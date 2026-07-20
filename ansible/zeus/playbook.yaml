@@ -22,8 +22,8 @@
 
     - name: Set secret facts
       ansible.builtin.set_fact:
-        op_sa_token: '{{ secrets_raw.results[1].stdout }}'
-        api_secret: '{{ secrets_raw.results[2].stdout }}'
+        op_sa_token: '{{ secrets_raw.results[0].stdout }}'
+        api_secret: '{{ secrets_raw.results[1].stdout }}'
       no_log: true
 
     - name: Create Zeus Docker network

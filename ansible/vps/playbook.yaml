@@ -25,11 +25,11 @@
 
     - name: Set secret facts
       ansible.builtin.set_fact:
-        op_sa_token: '{{ secrets_raw.results[1].stdout }}'
-        api_secret: '{{ secrets_raw.results[2].stdout }}'
-        webhook_secret: '{{ secrets_raw.results[3].stdout }}'
-        crowdsec_fw_api_key: '{{ secrets_raw.results[4].stdout }}'
-        vps_ip: '{{ secrets_raw.results[5].stdout }}'
+        op_sa_token: '{{ secrets_raw.results[0].stdout }}'
+        api_secret: '{{ secrets_raw.results[1].stdout }}'
+        webhook_secret: '{{ secrets_raw.results[2].stdout }}'
+        crowdsec_fw_api_key: '{{ secrets_raw.results[3].stdout }}'
+        vps_ip: '{{ secrets_raw.results[4].stdout }}'
       no_log: true
 
     - name: Install Docker
