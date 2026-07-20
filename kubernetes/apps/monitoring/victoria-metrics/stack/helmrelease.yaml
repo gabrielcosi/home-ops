@@ -1,0 +1,290 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: victoria-metrics
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: victoria-metrics
+  interval: 1h
+  values:
+    fullnameOverride: victoria-metrics-cluster
+
+    victoria-metrics-operator:
+      enabled: false
+
+    defaultDashboards:
+      enabled: true
+
+    defaultRules:
+      create: true
+      rules:
+        RecordingRulesNoData:
+          create: false
+
+    defaultDatasources:
+      grafanaOperator:
+        enabled: false
+
+    grafana:
+      enabled: false
+
+    alertmanager:
+      config:
+        global:
+          resolve_timeout: 5m
+        route:
+          group_by: ['alertname', 'job']
+          group_wait: 1m
+          group_interval: 5m
+          repeat_interval: 12h
+          receiver: 'pushover'
+          routes:
+            - receiver: 'vps-heartbeat'
+              group_wait: 0s
+              group_interval: 2m
+              repeat_interval: 2m30s
+              matchers:
+                - alertname = "Watchdog"
+            - receiver: 'null'
+              matchers:
+                - alertname = "InfoInhibitor"
+            - receiver: 'pushover'
+              matchers:
+                - severity = "critical"
+        receivers:
+          - name: 'null'
+          - name: 'vps-heartbeat'
+            webhook_configs:
+              - send_resolved: false
+                url: 'https://status-vps.xcd.dev/api/v1/endpoints/home_heartbeat/external?success=true'
+                http_config:
+                  authorization:
+                    type: Bearer
+                    credentials_file: /etc/vm/secrets/alertmanager-secret/heartbeat_token
+          - name: 'pushover'
+            pushover_configs:
+              - token_file: /etc/vm/secrets/alertmanager-secret/pushover_token
+                user_key_file: /etc/vm/secrets/alertmanager-secret/pushover_user_key
+                send_resolved: true
+                html: true
+                ttl: 24h
+                sound: gamelan
+                priority: |-
+                  {{ if eq .Status "firing" }}1{{ else }}0{{ end }}
+                title: |-
+                  [{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}] {{ .CommonLabels.alertname }}
+                message: |-
+                  {{ range .Alerts }}
+                  {{- if ne .Annotations.description "" }}{{ .Annotations.description }}
+                  {{- else if ne .Annotations.summary "" }}{{ .Annotations.summary }}
+                  {{- else }}Alert description not available{{- end }}
+                  {{- range .Labels.SortedPairs }}
+                  <b>{{ .Name }}:</b> {{ .Value }}
+                  {{- end }}
+                  {{ end }}
+                url_title: View in Alertmanager
+        inhibit_rules:
+          - equal: ['alertname', 'namespace']
+            source_match:
+              severity: 'critical'
+            target_match:
+              severity: 'warning'
+      spec:
+        secrets:
+          - alertmanager-secret
+        image:
+          repository: quay.io/prometheus/alertmanager
+        resources:
+          requests:
+            cpu: 20m
+            memory: 128Mi
+          limits:
+            memory: 128Mi
+      monzoTemplate:
+        enabled: false
+
+    kube-state-metrics:
+      fullnameOverride: kube-state-metrics
+      resources:
+        requests:
+          cpu: 10m
+          memory: 128Mi
+        limits:
+          memory: 128Mi
+
+    kubeApiServer:
+      vmScrape:
+        spec:
+          endpoints:
+            - bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+              port: https
+              scheme: https
+              tlsConfig:
+                caFile: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+                serverName: kubernetes
+              metricRelabelConfigs:
+                - action: drop
+                  sourceLabels:
+                    - "__name__"
+                  regex: (apiserver|etcd|rest_client)_request(|_sli|_slo)_duration_seconds_bucket
+                - action: drop
+                  sourceLabels:
+                    - "__name__"
+                  regex: (apiserver_response_sizes_bucket|apiserver_watch_events_sizes_bucket)
+
+    kubeControllerManager:
+      vmScrape:
+        spec:
+          endpoints:
+            - bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+              port: http-metrics
+              scheme: https
+              tlsConfig:
+                insecureSkipVerify: true
+
+    kubeEtcd:
+      service:
+        selector:
+          component: kube-apiserver
+        port: 2381
+        targetPort: 2381
+      vmScrape:
+        spec:
+          endpoints:
+            - scheme: http
+
+    kubeScheduler:
+      vmScrape:
+        spec:
+          endpoints:
+            - bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+              port: http-metrics
+              scheme: https
+              tlsConfig:
+                insecureSkipVerify: true
+
+    kubelet:
+      vmScrape:
+        spec:
+          relabelConfigs:
+            - action: labelmap
+              regex: __meta_kubernetes_node_label_(.+)
+            - action: labeldrop
+              regex: (beta_kubernetes_io_.*|extensions_talos_dev_.*|feature_node_kubernetes_io_.*|gpu_intel_com_.*|intel_feature_node_kubernetes_io_.*|kubernetes_io_arch|kubernetes_io_os|topology_kubernetes_io_.*)
+            - sourceLabels:
+                - __metrics_path__
+              targetLabel: metrics_path
+            - replacement: kubelet
+              targetLabel: job
+          metricRelabelConfigs:
+            - action: labeldrop
+              regex: (uid|id|name)
+            - action: labeldrop
+              regex: (beta_kubernetes_io_.*|extensions_talos_dev_.*|feature_node_kubernetes_io_.*|gpu_intel_com_.*|intel_feature_node_kubernetes_io_.*|kubernetes_io_arch|kubernetes_io_os|topology_kubernetes_io_.*)
+            - action: drop
+              sourceLabels:
+                - __name__
+              regex: (rest_client_request_duration_seconds_bucket|rest_client_request_duration_seconds_sum|rest_client_request_duration_seconds_count)
+            - action: drop
+              sourceLabels:
+                - id
+                - pod
+              regex: .+;
+            - action: drop
+              sourceLabels:
+                - __name__
+              regex: container_blkio_device_usage_total
+            - action: drop
+              sourceLabels:
+                - __name__
+              regex: 'container_fs_(io_current|io_time_seconds_total|io_time_weighted_seconds_total|reads_merged_total|sector_reads_total|sector_writes_total|writes_merged_total)'
+            - action: drop
+              sourceLabels:
+                - __name__
+              regex: container_(tasks_state|threads_max)
+
+    kubeProxy:
+      enabled: false
+
+    prometheus-node-exporter:
+      fullnameOverride: node-exporter
+      resources:
+        requests:
+          cpu: 10m
+          memory: 64Mi
+        limits:
+          memory: 64Mi
+
+    vmagent:
+      spec:
+        selectAllByDefault: true
+        scrapeInterval: 30s
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            memory: 512Mi
+        extraArgs:
+          promscrape.dropOriginalLabels: 'true'
+          promscrape.maxScrapeSize: 50MiB
+          promscrape.streamParse: 'true'
+
+    vmalert:
+      spec:
+        selectAllByDefault: true
+        evaluationInterval: 30s
+        resources:
+          requests:
+            cpu: 50m
+            memory: 128Mi
+          limits:
+            memory: 256Mi
+        datasource:
+          url: http://vmauth-victoria-metrics-cluster.monitoring.svc.cluster.local:8427
+
+    vmauth:
+      enabled: true
+      spec:
+        resources:
+          requests:
+            cpu: 50m
+            memory: 128Mi
+          limits:
+            memory: 256Mi
+        extraArgs:
+          requestBufferSize: '65536'
+        unauthorizedUserAccessSpec:
+          url_map:
+            - src_paths:
+                - /api/v1/query.*
+                - /api/v1/label/.*
+                - /api/v1/series.*
+                - /api/v1/status/.*
+              url_prefix: http://vmsingle-victoria-metrics-cluster.monitoring.svc.cluster.local:8428
+            - src_paths:
+                - /api/v1/rules.*
+                - /api/v1/alerts.*
+              url_prefix: http://vmalert-victoria-metrics-cluster.monitoring.svc.cluster.local:8080
+            - src_paths:
+                - /select/logsql/.*
+              url_prefix: http://victoria-logs.monitoring.svc.cluster.local:9428
+
+    vmsingle:
+      spec:
+        retentionPeriod: 90d
+        resources:
+          requests:
+            cpu: 150m
+            memory: 2Gi
+          limits:
+            memory: 4Gi
+        storage:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 50Gi
+          storageClassName: ceph-block

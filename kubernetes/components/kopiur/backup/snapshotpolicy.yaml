@@ -1,0 +1,39 @@
+---
+apiVersion: kopiur.home-operations.com/v1alpha1
+kind: SnapshotPolicy
+metadata:
+  name: ${APP}
+spec:
+  repository:
+    kind: ClusterRepository
+    name: nas
+  sources:
+    - pvc:
+        name: ${APP}
+  copyMethod: ${KOPIUR_COPYMETHOD:=Snapshot}
+  volumeSnapshotClassName: ${KOPIUR_SNAPSHOTCLASS:=csi-ceph-blockpool}
+  staging:
+    storageClassName: ${KOPIUR_STAGING_STORAGECLASS:=${KOPIUR_STORAGECLASS:=ceph-block}}
+    accessModes:
+      - ${KOPIUR_STAGING_ACCESSMODES:=${KOPIUR_ACCESSMODES:=ReadWriteOnce}}
+  compression:
+    compressor: zstd-fastest
+  retention:
+    keepLatest: 3
+    keepHourly: 24
+    keepDaily: 7
+    keepWeekly: 4
+  verification:
+    quick:
+      schedule:
+        cron: 'H 3 * * *'
+    deep:
+      schedule:
+        cron: 'H 5 1 * *'
+  mover:
+    securityContext:
+      runAsUser: ${KOPIUR_PUID:=1000}
+      runAsGroup: ${KOPIUR_PGID:=1000}
+    podSecurityContext:
+      fsGroup: ${KOPIUR_PGID:=1000}
+      fsGroupChangePolicy: OnRootMismatch

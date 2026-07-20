@@ -1,0 +1,39 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: outline
+spec:
+  components:
+    - ../../../../components/kopiur/restore
+    - ../../../../components/kopiur/backup
+    - ../../../../components/postgres/pass
+  dependsOn:
+    - name: cloudnative-pg
+      namespace: cnpg-system
+    - name: dragonfly
+      namespace: database
+    - name: shared-pg
+      namespace: database
+    - name: rook-ceph-cluster
+      namespace: rook-ceph
+  healthChecks:
+    - apiVersion: helm.toolkit.fluxcd.io/v2
+      kind: HelmRelease
+      name: outline
+      namespace: tools
+  interval: 1h
+  path: ./kubernetes/apps/tools/outline/app
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+    namespace: flux-system
+  targetNamespace: tools
+  wait: false
+  postBuild:
+    substitute:
+      APP: outline
+      KOPIUR_PUID: "65534"
+      KOPIUR_PGID: "65534"
+      KOPIUR_CAPACITY: "1Gi"

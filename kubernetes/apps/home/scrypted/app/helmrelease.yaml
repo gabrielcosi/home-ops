@@ -1,0 +1,83 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: scrypted
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: scrypted
+  interval: 1h
+  values:
+    controllers:
+      scrypted:
+        annotations:
+          reloader.stakater.com/auto: 'true'
+        pod:
+          annotations:
+            k8s.v1.cni.cncf.io/networks: |-
+              [{
+                "name": "trusted",
+                "namespace": "kube-system",
+                "ips": ["192.168.10.4/24"],
+                "mac": "be:24:11:10:00:04"
+              }]
+          securityContext:
+            fsGroup: 65534
+            fsGroupChangePolicy: OnRootMismatch
+            seccompProfile:
+              type: RuntimeDefault
+        containers:
+          app:
+            image:
+              repository: ghcr.io/koush/scrypted
+              tag: v0.144.1-noble-full
+            resources:
+              requests:
+                cpu: 75m
+                memory: 2Gi
+              limits:
+                memory: 2Gi
+            probes:
+              liveness:
+                enabled: true
+              readiness:
+                enabled: true
+              startup:
+                enabled: true
+                spec:
+                  failureThreshold: 30
+                  periodSeconds: 5
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: false
+              capabilities:
+                drop: ['ALL']
+                add: ['CHOWN', 'FOWNER', 'SETUID', 'SETGID', 'DAC_OVERRIDE'] # required by s6-overlay init
+
+    service:
+      app:
+        ports:
+          http:
+            port: 11080
+
+    route:
+      app:
+        hostnames:
+          - 'scrypted.xcd.dev'
+        parentRefs:
+          - name: envoy-internal
+            namespace: network
+
+    persistence:
+      config:
+        existingClaim: scrypted
+        advancedMounts:
+          scrypted:
+            app:
+              - path: /server/volume
+      tmp:
+        type: emptyDir
+        globalMounts:
+          - path: /.cache
+          - path: /.npm

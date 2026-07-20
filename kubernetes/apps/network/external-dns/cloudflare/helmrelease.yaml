@@ -1,0 +1,44 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: external-dns-cloudflare
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: external-dns-cloudflare
+  interval: 1h
+  values:
+    fullnameOverride: external-dns-cloudflare
+    provider:
+      name: cloudflare
+    env:
+      - name: CF_API_TOKEN
+        valueFrom:
+          secretKeyRef:
+            name: external-dns-cloudflare-secrets
+            key: CF_API_TOKEN
+    extraArgs:
+      - --gateway-name=envoy-external
+      - --cloudflare-dns-records-per-page=1000
+      - --label-filter=external-dns/instance!=unifi
+    triggerLoopOnEvent: true
+    policy: sync
+    sources:
+      - crd
+      - gateway-httproute
+    txtOwnerId: cloudflare
+    txtPrefix: k8s.%{record_type}-
+    domainFilters:
+      - xcd.dev
+      - gabrielcosi.dev
+    resources:
+      requests:
+        cpu: 10m
+        memory: 64Mi
+      limits:
+        memory: 128Mi
+    serviceMonitor:
+      enabled: true
+    podAnnotations:
+      secret.reloader.stakater.com/reload: external-dns-cloudflare-secrets

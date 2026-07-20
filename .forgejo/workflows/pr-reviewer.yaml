@@ -1,0 +1,154 @@
+---
+name: AI PR Review
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - ready_for_review
+      - labeled
+
+concurrency:
+  group: ${{ forgejo.workflow }}-${{ forgejo.event.pull_request.number || forgejo.ref }}${{ forgejo.event.action == 'labeled' && format('-label-{0}', forgejo.run_id) || '' }}
+  cancel-in-progress: true
+
+jobs:
+  review:
+    name: AI PR Review
+    if: >-
+      ${{ !forgejo.event.pull_request.draft
+      && (forgejo.event.action != 'labeled' || forgejo.event.label.name == 'ai-review') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      FORGEJO_API: http://forgejo-http.tools.svc.cluster.local:3000/api/v1
+      REPO: ${{ forgejo.repository }}
+      PR: ${{ forgejo.event.pull_request.number }}
+      KONFLATE_URL: http://konflate.tools.svc.cluster.local:8080
+      MARKER: '<!-- ai-pr-review -->'
+      DISABLE_AUTOUPDATER: '1'
+      CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC: '1'
+      # renovate: datasource=npm depName=@anthropic-ai/claude-code
+      CLAUDE_CODE_VERSION: '2.1.207'
+    steps:
+      - name: Checkout PR
+        uses: https://github.com/actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          ref: ${{ forgejo.event.pull_request.head.sha }}
+          persist-credentials: false
+
+      - name: Load secrets
+        id: secrets
+        uses: https://github.com/1Password/load-secrets-action@3a12b0ab99d9cd590a3e9b5a90ea017210ed9556 # v4.0.1
+        with:
+          export-env: false
+        env:
+          OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+          AI_AUTH_TOKEN: op://k8s/bifrost/bifrost_vk_pr_reviewer
+          REVIEW_TOKEN: op://k8s/pr-reviewer/forgejo_token
+          CRAWL4AI_TOKEN: op://k8s/crawl4ai/crawl4ai_api_token
+          GH_TOKEN: op://k8s/renovate/renovate_github_com_token
+
+      - name: Wait for konflate render
+        run: |-
+          echo "Waiting for konflate to finish rendering PR #${PR}..."
+          if curl -fsS --retry 40 --retry-delay 5 --retry-all-errors \
+               -H 'Accept: text/markdown' \
+               "${KONFLATE_URL}/api/prs/${PR}/summary" -o /dev/null; then
+            echo "konflate render ready."
+          else
+            echo "konflate not ready after retries — proceeding; the reviewer falls back to the git diff."
+          fi
+
+      - name: Review
+        env:
+          ANTHROPIC_BASE_URL: http://bifrost.ai.svc.cluster.local:8080/anthropic
+          ANTHROPIC_AUTH_TOKEN: ${{ steps.secrets.outputs.AI_AUTH_TOKEN }}
+          ANTHROPIC_MODEL: opencode-anthropic/minimax-m3
+          ANTHROPIC_SMALL_FAST_MODEL: opencode-anthropic/minimax-m3
+          CRAWL4AI_TOKEN: ${{ steps.secrets.outputs.CRAWL4AI_TOKEN }}
+          GH_TOKEN: ${{ steps.secrets.outputs.GH_TOKEN }}
+        run: |-
+          set -euo pipefail
+
+          curl -fsSL https://claude.ai/install.sh | bash -s "${CLAUDE_CODE_VERSION}"
+          export PATH="${HOME}/.local/bin:${PATH}"
+
+          jq -n \
+            --arg konflate "${KONFLATE_URL}/mcp" \
+            --arg crawl "http://crawl4ai.ai.svc.cluster.local:11235/mcp/sse" \
+            --arg auth "Bearer ${CRAWL4AI_TOKEN}" \
+            '{mcpServers: {
+               konflate: {type: "http", url: $konflate},
+               crawl4ai: {type: "sse", url: $crawl, headers: {Authorization: $auth}}
+             }}' > /tmp/mcp.json
+
+          {
+            printf 'You are reviewing pull request #%s in the Forgejo repository %s. Use this PR number with konflate'\''s MCP tools.\n\n' "${PR}" "${REPO}"
+            cat .forgejo/pr-review.prompt.md
+          } > /tmp/prompt.md
+
+          timeout 600 claude -p "$(cat /tmp/prompt.md)" \
+            --verbose \
+            --output-format stream-json \
+            --model "${ANTHROPIC_MODEL}" \
+            --permission-mode default \
+            --mcp-config /tmp/mcp.json \
+            --strict-mcp-config \
+            --allowedTools "Read,Glob,Grep,Bash(git log:*),Bash(git diff:*),Bash(gh:*),mcp__konflate,mcp__crawl4ai__md,Write" \
+            < /dev/null
+
+      - name: Publish review
+        id: publish
+        if: ${{ always() }}
+        env:
+          REVIEW_TOKEN: ${{ steps.secrets.outputs.REVIEW_TOKEN }}
+        run: |-
+          set -euo pipefail
+
+          if [ ! -s /tmp/review.md ]; then
+            echo "verdict=none" >> "${GITHUB_OUTPUT}"
+            echo "No review file produced — nothing to post."
+            exit 0
+          fi
+
+          body="$(cat /tmp/review.md)"
+          if printf '%s' "${body}" | grep -qiE '<!-- *verdict: *request_changes|\*\*verdict\*\*:[^|]*(changes required|request changes|not safe)'; then
+            echo "verdict=request_changes" >> "${GITHUB_OUTPUT}"
+          else
+            echo "verdict=approve" >> "${GITHUB_OUTPUT}"
+          fi
+
+          payload="$(jq -n --arg b "${MARKER}"$'\n'"${body}" '{body: $b}')"
+          existing="$(curl -fsS --retry 3 --retry-all-errors \
+            -H "Authorization: token ${REVIEW_TOKEN}" \
+            "${FORGEJO_API}/repos/${REPO}/issues/${PR}/comments?limit=50" \
+            | jq -r --arg m "${MARKER}" '[.[] | select(.body | contains($m))] | last | .id // empty')"
+
+          if [ -n "${existing}" ]; then
+            curl -fsS --retry 3 --retry-all-errors -X PATCH \
+              -H "Authorization: token ${REVIEW_TOKEN}" -H "Content-Type: application/json" \
+              "${FORGEJO_API}/repos/${REPO}/issues/comments/${existing}" -d "${payload}" -o /dev/null
+            echo "Updated review comment ${existing}."
+          else
+            curl -fsS --retry 3 --retry-all-errors -X POST \
+              -H "Authorization: token ${REVIEW_TOKEN}" -H "Content-Type: application/json" \
+              "${FORGEJO_API}/repos/${REPO}/issues/${PR}/comments" -d "${payload}" -o /dev/null
+            echo "Posted review comment."
+          fi
+
+      - name: Gate merge on verdict
+        if: ${{ always() }}
+        env:
+          VERDICT: ${{ steps.publish.outputs.verdict }}
+        run: |-
+          if [ "${VERDICT}" = "request_changes" ]; then
+            echo "AI reviewer requested changes — failing check to block automerge."
+            exit 1
+          fi
+          echo "AI reviewer verdict=${VERDICT:-none} — check green, merge not blocked."

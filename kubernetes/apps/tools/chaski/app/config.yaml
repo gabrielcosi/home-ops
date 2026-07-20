@@ -1,0 +1,69 @@
+---
+targets:
+  radarr:
+    apprise:
+      url: pover://{{ env "PUSHOVER_USER_KEY" }}@{{ env "RADARR_PUSHOVER_TOKEN" }}
+  sonarr:
+    apprise:
+      url: pover://{{ env "PUSHOVER_USER_KEY" }}@{{ env "SONARR_PUSHOVER_TOKEN" }}
+routes:
+  radarr:
+    target: radarr
+    whenExpr: payload.eventType in ["Download", "ManualInteractionRequired"]
+    title: >-
+      {{- if eq .payload.eventType "ManualInteractionRequired" -}}
+      Movie Requires Manual Interaction
+      {{- else if .payload.isUpgrade -}}
+      Movie Upgraded
+      {{- else -}}
+      Movie Added
+      {{- end -}}
+    message: |-
+      <b>{{ .payload.movie.title }} ({{ .payload.movie.year }})</b>{{ with .payload.movie.overview }}
+      <small>{{ . | ellipsis 300 }}</small>{{ end }}
+      <small><b>Client:</b> {{ .payload.downloadClient | default "unknown" }}</small>
+    params:
+      format: html
+      priority: '{{ if eq .payload.eventType "ManualInteractionRequired" }}high{{ else }}low{{ end }}'
+      url: >-
+        {{- if eq .payload.eventType "ManualInteractionRequired" -}}
+        {{ .payload.applicationUrl }}/activity/queue
+        {{- else -}}
+        {{ .payload.applicationUrl }}/movie/{{ .payload.movie.tmdbId }}
+        {{- end -}}
+      url_title: >-
+        {{- if eq .payload.eventType "ManualInteractionRequired" -}}
+        View Queue
+        {{- else -}}
+        View Movie
+        {{- end -}}
+  sonarr:
+    target: sonarr
+    whenExpr: payload.eventType in ["Download", "ManualInteractionRequired"]
+    title: >-
+      {{- if eq .payload.eventType "ManualInteractionRequired" -}}
+      Episode Requires Manual Interaction
+      {{- else if .payload.isUpgrade -}}
+      Episode Upgraded
+      {{- else -}}
+      Episode Added
+      {{- end -}}
+    message: |-
+      <b>{{ .payload.series.title }}{{ with .payload.episodes }} ({{ printf "S%02dE%02d" (toInt (index . 0).seasonNumber) (toInt (index . 0).episodeNumber) }}){{ end }}</b>{{ with .payload.episodes }}
+      <small>{{ (index . 0).title }}</small>{{ end }}
+      <small><b>Client:</b> {{ .payload.downloadClient | default "unknown" }}</small>
+    params:
+      format: html
+      priority: '{{ if eq .payload.eventType "ManualInteractionRequired" }}high{{ else }}low{{ end }}'
+      url: >-
+        {{- if eq .payload.eventType "ManualInteractionRequired" -}}
+        {{ .payload.applicationUrl }}/activity/queue
+        {{- else -}}
+        {{ .payload.applicationUrl }}/series/{{ .payload.series.titleSlug }}
+        {{- end -}}
+      url_title: >-
+        {{- if eq .payload.eventType "ManualInteractionRequired" -}}
+        View Queue
+        {{- else -}}
+        View Series
+        {{- end -}}

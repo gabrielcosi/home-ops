@@ -1,0 +1,105 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: plik
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: plik
+  interval: 1h
+  values:
+    controllers:
+      plik:
+        annotations:
+          reloader.stakater.com/auto: 'true'
+        strategy: Recreate
+
+        pod:
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 5010
+            runAsGroup: 3008
+            fsGroup: 3008
+            fsGroupChangePolicy: OnRootMismatch
+            seccompProfile:
+              type: RuntimeDefault
+
+        containers:
+          app:
+            image:
+              repository: rootgg/plik
+              tag: 1.4.2
+            envFrom:
+              - secretRef:
+                  name: plik-secrets
+            env:
+              TZ: Europe/Berlin
+            probes:
+              liveness:
+                enabled: true
+              readiness:
+                enabled: true
+              startup:
+                enabled: true
+                spec:
+                  failureThreshold: 30
+                  periodSeconds: 5
+            resources:
+              requests:
+                cpu: 10m
+                memory: 256Mi
+              limits:
+                memory: 1Gi
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities:
+                drop: ['ALL']
+
+    service:
+      app:
+        ports:
+          http:
+            port: 8080
+
+    route:
+      app:
+        annotations:
+          gatus.home-operations.com/endpoint: |
+            url: https://share.xcd.dev/version
+            conditions:
+              - '[STATUS] == 200'
+              - '[BODY].version != ""'
+        hostnames:
+          - 'share.xcd.dev'
+        parentRefs:
+          - name: envoy-external
+            namespace: network
+        rules:
+          - backendRefs:
+              - identifier: app
+                port: http
+
+    persistence:
+      config:
+        type: configMap
+        name: plik-config
+        globalMounts:
+          - path: /home/plik/server/plikd.cfg
+            subPath: plikd.cfg
+            readOnly: true
+      files:
+        type: nfs
+        server: tank.internal
+        path: /mnt/home-pool/plik
+        globalMounts:
+          - path: /home/plik/server/files
+      db:
+        existingClaim: plik
+        globalMounts:
+          - path: /home/plik/server/db
+      tmp:
+        type: emptyDir
+        globalMounts:
+          - path: /tmp

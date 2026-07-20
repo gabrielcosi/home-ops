@@ -1,0 +1,23 @@
+---
+apiVersion: renovate-operator.mogenius.com/v1alpha1
+kind: RenovateJob
+metadata:
+  name: forgejo
+spec:
+  skipForks: true
+  provider:
+    name: forgejo
+    endpoint: https://git.xcd.dev/api/v1
+  extraEnv:
+    - name: LOG_LEVEL
+      value: info
+  image: ghcr.io/renovatebot/renovate:43.269.1
+  parallelism: 3
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      memory: 4Gi
+  schedule: '0 * * * *'
+  secretRef: renovate-job-secrets

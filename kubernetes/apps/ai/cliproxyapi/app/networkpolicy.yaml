@@ -1,0 +1,48 @@
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: cliproxyapi-policy
+  labels:
+    app.kubernetes.io/instance: cliproxyapi
+    app.kubernetes.io/name: cliproxyapi
+spec:
+  description: Lock cliproxyapi to Bifrost ingress and configured provider egress only; deny all other phone-home.
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/instance: cliproxyapi
+      app.kubernetes.io/name: cliproxyapi
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: ai
+            k8s:app.kubernetes.io/instance: bifrost
+            k8s:app.kubernetes.io/name: bifrost
+      toPorts:
+        - ports:
+            - port: "8317"
+              protocol: TCP
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: kube-system
+            k8s:k8s-app: kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+            - port: "53"
+              protocol: TCP
+          rules:
+            dns:
+              - matchPattern: "*"
+    - toFQDNs:
+        - matchName: openai.com
+        - matchPattern: "*.openai.com"
+        - matchName: chatgpt.com
+        - matchPattern: "*.chatgpt.com"
+        - matchName: api.anthropic.com
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP

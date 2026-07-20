@@ -1,0 +1,39 @@
+---
+apiVersion: dragonflydb.io/v1alpha1
+kind: Dragonfly
+metadata:
+  name: gabrielcosi-dragonfly
+spec:
+  replicas: 2
+
+  env:
+    - name: MAX_MEMORY
+      valueFrom:
+        resourceFieldRef:
+          resource: limits.memory
+          divisor: 1Mi
+
+  authentication:
+    passwordFromSecret:
+      name: gabrielcosi-secrets
+      key: DRAGONFLY_PASSWORD
+
+  args:
+    - --maxmemory=$(MAX_MEMORY)Mi
+    - --proactor_threads=1
+    - --cluster_mode=emulated
+
+  resources:
+    requests:
+      cpu: 50m
+      memory: 256Mi
+    limits:
+      memory: 256Mi
+
+  topologySpreadConstraints:
+    - maxSkew: 1
+      topologyKey: kubernetes.io/hostname
+      whenUnsatisfiable: DoNotSchedule
+      labelSelector:
+        matchLabels:
+          app: gabrielcosi-dragonfly

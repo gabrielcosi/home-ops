@@ -1,0 +1,92 @@
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: Grafana
+metadata:
+  name: grafana
+  labels:
+    dashboards: grafana
+spec:
+  config:
+    analytics:
+      check_for_updates: "false"
+      check_for_plugin_updates: "false"
+      feedback_links_enabled: "false"
+      reporting_enabled: "false"
+    auth:
+      oauth_auto_login: "true"
+      oauth_allow_insecure_email_lookup: "false"
+      disable_login_form: "true"
+      signout_redirect_url: https://auth.xcd.dev/application/o/grafana/end-session/
+    auth.anonymous:
+      enabled: "false"
+    auth.generic_oauth:
+      name: authentik
+      enabled: "true"
+      client_id: $__file{/etc/secrets/auth_generic_oauth/client_id}
+      client_secret: $__file{/etc/secrets/auth_generic_oauth/client_secret}
+      scopes: openid profile email
+      auth_url: https://auth.xcd.dev/application/o/authorize/
+      token_url: https://auth.xcd.dev/application/o/token/
+      api_url: https://auth.xcd.dev/application/o/userinfo/
+      role_attribute_path: contains(groups[*], 'Grafana Admins') && 'Admin' || 'Viewer'
+    date_formats:
+      default_timezone: Europe/Berlin
+      use_browser_locale: "true"
+    explore:
+      enabled: "true"
+    log:
+      mode: console
+    metrics:
+      enabled: "true"
+    news:
+      news_feed_enabled: "false"
+    plugins:
+      plugin_admin_enabled: "false"
+    security:
+      angular_support_enabled: "true"
+    server:
+      root_url: https://grafana.xcd.dev
+      enable_gzip: "true"
+  deployment:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: grafana
+              env:
+                - name: GF_INSTALL_PLUGINS
+                  value: grafana-clock-panel
+              volumeMounts:
+                - name: oauth-secret
+                  mountPath: /etc/secrets/auth_generic_oauth
+                  readOnly: true
+              securityContext:
+                allowPrivilegeEscalation: false
+                capabilities:
+                  drop:
+                    - ALL
+              resources:
+                requests:
+                  cpu: 25m
+                  memory: 512Mi
+                limits:
+                  memory: 512Mi
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            fsGroup: 1000
+            fsGroupChangePolicy: OnRootMismatch
+          volumes:
+            - name: oauth-secret
+              secret:
+                secretName: oauth-secret
+                defaultMode: 0440
+  httpRoute:
+    spec:
+      hostnames:
+        - grafana.xcd.dev
+      parentRefs:
+        - name: envoy-internal
+          namespace: network
+  disableDefaultSecurityContext: All

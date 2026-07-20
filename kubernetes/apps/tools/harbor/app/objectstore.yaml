@@ -1,0 +1,22 @@
+---
+apiVersion: barmancloud.cnpg.io/v1
+kind: ObjectStore
+metadata:
+  name: harbor-store
+spec:
+  configuration:
+    destinationPath: s3://harbor-backup
+    endpointURL: https://s3.xcd.dev
+    s3Credentials:
+      accessKeyId:
+        name: harbor-secrets
+        key: PG_BACKUP_ACCESS_KEY_ID
+      secretAccessKey:
+        name: harbor-secrets
+        key: PG_BACKUP_ACCESS_SECRET_KEY
+    wal:
+      compression: lz4
+      maxParallel: 4
+    data:
+      compression: gzip
+  retentionPolicy: '7d'

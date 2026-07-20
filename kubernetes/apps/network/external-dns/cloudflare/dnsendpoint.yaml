@@ -1,0 +1,17 @@
+---
+apiVersion: externaldns.k8s.io/v1alpha1
+kind: DNSEndpoint
+metadata:
+  name: external
+  labels:
+    external-dns/instance: cloudflare
+spec:
+  endpoints:
+    - dnsName: external.xcd.dev
+      recordType: CNAME
+      targets:
+        - towonel.xcd.dev
+    - dnsName: status-vps.xcd.dev
+      recordType: CNAME
+      targets:
+        - towonel.xcd.dev

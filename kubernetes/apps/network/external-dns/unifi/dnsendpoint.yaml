@@ -1,0 +1,29 @@
+---
+apiVersion: externaldns.k8s.io/v1alpha1
+kind: DNSEndpoint
+metadata:
+  name: external-services
+  labels:
+    external-dns/instance: unifi
+spec:
+  endpoints:
+    - dnsName: s3.xcd.dev
+      recordType: A
+      targets:
+        - &npm_ip 192.168.42.20
+    - dnsName: rustfs.xcd.dev
+      recordType: A
+      targets:
+        - *npm_ip
+    - dnsName: ai-proxy.xcd.dev
+      recordType: A
+      targets:
+        - *npm_ip
+    - dnsName: comfyui.xcd.dev
+      recordType: A
+      targets:
+        - *npm_ip
+    - dnsName: komodo.xcd.dev
+      recordType: A
+      targets:
+        - *npm_ip

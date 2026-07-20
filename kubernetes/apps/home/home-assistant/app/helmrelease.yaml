@@ -1,0 +1,83 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: home-assistant
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: home-assistant
+  interval: 1h
+  values:
+    controllers:
+      home-assistant:
+        annotations:
+          reloader.stakater.com/auto: 'true'
+        pod:
+          annotations:
+            k8s.v1.cni.cncf.io/networks: |-
+              [{
+                "name": "trusted",
+                "namespace": "kube-system",
+                "ips": ["192.168.10.2/24"],
+                "mac": "be:24:11:10:00:02"
+              }]
+          securityContext:
+            fsGroup: 65533
+            fsGroupChangePolicy: OnRootMismatch
+            runAsGroup: 65533
+            runAsUser: 65534
+            runAsNonRoot: true
+            seccompProfile:
+              type: RuntimeDefault
+        containers:
+          app:
+            image:
+              repository: ghcr.io/home-operations/home-assistant
+              tag: 2026.7.2
+            env:
+              TZ: Europe/Berlin
+            resources:
+              requests:
+                cpu: 25m
+                memory: 1Gi
+              limits:
+                memory: 1Gi
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities:
+                drop:
+                  - ALL
+
+    service:
+      app:
+        ports:
+          http:
+            appProtocol: kubernetes.io/wss
+            port: 8123
+
+    route:
+      app:
+        hostnames:
+          - 'home.xcd.dev'
+        parentRefs:
+          - name: envoy-external
+            namespace: network
+
+    persistence:
+      config:
+        existingClaim: home-assistant
+        advancedMounts:
+          home-assistant:
+            app:
+              - path: /config
+                subPath: config
+
+      tmpfs:
+        type: emptyDir
+        advancedMounts:
+          home-assistant:
+            app:
+              - path: /tmp
+                subPath: hass-tmp

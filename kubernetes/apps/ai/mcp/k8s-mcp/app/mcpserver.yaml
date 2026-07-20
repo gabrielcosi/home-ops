@@ -1,0 +1,23 @@
+---
+apiVersion: toolhive.stacklok.dev/v1beta1
+kind: MCPServer
+metadata:
+  name: k8s-mcp
+spec:
+  image: docker.io/rohitghumare64/kubectl-mcp-server:1.24.0
+  transport: stdio
+  serviceAccount: k8s-mcp
+  groupRef:
+    name: mcp-tools
+  permissionProfile:
+    type: builtin
+    name: network
+  telemetryConfigRef:
+    name: prometheus
+    serviceName: k8s-mcp
+  resources:
+    requests:
+      cpu: 1m
+      memory: 128Mi
+    limits:
+      memory: 128Mi

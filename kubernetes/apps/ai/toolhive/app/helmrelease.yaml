@@ -1,0 +1,22 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: toolhive-operator
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: toolhive-operator
+  interval: 1h
+  values:
+    operator:
+      replicaCount: 1
+      resources:
+        requests:
+          cpu: 10m
+          memory: 128Mi
+        limits:
+          memory: 256Mi
+      gc:
+        gomemlimit: 230MiB
+        gogc: 75

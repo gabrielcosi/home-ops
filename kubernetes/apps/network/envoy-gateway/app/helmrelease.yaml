@@ -1,0 +1,30 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: envoy-gateway
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: envoy-gateway
+  interval: 1h
+  values:
+    global:
+      imageRegistry: mirror.gcr.io
+
+    deployment:
+      envoyGateway:
+        resources:
+          limits:
+            memory: 256Mi
+          requests:
+            cpu: 10m
+            memory: 256Mi
+
+    config:
+      envoyGateway:
+        provider:
+          type: Kubernetes
+          kubernetes:
+            deploy:
+              type: GatewayNamespace

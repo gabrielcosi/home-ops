@@ -1,0 +1,88 @@
+---
+apiVersion: k8s.cni.cncf.io/v1
+kind: NetworkAttachmentDefinition
+metadata:
+  name: trusted
+spec:
+  config: |-
+    {
+      "cniVersion": "1.1.0",
+      "name": "trusted",
+      "plugins": [
+        {
+          "type": "macvlan",
+          "master": "bond0.10",
+          "mode": "bridge",
+          "ipam": {
+            "type": "static",
+            "routes": [
+              {"dst": "0.0.0.0/0", "gw": "192.168.10.1"}
+            ]
+          }
+        },
+        {
+          "type": "sbr"
+        }
+      ]
+    }
+---
+apiVersion: k8s.cni.cncf.io/v1
+kind: NetworkAttachmentDefinition
+metadata:
+  name: iot
+spec:
+  config: |-
+    {
+      "cniVersion": "1.1.0",
+      "name": "iot",
+      "plugins": [
+        {
+          "type": "macvlan",
+          "master": "bond0.70",
+          "mode": "bridge",
+          "ipam": {
+            "type": "static",
+            "routes": [
+              {"dst": "0.0.0.0/0", "gw": "192.168.70.1"}
+            ]
+          }
+        },
+        {
+          "type": "sbr"
+        },
+        {
+          "type": "tuning",
+          "sysctl": {
+            "net.ipv6.conf.IFNAME.accept_ra": "1",
+            "net.ipv6.conf.IFNAME.accept_ra_rt_info_max_plen": "64"
+          }
+        }
+      ]
+    }
+---
+apiVersion: k8s.cni.cncf.io/v1
+kind: NetworkAttachmentDefinition
+metadata:
+  name: servers
+spec:
+  config: |-
+    {
+      "cniVersion": "1.1.0",
+      "name": "servers",
+      "plugins": [
+        {
+          "type": "macvlan",
+          "master": "bond0",
+          "mode": "bridge",
+          "ipam": {
+            "type": "static",
+            "routes": [
+              {"dst": "0.0.0.0/0", "gw": "192.168.42.1"}
+            ]
+          }
+        },
+        {
+          "type": "sbr"
+        }
+      ]
+    }

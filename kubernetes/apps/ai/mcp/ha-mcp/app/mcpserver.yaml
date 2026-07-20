@@ -1,0 +1,37 @@
+---
+apiVersion: toolhive.stacklok.dev/v1beta1
+kind: MCPServer
+metadata:
+  name: ha-mcp
+spec:
+  image: ghcr.io/homeassistant-ai/ha-mcp:7.14.1
+  transport: streamable-http
+  groupRef:
+    name: mcp-tools
+  env:
+    - name: HOMEASSISTANT_URL
+      value: https://home.xcd.dev
+  secrets:
+    - name: ha-mcp-token
+      key: HOMEASSISTANT_TOKEN
+  podTemplateSpec:
+    spec:
+      containers:
+        - name: mcp
+          command:
+            - ha-mcp-web
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir: {}
+  telemetryConfigRef:
+    name: prometheus
+    serviceName: ha-mcp
+  resources:
+    requests:
+      cpu: 1m
+      memory: 128Mi
+    limits:
+      memory: 128Mi

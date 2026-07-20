@@ -1,0 +1,13 @@
+---
+endpoints:
+  - name: Status Page
+    group: buddy
+    url: https://status-vps.xcd.dev
+    interval: 1m
+    ui:
+      hide-url: true
+      hide-hostname: true
+    conditions:
+      - '[STATUS] == 200'
+    alerts:
+      - type: pushover

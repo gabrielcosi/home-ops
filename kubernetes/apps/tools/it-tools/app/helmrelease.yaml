@@ -1,0 +1,57 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: it-tools
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: it-tools
+  interval: 1h
+  values:
+    controllers:
+      it-tools:
+        pod:
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 65534
+            runAsGroup: 65534
+            seccompProfile:
+              type: RuntimeDefault
+        containers:
+          app:
+            image:
+              repository: ghcr.io/corentinth/it-tools
+              tag: 2024.10.22-7ca5933
+            resources:
+              requests:
+                memory: 50Mi
+                cpu: 1m
+              limits:
+                memory: 50Mi
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: { drop: ['ALL'] }
+
+    persistence:
+      tmp:
+        type: emptyDir
+        globalMounts:
+          - path: /var/cache/nginx
+          - path: /var/run
+          - path: /tmp
+
+    service:
+      app:
+        ports:
+          http:
+            port: 80
+
+    route:
+      app:
+        hostnames:
+          - 'it-tools.xcd.dev'
+        parentRefs:
+          - name: envoy-internal
+            namespace: network

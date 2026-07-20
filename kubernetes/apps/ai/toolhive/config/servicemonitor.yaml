@@ -1,0 +1,15 @@
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: toolhive-mcp
+  labels:
+    app.kubernetes.io/name: toolhive-mcp
+spec:
+  selector:
+    matchLabels:
+      toolhive: "true"
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 15s

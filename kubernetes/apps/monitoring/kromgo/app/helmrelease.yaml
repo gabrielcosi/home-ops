@@ -1,0 +1,30 @@
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/helm.toolkit.fluxcd.io/helmrelease_v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: kromgo
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: kromgo
+  interval: 1h
+  values:
+    deploymentAnnotations:
+      reloader.stakater.com/auto: 'true'
+    existingConfigMap: kromgo-config
+    resources:
+      requests:
+        cpu: 10m
+      limits:
+        memory: 64Mi
+    httpRoute:
+      enabled: true
+      parentRefs:
+        - name: envoy-external
+          namespace: network
+      hostnames:
+        - 'kromgo.xcd.dev'
+    monitoring:
+      serviceMonitor:
+        enabled: true

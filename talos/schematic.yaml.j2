@@ -1,0 +1,12 @@
+---
+customization:
+  extraKernelArgs:
+    - i915.enable_guc=2
+    - module_blacklist=e1000e
+    - talos.config.early={{ ENV.CONFIG_EARLY }}
+  systemExtensions:
+    officialExtensions:
+      - siderolabs/drbd
+      - siderolabs/i915
+      - siderolabs/intel-ucode
+      - siderolabs/mei

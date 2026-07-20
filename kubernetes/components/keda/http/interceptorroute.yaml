@@ -1,0 +1,15 @@
+---
+apiVersion: http.keda.sh/v1beta1
+kind: InterceptorRoute
+metadata:
+  name: ${APP}
+spec:
+  target:
+    service: ${HTTP_SCALER_SERVICE:=${APP}}
+    port: ${HTTP_SCALER_PORT}
+  rules:
+    - hosts:
+        - ${SUBDOMAIN:=${APP}}.xcd.dev
+  scalingMetric:
+    concurrency:
+      targetValue: ${HTTP_SCALER_TARGET_VALUE:=100}

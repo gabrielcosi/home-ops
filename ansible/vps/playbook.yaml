@@ -1,0 +1,246 @@
+---
+- name: Bootstrap doco-cd on VPS
+  hosts: all
+  become: true
+  gather_facts: false
+  vars:
+    ansible_user: debian
+
+  tasks:
+    - name: Ping
+      ansible.builtin.ping:
+
+    - name: Read secrets from 1Password
+      ansible.builtin.shell: "vals get 'ref+op://vps/{{ item.key }}' < /dev/null"
+      delegate_to: localhost
+      become: false
+      no_log: true
+      loop:
+        - { key: 'doco-cd/credential', var: 'op_sa_token' }
+        - { key: 'doco-cd/api_secret', var: 'api_secret' }
+        - { key: 'doco-cd/webhook_secret', var: 'webhook_secret' }
+        - { key: 'towonel/crowdsec_fw_api_key', var: 'crowdsec_fw_api_key' }
+        - { key: 'towonel/ip', var: 'vps_ip' }
+      register: secrets_raw
+
+    - name: Set secret facts
+      ansible.builtin.set_fact:
+        op_sa_token: '{{ secrets_raw.results[1].stdout }}'
+        api_secret: '{{ secrets_raw.results[2].stdout }}'
+        webhook_secret: '{{ secrets_raw.results[3].stdout }}'
+        crowdsec_fw_api_key: '{{ secrets_raw.results[4].stdout }}'
+        vps_ip: '{{ secrets_raw.results[5].stdout }}'
+      no_log: true
+
+    - name: Install Docker
+      ansible.builtin.shell: curl -fsSL https://get.docker.com | sh
+      args:
+        executable: /bin/bash
+        creates: /usr/bin/docker
+    - name: ssh
+      block:
+        - name: ssh | Harden sshd_config and move admin to port 2222
+          ansible.builtin.copy:
+            dest: /etc/ssh/sshd_config.d/99-hardening.conf
+            content: |
+              Port 2222
+              PermitRootLogin no
+              PasswordAuthentication no
+              MaxAuthTries 3
+              LoginGraceTime 20
+            owner: root
+            group: root
+            mode: '0644'
+          notify: Restart ssh
+
+        - name: ssh | Disable socket activation (this image serves ssh.service)
+          ansible.builtin.systemd:
+            name: ssh.socket
+            enabled: false
+            state: stopped
+          failed_when: false
+
+    - name: firewall | Check if UFW is already active
+      ansible.builtin.command: ufw status
+      register: ufw_status
+      changed_when: false
+      failed_when: false
+
+    - name: firewall | Install ufw
+      when: "'Status: active' not in ufw_status.stdout"
+      ansible.builtin.apt:
+        name: ufw
+        state: present
+        update_cache: false
+
+    - name: 'firewall | Allow ports'
+      community.general.ufw:
+        rule: allow
+        port: '{{ item.port }}'
+        proto: "{{ item.protocol | default('tcp') }}"
+      loop:
+        - name: forgejo-ssh
+          port: 22
+        - name: admin-ssh
+          port: 2222
+        - name: HTTP
+          port: 80
+        - name: HTTPS
+          port: 443
+        - name: towonel-iroh
+          port: 51820
+          protocol: udp
+
+    - name: firewall | Enable UFW
+      community.general.ufw:
+        state: enabled
+        policy: deny
+    - name: Create edge docker network
+      community.docker.docker_network:
+        name: edge
+        driver: bridge
+        state: present
+
+    - name: Create doco-cd directory
+      ansible.builtin.file:
+        path: /opt/doco-cd
+        state: directory
+        mode: '0700'
+
+    - name: Create towonel data directory
+      ansible.builtin.file:
+        path: /opt/towonel
+        state: directory
+        owner: '10001'
+        group: '10001'
+        mode: '0700'
+    - name: doco-cd
+      vars:
+        dococd_config_dir: /opt/doco-cd
+      block:
+        - name: doco-cd | Copy docker-compose app file
+          ansible.builtin.copy:
+            src: ../../docker/vps/.doco-cd/docker-compose.app.yaml
+            dest: '{{ dococd_config_dir }}/docker-compose.yaml'
+            owner: debian
+            group: debian
+            mode: '0644'
+          register: compose_file
+        - name: doco-cd | Create secrets
+          ansible.builtin.copy:
+            dest: '{{ dococd_config_dir }}/{{ item.name }}'
+            content: |
+              {{ item.content }}
+            owner: debian
+            group: debian
+            mode: '0600'
+          no_log: true
+          loop:
+            - name: 1pw_token
+              content: '{{ op_sa_token }}'
+            - name: api_secret
+              content: '{{ api_secret }}'
+            - name: webhook_secret
+              content: '{{ webhook_secret }}'
+        - name: doco-cd | Run docker-compose
+          community.docker.docker_compose_v2:
+            project_src: '{{ dococd_config_dir }}'
+            files:
+              - docker-compose.yaml
+            pull: always
+            state: present
+          when: not ansible_check_mode
+
+        - name: doco-cd | Wait for healthy
+          community.docker.docker_container_info:
+            name: doco-cd
+          register: dococd_info
+          until: dococd_info.container.State.Health.Status == "healthy"
+          retries: 30
+          delay: 10
+          when: not ansible_check_mode
+    - name: crowdsec-firewall-bouncer
+      block:
+        - name: Wait for CrowdSec LAPI on loopback
+          ansible.builtin.wait_for:
+            host: 127.0.0.1
+            port: 8088
+            timeout: 180
+
+        - name: Register firewall bouncer (idempotent)
+          ansible.builtin.shell: |
+            if docker exec crowdsec cscli bouncers list | grep -qw firewall; then
+              echo "ALREADY_REGISTERED"
+            else
+              docker exec crowdsec cscli bouncers add firewall --key "{{ crowdsec_fw_api_key }}"
+            fi
+          register: bouncer_reg
+          changed_when: "'ALREADY_REGISTERED' not in bouncer_reg.stdout"
+
+        - name: Register CAPI (community blocklist)
+          ansible.builtin.shell: |
+            docker exec crowdsec cscli capi status >/dev/null 2>&1 \
+              || docker exec crowdsec cscli capi register
+          register: capi_reg
+          changed_when: "'Successfully' in capi_reg.stdout"
+
+        - name: Ensure /etc/apt/keyrings exists
+          ansible.builtin.file:
+            path: /etc/apt/keyrings
+            state: directory
+            mode: '0755'
+
+        - name: Download CrowdSec apt signing key
+          ansible.builtin.get_url:
+            url: https://packagecloud.io/crowdsec/crowdsec/gpgkey
+            dest: /etc/apt/keyrings/crowdsec.asc
+            mode: '0644'
+
+        - name: Add CrowdSec apt repository
+          ansible.builtin.apt_repository:
+            repo: 'deb [signed-by=/etc/apt/keyrings/crowdsec.asc] https://packagecloud.io/crowdsec/crowdsec/any any main'
+            filename: crowdsec
+            state: present
+            update_cache: true
+
+        - name: Install host firewall bouncer
+          ansible.builtin.apt:
+            name: crowdsec-firewall-bouncer-iptables
+            state: present
+
+        - name: Render bouncer config
+          ansible.builtin.template:
+            src: crowdsec-firewall-bouncer.yaml.j2
+            dest: /etc/crowdsec/bouncers/crowdsec-firewall-bouncer.yaml
+            owner: root
+            group: root
+            mode: '0600'
+          notify: Restart crowdsec-firewall-bouncer
+
+        - name: Enable + start bouncer
+          ansible.builtin.systemd:
+            name: crowdsec-firewall-bouncer
+            enabled: true
+            state: started
+
+        - name: Verify bouncer is active
+          ansible.builtin.command: systemctl is-active crowdsec-firewall-bouncer
+          changed_when: false
+
+    - name: Display summary
+      ansible.builtin.debug:
+        msg:
+          - '=== Bootstrap complete ==='
+          - 'VPS IP     : {{ vps_ip }}'
+
+  handlers:
+    - name: Restart ssh
+      ansible.builtin.systemd:
+        name: ssh.service
+        state: restarted
+        daemon_reload: true
+
+    - name: Restart crowdsec-firewall-bouncer
+      ansible.builtin.service:
+        name: crowdsec-firewall-bouncer
+        state: restarted

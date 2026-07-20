@@ -1,0 +1,57 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: cyberchef
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: cyberchef
+  interval: 1h
+  values:
+    controllers:
+      cyberchef:
+        pod:
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 65534
+            runAsGroup: 65534
+            seccompProfile:
+              type: RuntimeDefault
+        containers:
+          app:
+            image:
+              repository: ghcr.io/gchq/cyberchef
+              tag: 11.2.0
+            resources:
+              requests:
+                memory: 50Mi
+                cpu: 1m
+              limits:
+                memory: 50Mi
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: { drop: ['ALL'] }
+
+    persistence:
+      tmp:
+        type: emptyDir
+        globalMounts:
+          - path: /var/cache/nginx
+          - path: /var/run
+          - path: /tmp
+
+    service:
+      app:
+        ports:
+          http:
+            port: 8080
+
+    route:
+      app:
+        hostnames:
+          - 'cyberchef.xcd.dev'
+        parentRefs:
+          - name: envoy-internal
+            namespace: network

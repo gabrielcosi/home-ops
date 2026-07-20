@@ -1,0 +1,40 @@
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: gatus
+spec:
+  groups:
+    - name: gatus.rules
+      rules:
+        - alert: GatusDown
+          expr: |-
+            up{namespace="monitoring",job="gatus"} == 0
+          for: 5m
+          annotations:
+            summary: >-
+              Gatus is down
+            description: >-
+              Gatus has been unreachable for 5 minutes, so endpoint-based alerts may be missing.
+          labels:
+            severity: critical
+
+        - alert: GatusEndpointDown
+          expr: |-
+            gatus_results_endpoint_success{group="external"} == 0
+          for: 5m
+          annotations:
+            summary: >-
+              The {{ $labels.name }} endpoint is down
+          labels:
+            severity: critical
+
+        - alert: GatusEndpointExposed
+          expr: |-
+            gatus_results_endpoint_success{group="internal"} == 0
+          for: 5m
+          annotations:
+            summary: >-
+              The {{ $labels.name }} endpoint has a public DNS record and is exposed
+          labels:
+            severity: critical

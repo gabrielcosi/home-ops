@@ -1,0 +1,48 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: cert-manager
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: cert-manager
+  interval: 1h
+  values:
+    crds:
+      enabled: true
+
+    extraArgs:
+      - '--enable-gateway-api'
+
+    dns01RecursiveNameservers: https://1.1.1.1:443/dns-query,https://1.0.0.1:443/dns-query
+    dns01RecursiveNameserversOnly: true
+
+    resources:
+      limits:
+        memory: 70Mi
+      requests:
+        cpu: 5m
+        memory: 70Mi
+
+    webhook:
+      resources:
+        limits:
+          memory: 100Mi
+        requests:
+          cpu: 5m
+          memory: 100Mi
+
+    cainjector:
+      resources:
+        limits:
+          memory: 100Mi
+        requests:
+          cpu: 5m
+          memory: 100Mi
+
+    prometheus:
+      enabled: true
+
+      servicemonitor:
+        enabled: true

@@ -1,0 +1,19 @@
+---
+apiVersion: tailscale.com/v1alpha1
+kind: Connector
+metadata:
+  name: egress
+spec:
+  exitNode: true
+  replicas: 2
+---
+apiVersion: tailscale.com/v1alpha1
+kind: Connector
+metadata:
+  name: ingress
+spec:
+  appConnector:
+    routes:
+      - 192.168.42.0/24
+      - 192.168.69.0/24
+  replicas: 2

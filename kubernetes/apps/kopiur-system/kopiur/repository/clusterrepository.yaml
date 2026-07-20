@@ -1,0 +1,42 @@
+---
+apiVersion: kopiur.home-operations.com/v1alpha1
+kind: ClusterRepository
+metadata:
+  name: nas
+spec:
+  allowedNamespaces:
+    all: true
+  backend:
+    filesystem:
+      path: /repo
+      volume:
+        nfs:
+          server: tank.internal
+          path: /mnt/fast-pool/kopiur
+  encryption:
+    passwordSecretRef:
+      name: kopiur-nas-secret
+      namespace: kopiur-system
+      key: KOPIA_PASSWORD
+  health:
+    indexBlobWarnThreshold: 5000
+  identityDefaults:
+    hostnameExpr: "namespace"
+    usernameExpr: "policyName"
+  moverDefaults:
+    securityContext:
+      runAsUser: 1000
+      runAsGroup: 1000
+    podSecurityContext:
+      fsGroup: 1000
+      fsGroupChangePolicy: OnRootMismatch
+    cache:
+      mode: Persistent
+      capacity: 5Gi
+      storageClassName: miroir-replicated
+    scratch:
+      capacity: 20Gi
+      storageClassName: ceph-block
+    ttlSecondsAfterFinished: 300
+  scheduleDefaults:
+    timezone: Europe/Berlin

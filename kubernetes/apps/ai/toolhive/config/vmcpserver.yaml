@@ -1,0 +1,45 @@
+---
+apiVersion: toolhive.stacklok.dev/v1beta1
+kind: VirtualMCPServer
+metadata:
+  name: mcp-gateway
+spec:
+  incomingAuth:
+    type: anonymous
+  outgoingAuth:
+    source: discovered
+  serviceType: ClusterIP
+  podTemplateSpec:
+    spec:
+      containers:
+        - name: vmcp
+          env:
+            - name: OPENAI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: toolhive-vmcp-secrets
+                  key: OPENAI_API_KEY
+  sessionStorage:
+    provider: redis
+    address: dragonfly.database.svc.cluster.local:6379
+    db: 7
+    keyPrefix: 'thv:vmcp:mcp-gateway:'
+  groupRef:
+    name: mcp-tools
+  telemetryConfigRef:
+    name: prometheus
+    serviceName: mcp-gateway
+  config:
+    aggregation:
+      conflictResolution: prefix
+      conflictResolutionConfig:
+        prefixFormat: '{workload}_'
+    optimizer:
+      embeddingProvider: openai
+      embeddingService: http://bifrost.ai.svc.cluster.local:8080/v1
+      embeddingModel: sentence-transformers/all-MiniLM-L6-v2
+      embeddingServiceTimeout: 60s
+    operational:
+      failureHandling:
+        healthCheckInterval: 5m
+        statusReportingInterval: 5m

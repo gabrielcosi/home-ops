@@ -1,0 +1,24 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: freeze-frame
+spec:
+  components:
+    - ../../../../components/keda/http
+  dependsOn:
+    - name: keda-http
+      namespace: monitoring
+  interval: 1h
+  path: ./kubernetes/apps/tools/freeze-frame/app
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+    namespace: flux-system
+  targetNamespace: tools
+  wait: false
+  postBuild:
+    substitute:
+      APP: freeze-frame
+      HTTP_SCALER_PORT: "8080"

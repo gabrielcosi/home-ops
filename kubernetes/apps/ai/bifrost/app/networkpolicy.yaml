@@ -1,0 +1,77 @@
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: bifrost-policy
+  labels:
+    app.kubernetes.io/instance: bifrost
+    app.kubernetes.io/name: bifrost
+spec:
+  description: Restrict bifrost egress to DNS, the in-cluster providers, shared-pg, kube-apiserver, and opencode.ai. Ingress is intentionally left open — bifrost is auth-gated (is_vk_mandatory), and adding a Cilium ingress policy dropped in-cluster provider reply traffic, breaking the egress handshake.
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/instance: bifrost
+      app.kubernetes.io/name: bifrost
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: kube-system
+            k8s:k8s-app: kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+            - port: "53"
+              protocol: TCP
+          rules:
+            dns:
+              - matchPattern: "*"
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: ai
+            k8s:app.kubernetes.io/instance: llama-swap
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: ai
+            k8s:app.kubernetes.io/instance: text-embeddings
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: ai
+            k8s:app.kubernetes.io/instance: cliproxyapi
+      toPorts:
+        - ports:
+            - port: "8317"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: ai
+            k8s:app.kubernetes.io/instance: bifrost
+            k8s:app.kubernetes.io/name: bifrost
+      toPorts:
+        - ports:
+            - port: "7946"
+              protocol: TCP
+            - port: "7946"
+              protocol: UDP
+            - port: "10102"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: database
+            k8s:cnpg.io/cluster: shared-pg
+      toPorts:
+        - ports:
+            - port: "5432"
+              protocol: TCP
+    - toEntities:
+        - kube-apiserver
+    - toFQDNs:
+        - matchName: opencode.ai
+        - matchPattern: "*.opencode.ai"
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP

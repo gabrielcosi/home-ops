@@ -1,0 +1,9 @@
+port: 8317
+auth-dir: /data
+debug: false
+logging-to-file: false
+usage-statistics-enabled: false
+api-keys: []
+remote-management:
+  allow-remote: false
+  disable-control-panel: true

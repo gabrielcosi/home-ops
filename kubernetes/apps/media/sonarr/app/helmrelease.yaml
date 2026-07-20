@@ -1,0 +1,119 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: sonarr
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: sonarr
+  interval: 1h
+  values:
+    controllers:
+      sonarr:
+        annotations:
+          reloader.stakater.com/auto: 'true'
+
+        pod:
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 5007
+            runAsGroup: 3007
+            fsGroup: 3007
+            fsGroupChangePolicy: OnRootMismatch
+            seccompProfile:
+              type: RuntimeDefault
+
+        containers:
+          app:
+            image:
+              repository: ghcr.io/home-operations/sonarr
+              tag: 4.0.18.2978
+            env:
+              SONARR__APP__INSTANCENAME: Sonarr
+              SONARR__AUTH__APIKEY:
+                valueFrom:
+                  secretKeyRef:
+                    name: sonarr-secrets
+                    key: api_key
+              SONARR__AUTH__METHOD: External
+              SONARR__AUTH__REQUIRED: DisabledForLocalAddresses
+              SONARR__LOG__DBENABLED: 'False'
+              SONARR__LOG__LEVEL: info
+              SONARR__SERVER__PORT: 8989
+              TZ: Europe/Berlin
+            probes:
+              liveness:
+                enabled: true
+                spec:
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+                  failureThreshold: 5
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /ping
+                    port: 8989
+                  periodSeconds: 10
+                  timeoutSeconds: 5
+                  failureThreshold: 5
+              startup:
+                enabled: true
+                spec:
+                  failureThreshold: 30
+                  periodSeconds: 10
+            resources:
+              requests:
+                cpu: 10m
+                memory: 512Mi
+              limits:
+                memory: 512Mi
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities:
+                drop:
+                  - ALL
+
+    service:
+      app:
+        ports:
+          http:
+            port: 8989
+
+    route:
+      app:
+        hostnames:
+          - 'sonarr.xcd.dev'
+        parentRefs:
+          - name: envoy-internal-auth
+            namespace: network
+
+    persistence:
+      config:
+        existingClaim: sonarr
+        advancedMounts:
+          sonarr:
+            app:
+              - path: /config
+
+      downloads:
+        type: nfs
+        server: tank.internal
+        path: /mnt/home-pool/library/downloads
+        globalMounts:
+          - path: /downloads
+
+      media:
+        type: nfs
+        server: tank.internal
+        path: /mnt/home-pool/library/media
+        globalMounts:
+          - path: /media
+
+      tmp:
+        type: emptyDir
+        globalMounts:
+          - path: /tmp

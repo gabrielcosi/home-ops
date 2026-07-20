@@ -1,0 +1,12 @@
+---
+machine:
+  type: controlplane
+  nodeLabels:
+    topology.kubernetes.io/zone: gamma
+  install:
+    diskSelector:
+      model: "Micron_5400*"
+---
+apiVersion: v1alpha1
+kind: HostnameConfig
+hostname: ctrl-03

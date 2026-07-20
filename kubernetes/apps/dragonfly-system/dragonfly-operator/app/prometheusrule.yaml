@@ -1,0 +1,100 @@
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: dragonfly-alerts
+  labels:
+    app.kubernetes.io/name: dragonfly
+spec:
+  groups:
+    - name: dragonfly-alerts
+      rules:
+        - alert: DragonflyMasterDown
+          expr: |
+            count by (namespace) (dragonfly_master == 1) != 1
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Dragonfly master is down in {{ $labels.namespace }}"
+            description: "The Dragonfly master instance in namespace {{ $labels.namespace }} is not functioning."
+
+        - alert: DragonflyReplicaCountLow
+          expr: |
+            count by (namespace) (dragonfly_master == 0) < 1
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Dragonfly replica count is low in {{ $labels.namespace }}"
+            description: "Expected at least 1 replica in namespace {{ $labels.namespace }}, but found {{ $value }} (master is a single point of failure)."
+
+        - alert: DragonflyReplicaLagging
+          expr: |
+            dragonfly_connected_replica_lag_records > 1000
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Dragonfly replica lag detected in {{ $labels.namespace }}"
+            description: "Dragonfly replica {{ $labels.pod }} in namespace {{ $labels.namespace }} is lagging behind the master by {{ $value }} records."
+
+        - alert: DragonflyRestarted
+          expr: |
+            dragonfly_uptime_in_seconds < 600
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Dragonfly recently restarted in {{ $labels.namespace }}"
+            description: "Dragonfly {{ $labels.pod }} in namespace {{ $labels.namespace }} has been up for less than 10 minutes."
+
+        - alert: DragonflyMaxClientsReached
+          expr: |
+            dragonfly_connected_clients / dragonfly_max_clients > 0.9
+          for: 1m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Dragonfly max clients nearly reached in {{ $labels.namespace }}"
+            description: "Dragonfly {{ $labels.pod }} in namespace {{ $labels.namespace }} has {{ $value | humanizePercentage }} of max clients connected."
+
+        - alert: DragonflyBlockedClients
+          expr: |
+            dragonfly_blocked_clients > 100
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Dragonfly has many blocked clients in {{ $labels.namespace }}"
+            description: "Dragonfly {{ $labels.pod }} in namespace {{ $labels.namespace }} has {{ $value }} blocked clients (sustained) — possible deadlock or client leak."
+
+        - alert: DragonflyMemoryUsageHigh
+          expr: |
+            dragonfly_memory_used_bytes / dragonfly_memory_max_bytes > 0.8
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Dragonfly memory usage high in {{ $labels.namespace }}"
+            description: "Dragonfly {{ $labels.pod }} in namespace {{ $labels.namespace }} is using {{ $value | humanizePercentage }} of max memory."
+
+        - alert: DragonflyEvictedKeys
+          expr: |
+            increase(dragonfly_evicted_keys_total[5m]) > 10000
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Dragonfly is evicting keys heavily in {{ $labels.namespace }}"
+            description: "Dragonfly {{ $labels.pod }} in namespace {{ $labels.namespace }} evicted {{ $value }} keys in 5m (sustained) — cache may be undersized."
+
+        - alert: DragonflyHighConnectionRate
+          expr: |
+            rate(dragonfly_connections_received_total[5m]) > 100
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Dragonfly high connection rate in {{ $labels.namespace }}"
+            description: "Dragonfly {{ $labels.pod }} in namespace {{ $labels.namespace }} is receiving {{ $value | humanize }} connections/sec."

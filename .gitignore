@@ -1,0 +1,70 @@
+# Terraform/OpenTofu
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+*.tfvars
+*.tfvars.json
+crash.log
+crash.*.log
+.terraformrc
+terraform.rc
+tfplan
+.terraform.lock.hcl
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+output/
+
+# Certificates & Secrets
+*.pem
+*.key
+*.cert
+*.crt
+*.pfx
+*.p12
+kubeconfig
+*.env
+**/secrets/*
+
+# IDE & Editor files
+.vscode/*
+.idea/*
+*.swp
+*.swo
+*~
+
+# OS Generated Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Kubernetes
+kubeconfig*
+*.kubeconfig
+.kube/
+
+# Logs
+*.log
+
+# Build and artifacts
+dist/
+build/
+*.zip
+*.tar.gz
+**/kubernetes/**/charts
+
+# Talos
+talosconfig
+
+backups/
+**/logs/*
+
+krr/*
+
+# Migration staging
+tmp/

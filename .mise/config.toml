@@ -1,0 +1,6 @@
+[env]
+KUBECONFIG = "{{config_root}}/kubeconfig"
+MINIJINJA_CONFIG_FILE = "{{config_root}}/.minijinja.toml"
+TALOSCONFIG = "{{config_root}}/talosconfig"
+JUST_UNSTABLE = "1"
+FLATE_PATH = "{{config_root}}/kubernetes/flux/cluster"

@@ -1,0 +1,252 @@
+{
+  "zeus/fast": {
+    "provider": "zeus",
+    "base_model": "fast",
+    "mode": "chat",
+    "input_cost_per_token": 0.00000003,
+    "output_cost_per_token": 0.00000006,
+    "cache_creation_input_token_cost": 0.00000003,
+    "cache_read_input_token_cost": 0.000000006
+  },
+  "zeus/general": {
+    "provider": "zeus",
+    "base_model": "general",
+    "mode": "chat",
+    "input_cost_per_token": 0.00000010,
+    "output_cost_per_token": 0.00000015,
+    "cache_creation_input_token_cost": 0.00000010,
+    "cache_read_input_token_cost": 0.000000025
+  },
+  "zeus/qwen3.6-35b-a3b": {
+    "provider": "zeus",
+    "base_model": "qwen3.6-35b-a3b",
+    "mode": "chat",
+    "input_cost_per_token": 0.00000016,
+    "output_cost_per_token": 0.00000095,
+    "cache_creation_input_token_cost": 0.00000016,
+    "cache_read_input_token_cost": 0.00000004
+  },
+  "zeus/qwen3.6-27b": {
+    "provider": "zeus",
+    "base_model": "qwen3.6-27b",
+    "mode": "chat",
+    "input_cost_per_token": 0.00000025,
+    "output_cost_per_token": 0.00000150,
+    "cache_creation_input_token_cost": 0.00000025,
+    "cache_read_input_token_cost": 0.0000000625
+  },
+  "zeus/gemma4": {
+    "provider": "zeus",
+    "base_model": "gemma4",
+    "mode": "chat",
+    "input_cost_per_token": 0.00000008,
+    "output_cost_per_token": 0.00000016,
+    "cache_creation_input_token_cost": 0.00000008,
+    "cache_read_input_token_cost": 0.00000002
+  },
+  "zeus/embeddings": {
+    "provider": "zeus",
+    "base_model": "embeddings",
+    "mode": "embedding",
+    "input_cost_per_token": 0.00000002,
+    "output_cost_per_token": 0
+  },
+  "opencode/deepseek-v4-flash": {
+    "provider": "opencode",
+    "base_model": "deepseek-v4-flash",
+    "mode": "chat",
+    "input_cost_per_token": 0.00000014,
+    "output_cost_per_token": 0.00000028,
+    "cache_read_input_token_cost": 0.0000000028
+  },
+  "opencode/glm-5.2": {
+    "provider": "opencode",
+    "base_model": "glm-5.2",
+    "mode": "chat",
+    "input_cost_per_token": 0.0000014,
+    "output_cost_per_token": 0.0000044,
+    "cache_read_input_token_cost": 0.00000026
+  },
+  "opencode-anthropic/minimax-m3": {
+    "provider": "opencode-anthropic",
+    "base_model": "minimax-m3",
+    "mode": "chat",
+    "input_cost_per_token": 0.0000001,
+    "output_cost_per_token": 0.0000004,
+    "cache_read_input_token_cost": 0.00000002
+  },
+  "proxyapi/claude-fable-5": {
+    "provider": "proxyapi",
+    "base_model": "claude-fable-5",
+    "mode": "chat",
+    "input_cost_per_token": 0.000010,
+    "output_cost_per_token": 0.000050,
+    "cache_creation_input_token_cost": 0.0000125,
+    "cache_read_input_token_cost": 0.000001
+  },
+  "proxyapi/claude-sonnet-5": {
+    "provider": "proxyapi",
+    "base_model": "claude-sonnet-5",
+    "mode": "chat",
+    "input_cost_per_token": 0.000002,
+    "output_cost_per_token": 0.000010,
+    "cache_creation_input_token_cost": 0.0000025,
+    "cache_read_input_token_cost": 0.0000002
+  },
+  "proxyapi/claude-opus-4-8": {
+    "provider": "proxyapi",
+    "base_model": "claude-opus-4-8",
+    "mode": "chat",
+    "input_cost_per_token": 0.000005,
+    "output_cost_per_token": 0.000025,
+    "cache_creation_input_token_cost": 0.00000625,
+    "cache_read_input_token_cost": 0.0000005
+  },
+  "proxyapi/claude-opus-4-7": {
+    "provider": "proxyapi",
+    "base_model": "claude-opus-4-7",
+    "mode": "chat",
+    "input_cost_per_token": 0.000005,
+    "output_cost_per_token": 0.000025,
+    "cache_creation_input_token_cost": 0.00000625,
+    "cache_read_input_token_cost": 0.0000005
+  },
+  "proxyapi/claude-opus-4-6": {
+    "provider": "proxyapi",
+    "base_model": "claude-opus-4-6",
+    "mode": "chat",
+    "input_cost_per_token": 0.000005,
+    "output_cost_per_token": 0.000025,
+    "cache_creation_input_token_cost": 0.00000625,
+    "cache_read_input_token_cost": 0.0000005
+  },
+  "proxyapi/claude-sonnet-4-6": {
+    "provider": "proxyapi",
+    "base_model": "claude-sonnet-4-6",
+    "mode": "chat",
+    "input_cost_per_token": 0.000003,
+    "output_cost_per_token": 0.000015,
+    "cache_creation_input_token_cost": 0.00000375,
+    "cache_read_input_token_cost": 0.0000003
+  },
+  "proxyapi/claude-haiku-4-5-20251001": {
+    "provider": "proxyapi",
+    "base_model": "claude-haiku-4-5-20251001",
+    "mode": "chat",
+    "input_cost_per_token": 0.000001,
+    "output_cost_per_token": 0.000005,
+    "cache_creation_input_token_cost": 0.00000125,
+    "cache_read_input_token_cost": 0.0000001
+  },
+  "proxyapi/claude-sonnet-4-5-20250929": {
+    "provider": "proxyapi",
+    "base_model": "claude-sonnet-4-5-20250929",
+    "mode": "chat",
+    "input_cost_per_token": 0.000003,
+    "output_cost_per_token": 0.000015,
+    "cache_creation_input_token_cost": 0.00000375,
+    "cache_read_input_token_cost": 0.0000003
+  },
+  "proxyapi/claude-opus-4-5-20251101": {
+    "provider": "proxyapi",
+    "base_model": "claude-opus-4-5-20251101",
+    "mode": "chat",
+    "input_cost_per_token": 0.000005,
+    "output_cost_per_token": 0.000025,
+    "cache_creation_input_token_cost": 0.00000625,
+    "cache_read_input_token_cost": 0.0000005
+  },
+  "proxyapi/claude-opus-4-1-20250805": {
+    "provider": "proxyapi",
+    "base_model": "claude-opus-4-1-20250805",
+    "mode": "chat",
+    "input_cost_per_token": 0.000015,
+    "output_cost_per_token": 0.000075,
+    "cache_creation_input_token_cost": 0.00001875,
+    "cache_read_input_token_cost": 0.0000015
+  },
+  "proxyapi/claude-opus-4-20250514": {
+    "provider": "proxyapi",
+    "base_model": "claude-opus-4-20250514",
+    "mode": "chat",
+    "input_cost_per_token": 0.000015,
+    "output_cost_per_token": 0.000075,
+    "cache_creation_input_token_cost": 0.00001875,
+    "cache_read_input_token_cost": 0.0000015
+  },
+  "proxyapi/claude-sonnet-4-20250514": {
+    "provider": "proxyapi",
+    "base_model": "claude-sonnet-4-20250514",
+    "mode": "chat",
+    "input_cost_per_token": 0.000003,
+    "output_cost_per_token": 0.000015,
+    "cache_creation_input_token_cost": 0.00000375,
+    "cache_read_input_token_cost": 0.0000003
+  },
+  "proxyapi/claude-3-7-sonnet-20250219": {
+    "provider": "proxyapi",
+    "base_model": "claude-3-7-sonnet-20250219",
+    "mode": "chat",
+    "input_cost_per_token": 0.000003,
+    "output_cost_per_token": 0.000015,
+    "cache_creation_input_token_cost": 0.00000375,
+    "cache_read_input_token_cost": 0.0000003
+  },
+  "proxyapi/claude-3-5-haiku-20241022": {
+    "provider": "proxyapi",
+    "base_model": "claude-3-5-haiku-20241022",
+    "mode": "chat",
+    "input_cost_per_token": 0.0000008,
+    "output_cost_per_token": 0.000004,
+    "cache_creation_input_token_cost": 0.000001,
+    "cache_read_input_token_cost": 0.00000008
+  },
+  "proxyapi/gpt-5.6-sol": {
+    "provider": "proxyapi",
+    "base_model": "gpt-5.6-sol",
+    "mode": "chat",
+    "input_cost_per_token": 0.000005,
+    "output_cost_per_token": 0.000030,
+    "cache_read_input_token_cost": 0.0000005
+  },
+  "proxyapi/gpt-5.6-terra": {
+    "provider": "proxyapi",
+    "base_model": "gpt-5.6-terra",
+    "mode": "chat",
+    "input_cost_per_token": 0.0000025,
+    "output_cost_per_token": 0.000015,
+    "cache_read_input_token_cost": 0.00000025
+  },
+  "proxyapi/gpt-5.6-luna": {
+    "provider": "proxyapi",
+    "base_model": "gpt-5.6-luna",
+    "mode": "chat",
+    "input_cost_per_token": 0.000001,
+    "output_cost_per_token": 0.000006,
+    "cache_read_input_token_cost": 0.0000001
+  },
+  "proxyapi/gpt-5.5": {
+    "provider": "proxyapi",
+    "base_model": "gpt-5.5",
+    "mode": "chat",
+    "input_cost_per_token": 0.000005,
+    "output_cost_per_token": 0.000030,
+    "cache_read_input_token_cost": 0.0000005
+  },
+  "proxyapi/gpt-5.4": {
+    "provider": "proxyapi",
+    "base_model": "gpt-5.4",
+    "mode": "chat",
+    "input_cost_per_token": 0.0000025,
+    "output_cost_per_token": 0.000015,
+    "cache_read_input_token_cost": 0.00000025
+  },
+  "proxyapi/gpt-5.4-mini": {
+    "provider": "proxyapi",
+    "base_model": "gpt-5.4-mini",
+    "mode": "chat",
+    "input_cost_per_token": 0.00000075,
+    "output_cost_per_token": 0.0000045,
+    "cache_read_input_token_cost": 0.000000075
+  }
+}

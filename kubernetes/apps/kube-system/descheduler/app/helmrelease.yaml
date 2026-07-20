@@ -1,0 +1,81 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: descheduler
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: descheduler
+  interval: 1h
+  values:
+    resources:
+      requests:
+        cpu: 10m
+        memory: 100Mi
+      limits:
+        cpu: null
+        memory: 100Mi
+
+    kind: Deployment
+    deschedulerPolicyAPIVersion: descheduler/v1alpha2
+    deschedulerPolicy:
+      metricsProviders:
+        - source: KubernetesMetrics
+      profiles:
+        - name: Default
+          pluginConfig:
+            - name: DefaultEvictor
+              args:
+                podProtections:
+                  defaultDisabled:
+                    - FailedBarePods
+                    - PodsWithLocalStorage
+            - name: LowNodeUtilization
+              args:
+                metricsUtilization:
+                  source: KubernetesMetrics
+                thresholds:
+                  memory: 20
+                  pods: 40
+                targetThresholds:
+                  memory: 50
+                  pods: 60
+            - name: RemoveFailedPods
+              args:
+                reasons:
+                  - ContainerStatusUnknown
+                  - Evicted
+                  - NodeAffinity
+                  - NodeShutdown
+                  - Terminated
+                  - UnexpectedAdmissionError
+                includingInitContainers: true
+                excludeOwnerKinds:
+                  - Job
+                minPodLifetimeSeconds: 1800
+            - name: RemovePodsViolatingInterPodAntiAffinity
+            - name: RemovePodsViolatingNodeAffinity
+              args:
+                nodeAffinityType:
+                  - requiredDuringSchedulingIgnoredDuringExecution
+            - name: RemovePodsViolatingTopologySpreadConstraint
+          plugins:
+            balance:
+              enabled:
+                - LowNodeUtilization
+                - RemovePodsViolatingTopologySpreadConstraint
+            deschedule:
+              enabled:
+                - RemoveFailedPods
+                - RemovePodsViolatingInterPodAntiAffinity
+                - RemovePodsViolatingNodeAffinity
+
+    service:
+      enabled: true
+
+    serviceMonitor:
+      enabled: true
+
+    leaderElection:
+      enabled: true

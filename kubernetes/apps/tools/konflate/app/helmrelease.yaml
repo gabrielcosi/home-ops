@@ -1,0 +1,35 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: konflate
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: konflate
+  interval: 1h
+  values:
+    config:
+      repo: forgejo://git.xcd.dev/gabrielcosi/home-ops
+      statusChecks: true
+      prComments: true
+      publicUrl: https://konflate.xcd.dev
+      mcp: true
+      verifyImages: true
+    secret:
+      existingSecret: konflate-secrets
+    httpRoute:
+      enabled: true
+      parentRefs:
+        - name: envoy-external
+          namespace: network
+      hostnames:
+        - konflate.xcd.dev
+    monitoring:
+      serviceMonitor:
+        enabled: true
+    resources:
+      requests:
+        cpu: 50m
+      limits:
+        memory: 1Gi

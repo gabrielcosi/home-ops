@@ -1,0 +1,39 @@
+---
+name: edge
+
+services:
+  caddy:
+    # renovate: datasource=docker depName=ghcr.io/bjw-s-labs/caddy-l4
+    image: ghcr.io/bjw-s-labs/caddy-l4:2.11.4
+    container_name: caddy
+    restart: unless-stopped
+    environment:
+      CADDY_ACME_EMAIL: ${TOWONEL_ACME_EMAIL}
+      VPS_LOCAL_HOSTS: >-
+        towonel.xcd.dev
+        doco-cd.xcd.dev
+        status-vps.xcd.dev
+    ports:
+      - "${VPS_IP}:80:80"
+      - "${VPS_IP}:443:443"
+    volumes:
+      - caddy-data:/data
+      - caddy-config:/config
+    configs:
+      - source: caddyfile
+        target: /etc/caddy/Caddyfile
+    labels:
+      - prometheus.scrape=false
+
+volumes:
+  caddy-data:
+  caddy-config:
+
+configs:
+  caddyfile:
+    file: ./config/Caddyfile
+
+networks:
+  default:
+    name: edge
+    external: true

@@ -1,0 +1,18 @@
+models: {}
+
+apiKeys:
+  - ${env.LS_API_KEY}
+
+peers:
+  zeus:
+    proxy: http://127.0.0.1:9999
+    models:
+      - fast
+      - general
+      - qwen3.6-35b-a3b
+      - qwen3.6-27b
+      - gemma4
+      - ocr
+      - embeddings
+      - tts
+      - stt

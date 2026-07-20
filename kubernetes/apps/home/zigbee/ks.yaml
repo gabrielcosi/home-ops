@@ -1,0 +1,27 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: zigbee
+spec:
+  dependsOn:
+    - name: rook-ceph-cluster
+      namespace: rook-ceph
+  components:
+    - ../../../../components/kopiur/restore
+    - ../../../../components/kopiur/backup
+  interval: 1h
+  path: ./kubernetes/apps/home/zigbee/app
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+    namespace: flux-system
+  targetNamespace: home
+  wait: false
+  postBuild:
+    substitute:
+      APP: zigbee
+      KOPIUR_PUID: "65534"
+      KOPIUR_PGID: "65534"
+      KOPIUR_CAPACITY: "100Mi"

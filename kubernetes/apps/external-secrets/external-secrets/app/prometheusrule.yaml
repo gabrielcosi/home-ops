@@ -1,0 +1,57 @@
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: external-secrets
+spec:
+  groups:
+    - name: external-secrets.rules
+      rules:
+        - alert: ExternalSecretsOperatorAbsent
+          expr: |-
+            absent(up{job=~"external-secrets.*"})
+          for: 5m
+          annotations:
+            summary: >-
+              External Secrets Operator has disappeared from Prometheus service discovery
+          labels:
+            severity: critical
+
+        - alert: ExternalSecretNotReady
+          expr: |-
+            max by (namespace, name) (
+              externalsecret_status_condition{type="Ready",status=~"[Ff]alse"} == 1
+            )
+          for: 10m
+          annotations:
+            summary: >-
+              ExternalSecret {{ $labels.namespace }}/{{ $labels.name }} is not Ready
+          labels:
+            severity: warning
+
+        - alert: ExternalSecretSyncError
+          expr: |-
+            sum by (namespace, name) (
+              increase(externalsecret_sync_calls_error[10m])
+            ) > 0
+          for: 10m
+          annotations:
+            summary: >-
+              ExternalSecret {{ $labels.namespace }}/{{ $labels.name }} is failing to fetch secret data from provider
+            description: >-
+              ESO reported {{ $value }} sync errors in the last 10m for {{ $labels.namespace }}/{{ $labels.name }}.
+              Check the ExternalSecret status and ESO controller logs for provider error details.
+          labels:
+            severity: critical
+
+        - alert: ClusterSecretStoreNotReady
+          expr: |-
+            max by (name) (
+              clustersecretstore_status_condition{type="Ready",status=~"[Ff]alse"} == 1
+            )
+          for: 10m
+          annotations:
+            summary: >-
+              ClusterSecretStore {{ $labels.name }} is not Ready
+          labels:
+            severity: critical

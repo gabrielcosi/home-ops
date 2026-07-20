@@ -1,0 +1,68 @@
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: smartctl-exporter
+spec:
+  groups:
+    - name: smartctl-exporter.rules
+      rules:
+        - alert: SmartDeviceHealthFailed
+          expr: |-
+            smartctl_device_smart_status != 1 or smartctl_device_status != 1
+          for: 5m
+          annotations:
+            summary: >-
+              Drive {{ $labels.device }} on {{ $labels.instance }} did not pass its SMART health check
+          labels:
+            severity: critical
+
+        - alert: SmartDeviceCriticalWarning
+          expr: |-
+            smartctl_device_critical_warning != 0
+          for: 5m
+          annotations:
+            summary: >-
+              Drive {{ $labels.device }} on {{ $labels.instance }} reports a critical controller warning
+          labels:
+            severity: critical
+
+        - alert: SmartDeviceMediaErrors
+          expr: |-
+            smartctl_device_media_errors != 0
+          for: 5m
+          annotations:
+            summary: >-
+              Drive {{ $labels.device }} on {{ $labels.instance }} has media errors
+          labels:
+            severity: critical
+
+        - alert: SmartDeviceAvailableSpareLow
+          expr: |-
+            smartctl_device_available_spare_threshold > smartctl_device_available_spare
+          for: 5m
+          annotations:
+            summary: >-
+              Drive {{ $labels.device }} on {{ $labels.instance }} has dropped below its available-spare threshold
+          labels:
+            severity: critical
+
+        - alert: SmartDeviceHighTemperature
+          expr: |-
+            avg_over_time(smartctl_device_temperature{temperature_type="current"}[5m]) > 70
+          for: 10m
+          annotations:
+            summary: >-
+              Drive {{ $labels.device }} on {{ $labels.instance }} has averaged over 70°C for the last 5 minutes
+          labels:
+            severity: warning
+
+        - alert: SmartDeviceInterfaceSlow
+          expr: |-
+            smartctl_device_interface_speed{speed_type="current"} != on(instance, device) smartctl_device_interface_speed{speed_type="max"}
+          for: 5m
+          annotations:
+            summary: >-
+              Drive {{ $labels.device }} on {{ $labels.instance }} negotiated a slower link than its maximum
+          labels:
+            severity: warning

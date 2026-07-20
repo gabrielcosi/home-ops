@@ -1,0 +1,20 @@
+---
+working_dir: ./docker/vps
+webhook_filter: '^refs/heads/main$'
+reconciliation:
+  enabled: true
+auto_discovery:
+  enabled: true
+  depth: 1
+  delete: true
+force_recreate: false
+external_secrets:
+  TOWONEL_ACME_EMAIL: 'op://vps/towonel/acme_email'
+  TOWONEL_INVITE_HASH_KEY: 'op://vps/towonel/invite_hash'
+  TOWONEL_HUB_KEK: 'op://vps/towonel/hub_kek'
+  TOWONEL_HUB_OPERATOR_API_KEY: 'op://vps/towonel/operator_api_key'
+  VPS_IP: 'op://vps/towonel/ip'
+  GATUS_PUSHOVER_TOKEN: 'op://vps/gatus/pushover_token'
+  GATUS_PUSHOVER_USER_KEY: 'op://vps/gatus/pushover_user_key'
+  GATUS_REMOTE_HEARTBEAT_TOKEN: 'op://vps/gatus/heartbeat_token'
+  VPS_MONITORING_PASSWORD: 'op://vps/monitoring/ingest_password'

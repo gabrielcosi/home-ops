@@ -1,0 +1,42 @@
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: ReferenceGrant
+metadata:
+  name: keda-interceptor-from-ai
+spec:
+  from:
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      namespace: ai
+  to:
+    - group: ''
+      kind: Service
+      name: keda-add-ons-http-interceptor-proxy
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: ReferenceGrant
+metadata:
+  name: keda-interceptor-from-home
+spec:
+  from:
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      namespace: home
+  to:
+    - group: ''
+      kind: Service
+      name: keda-add-ons-http-interceptor-proxy
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: ReferenceGrant
+metadata:
+  name: keda-interceptor-from-tools
+spec:
+  from:
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      namespace: tools
+  to:
+    - group: ''
+      kind: Service
+      name: keda-add-ons-http-interceptor-proxy

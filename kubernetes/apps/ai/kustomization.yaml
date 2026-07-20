@@ -1,0 +1,20 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: ai
+components:
+  - ../../components/flux-alerts
+  - ../../components/kopiur/secret
+resources:
+  - ./namespace.yaml
+  - ./bifrost/ks.yaml
+  - ./cliproxyapi/ks.yaml
+  - ./crawl4ai/ks.yaml
+  - ./hermes/ks.yaml
+  - ./llama-swap/ks.yaml
+  - ./mcp
+  - ./memini/ks.yaml
+  - ./n8n/ks.yaml
+  - ./open-webui/ks.yaml
+  - ./text-embeddings/ks.yaml
+  - ./toolhive/ks.yaml

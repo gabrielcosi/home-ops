@@ -1,0 +1,26 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: gatus
+spec:
+  components:
+    - ../../../../components/postgres/pass
+  dependsOn:
+    - name: cloudnative-pg
+      namespace: cnpg-system
+    - name: shared-pg
+      namespace: database
+  interval: 1h
+  path: ./kubernetes/apps/monitoring/gatus/app
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+    namespace: flux-system
+  targetNamespace: monitoring
+  wait: false
+  postBuild:
+    substitute:
+      APP: gatus
+      DATABASE_HOST: shared-pg-rw.database.svc.cluster.local

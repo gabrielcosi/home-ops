@@ -1,0 +1,143 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: cilium
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: cilium
+  interval: 1h
+  values:
+    cluster:
+      name: talos
+      id: 1
+    
+    kubeProxyReplacement: true
+    kubeProxyReplacementHealthzBindAddr: 0.0.0.0:10256
+    
+    # Talos specific
+    k8sServiceHost: localhost
+    k8sServicePort: 7445
+    securityContext:
+      capabilities:
+        ciliumAgent:
+          [
+            CHOWN,
+            KILL,
+            NET_ADMIN,
+            NET_RAW,
+            IPC_LOCK,
+            SYS_ADMIN,
+            SYS_RESOURCE,
+            DAC_OVERRIDE,
+            FOWNER,
+            SETGID,
+            SETUID,
+            PERFMON,
+            BPF,
+          ]
+        cleanCiliumState: [NET_ADMIN, SYS_ADMIN, SYS_RESOURCE, PERFMON, BPF]
+    
+    socketLB:
+      enabled: true
+      hostNamespaceOnly: true
+    
+    cni:
+      exclusive: false
+    
+    cgroup:
+      autoMount:
+        enabled: false
+      hostRoot: /sys/fs/cgroup
+    
+    # ===== ROUTING CONFIGURATION =====
+    routingMode: native
+    autoDirectNodeRoutes: true
+    ipv4NativeRoutingCIDR: 10.42.0.0/16
+    devices: bond+
+    
+    # ===== BPF PERFORMANCE OPTIMIZATIONS =====
+    bpf:
+      datapathMode: netkit
+      masquerade: true
+      preallocateMaps: true
+      tproxy: false
+    
+    bpfClockProbe: true
+    enableIPv4BIGTCP: true
+    
+    endpointRoutes:
+      enabled: true
+    
+    # ===== BANDWIDTH MANAGEMENT =====
+    bandwidthManager:
+      enabled: true
+      bbr: true
+    
+    pmtuDiscovery:
+      enabled: true
+    
+    localRedirectPolicies:
+      enabled: true
+    
+    # ===== IPAM =====
+    # https://docs.cilium.io/en/stable/network/concepts/ipam/
+    ipam:
+      mode: kubernetes
+    
+    # ===== OPERATOR CONFIGURATION =====
+    operator:
+      dashboards:
+        enabled: true
+      rollOutPods: true
+      replicas: 2
+      resources:
+        limits:
+          memory: 256Mi
+        requests:
+          cpu: 50m
+          memory: 128Mi
+      prometheus:
+        serviceMonitor:
+          enabled: true
+    
+    rollOutCiliumPods: true
+    resources:
+      limits:
+        memory: 1Gi
+      requests:
+        cpu: 200m
+        memory: 512Mi
+    
+    # ===== BGP + L2 ANNOUNCEMENTS =====
+    l2announcements:
+      enabled: true
+    
+    bgpControlPlane:
+      enabled: true
+    
+    k8sClientRateLimit:
+      qps: 25
+      burst: 50
+    
+    # ===== LOAD BALANCER =====
+    loadBalancer:
+      algorithm: maglev
+      mode: dsr
+    
+    prometheus:
+      enabled: true
+      serviceMonitor:
+        enabled: true
+        trustCRDsExist: true
+    
+    dashboards:
+      enabled: true
+    
+    gatewayAPI:
+      enabled: false
+    envoy:
+      enabled: false
+    hubble:
+      enabled: false

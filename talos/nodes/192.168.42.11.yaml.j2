@@ -1,0 +1,12 @@
+---
+machine:
+  type: controlplane
+  nodeLabels:
+    topology.kubernetes.io/zone: alpha
+  install:
+    diskSelector:
+      model: "Micron_5300*"
+---
+apiVersion: v1alpha1
+kind: HostnameConfig
+hostname: ctrl-01

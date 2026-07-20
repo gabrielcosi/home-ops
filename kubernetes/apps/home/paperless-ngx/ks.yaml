@@ -1,0 +1,35 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: paperless-ngx
+spec:
+  components:
+    - ../../../../components/kopiur/restore
+    - ../../../../components/kopiur/backup
+    - ../../../../components/keda/http
+  dependsOn:
+    - name: keda-http
+      namespace: monitoring
+    - name: dragonfly
+      namespace: database
+    - name: rook-ceph-cluster
+      namespace: rook-ceph
+  interval: 1h
+  path: ./kubernetes/apps/home/paperless-ngx/app
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+    namespace: flux-system
+  targetNamespace: home
+  wait: false
+  postBuild:
+    substitute:
+      APP: paperless-ngx
+      KOPIUR_PUID: "5001"
+      KOPIUR_PGID: "5001"
+      HTTP_SCALER_PORT: "8000"
+      HTTP_SCALER_SCALEDOWN: "600"
+      SUBDOMAIN: paperless
+      KOPIUR_CAPACITY: "1Gi"

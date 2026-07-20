@@ -1,0 +1,149 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: llama-swap
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: llama-swap
+  interval: 1h
+  values:
+    controllers:
+      llama-swap:
+        pod:
+          annotations:
+            k8s.v1.cni.cncf.io/networks: |-
+              [{
+                "name": "servers",
+                "namespace": "kube-system",
+                "ips": ["192.168.42.4/24"],
+                "mac": "be:24:11:42:00:04"
+              }]
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 65534
+            runAsGroup: 65534
+            fsGroup: 65534
+            fsGroupChangePolicy: OnRootMismatch
+            seccompProfile:
+              type: RuntimeDefault
+
+        containers:
+          app:
+            nameOverride: llama-swap
+            image:
+              repository: ghcr.io/mostlygeek/llama-swap
+              tag: v240-cpu-b10068-non-root
+            args:
+              - --config
+              - /app/config.yaml
+              - --listen
+              - 0.0.0.0:8080
+            envFrom:
+              - secretRef:
+                  name: llama-swap-secrets
+            probes:
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /health
+                    port: 8080
+                  initialDelaySeconds: 5
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+                  failureThreshold: 3
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /health
+                    port: 8080
+                  initialDelaySeconds: 3
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+                  failureThreshold: 3
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop: ['ALL']
+            resources:
+              requests:
+                cpu: 1m
+                memory: 128Mi
+              limits:
+                memory: 1Gi
+
+          wol-proxy:
+            image:
+              repository: ghcr.io/gabrielcosi/llama-proxy
+              tag: sha-b0e83ff@sha256:bca70eb5419de38573ebb59549b79f97fae1accde2d8d7007e94de0e067029d7
+            envFrom:
+              - secretRef:
+                  name: llama-swap-secrets
+            args:
+              - -mac
+              - 38:05:25:35:3e:82
+              - -upstream
+              - http://192.168.42.50:9292
+              - -source-ip
+              - 192.168.42.4
+              - -listen
+              - 0.0.0.0:9999
+              - -timeout
+              - '180'
+            probes:
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /status
+                    port: 9999
+                  initialDelaySeconds: 3
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+                  failureThreshold: 3
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /status
+                    port: 9999
+                  initialDelaySeconds: 3
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+                  failureThreshold: 3
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop: ['ALL']
+            resources:
+              requests:
+                cpu: 5m
+                memory: 64Mi
+              limits:
+                memory: 64Mi
+
+    service:
+      app:
+        ports:
+          http:
+            port: 8080
+
+    persistence:
+      config:
+        type: configMap
+        name: llama-swap-config
+        globalMounts:
+          - path: /app/config.yaml
+            subPath: config.yaml
+            readOnly: true
+      tmp:
+        type: emptyDir
+        globalMounts:
+          - path: /tmp

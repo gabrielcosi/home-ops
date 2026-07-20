@@ -1,0 +1,14 @@
+---
+apiVersion: miroir.home-operations.com/v1alpha1
+kind: MiroirNodeGroup
+metadata:
+  name: default
+spec:
+  nodeSelector:
+    matchLabels:
+      node-role.kubernetes.io/control-plane: ""
+  template:
+    pools:
+      - name: default
+        lvmthin:
+          device: /dev/disk/by-partlabel/r-miroir

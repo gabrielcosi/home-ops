@@ -1,0 +1,49 @@
+---
+secrets:
+  1pw_token:
+    file: /opt/doco-cd/1pw_token
+  api_secret:
+    file: /opt/doco-cd/api_secret
+
+services:
+  app:
+    container_name: doco-cd
+    environment:
+      API_SECRET_FILE: /run/secrets/api_secret
+      DEPLOY_CONFIG_BASE_DIR: ./docker/zeus/
+      LOG_LEVEL: info
+      POLL_CONFIG: |-
+        - url: https://github.com/gabrielcosi/home-ops.git
+          reference: main
+          interval: 900
+      SECRET_PROVIDER: 1password
+      SECRET_PROVIDER_ACCESS_TOKEN_FILE: /run/secrets/1pw_token
+      TZ: Europe/Berlin
+    ports:
+      - '8080:80'
+    healthcheck:
+      test:
+        - CMD
+        - /doco-cd
+        - healthcheck
+      start_period: 60s
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    image: ghcr.io/kimdre/doco-cd:0.98.0@sha256:8f0c6046f98024783c91d0afc668bbae3ab29e0efad761580a8933dc7aceb0ac
+    restart: unless-stopped
+    secrets:
+      - 1pw_token
+      - api_secret
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - data:/data
+    networks:
+      - zeus
+
+volumes:
+  data:
+
+networks:
+  zeus:
+    external: true

@@ -1,0 +1,35 @@
+---
+name: comfyui
+
+services:
+  comfyui:
+    image: yanwk/comfyui-boot:cu130-megapak-pt211-20260514 # renovate: docker=yanwk/comfyui-boot versioning=regex:^(?<compatibility>cu\d+-megapak-pt\d+)-(?<major>\d{8})$
+    container_name: comfyui
+    ports:
+      - "8188:8188"
+    volumes:
+      - /srv/docker/comfyui/cache/dot-cache:/root/.cache
+      - /srv/docker/comfyui/cache/dot-config:/root/.config
+      - /srv/docker/comfyui/nodes/dot-local:/root/.local
+      - /srv/docker/comfyui/nodes/custom_nodes:/root/ComfyUI/custom_nodes
+      - /srv/docker/comfyui/models/models:/root/ComfyUI/models
+      - /srv/docker/comfyui/models/hf-hub:/root/.cache/huggingface/hub
+      - /srv/docker/comfyui/models/torch-hub:/root/.cache/torch/hub
+      - /srv/docker/comfyui/user/input:/root/ComfyUI/input
+      - /srv/docker/comfyui/user/output:/root/ComfyUI/output
+      - /srv/docker/comfyui/user/profile:/root/ComfyUI/user
+      - /srv/docker/comfyui/user/scripts:/root/user-scripts
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    restart: unless-stopped
+    networks:
+      - zeus
+
+networks:
+  zeus:
+    external: true

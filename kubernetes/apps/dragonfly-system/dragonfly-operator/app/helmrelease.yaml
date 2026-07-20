@@ -1,0 +1,22 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: dragonfly-operator
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: dragonfly-operator
+  interval: 1h
+  values:
+    serviceMonitor:
+      enabled: true
+    rbacProxy:
+      enabled: false
+    grafanaDashboard:
+      enabled: true
+      grafanaOperator:
+        enabled: true
+        allowCrossNamespaceImport: true
+        matchLabels:
+          dashboards: grafana

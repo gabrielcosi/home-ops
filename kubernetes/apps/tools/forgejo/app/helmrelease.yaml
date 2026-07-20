@@ -1,0 +1,215 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: forgejo
+  annotations:
+    anubis.home/skip-route-patch: "true"
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: forgejo
+  interval: 1h
+  values:
+    replicaCount: 1
+    fullnameOverride: forgejo
+
+    image:
+      rootless: true
+      registry: code.forgejo.org
+      repository: forgejo/forgejo
+      tag: 16.0.0
+
+    service:
+      http:
+        port: 3000
+
+      ssh:
+        port: 22
+
+    resources:
+      requests:
+        cpu: 50m
+        memory: 512Mi
+      limits:
+        cpu: 1000m
+        memory: 2Gi
+
+    persistence:
+      enabled: true
+      create: false
+      claimName: forgejo
+      size: 1Gi
+      accessModes:
+        - ReadWriteMany
+      storageClass: ceph-filesystem
+
+    httpRoute:
+      enabled: false
+
+    tcpRoute:
+      enabled: true
+      parentRefs:
+        - name: envoy-external
+          namespace: network
+          sectionName: ssh
+
+    deployment:
+      env:
+        - name: GOMAXPROCS
+          valueFrom:
+            resourceFieldRef:
+              resource: limits.cpu
+        - name: FORGEJO__DATABASE__PASSWD
+          valueFrom:
+            secretKeyRef:
+              name: forgejo-pg-credentials
+              key: password
+
+    extraVolumes:
+      - name: signing-key
+        secret:
+          secretName: forgejo-signing-key
+          defaultMode: 288
+
+    extraInitVolumeMounts:
+      - name: signing-key
+        mountPath: /data/signing
+        readOnly: true
+
+    extraContainerVolumeMounts:
+      - name: signing-key
+        mountPath: /data/signing
+        readOnly: true
+
+    gitea:
+      metrics:
+        enabled: true
+        serviceMonitor:
+          enabled: true
+
+      admin:
+        username: 'gabrielcosi'
+        email: 'contact@gabrielcosi.dev'
+        passwordMode: 'initialOnlyRequireReset'
+
+      oauth:
+        - name: 'authentik'
+          provider: 'openidConnect'
+          existingSecret: forgejo-authentik-secret
+          autoDiscoverUrl: 'https://auth.xcd.dev/application/o/git/.well-known/openid-configuration'
+          scopes: 'email profile groups'
+          requiredClaimName: 'groups'
+          groupClaimName: 'groups'
+          adminGroup: 'gitadmin'
+          restrictedGroup: 'gitrestricted'
+
+      config:
+        APP_NAME: 'XCD Git'
+
+        ui.meta:
+          AUTHOR: Gabriel Cosi
+          DESCRIPTION: 'XCD Git'
+
+        server:
+          ROOT_URL: https://git.xcd.dev
+          DOMAIN: git.xcd.dev
+          SSH_DOMAIN: git.xcd.dev
+          SSH_SERVER_HOST_KEYS: ssh/ssh_host_ed25519_key
+
+        database:
+          DB_TYPE: postgres
+          HOST: forgejo-pooler.tools.svc.cluster.local:5432
+          NAME: forgejodb
+          USER: forgejo
+
+        actions:
+          ENABLED: true
+
+        repository:
+          DEFAULT_REPO_UNITS: repo.code,repo.releases,repo.issues,repo.pulls,repo.actions
+          DISABLED_REPO_UNITS: repo.ext_wiki,repo.ext_issues
+          DISABLE_DOWNLOAD_SOURCE_ARCHIVES: true
+          ROOT: /data/git/repositories
+
+        repository.signing:
+          FORMAT: ssh
+          SIGNING_KEY: /data/signing/ed25519.pub
+          SIGNING_NAME: XCD Git Instance
+          SIGNING_EMAIL: noreply@git.xcd.dev
+          INITIAL_COMMIT: pubkey
+          CRUD_ACTIONS: pubkey, parentsigned
+          WIKI: never
+          MERGES: pubkey
+
+        security:
+          REVERSE_PROXY_TRUSTED_PROXIES: 10.42.0.0/16
+
+        repository.pull-request:
+          DEFAULT_MERGE_STYLE: squash
+
+        indexer:
+          ISSUE_INDEXER_TYPE: bleve
+          REPO_INDEXER_ENABLED: true
+
+        storage:
+          STORAGE_TYPE: local
+          PATH: /data/git
+
+        session:
+          PROVIDER: redis
+          SESSION_LIFE_TIME: '1209600'
+
+        cache:
+          ENABLED: true
+          ADAPTER: redis
+
+        queue:
+          TYPE: redis
+
+        service:
+          ALLOW_ONLY_EXTERNAL_REGISTRATION: true
+          SHOW_REGISTRATION_BUTTON: false
+          ENABLE_INTERNAL_SIGNIN: false
+          ENABLE_PASSWORD_SIGNIN_FORM: false
+          ENABLE_NOTIFY_MAIL: true
+
+        service.explore:
+          REQUIRE_SIGNIN_VIEW: false
+          DISABLE_CODE_PAGE: false
+          DISABLE_USERS_PAGE: true
+          DISABLE_ORGANIZATIONS_PAGE: true
+
+        migrations:
+          ALLOW_LOCALNETWORKS: true
+
+        openid:
+          ENABLE_OPENID_SIGNIN: false
+          ENABLE_OPENID_SIGNUP: false
+
+        oauth2_client:
+          REGISTER_EMAIL_CONFIRM: false
+          ENABLE_AUTO_REGISTRATION: true
+          USERNAME: nickname
+          ACCOUNT_LINKING: auto
+          OPENID_CONNECT_SCOPES: profile email
+
+        webhook:
+          ALLOWED_HOST_LIST: '*'
+
+        mailer:
+          ENABLED: true
+          PROTOCOL: smtp
+          SMTP_ADDR: smtp-relay.tools.svc.cluster.local
+          SMTP_PORT: 25
+          FROM: XCD Git <git@xcd.dev>
+
+        metrics:
+          ENABLED: true
+
+      additionalConfigSources:
+        - secret:
+            secretName: forgejo-config
+
+    test:
+      enabled: false

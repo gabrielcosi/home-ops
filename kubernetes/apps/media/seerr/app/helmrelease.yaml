@@ -1,0 +1,80 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: seerr
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: seerr
+  interval: 1h
+  values:
+    controllers:
+      seerr:
+        pod:
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 65534
+            runAsGroup: 65534
+            fsGroup: 65534
+            fsGroupChangePolicy: OnRootMismatch
+            seccompProfile:
+              type: RuntimeDefault
+        containers:
+          app:
+            image:
+              repository: ghcr.io/seerr-team/seerr
+              tag: develop@sha256:86c8eb6a47eabfaec07425173d87a3bf15dc1800dfc616c48447ee8fd0e47b1a
+            env:
+              LOG_LEVEL: info
+              TZ: Europe/Berlin
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /api/v1/status
+                    port: 5055
+                  initialDelaySeconds: 5
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+                  failureThreshold: 3
+              readiness: *probes
+            resources:
+              requests:
+                cpu: 10m
+                memory: 256Mi
+              limits:
+                memory: 512Mi
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities:
+                drop:
+                  - ALL
+
+    service:
+      app:
+        ports:
+          http:
+            port: 5055
+
+    route:
+      app:
+        hostnames:
+          - 'request.xcd.dev'
+        parentRefs:
+          - name: envoy-external
+            namespace: network
+
+    persistence:
+      config:
+        existingClaim: seerr
+        advancedMounts:
+          seerr:
+            app:
+              - path: /app/config
+
+      tmp:
+        type: emptyDir

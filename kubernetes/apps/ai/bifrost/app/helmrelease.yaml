@@ -1,0 +1,506 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: bifrost
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: bifrost
+  interval: 1h
+  values:
+    replicaCount: 2
+
+    image:
+      repository: ghcr.io/maximhq/bifrost
+      tag: v1.6.4
+
+    deploymentAnnotations:
+      reloader.stakater.com/auto: 'true'
+
+    affinity:
+      podAntiAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchLabels:
+                app.kubernetes.io/name: bifrost
+                app.kubernetes.io/instance: bifrost
+            topologyKey: kubernetes.io/hostname
+
+    serviceAccount:
+      automount: false
+
+    podSecurityContext:
+      fsGroup: 1000
+      runAsUser: 1000
+      runAsNonRoot: true
+      seccompProfile:
+        type: RuntimeDefault
+
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+          - ALL
+      readOnlyRootFilesystem: false
+      runAsNonRoot: true
+      runAsUser: 1000
+
+    resources:
+      requests:
+        cpu: 25m
+        memory: 512Mi
+      limits:
+        cpu: null
+        memory: 2Gi
+
+    bifrost:
+      sourceOfTruth: 'config.json'
+      framework:
+        pricing:
+          pricingUrl: file:///pricing/pricing.json
+          modelParametersUrl: file:///pricing/models.json
+          mcpLibraryUrl: file:///pricing/mcp-library.json
+      encryptionKeySecret:
+        name: bifrost-secrets
+        key: encryption-key
+      client:
+        logRetentionDays: 90
+        allowedOrigins:
+          - https://ai.xcd.dev
+          - https://bifrost.xcd.dev
+        loggingHeaders:
+          - X-Request-ID
+          - X-Correlation-ID
+          - X-Tenant-ID
+        compat:
+          shouldDropParams: true
+          shouldConvertParams: true
+      providers:
+        zeus:
+          keys:
+            - name: llama-swap-key
+              value: env.LLAMA_SWAP_API_KEY
+              models:
+                - '*'
+              weight: 1
+          network_config:
+            base_url: http://llama-swap.ai.svc.cluster.local:8080
+            allow_private_network: true
+            default_request_timeout_in_seconds: 600
+            max_retries: 3
+            retry_backoff_initial_ms: 250
+            retry_backoff_max_ms: 5000
+            stream_idle_timeout_in_seconds: 120
+          custom_provider_config:
+            base_provider_type: openai
+            allowed_requests:
+              list_models: true
+              text_completion: true
+              text_completion_stream: true
+              chat_completion: true
+              chat_completion_stream: true
+              responses: true
+              responses_stream: true
+              embedding: true
+              transcription: true
+              transcription_stream: true
+              speech: true
+              speech_stream: true
+          concurrency_and_buffer_size:
+            concurrency: 100
+            buffer_size: 500
+        opencode:
+          keys:
+            - name: opencode-key
+              value: env.OPENCODE_API_KEY
+              models:
+                - deepseek-v4-flash
+                - deepseek-v4-pro
+                - glm-5.1
+                - glm-5.2
+                - kimi-k2.5
+                - kimi-k2.6
+                - kimi-k2.7-code
+                - mimo-v2-omni
+                - mimo-v2-pro
+                - mimo-v2.5
+                - mimo-v2.5-pro
+              weight: 1
+          network_config:
+            base_url: https://opencode.ai/zen/go
+            default_request_timeout_in_seconds: 300
+            max_retries: 3
+          custom_provider_config:
+            base_provider_type: openai
+            allowed_requests:
+              list_models: true
+              text_completion: true
+              text_completion_stream: true
+              chat_completion: true
+              chat_completion_stream: true
+              responses: true
+              responses_stream: true
+        opencode-anthropic:
+          keys:
+            - name: opencode-anthropic-key
+              value: env.OPENCODE_API_KEY
+              models:
+                - minimax-m2.5
+                - minimax-m2.7
+                - minimax-m3
+                - qwen3.5-plus
+                - qwen3.6-plus
+                - qwen3.7-max
+                - qwen3.7-plus
+              weight: 1
+          network_config:
+            base_url: https://opencode.ai/zen/go
+            default_request_timeout_in_seconds: 300
+            max_retries: 3
+          custom_provider_config:
+            base_provider_type: anthropic
+            allowed_requests:
+              list_models: true
+              chat_completion: true
+              chat_completion_stream: true
+              responses: true
+              responses_stream: true
+        text-embeddings:
+          keys:
+            - name: text-embeddings-key
+              value: env.TEXT_EMBEDDINGS_API_KEY
+              models:
+                - '*'
+              weight: 1
+          network_config:
+            base_url: http://text-embeddings.ai.svc.cluster.local:8080
+            allow_private_network: true
+            default_request_timeout_in_seconds: 60
+            max_retries: 3
+          custom_provider_config:
+            base_provider_type: openai
+            allowed_requests:
+              embedding: true
+        proxyapi:
+          keys:
+            - name: cliproxyapi-key
+              value: cliproxyapi-local
+              models:
+                - '*'
+              weight: 1
+          network_config:
+            base_url: http://cliproxyapi.ai.svc.cluster.local:8317
+            allow_private_network: true
+            default_request_timeout_in_seconds: 300
+            max_retries: 2
+          custom_provider_config:
+            base_provider_type: openai
+            allowed_requests:
+              list_models: true
+              text_completion: true
+              text_completion_stream: true
+              chat_completion: true
+              chat_completion_stream: true
+              responses: true
+              responses_stream: true
+              websocket_responses: true
+      plugins:
+        telemetry:
+          enabled: true
+        logging:
+          enabled: true
+        governance:
+          enabled: true
+          config:
+            is_vk_mandatory: true
+      governance:
+        rateLimits:
+          - id: rl-memini
+            request_max_limit: 500
+            request_reset_duration: '5m'
+            token_max_limit: 8000000
+            token_reset_duration: '1d'
+          - id: rl-opencode
+            request_max_limit: 600
+            request_reset_duration: '5m'
+            token_max_limit: 20000000
+            token_reset_duration: '1d'
+          - id: rl-hermes
+            request_max_limit: 300
+            request_reset_duration: '5m'
+            token_max_limit: 80000000
+            token_reset_duration: '1d'
+          - id: rl-open-webui
+            request_max_limit: 300
+            request_reset_duration: '5m'
+            token_max_limit: 10000000
+            token_reset_duration: '1d'
+          - id: rl-nvim
+            request_max_limit: 600
+            request_reset_duration: '5m'
+            token_max_limit: 8000000
+            token_reset_duration: '1d'
+          - id: rl-cbas-5h
+            request_max_limit: 3200
+            request_reset_duration: '5h'
+          - id: rl-cbas-monthly
+            request_max_limit: 16000
+            request_reset_duration: '1M'
+          - id: rl-home-assistant
+            request_max_limit: 600
+            request_reset_duration: '5m'
+            token_max_limit: 8000000
+            token_reset_duration: '1d'
+          - id: rl-wyoming
+            request_max_limit: 1200
+            request_reset_duration: '5m'
+          - id: rl-toolhive
+            request_max_limit: 500
+            request_reset_duration: '5m'
+            token_max_limit: 8000000
+            token_reset_duration: '1d'
+          - id: rl-n8n
+            request_max_limit: 500
+            request_reset_duration: '5m'
+            token_max_limit: 8000000
+            token_reset_duration: '1d'
+          - id: rl-pr-reviewer
+            request_max_limit: 100
+            request_reset_duration: '5m'
+            token_max_limit: 40000000
+            token_reset_duration: '1d'
+        budgets:
+          - id: b-glm5.2-5h
+            max_limit: 6
+            reset_duration: '5h'
+          - id: b-glm5.2-weekly
+            max_limit: 15
+            reset_duration: '1w'
+          - id: b-glm5.2-monthly
+            max_limit: 30
+            reset_duration: '1M'
+        virtualKeys:
+          - id: memini
+            name: memini
+            value: env.BIFROST_VK_MEMINI
+            is_active: true
+            rate_limit_id: rl-memini
+            provider_configs:
+              - provider: text-embeddings
+                weight: 1
+                allowed_models:
+                  - sentence-transformers/all-MiniLM-L6-v2
+                key_ids:
+                  - '*'
+              - provider: opencode
+                weight: 1
+                allowed_models:
+                  - deepseek-v4-flash
+                key_ids:
+                  - '*'
+          - id: opencode
+            name: opencode
+            value: env.BIFROST_VK_OPENCODE
+            is_active: true
+            rate_limit_id: rl-opencode
+            provider_configs:
+              - provider: zeus
+                weight: 1
+                allowed_models:
+                  - '*'
+                key_ids:
+                  - '*'
+              - provider: opencode
+                weight: 1
+                allowed_models:
+                  - '*'
+                key_ids:
+                  - '*'
+              - provider: opencode-anthropic
+                weight: 1
+                allowed_models:
+                  - '*'
+                key_ids:
+                  - '*'
+              - provider: proxyapi
+                weight: 1
+                allowed_models:
+                  - '*'
+                key_ids:
+                  - '*'
+          - id: hermes
+            name: hermes
+            value: env.BIFROST_VK_HERMES
+            is_active: true
+            rate_limit_id: rl-hermes
+            provider_configs:
+              - provider: zeus
+                weight: 1
+                allowed_models:
+                  - qwen3.6-35b-a3b
+                  - qwen3.6-27b
+                key_ids:
+                  - '*'
+              - provider: opencode-anthropic
+                weight: 1
+                allowed_models:
+                  - minimax-m3
+                key_ids:
+                  - '*'
+              - provider: opencode
+                weight: 1
+                allowed_models:
+                  - glm-5.2
+                  - deepseek-v4-flash
+                key_ids:
+                  - '*'
+          - id: open-webui
+            name: open-webui
+            value: env.BIFROST_VK_OPENWEBUI
+            is_active: true
+            rate_limit_id: rl-open-webui
+            provider_configs:
+              - provider: zeus
+                weight: 1
+                allowed_models:
+                  - '*'
+                key_ids:
+                  - '*'
+          - id: nvim
+            name: nvim
+            value: env.BIFROST_VK_NVIM
+            is_active: true
+            rate_limit_id: rl-nvim
+            provider_configs:
+              - provider: opencode
+                weight: 1
+                allowed_models:
+                  - deepseek-v4-flash
+                key_ids:
+                  - '*'
+          - id: cbas
+            name: cbas
+            value: env.BIFROST_VK_CBAS
+            is_active: true
+            rate_limit_id: rl-cbas-monthly
+            provider_configs:
+              - provider: opencode-anthropic
+                weight: 1
+                allowed_models:
+                  - minimax-m3
+                rate_limit_id: rl-cbas-5h
+                key_ids:
+                  - '*'
+          - id: home-assistant
+            name: home-assistant
+            value: env.BIFROST_VK_HOME_ASSISTANT
+            is_active: true
+            rate_limit_id: rl-home-assistant
+            provider_configs:
+              - provider: opencode
+                weight: 1
+                allowed_models:
+                  - glm-5.2
+                key_ids:
+                  - '*'
+          - id: wyoming
+            name: wyoming
+            value: env.BIFROST_VK_WYOMING
+            is_active: true
+            rate_limit_id: rl-wyoming
+            provider_configs:
+              - provider: zeus
+                weight: 1
+                allowed_models:
+                  - stt
+                  - tts
+                key_ids:
+                  - '*'
+          - id: toolhive
+            name: toolhive
+            value: env.BIFROST_VK_TOOLHIVE
+            is_active: true
+            rate_limit_id: rl-toolhive
+            provider_configs:
+              - provider: text-embeddings
+                weight: 1
+                allowed_models:
+                  - sentence-transformers/all-MiniLM-L6-v2
+                key_ids:
+                  - '*'
+          - id: n8n
+            name: n8n
+            value: env.BIFROST_VK_N8N
+            is_active: true
+            rate_limit_id: rl-n8n
+            provider_configs:
+              - provider: zeus
+                weight: 1
+                allowed_models:
+                  - '*'
+                key_ids:
+                  - '*'
+          - id: pr-reviewer
+            name: pr-reviewer
+            value: env.BIFROST_VK_PR_REVIEWER
+            is_active: true
+            rate_limit_id: rl-pr-reviewer
+            provider_configs:
+              - provider: opencode-anthropic
+                weight: 1
+                allowed_models:
+                  - minimax-m3
+                key_ids:
+                  - '*'
+        modelConfigs:
+          - id: mc-glm5.2-global
+            model_name: glm-5.2
+            provider: opencode
+            scope: global
+            budget_ids:
+              - b-glm5.2-5h
+              - b-glm5.2-weekly
+              - b-glm5.2-monthly
+      cluster:
+        enabled: true
+        discovery:
+          enabled: true
+          type: kubernetes
+          k8sNamespace: ai
+          k8sLabelSelector: app.kubernetes.io/instance=bifrost
+
+    storage:
+      mode: postgres
+      persistence:
+        enabled: false
+      configStore:
+        type: postgres
+      logsStore:
+        type: postgres
+
+    postgresql:
+      enabled: false
+      external:
+        enabled: true
+        host: shared-pg-rw.database.svc.cluster.local
+        port: 5432
+        user: bifrost
+        database: bifrost
+        sslMode: require
+        existingSecret: bifrost-postgres
+        passwordKey: password
+
+    volumes:
+      - name: pricing
+        configMap:
+          name: bifrost-pricing
+
+    volumeMounts:
+      - name: pricing
+        mountPath: /pricing
+        readOnly: true
+
+    envFrom:
+      - secretRef:
+          name: bifrost-secrets

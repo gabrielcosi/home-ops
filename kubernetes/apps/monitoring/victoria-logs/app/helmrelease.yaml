@@ -1,0 +1,47 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: victoria-logs
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: victoria-logs
+  interval: 1h
+  values:
+    global:
+      image:
+        registry: quay.io
+
+    dashboards:
+      enabled: true
+      grafanaOperator:
+        enabled: true
+        spec:
+          allowCrossNamespaceImport: true
+          instanceSelector:
+            matchLabels:
+              dashboards: grafana
+
+    server:
+      fullnameOverride: victoria-logs
+      retentionPeriod: 90d
+      persistentVolume:
+        enabled: true
+        storageClassName: ceph-block
+        size: 50Gi
+      resources:
+        requests:
+          cpu: 50m
+          memory: 512Mi
+        limits:
+          memory: 2Gi
+      route:
+        enabled: true
+        hostnames:
+          - logs.xcd.dev
+        parentRefs:
+          - name: envoy-internal-auth
+            namespace: network
+      serviceMonitor:
+        enabled: true

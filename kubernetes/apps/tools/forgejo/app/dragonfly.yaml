@@ -1,0 +1,39 @@
+---
+apiVersion: dragonflydb.io/v1alpha1
+kind: Dragonfly
+metadata:
+  name: forgejo-dragonfly
+spec:
+  replicas: 2
+
+  authentication:
+    passwordFromSecret:
+      name: forgejo-secrets
+      key: dragonfly_auth
+
+  args:
+    - --maxmemory=$(MAX_MEMORY)Mi
+    - --proactor_threads=1
+    - --cluster_mode=emulated
+
+  env:
+    - name: MAX_MEMORY
+      valueFrom:
+        resourceFieldRef:
+          divisor: 1Mi
+          resource: limits.memory
+
+  resources:
+    requests:
+      cpu: 50m
+      memory: 256Mi
+    limits:
+      memory: 256Mi
+
+  topologySpreadConstraints:
+    - maxSkew: 1
+      topologyKey: kubernetes.io/hostname
+      whenUnsatisfiable: DoNotSchedule
+      labelSelector:
+        matchLabels:
+          app: forgejo-dragonfly

@@ -1,0 +1,41 @@
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: qbittorrent-policy
+  labels:
+    app.kubernetes.io/instance: qbittorrent
+    app.kubernetes.io/name: qbittorrent
+spec:
+  description: Deny direct internet egress from qBittorrent except WireGuard VPN traffic.
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/instance: qbittorrent
+      app.kubernetes.io/name: qbittorrent
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: media
+            k8s:app.kubernetes.io/instance: qui
+            k8s:app.kubernetes.io/name: qui
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: network
+            k8s:app.kubernetes.io/component: proxy
+            k8s:app.kubernetes.io/name: envoy
+            k8s:gateway.envoyproxy.io/owning-gateway-name: envoy-internal-auth
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
+  egress:
+    - toCIDR:
+        - 0.0.0.0/0
+      toPorts:
+        - ports:
+            - port: "51820"
+              protocol: UDP

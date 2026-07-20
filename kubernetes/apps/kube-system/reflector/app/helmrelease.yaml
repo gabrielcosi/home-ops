@@ -1,0 +1,22 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: reflector
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: reflector
+  interval: 1h
+  values:
+    extraEnv:
+      - name: DOTNET_gcServer
+        value: "0"
+      - name: DOTNET_GCConserveMemory
+        value: "9"
+    resources:
+      requests:
+        cpu: 10m
+        memory: 128Mi
+      limits:
+        memory: 256Mi

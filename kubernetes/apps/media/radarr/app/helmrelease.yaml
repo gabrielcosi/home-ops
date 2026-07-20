@@ -1,0 +1,119 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: radarr
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: radarr
+  interval: 1h
+  values:
+    controllers:
+      radarr:
+        annotations:
+          reloader.stakater.com/auto: 'true'
+
+        pod:
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 5006
+            runAsGroup: 3007
+            fsGroup: 3007
+            fsGroupChangePolicy: OnRootMismatch
+            seccompProfile:
+              type: RuntimeDefault
+
+        containers:
+          app:
+            image:
+              repository: ghcr.io/home-operations/radarr
+              tag: 6.4.0.10523
+            env:
+              RADARR__APP__INSTANCENAME: Radarr
+              RADARR__AUTH__APIKEY:
+                valueFrom:
+                  secretKeyRef:
+                    name: radarr-secrets
+                    key: api_key
+              RADARR__AUTH__METHOD: External
+              RADARR__AUTH__REQUIRED: DisabledForLocalAddresses
+              RADARR__LOG__DBENABLED: 'False'
+              RADARR__LOG__LEVEL: info
+              RADARR__SERVER__PORT: 7878
+              TZ: Europe/Berlin
+            probes:
+              liveness:
+                enabled: true
+                spec:
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+                  failureThreshold: 5
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /ping
+                    port: 7878
+                  periodSeconds: 10
+                  timeoutSeconds: 5
+                  failureThreshold: 5
+              startup:
+                enabled: true
+                spec:
+                  failureThreshold: 30
+                  periodSeconds: 10
+            resources:
+              requests:
+                cpu: 10m
+                memory: 512Mi
+              limits:
+                memory: 512Mi
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities:
+                drop:
+                  - ALL
+
+    service:
+      app:
+        ports:
+          http:
+            port: 7878
+
+    route:
+      app:
+        hostnames:
+          - 'radarr.xcd.dev'
+        parentRefs:
+          - name: envoy-internal-auth
+            namespace: network
+
+    persistence:
+      config:
+        existingClaim: radarr
+        advancedMounts:
+          radarr:
+            app:
+              - path: /config
+
+      downloads:
+        type: nfs
+        server: tank.internal
+        path: /mnt/home-pool/library/downloads
+        globalMounts:
+          - path: /downloads
+
+      media:
+        type: nfs
+        server: tank.internal
+        path: /mnt/home-pool/library/media
+        globalMounts:
+          - path: /media
+
+      tmp:
+        type: emptyDir
+        globalMounts:
+          - path: /tmp

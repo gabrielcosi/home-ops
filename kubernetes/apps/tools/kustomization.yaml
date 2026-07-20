@@ -1,0 +1,22 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: tools
+components:
+  - ../../components/flux-alerts
+  - ../../components/kopiur/secret
+resources:
+  - ./namespace.yaml
+  - ./chaski/ks.yaml
+  - ./cyberchef/ks.yaml
+  - ./forgejo/ks.yaml
+  - ./freeze-frame/ks.yaml
+  - ./harbor/ks.yaml
+  - ./it-tools/ks.yaml
+  - ./konflate/ks.yaml
+  - ./miniflux/ks.yaml
+  - ./outline/ks.yaml
+  - ./plik/ks.yaml
+  - ./renovate-operator/ks.yaml
+  - ./searxng/ks.yaml
+  - ./smtp-relay/ks.yaml

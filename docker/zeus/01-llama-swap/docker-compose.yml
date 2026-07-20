@@ -1,0 +1,30 @@
+---
+name: llama-swap
+
+services:
+  llama-swap:
+    image: ghcr.io/gabrielcosi/llama-swap:v239-cuda13-b9982 # renovate: docker=ghcr.io/gabrielcosi/llama-swap versioning=regex:^v(?<major>\d+)-(?<compatibility>cuda\d+)-b(?<build>\d+)$
+    container_name: llama-swap
+    ports:
+      - "9292:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /opt/models:/models
+      - ./config.yaml:/app/config.yaml
+    networks:
+      - llama-swap
+      - zeus
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    restart: unless-stopped
+
+networks:
+  llama-swap:
+    name: llama-swap
+  zeus:
+    external: true

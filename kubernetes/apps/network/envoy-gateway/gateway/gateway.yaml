@@ -1,0 +1,101 @@
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: envoy-internal
+  namespace: network
+spec:
+  gatewayClassName: envoy
+  infrastructure:
+    annotations:
+      io.cilium/lb-ipam-ips: '192.168.69.181'
+  listeners:
+    - name: https
+      protocol: HTTPS
+      port: 443
+      tls:
+        certificateRefs:
+          - kind: Secret
+            name: cert-gabrielcosi
+          - kind: Secret
+            name: cert-xcd
+      allowedRoutes:
+        namespaces:
+          from: All
+    - name: ssh
+      protocol: TCP
+      port: 22
+      allowedRoutes:
+        namespaces:
+          from: Selector
+          selector:
+            matchLabels:
+              kubernetes.io/metadata.name: tools
+        kinds:
+          - kind: TCPRoute
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: envoy-internal-auth
+  namespace: network
+spec:
+  gatewayClassName: envoy
+  infrastructure:
+    annotations:
+      io.cilium/lb-ipam-ips: '192.168.69.183'
+  listeners:
+    - name: https
+      protocol: HTTPS
+      port: 443
+      tls:
+        certificateRefs:
+          - kind: Secret
+            name: cert-gabrielcosi
+          - kind: Secret
+            name: cert-xcd
+      allowedRoutes:
+        namespaces:
+          from: All
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: envoy-external
+  namespace: network
+  annotations:
+    external-dns.alpha.kubernetes.io/target: &hostname external.xcd.dev
+    gatus.home-operations.com/endpoint: |-
+      client:
+        dns-resolver: tcp://1.1.1.1:53
+      group: external
+spec:
+  gatewayClassName: envoy
+  infrastructure:
+    annotations:
+      external-dns.alpha.kubernetes.io/hostname: *hostname
+      io.cilium/lb-ipam-ips: '192.168.69.182'
+  listeners:
+    - name: https
+      protocol: HTTPS
+      port: 443
+      tls:
+        certificateRefs:
+          - kind: Secret
+            name: cert-gabrielcosi
+          - kind: Secret
+            name: cert-xcd
+      allowedRoutes:
+        namespaces:
+          from: All
+    - name: ssh
+      protocol: TCP
+      port: 22
+      allowedRoutes:
+        namespaces:
+          from: Selector
+          selector:
+            matchLabels:
+              kubernetes.io/metadata.name: tools
+        kinds:
+          - kind: TCPRoute

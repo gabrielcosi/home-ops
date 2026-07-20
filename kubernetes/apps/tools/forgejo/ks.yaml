@@ -1,0 +1,77 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: forgejo
+spec:
+  components:
+    - ../../../../components/kopiur/restore
+    - ../../../../components/kopiur/backup
+    - ../../../../components/anubis
+  dependsOn:
+    - name: cloudnative-pg
+      namespace: cnpg-system
+    - name: plugin-barman-cloud
+      namespace: cnpg-system
+    - name: dragonfly-operator
+      namespace: dragonfly-system
+    - name: rook-ceph-cluster
+      namespace: rook-ceph
+  healthChecks:
+    - apiVersion: postgresql.cnpg.io/v1
+      kind: Cluster
+      name: forgejo-pg
+      namespace: tools
+    - apiVersion: dragonflydb.io/v1alpha1
+      kind: Dragonfly
+      name: forgejo-dragonfly
+      namespace: tools
+    - apiVersion: helm.toolkit.fluxcd.io/v2
+      kind: HelmRelease
+      name: forgejo
+      namespace: tools
+  interval: 1h
+  path: ./kubernetes/apps/tools/forgejo/app
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+    namespace: flux-system
+  targetNamespace: tools
+  wait: false
+  postBuild:
+    substitute:
+      APP: forgejo
+      APP_NAMESPACE: tools
+      ANUBIS_TARGET: http://forgejo-http.tools.svc.cluster.local:3000
+      KOPIUR_CAPACITY: "1Gi"
+      KOPIUR_STORAGECLASS: ceph-filesystem
+      KOPIUR_ACCESSMODES: ReadWriteMany
+      KOPIUR_PUID: "1000"
+      KOPIUR_PGID: "1000"
+      KOPIUR_SNAPSHOTCLASS: csi-ceph-filesystem
+      KOPIUR_STAGING_STORAGECLASS: cephfs-backingsnapshot
+      KOPIUR_STAGING_ACCESSMODES: ReadOnlyMany
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: forgejo-runner
+spec:
+  dependsOn:
+    - name: forgejo
+      namespace: tools
+  healthChecks:
+    - apiVersion: helm.toolkit.fluxcd.io/v2
+      kind: HelmRelease
+      name: forgejo-runner
+      namespace: tools
+  interval: 1h
+  path: ./kubernetes/apps/tools/forgejo/runner
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+    namespace: flux-system
+  targetNamespace: tools
+  wait: false

@@ -1,0 +1,110 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: zigbee
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: zigbee
+  interval: 1h
+  values:
+    controllers:
+      zigbee:
+        annotations:
+          reloader.stakater.com/auto: 'true'
+        pod:
+          securityContext:
+            fsGroup: 65534
+            fsGroupChangePolicy: OnRootMismatch
+            runAsGroup: 65534
+            runAsUser: 65534
+            runAsNonRoot: true
+            seccompProfile:
+              type: RuntimeDefault
+        containers:
+          app:
+            image:
+              repository: ghcr.io/koenkk/zigbee2mqtt
+              tag: 2.12.1
+            env:
+              TZ: Europe/Berlin
+              Z2M_WATCHDOG: default
+              ZIGBEE2MQTT_DATA: /data
+              # logging
+              ZIGBEE2MQTT_CONFIG_ADVANCED_LOG_LEVEL: info
+              ZIGBEE2MQTT_CONFIG_ADVANCED_LOG_OUTPUT: >-
+                ["console"]
+              # device-availability
+              ZIGBEE2MQTT_CONFIG_AVAILABILITY_ENABLED: true
+              ZIGBEE2MQTT_CONFIG_AVAILABILITY_ACTIVE_TIMEOUT: 60
+              ZIGBEE2MQTT_CONFIG_AVAILABILITY_PASSIVE_TIMEOUT: 2000
+              ZIGBEE2MQTT_CONFIG_DEVICE_OPTIONS_RETAIN: true
+              # frontend
+              ZIGBEE2MQTT_CONFIG_FRONTEND_ENABLED: true
+              ZIGBEE2MQTT_CONFIG_FRONTEND_URL: https://zigbee.xcd.dev
+              # home-assistant
+              ZIGBEE2MQTT_CONFIG_HOMEASSISTANT_ENABLED: true
+              ZIGBEE2MQTT_CONFIG_HOMEASSISTANT_DISCOVERY_TOPIC: homeassistant
+              ZIGBEE2MQTT_CONFIG_HOMEASSISTANT_STATUS_TOPIC: homeassistant/status
+              ZIGBEE2MQTT_CONFIG_HOMEASSISTANT_EXPERIMENTAL_EVENT_ENTITIES: true
+              # mqtt
+              ZIGBEE2MQTT_CONFIG_MQTT_SERVER: mqtt://mosquitto.home.svc.cluster.local
+              ZIGBEE2MQTT_CONFIG_MQTT_KEEPALIVE: 60
+              ZIGBEE2MQTT_CONFIG_MQTT_REJECT_UNAUTHORIZED: true
+              ZIGBEE2MQTT_CONFIG_MQTT_INCLUDE_DEVICE_INFORMATION: true
+              ZIGBEE2MQTT_CONFIG_MQTT_VERSION: 5
+              ZIGBEE2MQTT_CONFIG_ADVANCED_LAST_SEEN: ISO_8601
+              # adapter
+              ZIGBEE2MQTT_CONFIG_ADVANCED_TRANSMIT_POWER: 20
+              ZIGBEE2MQTT_CONFIG_SERIAL_ADAPTER: ember
+              ZIGBEE2MQTT_CONFIG_SERIAL_PORT: tcp://slzb-mr1.internal:6638
+              ZIGBEE2MQTT_CONFIG_SERIAL_BAUDRATE: 115200
+              ZIGBEE2MQTT_CONFIG_SERIAL_DISABLE_LED: false
+              # security
+              ZIGBEE2MQTT_CONFIG_PERMIT_JOIN: false
+            envFrom:
+              - secretRef:
+                  name: zigbee-secrets
+            probes:
+              liveness:
+                enabled: true
+              readiness:
+                enabled: true
+              startup:
+                enabled: true
+                spec:
+                  periodSeconds: 10
+                  failureThreshold: 30
+            resources:
+              requests:
+                cpu: 20m
+                memory: 128Mi
+              limits:
+                memory: 128Mi
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: { drop: ['ALL'] }
+
+    service:
+      app:
+        ports:
+          http:
+            port: 8080
+
+    route:
+      app:
+        hostnames:
+          - 'zigbee.xcd.dev'
+        parentRefs:
+          - name: envoy-internal
+            namespace: network
+
+    persistence:
+      data:
+        existingClaim: zigbee
+        advancedMounts:
+          zigbee:
+            app:
+              - path: /data

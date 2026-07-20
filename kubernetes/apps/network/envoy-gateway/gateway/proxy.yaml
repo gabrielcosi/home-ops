@@ -1,0 +1,31 @@
+---
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: EnvoyProxy
+metadata:
+  name: envoy
+  namespace: network
+spec:
+  logging:
+    level:
+      default: info
+  provider:
+    type: Kubernetes
+    kubernetes:
+      envoyDaemonSet:
+        container:
+          image: mirror.gcr.io/envoyproxy/envoy:v1.39.0
+          resources:
+            limits:
+              memory: 512Mi
+            requests:
+              cpu: 50m
+              memory: 128Mi
+      envoyService:
+        externalTrafficPolicy: Local
+  shutdown:
+    drainTimeout: 180s
+  telemetry:
+    metrics:
+      prometheus:
+        compression:
+          type: Gzip

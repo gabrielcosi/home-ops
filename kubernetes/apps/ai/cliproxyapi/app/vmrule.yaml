@@ -1,0 +1,23 @@
+---
+apiVersion: operator.victoriametrics.com/v1beta1
+kind: VMRule
+metadata:
+  name: cliproxyapi-reauth
+spec:
+  groups:
+    - name: cliproxyapi
+      type: vlogs
+      interval: 1m
+      rules:
+        - alert: CliProxyApiReauthNeeded
+          expr: |
+            _time:15m {kubernetes.pod_namespace="ai", kubernetes.pod_name=~"cliproxyapi.*"} ("invalid_grant" OR "refresh_token_reused") | stats by () count() as hits | filter hits:>0
+          for: 2m
+          labels:
+            severity: critical
+          annotations:
+            summary: CLIProxyAPI needs an interactive re-login
+            description: >-
+              CLIProxyAPI logged OpenAI/Codex auth or refresh-token failures in the last 10m.
+              The subscription token chain is likely broken — re-run the interactive login and
+              kubectl cp the refreshed auth file into the cliproxyapi /data PVC.

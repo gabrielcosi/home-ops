@@ -1,0 +1,21 @@
+---
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: ${APP}-nfs
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: ${CONTROLLER:=Deployment}
+    name: ${APP}
+  pollingInterval: 5
+  cooldownPeriod: 0
+  minReplicaCount: 0
+  maxReplicaCount: 1
+  triggers:
+    - type: prometheus
+      metadata:
+        serverAddress: http://vmsingle-victoria-metrics-cluster.monitoring.svc.cluster.local:8428
+        metricName: ${ZEROSCALER_METRIC_NAME:=probe_success}
+        query: ${ZEROSCALER_METRIC_NAME:=probe_success}{job="${ZEROSCALER_JOB_NAME:=nfs_probe}"} == 1
+        threshold: "1"

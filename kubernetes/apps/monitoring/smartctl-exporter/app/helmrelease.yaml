@@ -1,0 +1,25 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: smartctl-exporter
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: smartctl-exporter
+  interval: 1h
+  values:
+    fullnameOverride: smartctl-exporter
+    serviceMonitor:
+      enabled: true
+      relabelings:
+        - action: labeldrop
+          regex: (pod)
+        - action: replace
+          regex: (.*)
+          replacement: $1.internal
+          sourceLabels:
+            - __meta_kubernetes_endpoint_node_name
+          targetLabel: instance
+    prometheusRules:
+      enabled: false

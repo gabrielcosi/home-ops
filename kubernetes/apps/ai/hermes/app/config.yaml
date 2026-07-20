@@ -1,0 +1,150 @@
+custom_providers:
+  - name: bifrost
+    base_url: http://bifrost.ai.svc.cluster.local:8080/v1
+    key_env: OPENAI_API_KEY
+
+model:
+  default: opencode-anthropic/minimax-m3
+  provider: custom:bifrost
+
+model_aliases:
+  glm-5.2:
+    model: opencode/glm-5.2
+    provider: custom:bifrost
+  qwen3.6-35b-a3b:
+    model: zeus/qwen3.6-35b-a3b
+    provider: custom:bifrost
+  qwen3.6-27b:
+    model: zeus/qwen3.6-27b
+    provider: custom:bifrost
+  minimax:
+    model: opencode-anthropic/minimax-m3
+    provider: custom:bifrost
+
+fallback_providers:
+  - provider: custom:bifrost
+    model: opencode-anthropic/minimax-m3
+
+memory:
+  provider: memini
+
+plugins:
+  enabled:
+    - memini
+
+terminal:
+  backend: local
+  timeout: 900
+  lifetime_seconds: 1800
+  persistent_shell: true
+
+compression:
+  enabled: true
+  protect_first_n: 0
+  threshold: 0.8
+
+auxiliary:
+  approval:
+    provider: custom:bifrost
+    model: opencode-anthropic/minimax-m3
+    timeout: 60
+  compression:
+    provider: custom:bifrost
+    model: opencode-anthropic/minimax-m3
+  web_extract:
+    provider: custom:bifrost
+    model: opencode-anthropic/minimax-m3
+  session_search:
+    provider: custom:bifrost
+    model: opencode/glm-5.2
+  vision:
+    provider: custom:bifrost
+    model: opencode-anthropic/minimax-m3
+  goal_judge:
+    provider: custom:bifrost
+    model: opencode/glm-5.2
+  title_generation:
+    provider: custom:bifrost
+    model: opencode/deepseek-v4-flash
+  profile_describer:
+    provider: custom:bifrost
+    model: opencode/glm-5.2
+  triage_specifier:
+    provider: custom:bifrost
+    model: opencode/glm-5.2
+  kanban_decomposer:
+    provider: custom:bifrost
+    model: opencode/glm-5.2
+  curator:
+    provider: custom:bifrost
+    model: opencode/glm-5.2
+    timeout: 600
+
+streaming:
+  enabled: false
+
+gateway:
+  streaming:
+    enabled: false
+
+approvals:
+  mode: smart
+  timeout: 60
+  cron_mode: deny
+
+security:
+  redact_secrets: true
+  website_blocklist:
+    enabled: true
+    domains:
+      - '169.254.169.254'
+      - 'metadata.google.internal'
+
+privacy:
+  redact_pii: true
+
+agent:
+  max_turns: 150
+  gateway_timeout: 1800
+  restart_drain_timeout: 180
+  api_max_retries: 3
+  reasoning_effort: medium
+  disabled_toolsets:
+    - browser
+
+delegation:
+  provider: custom:bifrost
+  model: opencode/glm-5.2
+  max_concurrent_children: 8
+  max_spawn_depth: 2
+
+moa:
+  default_preset: council
+  presets:
+    council:
+      enabled: true
+      reference_models:
+        - provider: custom:bifrost
+          model: opencode-anthropic/minimax-m3
+        - provider: custom:bifrost
+          model: opencode/glm-5.2
+      aggregator:
+        provider: custom:bifrost
+        model: opencode-anthropic/minimax-m3
+      reference_temperature: 0.6
+      aggregator_temperature: 0.4
+      max_tokens: 8192
+
+platforms:
+  telegram:
+    enabled: true
+
+mcp_servers:
+  mcps:
+    url: https://mcp.xcd.dev/mcp
+
+web:
+  search_backend: searxng
+  extract_backend: crawl4ai
+
+unauthorized_dm_behavior: pair

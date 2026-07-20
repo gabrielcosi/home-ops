@@ -1,0 +1,39 @@
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Pooler
+metadata:
+  name: forgejo-pooler
+spec:
+  cluster:
+    name: forgejo-pg
+  instances: 3
+  type: rw
+  pgbouncer:
+    poolMode: transaction
+    parameters:
+      ignore_startup_parameters: statement_timeout
+      max_client_conn: '150'
+      default_pool_size: '10'
+      min_pool_size: '2'
+      reserve_pool_size: '2'
+      reserve_pool_timeout: '3'
+      max_db_connections: '15'
+      query_wait_timeout: '60'
+      server_idle_timeout: '20'
+  template:
+    spec:
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: DoNotSchedule
+          labelSelector:
+            matchLabels:
+              cnpg.io/poolerName: forgejo-pooler
+      containers:
+        - name: pgbouncer
+          resources:
+            requests:
+              memory: '64Mi'
+              cpu: '10m'
+            limits:
+              memory: '64Mi'

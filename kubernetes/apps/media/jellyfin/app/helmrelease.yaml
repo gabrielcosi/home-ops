@@ -1,0 +1,98 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: jellyfin
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: jellyfin
+  interval: 1h
+  values:
+    controllers:
+      jellyfin:
+        pod:
+          resourceClaims:
+            - name: gpu
+              resourceClaimTemplateName: jellyfin
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 5003
+            runAsGroup: 3007
+            fsGroup: 3007
+            fsGroupChangePolicy: OnRootMismatch
+            supplementalGroups:
+              - 44
+              - 104
+            seccompProfile:
+              type: RuntimeDefault
+        containers:
+          app:
+            image:
+              repository: ghcr.io/jellyfin/jellyfin
+              tag: 10.11.11
+            env:
+              - name: TZ
+                value: Europe/Berlin
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /health
+                    port: 8096
+                  initialDelaySeconds: 0
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+                  failureThreshold: 3
+              readiness: *probes
+            resources:
+              claims:
+                - name: gpu
+              requests:
+                cpu: 25m
+                memory: 1Gi
+              limits:
+                memory: 8Gi
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities:
+                drop:
+                  - ALL
+
+    service:
+      app:
+        ports:
+          http:
+            port: 8096
+
+    route:
+      app:
+        hostnames:
+          - 'watch.xcd.dev'
+        parentRefs:
+          - name: envoy-external
+            namespace: network
+
+    persistence:
+      config:
+        existingClaim: jellyfin
+        advancedMounts:
+          jellyfin:
+            app:
+              - path: /config
+
+      media:
+        type: nfs
+        server: tank.internal
+        path: /mnt/home-pool/library/media
+        globalMounts:
+          - path: /mnt/media
+
+      tmp:
+        type: emptyDir
+        globalMounts:
+          - path: /tmp
+          - path: /cache

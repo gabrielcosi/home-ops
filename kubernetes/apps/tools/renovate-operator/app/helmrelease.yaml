@@ -1,0 +1,49 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: renovate-operator
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: renovate-operator
+  interval: 1h
+  values:
+    fullnameOverride: renovate-operator
+
+    resources:
+      requests:
+        cpu: 10m
+        memory: 128Mi
+      limits:
+        memory: 256Mi
+
+    route:
+      enabled: true
+      hostnames:
+        - renovate.xcd.dev
+      parentRefs:
+        - name: envoy-internal
+          namespace: network
+
+    auth:
+      oidc:
+        enabled: true
+        issuerUrl: https://auth.xcd.dev/application/o/renovate/
+        clientId: lMZHiTSZOcdsbZNggDPpzsUVOY6pcIl0QC2duGlt
+        existingSecret: renovate-secrets
+        secretKey: client-secret
+        redirectUrl: https://renovate.xcd.dev/auth/callback
+        additionalScopes:
+          - groups
+        allowedGroupPattern: '^Renovate Admins$'
+
+    webhook:
+      enabled: false
+      route:
+        enabled: false
+
+    metrics:
+      enabled: true
+      serviceMonitor:
+        enabled: true

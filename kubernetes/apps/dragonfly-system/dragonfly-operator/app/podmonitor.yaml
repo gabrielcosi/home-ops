@@ -1,0 +1,19 @@
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: dragonfly
+  labels:
+    app.kubernetes.io/name: dragonfly
+spec:
+  namespaceSelector:
+    any: true
+  selector:
+    matchLabels:
+      app: dragonfly
+  podTargetLabels:
+    - app
+    - role
+  podMetricsEndpoints:
+    - port: admin
+      interval: 30s

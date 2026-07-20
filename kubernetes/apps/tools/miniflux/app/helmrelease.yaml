@@ -1,0 +1,88 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: miniflux
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: miniflux
+  interval: 1h
+  values:
+    controllers:
+      miniflux:
+        annotations:
+          reloader.stakater.com/auto: 'true'
+        pod:
+          securityContext:
+            runAsUser: 65534
+            runAsGroup: 65534
+            runAsNonRoot: true
+            fsGroup: 65534
+            fsGroupChangePolicy: OnRootMismatch
+            seccompProfile:
+              type: RuntimeDefault
+        containers:
+          app:
+            image:
+              repository: ghcr.io/miniflux/miniflux
+              tag: 2.3.2-distroless@sha256:e2a2d2939d79687315385749c0ebcda0a1e8220e02c7e4f41f0e55cba2fbf1b7
+            env:
+              TZ: Europe/Berlin
+              BASE_URL: 'https://rss.xcd.dev'
+              RUN_MIGRATIONS: '1'
+              FETCHER_ALLOW_PRIVATE_NETWORKS: '1'
+              OAUTH2_PROVIDER: oidc
+              OAUTH2_OIDC_PROVIDER_NAME: Authentik
+              OAUTH2_OIDC_DISCOVERY_ENDPOINT: 'https://auth.xcd.dev/application/o/miniflux/'
+              OAUTH2_REDIRECT_URL: 'https://rss.xcd.dev/oauth2/oidc/callback'
+              OAUTH2_USER_CREATION: '1'
+              DISABLE_LOCAL_AUTH: '1'
+              DATABASE_URL:
+                valueFrom:
+                  secretKeyRef:
+                    name: miniflux-postgres
+                    key: url
+            envFrom:
+              - secretRef:
+                  name: miniflux-secret
+            probes:
+              liveness:
+                enabled: true
+                type: HTTP
+                path: /healthcheck
+              readiness:
+                enabled: true
+                type: HTTP
+                path: /healthcheck
+              startup:
+                enabled: true
+                type: HTTP
+                path: /healthcheck
+                spec:
+                  periodSeconds: 5
+                  failureThreshold: 12
+            resources:
+              requests:
+                cpu: 10m
+                memory: 64Mi
+              limits:
+                memory: 256Mi
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities:
+                drop:
+                  - ALL
+    service:
+      app:
+        ports:
+          http:
+            port: 8080
+    route:
+      app:
+        hostnames:
+          - 'rss.xcd.dev'
+        parentRefs:
+          - name: envoy-internal
+            namespace: network

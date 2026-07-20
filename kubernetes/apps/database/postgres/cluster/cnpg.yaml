@@ -1,0 +1,63 @@
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: shared-pg
+  annotations:
+    cnpg.io/skipEmptyWalArchiveCheck: enabled
+spec:
+  instances: 3
+  primaryUpdateMethod: switchover
+  imageName: ghcr.io/cloudnative-pg/postgresql:18.4-standard-trixie@sha256:4e4ac3fb2c914cfb44f80f0b8be8aa550e83b80bf5220df49c3a8780c1f79bc8
+
+  topologySpreadConstraints:
+    - maxSkew: 1
+      topologyKey: kubernetes.io/hostname
+      whenUnsatisfiable: DoNotSchedule
+      labelSelector:
+        matchLabels:
+          cnpg.io/cluster: shared-pg
+
+  bootstrap:
+    recovery:
+      source: source
+
+  externalClusters:
+    - name: source
+      plugin:
+        name: barman-cloud.cloudnative-pg.io
+        parameters:
+          barmanObjectName: shared-store
+          serverName: shared-pg-v18
+
+  storage:
+    pvcTemplate:
+      storageClassName: ceph-block
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: 10Gi
+
+  resources:
+    requests:
+      memory: '512Mi'
+      cpu: '100m'
+    limits:
+      memory: '2Gi'
+
+  postgresql:
+    parameters:
+      timezone: Europe/Berlin
+      max_wal_size: '512MB'
+      min_wal_size: '128MB'
+      max_slot_wal_keep_size: '1GB'
+      wal_compression: 'on'
+      wal_keep_size: '0'
+
+  plugins:
+    - name: barman-cloud.cloudnative-pg.io
+      isWALArchiver: true
+      parameters:
+        barmanObjectName: shared-store
+        serverName: shared-pg-v18

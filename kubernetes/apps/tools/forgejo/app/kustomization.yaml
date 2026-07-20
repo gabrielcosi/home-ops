@@ -1,0 +1,13 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ./ocirepository.yaml
+  - ./helmrelease.yaml
+  - ./httproute.yaml
+  - ./cnpg.yaml
+  - ./objectstore.yaml
+  - ./pooler.yaml
+  - ./dragonfly.yaml
+  - ./externalsecret.yaml
+  - ./backup.yaml

@@ -1,0 +1,35 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: gabrielcosi
+spec:
+  components:
+    - ../../../../components/anubis
+  dependsOn:
+    - name: dragonfly-operator
+      namespace: dragonfly-system
+  healthChecks:
+    - apiVersion: dragonflydb.io/v1alpha1
+      kind: Dragonfly
+      name: gabrielcosi-dragonfly
+      namespace: portfolio
+    - apiVersion: helm.toolkit.fluxcd.io/v2
+      kind: HelmRelease
+      name: gabrielcosi
+      namespace: portfolio
+  interval: 1h
+  path: ./kubernetes/apps/portfolio/gabrielcosi/app
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+    namespace: flux-system
+  targetNamespace: portfolio
+  wait: false
+  postBuild:
+    substitute:
+      APP: gabrielcosi
+      APP_NAMESPACE: portfolio
+      ANUBIS_TARGET: http://gabrielcosi.portfolio.svc.cluster.local:3000
+      ANUBIS_ALLOW_PATH_REGEX: '^/(rss\.xml|atom\.xml|feed\.xml|index\.xml|feed\.atom|index\.rss|feed/?|rss/?|rss/feed\.xml)'

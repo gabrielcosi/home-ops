@@ -1,0 +1,103 @@
+---
+name: monitoring
+
+services:
+  vmagent:
+    # renovate: datasource=docker depName=quay.io/victoriametrics/vmagent
+    image: quay.io/victoriametrics/vmagent:v1.148.0
+    container_name: vmagent
+    restart: unless-stopped
+    group_add:
+      - "989" # host docker group, for /var/run/docker.sock
+    command:
+      - --promscrape.config=/etc/vmagent/scrape.yaml
+      - --remoteWrite.url=http://towonel-hub:18429/api/v1/write
+      - --remoteWrite.basicAuth.username=vps
+      - --remoteWrite.basicAuth.password=${VPS_MONITORING_PASSWORD}
+      - --remoteWrite.label=cluster=edge-vps
+      - --remoteWrite.label=machine=vps
+      - --remoteWrite.label=location=hetzner
+      - --remoteWrite.tmpDataPath=/vmagentdata
+      - --remoteWrite.maxDiskUsagePerURL=1GB
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=16m
+    volumes:
+      - ./config/vmagent.yaml:/etc/vmagent/scrape.yaml:ro
+      - vmagent-data:/vmagentdata
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+          cpus: "0.5"
+    logging: &default-logging
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  node-exporter:
+    # renovate: datasource=docker depName=quay.io/prometheus/node-exporter
+    image: quay.io/prometheus/node-exporter:v1.12.1
+    container_name: node-exporter
+    restart: unless-stopped
+    command:
+      - --path.rootfs=/host
+      - --path.procfs=/host/proc
+      - --path.sysfs=/host/sys
+      - --collector.filesystem.mount-points-exclude=^/(dev|proc|sys|var/lib/docker/.+)($$|/)
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=16m
+    volumes:
+      - /:/host:ro,rslave
+    deploy:
+      resources:
+        limits:
+          memory: 64M
+          cpus: "0.25"
+    logging: *default-logging
+
+  fluent-bit:
+    # renovate: datasource=docker depName=cr.fluentbit.io/fluent/fluent-bit
+    image: cr.fluentbit.io/fluent/fluent-bit:5.0
+    container_name: fluent-bit
+    restart: unless-stopped
+    environment:
+      VPS_MONITORING_PASSWORD: ${VPS_MONITORING_PASSWORD}
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=16m
+    volumes:
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - ./config/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf:ro
+      - ./config/enrich.lua:/fluent-bit/etc/enrich.lua:ro
+      - fluent-bit-data:/fluent-bit/data
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+          cpus: "0.5"
+    logging: *default-logging
+
+volumes:
+  vmagent-data:
+  fluent-bit-data:
+
+networks:
+  default:
+    name: edge
+    external: true

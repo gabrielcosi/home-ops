@@ -1,0 +1,46 @@
+---
+name: gatus
+
+services:
+  gatus:
+    # renovate: datasource=docker depName=ghcr.io/twin/gatus
+    image: ghcr.io/twin/gatus:v5.36.0
+    container_name: gatus
+    restart: unless-stopped
+    environment:
+      GATUS_DELAY_START_SECONDS: '5'
+      GATUS_CONFIG_PATH: /config
+      GATUS_WEB_PORT: '8080'
+      TZ: Europe/Berlin
+      PUSHOVER_TOKEN: ${GATUS_PUSHOVER_TOKEN}
+      PUSHOVER_USER_KEY: ${GATUS_PUSHOVER_USER_KEY}
+      REMOTE_HEARTBEAT_TOKEN: ${GATUS_REMOTE_HEARTBEAT_TOKEN}
+    extra_hosts:
+      - status.xcd.dev:${VPS_IP}
+    volumes:
+      - gatus-config:/config
+    configs:
+      - source: gatus_config
+        target: /config/config.yaml
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+          cpus: '0.5'
+    logging:
+      driver: json-file
+      options:
+        max-size: '10m'
+        max-file: '3'
+
+volumes:
+  gatus-config:
+
+configs:
+  gatus_config:
+    file: ./config/config.yaml
+
+networks:
+  default:
+    name: edge
+    external: true

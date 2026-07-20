@@ -1,0 +1,83 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: karma
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: karma
+  interval: 1h
+  values:
+    controllers:
+      karma:
+        pod:
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 65534
+            runAsGroup: 65534
+            seccompProfile:
+              type: RuntimeDefault
+        containers:
+          app:
+            image:
+              repository: ghcr.io/prymitive/karma
+              tag: v0.131
+            env:
+              ALERTMANAGER_URI: http://vmalertmanager-victoria-metrics-cluster.monitoring.svc.cluster.local:9093
+              ALERTMANAGER_PROXY: true
+            probes:
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /health
+                    port: 8080
+                  initialDelaySeconds: 0
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+                  failureThreshold: 3
+
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /health
+                    port: 8080
+                  initialDelaySeconds: 0
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+                  failureThreshold: 3
+
+            resources:
+              requests:
+                cpu: 10m
+              limits:
+                memory: 64Mi
+
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities:
+                drop: ['ALL']
+
+    service:
+      app:
+        ports:
+          http:
+            port: 8080
+
+    route:
+      app:
+        hostnames:
+          - 'karma.xcd.dev'
+        parentRefs:
+          - name: envoy-internal
+            namespace: network
+
+    serviceMonitor:
+      app:
+        endpoints:
+          - port: http

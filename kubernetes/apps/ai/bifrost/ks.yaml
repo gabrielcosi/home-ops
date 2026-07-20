@@ -1,0 +1,26 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: bifrost
+spec:
+  dependsOn:
+    - name: cloudnative-pg
+      namespace: cnpg-system
+    - name: shared-pg
+      namespace: database
+  components:
+    - ../../../../components/postgres/pass
+  interval: 1h
+  path: ./kubernetes/apps/ai/bifrost/app
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+    namespace: flux-system
+  targetNamespace: ai
+  wait: false
+  postBuild:
+    substitute:
+      APP: bifrost
+      DATABASE_HOST: shared-pg-rw.database.svc.cluster.local

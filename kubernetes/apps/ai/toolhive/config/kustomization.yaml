@@ -1,0 +1,11 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ./externalsecret.yaml
+  - ./httproute.yaml
+  - ./mcpgroup.yaml
+  - ./servicemonitor.yaml
+  - ./telemetry.yaml
+  - ./vmcpserver.yaml
+  - ./grafanadashboard.yaml

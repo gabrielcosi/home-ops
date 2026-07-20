@@ -1,0 +1,19 @@
+---
+apiVersion: toolhive.stacklok.dev/v1beta1
+kind: MCPRemoteProxy
+metadata:
+  name: outline-mcp
+spec:
+  remoteUrl: 'https://docs.xcd.dev/mcp'
+  transport: streamable-http
+  groupRef:
+    name: mcp-tools
+  telemetryConfigRef:
+    name: prometheus
+    serviceName: outline-mcp
+  headerForward:
+    addHeadersFromSecret:
+      - headerName: Authorization
+        valueSecretRef:
+          name: outline-mcp-token
+          key: OUTLINE_MCP_TOKEN

@@ -1,0 +1,69 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: mosquitto
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: mosquitto
+  interval: 1h
+  values:
+    controllers:
+      mosquitto:
+        annotations:
+          reloader.stakater.com/auto: 'true'
+        pod:
+          securityContext:
+            runAsUser: 65534
+            runAsGroup: 65534
+            runAsNonRoot: true
+            fsGroup: 65534
+            seccompProfile:
+              type: RuntimeDefault
+        containers:
+          app:
+            image:
+              repository: public.ecr.aws/docker/library/eclipse-mosquitto
+              tag: 2.0.22
+            resources:
+              requests:
+                cpu: 10m
+                memory: 100Mi
+              limits:
+                memory: 100Mi
+            probes:
+              liveness:
+                enabled: true
+              readiness:
+                enabled: true
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities:
+                drop:
+                  - ALL
+
+    service:
+      mosquitto:
+        type: LoadBalancer
+        annotations:
+          io.cilium/lb-ipam-ips: '192.168.69.188'
+          external-dns.alpha.kubernetes.io/hostname: mqtt.xcd.dev
+        ports:
+          mqtt:
+            port: 1883
+
+    persistence:
+      data:
+        existingClaim: mosquitto
+        globalMounts:
+          - path: /mosquitto/data
+
+      config:
+        type: custom
+        volumeSpec:
+          secret:
+            secretName: mosquitto-secrets
+        globalMounts:
+          - path: /mosquitto/config

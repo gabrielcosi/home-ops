@@ -1,0 +1,31 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: shared-pg
+  namespace: database
+spec:
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: shared-pg
+  dependsOn:
+    - name: cloudnative-pg
+      namespace: cnpg-system
+    - name: plugin-barman-cloud
+      namespace: cnpg-system
+  healthChecks:
+    - apiVersion: postgresql.cnpg.io/v1
+      kind: Cluster
+      name: shared-pg
+      namespace: database
+  interval: 1h
+  path: ./kubernetes/apps/database/postgres/cluster
+  prune: true
+  retryInterval: 2m
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+    namespace: flux-system
+  targetNamespace: database
+  timeout: 5m
+  wait: false

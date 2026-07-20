@@ -1,0 +1,137 @@
+prometheus: http://vmauth-victoria-metrics-cluster.monitoring.svc.cluster.local:8427
+
+badges:
+  - id: talos_version
+    icon: si:talos
+    query: label_replace(node_os_info{name="Talos"}, "version_id", "$1", "version_id", "v(.+)")
+    valueExpr: labels["version_id"]
+    title: Talos
+
+  - id: kubernetes_version
+    icon: si:kubernetes
+    query: label_replace(kubernetes_build_info{service="kubernetes"}, "git_version", "$1", "git_version", "v(.+)")
+    valueExpr: labels["git_version"]
+    title: Kubernetes
+
+  - id: cluster_node_count
+    query: count(count by (node) (kube_node_status_condition{condition="Ready"}))
+    valueExpr: humanizeCommas(result)
+    colorExpr: '"green"'
+    title: Nodes
+
+  - id: cluster_pod_count
+    query: sum(kube_pod_status_phase{phase="Running"})
+    valueExpr: humanizeCommas(result)
+    colorExpr: '"green"'
+    title: Pods
+
+  - id: cluster_latency_over_7d
+    query: quantile(0.99, gatus_results_duration_seconds)
+    valueExpr: string(math.round(result * 1000.0)) + " ms"
+    colorExpr: 'colorScale(result, [0.3, 0.7], ["green", "orange", "red"])'
+    title: Gateway Latency
+
+  - id: cluster_cpu_usage
+    query: round(avg(sum by (instance, cpu, cluster) (rate(node_cpu_seconds_total{job="node-exporter",mode!~"idle|iowait|steal"}[5m]))) by (cluster) * 100, 0.1)
+    valueExpr: string(result) + "%"
+    colorExpr: 'colorScale(result, [35.0, 75.0], ["green", "orange", "red"])'
+    title: CPU
+
+  - id: cluster_memory_usage
+    query: round(sum(node_memory_MemTotal_bytes{job="node-exporter"} - node_memory_MemAvailable_bytes{job="node-exporter"}) by (cluster) / sum(node_memory_MemTotal_bytes{job="node-exporter"}) by (cluster) * 100, 0.1)
+    valueExpr: string(result) + "%"
+    colorExpr: 'colorScale(result, [49.0, 75.0], ["green", "orange", "red"])'
+    title: Memory
+
+  - id: cluster_age_days
+    query: round(time() - max(kube_node_created))
+    valueExpr: humanizeDurationDays(result)
+    colorExpr: '"green"'
+    title: Age
+
+  - id: cluster_uptime_days
+    query: round(avg(node_time_seconds - node_boot_time_seconds))
+    valueExpr: humanizeDurationDays(result)
+    colorExpr: '"green"'
+    title: Uptime
+
+  - id: cluster_alert_count
+    query: ALERTS{alertstate="firing"} - 1
+    colorExpr: 'colorScale(result, [1.0], ["green", "red"])'
+    title: Alerts
+
+  - id: global_sla
+    query: |
+      round(
+        sum(increase(gatus_results_total{success="true"}[7d]))
+        /
+        sum(increase(gatus_results_total[7d]))
+        * 100,
+        0.01
+      )
+    valueExpr: string(result) + "%"
+    colorExpr: 'colorScale(result, [99.0, 99.9], ["red", "orange", "green"])'
+    title: SLA (7d)
+
+  - id: llms_tokens_total
+    query: |
+      round(
+        sum(increase(bifrost_input_tokens_total[7d]))
+        +
+        sum(increase(bifrost_output_tokens_total[7d]))
+      )
+    valueExpr: humanize(result) + " tokens"
+    title: LLM Tokens (7d)
+
+  - id: llms_top_model
+    query: |
+      topk(
+        1,
+        sum by (model) (
+          increase(bifrost_input_tokens_total[7d])
+          +
+          increase(bifrost_output_tokens_total[7d])
+        )
+      )
+    valueExpr: labels["model"]
+    title: Top LLM Model (7d)
+
+graphs:
+  - id: cluster_pod_count
+    query: sum(kube_pod_status_phase{phase="Running"})
+    title: Pods
+    maxDuration: 7d
+
+  - id: cluster_latency_over_7d
+    query: quantile(0.99, gatus_results_duration_seconds)
+    title: Gateway Latency
+    maxDuration: 7d
+
+  - id: cluster_cpu_usage
+    query: round(avg(sum by (instance, cpu, cluster) (rate(node_cpu_seconds_total{job="node-exporter",mode!~"idle|iowait|steal"}[5m]))) by (cluster) * 100, 0.1)
+    title: CPU
+    maxDuration: 7d
+
+  - id: cluster_memory_usage
+    query: round(sum(node_memory_MemTotal_bytes{job="node-exporter"} - node_memory_MemAvailable_bytes{job="node-exporter"}) by (cluster) / sum(node_memory_MemTotal_bytes{job="node-exporter"}) by (cluster) * 100, 0.1)
+    title: Memory
+    maxDuration: 7d
+
+  - id: global_sla
+    query: |
+      sum(increase(gatus_results_total{success="true"}[7d]))
+      /
+      sum(increase(gatus_results_total[7d]))
+      * 100
+    title: SLA (7d)
+    maxDuration: 7d
+
+  - id: llms_tokens_total
+    query: |
+      round(
+        sum(increase(bifrost_input_tokens_total[7d]))
+        +
+        sum(increase(bifrost_output_tokens_total[7d]))
+      )
+    title: LLM Tokens (7d)
+    maxDuration: 7d

@@ -1,0 +1,38 @@
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: unpoller
+spec:
+  groups:
+    - name: unpoller.rules
+      rules:
+        - alert: UniFiDeviceHighCPU
+          expr: |-
+            avg_over_time(unpoller_device_cpu_utilization_ratio[15m]) > 0.75
+          for: 15m
+          annotations:
+            summary: >-
+              UniFi device {{ $labels.name }} has averaged {{ $value | humanizePercentage }} CPU over the last 15 minutes
+          labels:
+            severity: warning
+
+        - alert: UniFiDeviceHighMemory
+          expr: |-
+            avg_over_time(unpoller_device_memory_utilization_ratio[15m]) > 0.9
+          for: 30m
+          annotations:
+            summary: >-
+              UniFi device {{ $labels.name }} has averaged {{ $value | humanizePercentage }} memory over the last 15 minutes
+          labels:
+            severity: warning
+
+        - alert: UniFiControllerUnreachable
+          expr: |-
+            unpoller_controller_up == 0
+          for: 10m
+          annotations:
+            summary: >-
+              unpoller cannot reach the UniFi controller — UniFi device metrics and alerts are blind
+          labels:
+            severity: warning

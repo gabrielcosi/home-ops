@@ -1,0 +1,20 @@
+---
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: BackendTrafficPolicy
+metadata:
+  name: plik
+spec:
+  targetRefs:
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      name: plik
+  # Route-level policy replaces (does not merge with) the global one, so the
+  # timeout/buffer are restated. compression: [] disables global compression,
+  # which breaks Range — i.e. no resumable large downloads.
+  compression: []
+  connection:
+    bufferLimit: 8Mi
+  tcpKeepalive: {}
+  timeout:
+    http:
+      requestTimeout: 0s

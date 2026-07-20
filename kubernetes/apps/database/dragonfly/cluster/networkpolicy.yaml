@@ -1,0 +1,19 @@
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: dragonfly-allow-clients
+  namespace: database
+spec:
+  description: Allow any in-cluster pod to reach the shared Dragonfly client port.
+  endpointSelector:
+    matchLabels:
+      k8s:app: dragonfly
+      k8s:app.kubernetes.io/name: dragonfly
+  ingress:
+    - fromEntities:
+        - cluster
+      toPorts:
+        - ports:
+            - port: "6379"
+              protocol: TCP

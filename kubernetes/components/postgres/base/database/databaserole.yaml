@@ -1,0 +1,15 @@
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: DatabaseRole
+metadata:
+  name: postgres-${APP}
+spec:
+  cluster:
+    name: shared-pg
+  databaseRoleReclaimPolicy: retain
+  ensure: present
+  login: true
+  name: ${DATABASE_OWNER:=${APP}}
+  passwordSecret:
+    name: ${APP}-postgres
+  superuser: false

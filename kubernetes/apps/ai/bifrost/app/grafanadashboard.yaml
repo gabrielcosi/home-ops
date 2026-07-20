@@ -1,0 +1,261 @@
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: bifrost
+spec:
+  allowCrossNamespaceImport: true
+  instanceSelector:
+    matchLabels:
+      dashboards: grafana
+  json: |
+    {
+      "uid": "bifrost-overview",
+      "title": "Bifrost",
+      "tags": ["bifrost", "llm", "ai-gateway"],
+      "schemaVersion": 39,
+      "version": 1,
+      "editable": true,
+      "graphTooltip": 1,
+      "time": { "from": "now-24h", "to": "now" },
+      "timepicker": {},
+      "refresh": "30s",
+      "templating": {
+        "list": [
+          {
+            "name": "provider",
+            "label": "Provider",
+            "type": "query",
+            "datasource": { "type": "prometheus", "uid": "victoriametrics" },
+            "query": { "qryType": 1, "query": "label_values(bifrost_success_requests_total, provider)", "refId": "PrometheusVariableQueryEditor-VariableQuery" },
+            "includeAll": true,
+            "multi": true,
+            "current": { "selected": true, "text": ["All"], "value": ["$__all"] },
+            "refresh": 2,
+            "sort": 1
+          },
+          {
+            "name": "model",
+            "label": "Model",
+            "type": "query",
+            "datasource": { "type": "prometheus", "uid": "victoriametrics" },
+            "query": { "qryType": 1, "query": "label_values(bifrost_success_requests_total{provider=~\"$provider\"}, model)", "refId": "PrometheusVariableQueryEditor-VariableQuery" },
+            "includeAll": true,
+            "multi": true,
+            "current": { "selected": true, "text": ["All"], "value": ["$__all"] },
+            "refresh": 2,
+            "sort": 1
+          },
+          {
+            "name": "vkey",
+            "label": "Virtual Key",
+            "type": "query",
+            "datasource": { "type": "prometheus", "uid": "victoriametrics" },
+            "query": { "qryType": 1, "query": "label_values(bifrost_success_requests_total{provider=~\"$provider\",model=~\"$model\"}, virtual_key_name)", "refId": "PrometheusVariableQueryEditor-VariableQuery" },
+            "includeAll": true,
+            "multi": true,
+            "current": { "selected": true, "text": ["All"], "value": ["$__all"] },
+            "refresh": 2,
+            "sort": 1
+          }
+        ]
+      },
+      "panels": [
+        {
+          "type": "stat", "title": "Requests (range)",
+          "id": 1, "gridPos": { "h": 4, "w": 6, "x": 0, "y": 0 },
+          "datasource": { "type": "prometheus", "uid": "victoriametrics" },
+          "targets": [
+            { "refId": "A", "expr": "sum(increase(bifrost_success_requests_total{provider=~\"$provider\",model=~\"$model\",virtual_key_name=~\"$vkey\"}[$__range])) + sum(increase(bifrost_error_requests_total{provider=~\"$provider\",model=~\"$model\",virtual_key_name=~\"$vkey\"}[$__range]))", "instant": true, "legendFormat": "requests" }
+          ],
+          "fieldConfig": { "defaults": { "unit": "short", "decimals": 0, "color": { "mode": "thresholds" }, "thresholds": { "mode": "absolute", "steps": [ { "color": "blue", "value": null } ] } }, "overrides": [] },
+          "options": { "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "textMode": "auto", "colorMode": "background", "graphMode": "area" }
+        },
+        {
+          "type": "stat", "title": "Success Rate",
+          "id": 2, "gridPos": { "h": 4, "w": 6, "x": 6, "y": 0 },
+          "datasource": { "type": "prometheus", "uid": "victoriametrics" },
+          "targets": [
+            { "refId": "A", "expr": "sum(rate(bifrost_success_requests_total{provider=~\"$provider\",model=~\"$model\",virtual_key_name=~\"$vkey\"}[$__range])) / clamp_min(sum(rate(bifrost_success_requests_total{provider=~\"$provider\",model=~\"$model\",virtual_key_name=~\"$vkey\"}[$__range])) + sum(rate(bifrost_error_requests_total{provider=~\"$provider\",model=~\"$model\",virtual_key_name=~\"$vkey\"}[$__range])), 1e-9)", "instant": true, "legendFormat": "success rate" }
+          ],
+          "fieldConfig": { "defaults": { "unit": "percentunit", "decimals": 2, "min": 0, "max": 1, "color": { "mode": "thresholds" }, "thresholds": { "mode": "absolute", "steps": [ { "color": "red", "value": null }, { "color": "orange", "value": 0.95 }, { "color": "green", "value": 0.99 } ] } }, "overrides": [] },
+          "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "background", "graphMode": "none" }
+        },
+        {
+          "type": "stat", "title": "Total Cost (range)",
+          "id": 3, "gridPos": { "h": 4, "w": 6, "x": 12, "y": 0 },
+          "datasource": { "type": "prometheus", "uid": "victoriametrics" },
+          "targets": [
+            { "refId": "A", "expr": "sum(increase(bifrost_cost_total{provider=~\"$provider\",model=~\"$model\",virtual_key_name=~\"$vkey\"}[$__range]))", "instant": true, "legendFormat": "cost" }
+          ],
+          "fieldConfig": { "defaults": { "unit": "currencyUSD", "decimals": 4, "color": { "mode": "thresholds" }, "thresholds": { "mode": "absolute", "steps": [ { "color": "purple", "value": null } ] } }, "overrides": [] },
+          "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "background", "graphMode": "area" }
+        },
+        {
+          "type": "stat", "title": "Tokens (range)",
+          "id": 4, "gridPos": { "h": 4, "w": 6, "x": 18, "y": 0 },
+          "datasource": { "type": "prometheus", "uid": "victoriametrics" },
+          "targets": [
+            { "refId": "A", "expr": "sum(increase(bifrost_input_tokens_total{provider=~\"$provider\",model=~\"$model\",virtual_key_name=~\"$vkey\"}[$__range])) + sum(increase(bifrost_output_tokens_total{provider=~\"$provider\",model=~\"$model\",virtual_key_name=~\"$vkey\"}[$__range]))", "instant": true, "legendFormat": "tokens" }
+          ],
+          "fieldConfig": { "defaults": { "unit": "short", "decimals": 0, "color": { "mode": "thresholds" }, "thresholds": { "mode": "absolute", "steps": [ { "color": "blue", "value": null } ] } }, "overrides": [] },
+          "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "background", "graphMode": "area" }
+        },
+
+        {
+          "type": "timeseries", "title": "Request rate (success vs error)",
+          "id": 10, "gridPos": { "h": 8, "w": 12, "x": 0, "y": 4 },
+          "datasource": { "type": "prometheus", "uid": "victoriametrics" },
+          "targets": [
+            { "refId": "A", "expr": "sum(rate(bifrost_success_requests_total{provider=~\"$provider\",model=~\"$model\",virtual_key_name=~\"$vkey\"}[$__rate_interval]))", "legendFormat": "success" },
+            { "refId": "B", "expr": "sum(rate(bifrost_error_requests_total{provider=~\"$provider\",model=~\"$model\",virtual_key_name=~\"$vkey\"}[$__rate_interval]))", "legendFormat": "error" }
+          ],
+          "fieldConfig": { "defaults": { "unit": "reqps", "custom": { "drawStyle": "bars", "fillOpacity": 70, "stacking": { "mode": "normal", "group": "A" }, "lineWidth": 0 } }, "overrides": [
+            { "matcher": { "id": "byName", "options": "success" }, "properties": [ { "id": "color", "value": { "mode": "fixed", "fixedColor": "green" } } ] },
+            { "matcher": { "id": "byName", "options": "error" }, "properties": [ { "id": "color", "value": { "mode": "fixed", "fixedColor": "red" } } ] }
+          ] },
+          "options": { "legend": { "displayMode": "list", "placement": "bottom", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } }
+        },
+        {
+          "type": "timeseries", "title": "Requests by model",
+          "id": 11, "gridPos": { "h": 8, "w": 12, "x": 12, "y": 4 },
+          "datasource": { "type": "prometheus", "uid": "victoriametrics" },
+          "targets": [
+            { "refId": "A", "expr": "sum by (model) (rate(bifrost_success_requests_total{provider=~\"$provider\",model=~\"$model\",virtual_key_name=~\"$vkey\"}[$__rate_interval]))", "legendFormat": "{{model}}" }
+          ],
+          "fieldConfig": { "defaults": { "unit": "reqps", "custom": { "drawStyle": "line", "fillOpacity": 20, "lineInterpolation": "smooth", "stacking": { "mode": "normal", "group": "A" } } }, "overrides": [] },
+          "options": { "legend": { "displayMode": "table", "placement": "right", "showLegend": true, "calcs": ["mean","max"] }, "tooltip": { "mode": "multi", "sort": "desc" } }
+        },
+
+        {
+          "type": "timeseries", "title": "Token throughput by model (in / out)",
+          "id": 20, "gridPos": { "h": 8, "w": 12, "x": 0, "y": 12 },
+          "datasource": { "type": "prometheus", "uid": "victoriametrics" },
+          "targets": [
+            { "refId": "A", "expr": "sum by (model) (rate(bifrost_input_tokens_total{provider=~\"$provider\",model=~\"$model\",virtual_key_name=~\"$vkey\"}[$__rate_interval]))", "legendFormat": "{{model}} in" },
+            { "refId": "B", "expr": "sum by (model) (rate(bifrost_output_tokens_total{provider=~\"$provider\",model=~\"$model\",virtual_key_name=~\"$vkey\"}[$__rate_interval]))", "legendFormat": "{{model}} out" }
+          ],
+          "fieldConfig": { "defaults": { "unit": "short", "custom": { "drawStyle": "line", "fillOpacity": 15, "lineInterpolation": "smooth" } } },
+          "options": { "legend": { "displayMode": "table", "placement": "right", "showLegend": true, "calcs": ["mean","max"] }, "tooltip": { "mode": "multi", "sort": "desc" } }
+        },
+        {
+          "type": "timeseries", "title": "Cost rate by model",
+          "id": 21, "gridPos": { "h": 8, "w": 12, "x": 12, "y": 12 },
+          "datasource": { "type": "prometheus", "uid": "victoriametrics" },
+          "targets": [
+            { "refId": "A", "expr": "sum by (model) (rate(bifrost_cost_total{provider=~\"$provider\",model=~\"$model\",virtual_key_name=~\"$vkey\"}[$__rate_interval]))", "legendFormat": "{{model}}" }
+          ],
+          "fieldConfig": { "defaults": { "unit": "currencyUSD", "decimals": 4, "custom": { "drawStyle": "line", "fillOpacity": 25, "lineInterpolation": "smooth", "stacking": { "mode": "normal", "group": "A" } } } },
+          "options": { "legend": { "displayMode": "table", "placement": "right", "showLegend": true, "calcs": ["sum","mean"] }, "tooltip": { "mode": "multi", "sort": "desc" } }
+        },
+
+        {
+          "type": "timeseries", "title": "Upstream latency (p50 / p95 / p99)",
+          "id": 30, "gridPos": { "h": 8, "w": 8, "x": 0, "y": 20 },
+          "datasource": { "type": "prometheus", "uid": "victoriametrics" },
+          "targets": [
+            { "refId": "A", "expr": "histogram_quantile(0.50, sum by (le) (rate(bifrost_upstream_latency_seconds_bucket{provider=~\"$provider\",model=~\"$model\",virtual_key_name=~\"$vkey\",is_success=\"true\"}[$__rate_interval])))", "legendFormat": "p50" },
+            { "refId": "B", "expr": "histogram_quantile(0.95, sum by (le) (rate(bifrost_upstream_latency_seconds_bucket{provider=~\"$provider\",model=~\"$model\",virtual_key_name=~\"$vkey\",is_success=\"true\"}[$__rate_interval])))", "legendFormat": "p95" },
+            { "refId": "C", "expr": "histogram_quantile(0.99, sum by (le) (rate(bifrost_upstream_latency_seconds_bucket{provider=~\"$provider\",model=~\"$model\",virtual_key_name=~\"$vkey\",is_success=\"true\"}[$__rate_interval])))", "legendFormat": "p99" }
+          ],
+          "fieldConfig": { "defaults": { "unit": "s", "custom": { "drawStyle": "line", "fillOpacity": 10, "lineInterpolation": "smooth" } } },
+          "options": { "legend": { "displayMode": "list", "placement": "bottom", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } }
+        },
+        {
+          "type": "timeseries", "title": "Time to first token (p50 / p95 / p99)",
+          "id": 31, "gridPos": { "h": 8, "w": 8, "x": 8, "y": 20 },
+          "datasource": { "type": "prometheus", "uid": "victoriametrics" },
+          "targets": [
+            { "refId": "A", "expr": "histogram_quantile(0.50, sum by (le) (rate(bifrost_stream_first_token_latency_seconds_bucket{provider=~\"$provider\",model=~\"$model\",virtual_key_name=~\"$vkey\"}[$__rate_interval])))", "legendFormat": "p50" },
+            { "refId": "B", "expr": "histogram_quantile(0.95, sum by (le) (rate(bifrost_stream_first_token_latency_seconds_bucket{provider=~\"$provider\",model=~\"$model\",virtual_key_name=~\"$vkey\"}[$__rate_interval])))", "legendFormat": "p95" },
+            { "refId": "C", "expr": "histogram_quantile(0.99, sum by (le) (rate(bifrost_stream_first_token_latency_seconds_bucket{provider=~\"$provider\",model=~\"$model\",virtual_key_name=~\"$vkey\"}[$__rate_interval])))", "legendFormat": "p99" }
+          ],
+          "fieldConfig": { "defaults": { "unit": "s", "custom": { "drawStyle": "line", "fillOpacity": 10, "lineInterpolation": "smooth" } } },
+          "options": { "legend": { "displayMode": "list", "placement": "bottom", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } }
+        },
+        {
+          "type": "timeseries", "title": "Inter-token latency (p50 / p95 / p99)",
+          "id": 32, "gridPos": { "h": 8, "w": 8, "x": 16, "y": 20 },
+          "datasource": { "type": "prometheus", "uid": "victoriametrics" },
+          "targets": [
+            { "refId": "A", "expr": "histogram_quantile(0.50, sum by (le) (rate(bifrost_stream_inter_token_latency_seconds_bucket{provider=~\"$provider\",model=~\"$model\",virtual_key_name=~\"$vkey\"}[$__rate_interval])))", "legendFormat": "p50" },
+            { "refId": "B", "expr": "histogram_quantile(0.95, sum by (le) (rate(bifrost_stream_inter_token_latency_seconds_bucket{provider=~\"$provider\",model=~\"$model\",virtual_key_name=~\"$vkey\"}[$__rate_interval])))", "legendFormat": "p95" },
+            { "refId": "C", "expr": "histogram_quantile(0.99, sum by (le) (rate(bifrost_stream_inter_token_latency_seconds_bucket{provider=~\"$provider\",model=~\"$model\",virtual_key_name=~\"$vkey\"}[$__rate_interval])))", "legendFormat": "p99" }
+          ],
+          "fieldConfig": { "defaults": { "unit": "s", "custom": { "drawStyle": "line", "fillOpacity": 10, "lineInterpolation": "smooth" } } },
+          "options": { "legend": { "displayMode": "list", "placement": "bottom", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } }
+        },
+
+        {
+          "type": "table", "title": "Top virtual keys (range)",
+          "id": 40, "gridPos": { "h": 9, "w": 12, "x": 0, "y": 28 },
+          "datasource": { "type": "prometheus", "uid": "victoriametrics" },
+          "targets": [
+            { "refId": "A", "expr": "sum by (virtual_key_name) (increase(bifrost_success_requests_total{provider=~\"$provider\",model=~\"$model\",virtual_key_name=~\"$vkey\"}[$__range]))", "instant": true, "format": "table", "legendFormat": "" },
+            { "refId": "B", "expr": "sum by (virtual_key_name) (increase(bifrost_input_tokens_total{provider=~\"$provider\",model=~\"$model\",virtual_key_name=~\"$vkey\"}[$__range]) + increase(bifrost_output_tokens_total{provider=~\"$provider\",model=~\"$model\",virtual_key_name=~\"$vkey\"}[$__range]))", "instant": true, "format": "table" },
+            { "refId": "C", "expr": "sum by (virtual_key_name) (increase(bifrost_cost_total{provider=~\"$provider\",model=~\"$model\",virtual_key_name=~\"$vkey\"}[$__range]))", "instant": true, "format": "table" }
+          ],
+          "transformations": [
+            { "id": "merge", "options": {} },
+            { "id": "organize", "options": { "excludeByName": { "Time": true }, "renameByName": { "virtual_key_name": "Virtual Key", "Value #A": "Requests", "Value #B": "Tokens", "Value #C": "Cost" }, "indexByName": { "virtual_key_name": 0, "Value #A": 1, "Value #B": 2, "Value #C": 3 } } }
+          ],
+          "fieldConfig": { "defaults": { "custom": { "align": "auto" } }, "overrides": [
+            { "matcher": { "id": "byName", "options": "Cost" }, "properties": [ { "id": "unit", "value": "currencyUSD" }, { "id": "decimals", "value": 4 } ] },
+            { "matcher": { "id": "byName", "options": "Requests" }, "properties": [ { "id": "unit", "value": "short" }, { "id": "decimals", "value": 0 } ] },
+            { "matcher": { "id": "byName", "options": "Tokens" }, "properties": [ { "id": "unit", "value": "short" }, { "id": "decimals", "value": 0 } ] }
+          ] },
+          "options": { "showHeader": true, "footer": { "show": false } }
+        },
+        {
+          "type": "timeseries", "title": "Errors by status code",
+          "id": 41, "gridPos": { "h": 9, "w": 6, "x": 12, "y": 28 },
+          "datasource": { "type": "prometheus", "uid": "victoriametrics" },
+          "targets": [
+            { "refId": "A", "expr": "sum by (status_code) (rate(bifrost_error_requests_total{provider=~\"$provider\",model=~\"$model\",virtual_key_name=~\"$vkey\"}[$__rate_interval]))", "legendFormat": "{{status_code}}" }
+          ],
+          "fieldConfig": { "defaults": { "unit": "reqps", "custom": { "drawStyle": "bars", "fillOpacity": 80, "stacking": { "mode": "normal", "group": "A" }, "lineWidth": 0 } } },
+          "options": { "legend": { "displayMode": "list", "placement": "bottom", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } }
+        },
+        {
+          "type": "timeseries", "title": "Retries (by retry count)",
+          "id": 42, "gridPos": { "h": 9, "w": 6, "x": 18, "y": 28 },
+          "datasource": { "type": "prometheus", "uid": "victoriametrics" },
+          "targets": [
+            { "refId": "A", "expr": "sum by (number_of_retries) (rate(bifrost_success_requests_total{provider=~\"$provider\",model=~\"$model\",virtual_key_name=~\"$vkey\"}[$__rate_interval]))", "legendFormat": "{{number_of_retries}} retries" }
+          ],
+          "fieldConfig": { "defaults": { "unit": "reqps", "custom": { "drawStyle": "bars", "fillOpacity": 80, "stacking": { "mode": "normal", "group": "A" }, "lineWidth": 0 } } },
+          "options": { "legend": { "displayMode": "list", "placement": "bottom", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } }
+        },
+
+        {
+          "type": "timeseries", "title": "Key rotation events (by reason)",
+          "id": 50, "gridPos": { "h": 7, "w": 12, "x": 0, "y": 37 },
+          "datasource": { "type": "prometheus", "uid": "victoriametrics" },
+          "targets": [
+            { "refId": "A", "expr": "sum by (provider, key_name, fail_reason) (rate(bifrost_key_rotation_events_total{provider=~\"$provider\"}[$__rate_interval]))", "legendFormat": "{{provider}}/{{key_name}} - {{fail_reason}}" }
+          ],
+          "fieldConfig": { "defaults": { "unit": "ops", "custom": { "drawStyle": "bars", "fillOpacity": 80, "lineWidth": 0 } } },
+          "options": { "legend": { "displayMode": "table", "placement": "right", "showLegend": true, "calcs": ["sum"] }, "tooltip": { "mode": "multi", "sort": "desc" } }
+        },
+        {
+          "type": "stat", "title": "Avg cost / 1K tokens",
+          "id": 51, "gridPos": { "h": 7, "w": 6, "x": 12, "y": 37 },
+          "datasource": { "type": "prometheus", "uid": "victoriametrics" },
+          "targets": [
+            { "refId": "A", "expr": "1000 * sum(increase(bifrost_cost_total{provider=~\"$provider\",model=~\"$model\",virtual_key_name=~\"$vkey\"}[$__range])) / clamp_min(sum(increase(bifrost_input_tokens_total{provider=~\"$provider\",model=~\"$model\",virtual_key_name=~\"$vkey\"}[$__range])) + sum(increase(bifrost_output_tokens_total{provider=~\"$provider\",model=~\"$model\",virtual_key_name=~\"$vkey\"}[$__range])), 1)", "instant": true, "legendFormat": "$/1K" }
+          ],
+          "fieldConfig": { "defaults": { "unit": "currencyUSD", "decimals": 4, "color": { "mode": "thresholds" }, "thresholds": { "mode": "absolute", "steps": [ { "color": "purple", "value": null } ] } } },
+          "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "background", "graphMode": "none" }
+        },
+        {
+          "type": "stat", "title": "Avg tokens / request",
+          "id": 52, "gridPos": { "h": 7, "w": 6, "x": 18, "y": 37 },
+          "datasource": { "type": "prometheus", "uid": "victoriametrics" },
+          "targets": [
+            { "refId": "A", "expr": "(sum(increase(bifrost_input_tokens_total{provider=~\"$provider\",model=~\"$model\",virtual_key_name=~\"$vkey\"}[$__range])) + sum(increase(bifrost_output_tokens_total{provider=~\"$provider\",model=~\"$model\",virtual_key_name=~\"$vkey\"}[$__range]))) / clamp_min(sum(increase(bifrost_success_requests_total{provider=~\"$provider\",model=~\"$model\",virtual_key_name=~\"$vkey\"}[$__range])), 1)", "instant": true, "legendFormat": "tokens/req" }
+          ],
+          "fieldConfig": { "defaults": { "unit": "short", "decimals": 0, "color": { "mode": "thresholds" }, "thresholds": { "mode": "absolute", "steps": [ { "color": "blue", "value": null } ] } } },
+          "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "background", "graphMode": "none" }
+        }
+      ]
+    }

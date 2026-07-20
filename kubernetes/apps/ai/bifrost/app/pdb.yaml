@@ -1,0 +1,12 @@
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: bifrost
+  namespace: ai
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: bifrost
+      app.kubernetes.io/instance: bifrost

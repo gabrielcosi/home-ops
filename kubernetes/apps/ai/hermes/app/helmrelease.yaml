@@ -1,0 +1,181 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: hermes
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: hermes
+  interval: 1h
+  values:
+    controllers:
+      hermes:
+        annotations:
+          reloader.stakater.com/auto: 'true'
+        pod:
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 10000
+            runAsGroup: 10000
+            fsGroup: 10000
+            fsGroupChangePolicy: OnRootMismatch
+            seccompProfile:
+              type: RuntimeDefault
+        initContainers:
+          seed-tools:
+            image:
+              repository: ghcr.io/gabrielcosi/hermes-agent
+              tag: v2026.7.7@sha256:6128527aeac9dbe5e468ce79c5812e9627952335cdefb2743fd7274bd115e5d3
+            command:
+              - sh
+              - -c
+              - |
+                set -e
+                if [ -e /homebrew-runtime/.seeded ]; then
+                  echo "Homebrew already seeded; skipping."
+                else
+                  echo "Resetting incomplete Homebrew seed."
+                  chmod -R u+w /homebrew-runtime 2>/dev/null || true
+                  find /homebrew-runtime -mindepth 1 -maxdepth 1 -exec rm -rf {} +
+                  echo "Seeding Homebrew from image /home/linuxbrew/.linuxbrew into /homebrew-runtime."
+                  cp -RP /home/linuxbrew/.linuxbrew/. /homebrew-runtime/
+                  touch /homebrew-runtime/.seeded
+                  echo "Homebrew seed complete."
+                fi
+                echo "Linking memini plugin into /opt/data/plugins."
+                mkdir -p /opt/data/plugins
+                ln -sfn /opt/memini /opt/data/plugins/memini
+                echo "Ensuring /opt/data/home and /opt/data/bin exist."
+                mkdir -p /opt/data/home /opt/data/bin
+                echo "Writing /opt/data/home/.profile with PATH."
+                printf '%s\n' 'export PATH="/opt/data/bin:/home/linuxbrew/.linuxbrew/bin:/opt/hermes/.venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"' > /opt/data/home/.profile
+                echo "Mirroring .profile to /opt/data/home/.bashrc."
+                cp /opt/data/home/.profile /opt/data/home/.bashrc
+                echo "Shell dotfiles ready."
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities:
+                drop:
+                  - ALL
+          seed-config:
+            image:
+              repository: mikefarah/yq
+              tag: '4.53.3'
+            command:
+              - sh
+              - -c
+              - |
+                set -eu
+                if [ ! -f /opt/data/config.yaml ]; then
+                  echo "seed-config: no persisted config; seeding from git source."
+                  cp /config-src/config.yaml /opt/data/config.yaml
+                  cp /config-src/config.yaml /opt/data/.config.git-base.yaml
+                  exit 0
+                fi
+                cp /opt/data/config.yaml /tmp/config.work.yaml
+                if [ -f /opt/data/.config.git-base.yaml ]; then
+                  yq -o=json -I=0 '[... | path] | .[] | select(length > 0) | select(.[-1] | tag == "!!str")' /opt/data/.config.git-base.yaml | sort -u > /tmp/base.keys
+                  yq -o=json -I=0 '[... | path] | .[] | select(length > 0) | select(.[-1] | tag == "!!str")' /config-src/config.yaml | sort -u > /tmp/src.keys
+                  if [ -s /tmp/src.keys ]; then
+                    grep -Fxv -f /tmp/src.keys /tmp/base.keys > /tmp/removed.keys || true
+                    if [ -s /tmp/removed.keys ]; then
+                      echo "seed-config: pruning keys removed from git since last reconcile:"
+                      cat /tmp/removed.keys
+                      yq ea -p=json -o=json -I=0 '[.]' /tmp/removed.keys > /tmp/removed.json
+                      yq -i 'del(.. | select( ([path] - load("/tmp/removed.json")) | length == 0 ))' /tmp/config.work.yaml
+                    fi
+                  fi
+                fi
+                yq eval-all 'select(fileIndex == 0) * select(fileIndex == 1)' /tmp/config.work.yaml /config-src/config.yaml > /tmp/config.final.yaml
+                cp /tmp/config.final.yaml /opt/data/config.yaml
+                cp /config-src/config.yaml /opt/data/.config.git-base.yaml
+                echo "seed-config: merged git over persisted config (git wins; runtime-only keys kept; git deletions pruned)."
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities:
+                drop:
+                  - ALL
+        containers:
+          gateway:
+            image:
+              repository: ghcr.io/gabrielcosi/hermes-agent
+              tag: v2026.7.7@sha256:6128527aeac9dbe5e468ce79c5812e9627952335cdefb2743fd7274bd115e5d3
+            args:
+              - gateway
+              - run
+            env:
+              TZ: Europe/Berlin
+              HOME: /opt/data/home
+              HERMES_HOME: /opt/data
+              PATH: /opt/data/bin:/home/linuxbrew/.linuxbrew/bin:/opt/hermes/.venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+              API_SERVER_ENABLED: true
+              API_SERVER_HOST: 0.0.0.0
+              API_SERVER_PORT: '8642'
+              HERMES_STREAM_READ_TIMEOUT: '300'
+              HERMES_STREAM_STALE_TIMEOUT: '300'
+              HOMEBREW_NO_AUTO_UPDATE: '1'
+              HOMEBREW_NO_ANALYTICS: '1'
+              HOMEBREW_NO_ENV_HINTS: '1'
+              S6_YES_I_WANT_A_WORLD_WRITABLE_RUN_BECAUSE_KUBERNETES: '1'
+              S6_READ_ONLY_ROOT: '1'
+              SEARXNG_URL: http://searxng.tools.svc.cluster.local:8080
+              MEMINI_URL: http://memini.ai.svc.cluster.local:8080
+              MEMINI_NAMESPACE: hermes
+              OPENAI_BASE_URL: http://bifrost.ai.svc.cluster.local:8080/v1
+              CRAWL4AI_API_URL: http://crawl4ai.ai.svc.cluster.local:11235
+              _HERMES_FORCE_GITHUB_TOKEN:
+                valueFrom:
+                  secretKeyRef:
+                    name: hermes-secrets
+                    key: GITHUB_TOKEN
+            envFrom:
+              - secretRef:
+                  name: hermes-secrets
+            resources:
+              requests:
+                cpu: 50m
+                memory: 512Mi
+              limits:
+                memory: 2Gi
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities:
+                drop:
+                  - ALL
+
+    persistence:
+      data:
+        existingClaim: hermes
+        globalMounts:
+          - path: /opt/data
+      homebrew:
+        type: persistentVolumeClaim
+        forceRename: hermes-homebrew
+        accessMode: ReadWriteOnce
+        size: 1Gi
+        storageClass: miroir-replicated
+        advancedMounts:
+          hermes:
+            seed-tools:
+              - path: /homebrew-runtime
+            gateway:
+              - path: /home/linuxbrew/.linuxbrew
+      config:
+        type: configMap
+        name: hermes-config
+        advancedMounts:
+          hermes:
+            seed-config:
+              - path: /config-src/config.yaml
+                subPath: config.yaml
+                readOnly: true
+      tmp:
+        type: emptyDir
+        globalMounts:
+          - path: /tmp
+          - path: /var/tmp
+          - path: /run

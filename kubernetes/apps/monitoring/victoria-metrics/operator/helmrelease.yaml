@@ -1,0 +1,38 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: victoria-metrics-operator
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: victoria-metrics-operator
+  interval: 1h
+  values:
+    fullnameOverride: victoria-metrics
+
+    global:
+      image:
+        registry: quay.io
+
+    crds:
+      enabled: true
+      cleanup:
+        enabled: false
+
+    admissionWebhooks:
+      enabled: false
+
+    operator:
+      disable_prometheus_converter: false
+      enable_converter_ownership: true
+
+    resources:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+      limits:
+        memory: 256Mi
+
+    serviceMonitor:
+      enabled: false

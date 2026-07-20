@@ -1,0 +1,182 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: harbor
+spec:
+  chart:
+    spec:
+      chart: harbor
+      version: 1.19.1
+      sourceRef:
+        kind: HelmRepository
+        name: harbor
+  interval: 1h
+  values:
+    expose:
+      type: route
+      tls:
+        enabled: false
+      route:
+        annotations:
+          gatus.home-operations.com/endpoint: |
+            name: harbor
+            url: https://reg.xcd.dev/api/v2.0/health
+            conditions:
+              - '[STATUS] == 200'
+              - '[BODY].status == healthy'
+        parentRefs:
+          - name: envoy-external
+            namespace: network
+        hosts:
+          - 'reg.xcd.dev'
+
+    externalURL: https://reg.xcd.dev
+
+    core:
+      replicas: 2
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: DoNotSchedule
+      resources:
+        requests:
+          cpu: 10m
+          memory: 128Mi
+        limits:
+          memory: 256Mi
+      extraEnvVars:
+        - name: OAUTH_CLIENT_ID
+          valueFrom:
+            secretKeyRef:
+              name: harbor-secrets
+              key: OAUTH_CLIENT_ID
+        - name: OAUTH_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: harbor-secrets
+              key: OAUTH_CLIENT_SECRET
+        - name: CONFIG_OVERWRITE_JSON
+          value: |
+            {
+              "auth_mode": "oidc_auth",
+              "primary_auth_mode": "true",
+              "oidc_name": "authentik",
+              "oidc_endpoint": "https://auth.xcd.dev/application/o/harbor/",
+              "oidc_group_filter": "Harbor (Users|Admins)",
+              "oidc_groups_claim": "groups",
+              "oidc_admin_group": "Harbor Admins",
+              "oidc_client_id": "$(OAUTH_CLIENT_ID)",
+              "oidc_client_secret": "$(OAUTH_CLIENT_SECRET)",
+              "oidc_scope": "openid,email,profile,offline_access",
+              "oidc_verify_cert": "true",
+              "oidc_auto_onboard": "true",
+              "oidc_user_claim": "preferred_username"
+            }
+      # Argo CD drift guard: force stable secret inputs instead of chart-generated random values.
+      # Remove these once goharbor/harbor-helm randAlphaNum drift is fully resolved upstream.
+      existingSecret: harbor-secrets
+      existingXsrfSecret: harbor-secrets
+      existingXsrfSecretKey: CSRF_KEY
+      secretName: harbor-secrets
+
+    registry:
+      replicas: 2
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: DoNotSchedule
+      registry:
+        resources:
+          requests:
+            cpu: 10m
+            memory: 128Mi
+          limits:
+            memory: 512Mi
+      controller:
+        resources:
+          requests:
+            cpu: 10m
+            memory: 64Mi
+          limits:
+            memory: 64Mi
+      # Argo CD drift guard: avoid non-deterministic `htpasswd` rendering and random registry HTTP secret.
+      # Remove these once goharbor/harbor-helm randAlphaNum drift is fully resolved upstream.
+      existingSecret: harbor-secrets
+      credentials:
+        existingSecret: harbor-secrets
+
+    portal:
+      replicas: 2
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: DoNotSchedule
+      resources:
+        requests:
+          cpu: 10m
+          memory: 64Mi
+        limits:
+          memory: 64Mi
+
+    jobservice:
+      replicas: 2
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: DoNotSchedule
+      jobLoggers:
+        - stdout
+      resources:
+        requests:
+          cpu: 10m
+          memory: 64Mi
+        limits:
+          memory: 64Mi
+      # Argo CD drift guard: avoid chart-generated random jobservice secret.
+      # Remove this once goharbor/harbor-helm randAlphaNum drift is fully resolved upstream.
+      existingSecret: harbor-secrets
+
+    trivy:
+      replicas: 1
+      resources:
+        requests:
+          cpu: 50m
+          memory: 512Mi
+        limits:
+          cpu: 1
+          memory: 1Gi
+
+    redis:
+      type: external
+      external:
+        addr: harbor-dragonfly.tools.svc.cluster.local:6379
+
+    database:
+      type: external
+      external:
+        host: harbor-pg-rw.tools.svc.cluster.local
+        port: 5432
+        username: harbor
+        coreDatabase: harbor
+        existingSecret: harbor-secrets
+
+    persistence:
+      enabled: true
+      persistentVolumeClaim:
+        registry:
+          existingClaim: harbor
+        trivy:
+          storageClass: miroir-replicated
+          size: 5Gi
+          accessMode: ReadWriteOnce
+
+    cache:
+      enabled: true
+
+    existingSecretAdminPassword: harbor-secrets
+    existingSecretAdminPasswordKey: HARBOR_ADMIN_PASSWORD
+
+    # Argo CD drift guard: keep Harbor encryption key stable from external secret.
+    # Remove this once goharbor/harbor-helm randAlphaNum drift is fully resolved upstream.
+    existingSecretSecretKey: harbor-secrets
