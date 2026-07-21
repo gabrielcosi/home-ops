@@ -29,10 +29,9 @@ spec:
 
     resources:
       requests:
-        cpu: 50m
+        cpu: 200m
         memory: 512Mi
       limits:
-        cpu: 1000m
         memory: 2Gi
 
     persistence:
@@ -57,9 +56,7 @@ spec:
     deployment:
       env:
         - name: GOMAXPROCS
-          valueFrom:
-            resourceFieldRef:
-              resource: limits.cpu
+          value: "4"
         - name: FORGEJO__DATABASE__PASSWD
           valueFrom:
             secretKeyRef:

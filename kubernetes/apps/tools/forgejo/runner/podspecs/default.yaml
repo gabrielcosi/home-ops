@@ -7,9 +7,8 @@ containers:
         value: noninteractive
     resources:
       requests:
-        cpu: 100m
+        cpu: 250m
         memory: 256Mi
       limits:
-        cpu: 2
         memory: 4Gi
 restartPolicy: Never

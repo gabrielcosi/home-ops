@@ -9,10 +9,9 @@ initContainers:
         value: /certs
     resources:
       requests:
-        cpu: 100m
+        cpu: 250m
         memory: 256Mi
       limits:
-        cpu: 2
         memory: 4Gi
     volumeMounts:
       - name: docker-storage
@@ -43,10 +42,9 @@ containers:
         value: /certs/client
     resources:
       limits:
-        cpu: 500m
         memory: 2Gi
       requests:
-        cpu: 100m
+        cpu: 250m
         memory: 256Mi
     volumeMounts:
       - name: docker-certs
