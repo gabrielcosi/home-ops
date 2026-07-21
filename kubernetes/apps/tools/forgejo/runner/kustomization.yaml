@@ -5,6 +5,7 @@ resources:
   - ./ocirepository.yaml
   - ./helmrelease.yaml
   - ./externalsecret.yaml
+  - ./priorityclass.yaml
 
 configMapGenerator:
   - name: forgejo-runner-values

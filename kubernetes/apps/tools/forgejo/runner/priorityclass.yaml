@@ -1,0 +1,9 @@
+---
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: batch-low
+value: -10
+globalDefault: false
+preemptionPolicy: Never
+description: 'Preemptible batch workloads that yield capacity to cluster services'

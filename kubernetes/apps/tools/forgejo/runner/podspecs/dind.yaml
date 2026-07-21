@@ -9,7 +9,7 @@ initContainers:
         value: /certs
     resources:
       requests:
-        cpu: 250m
+        cpu: 100m
         memory: 256Mi
       limits:
         memory: 4Gi
@@ -44,12 +44,13 @@ containers:
       limits:
         memory: 2Gi
       requests:
-        cpu: 250m
+        cpu: 100m
         memory: 256Mi
     volumeMounts:
       - name: docker-certs
         mountPath: /certs
         readOnly: true
+priorityClassName: batch-low
 volumes:
   - name: docker-storage
     emptyDir: {}

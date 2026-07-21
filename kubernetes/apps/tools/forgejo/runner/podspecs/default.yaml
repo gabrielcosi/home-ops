@@ -7,8 +7,9 @@ containers:
         value: noninteractive
     resources:
       requests:
-        cpu: 250m
+        cpu: 100m
         memory: 256Mi
       limits:
         memory: 4Gi
+priorityClassName: batch-low
 restartPolicy: Never
