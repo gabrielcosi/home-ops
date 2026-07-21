@@ -25,4 +25,5 @@ spec:
     - dial.*tcp.*timeout
     - dial.*tcp.*unreachable
     - waiting.*socket
+    - unexpected status code 5\d\d
   suspend: false
