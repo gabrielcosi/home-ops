@@ -54,6 +54,22 @@ spec:
               kind: Deployment
               name: (kustomize-controller|helm-controller|source-controller)
           - patch: |-
+              apiVersion: apps/v1
+              kind: Deployment
+              metadata:
+                name: all
+              spec:
+                template:
+                  spec:
+                    containers:
+                      - name: manager
+                        resources:
+                          limits:
+                            cpu: null
+            target:
+              kind: Deployment
+              name: (kustomize-controller|helm-controller|source-controller|notification-controller)
+          - patch: |-
               - op: add
                 path: /spec/template/spec/containers/0/args/-
                 value: --concurrent=20
