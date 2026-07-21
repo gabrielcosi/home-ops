@@ -89,13 +89,11 @@ jobs:
              }}' > /tmp/mcp.json
 
           {
-            printf 'You are reviewing pull request #%s in the Forgejo repository %s. Use this PR number with konflate'\''s MCP tools.\n\n' "${PR}" "${REPO}"
+            printf 'You are reviewing pull request #%s in %s, a Flux GitOps Kubernetes homelab on Forgejo. Pass this PR number to konflate'\''s MCP tools.\n\n' "${PR}" "${REPO}"
             cat .forgejo/pr-review.prompt.md
           } > /tmp/prompt.md
 
           timeout 600 claude -p "$(cat /tmp/prompt.md)" \
-            --verbose \
-            --output-format stream-json \
             --model "${ANTHROPIC_MODEL}" \
             --permission-mode default \
             --mcp-config /tmp/mcp.json \
@@ -147,8 +145,16 @@ jobs:
         env:
           VERDICT: ${{ steps.publish.outputs.verdict }}
         run: |-
-          if [ "${VERDICT}" = "request_changes" ]; then
-            echo "AI reviewer requested changes — failing check to block automerge."
-            exit 1
-          fi
-          echo "AI reviewer verdict=${VERDICT:-none} — check green, merge not blocked."
+          case "${VERDICT:-none}" in
+            approve)
+              echo "AI reviewer approved — check green, merge not blocked."
+              ;;
+            request_changes)
+              echo "AI reviewer requested changes — failing check to block automerge."
+              exit 1
+              ;;
+            *)
+              echo "AI reviewer produced no verdict — failing check to block automerge."
+              exit 1
+              ;;
+          esac
