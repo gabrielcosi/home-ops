@@ -23,13 +23,6 @@ spec:
     keepHourly: 24
     keepDaily: 7
     keepWeekly: 4
-  verification:
-    quick:
-      schedule:
-        cron: 'H 3 * * *'
-    deep:
-      schedule:
-        cron: 'H 5 1 * *'
   mover:
     securityContext:
       runAsUser: ${KOPIUR_PUID:=1000}

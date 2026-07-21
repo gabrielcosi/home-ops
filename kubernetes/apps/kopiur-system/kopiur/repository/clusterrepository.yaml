@@ -34,9 +34,6 @@ spec:
       mode: Ephemeral
       capacity: 5Gi
       storageClassName: miroir-local
-    scratch:
-      capacity: 20Gi
-      storageClassName: ceph-block
     ttlSecondsAfterFinished: 300
   scheduleDefaults:
     timezone: Europe/Berlin
