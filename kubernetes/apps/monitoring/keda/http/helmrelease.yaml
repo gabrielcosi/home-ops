@@ -21,6 +21,7 @@ spec:
           cpu: 25m
           memory: 32Mi
         limits:
+          cpu: null
           memory: 128Mi
     operator:
       replicas: 1
@@ -29,6 +30,7 @@ spec:
           cpu: 25m
           memory: 32Mi
         limits:
+          cpu: null
           memory: 128Mi
     scaler:
       replicas: 1
@@ -37,4 +39,5 @@ spec:
           cpu: 25m
           memory: 32Mi
         limits:
+          cpu: null
           memory: 64Mi

@@ -9,6 +9,16 @@ spec:
     name: rook-ceph
   interval: 1h
   values:
+    ceph-csi-operator:
+      controllerManager:
+        manager:
+          resources:
+            requests:
+              cpu: 10m
+              memory: 64Mi
+            limits:
+              cpu: null
+              memory: 128Mi
     csi:
       cephFSKernelMountOptions: ms_mode=prefer-crc
       csiRBDProvisionerResource: |
