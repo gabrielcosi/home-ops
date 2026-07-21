@@ -9,7 +9,6 @@ on:
       - opened
       - reopened
       - synchronize
-      - ready_for_review
       - labeled
 
 concurrency:
@@ -20,7 +19,7 @@ jobs:
   review:
     name: AI PR Review
     if: >-
-      ${{ !forgejo.event.pull_request.draft
+      ${{ startsWith(forgejo.event.pull_request.head.ref, 'renovate/')
       && (forgejo.event.action != 'labeled' || forgejo.event.label.name == 'ai-review') }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
