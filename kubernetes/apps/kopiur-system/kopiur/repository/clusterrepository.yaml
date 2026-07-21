@@ -31,9 +31,9 @@ spec:
       fsGroup: 1000
       fsGroupChangePolicy: OnRootMismatch
     cache:
-      mode: Persistent
+      mode: Ephemeral
       capacity: 5Gi
-      storageClassName: miroir-replicated
+      storageClassName: miroir-local
     scratch:
       capacity: 20Gi
       storageClassName: ceph-block
