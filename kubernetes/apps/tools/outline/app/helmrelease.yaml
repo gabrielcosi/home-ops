@@ -45,7 +45,7 @@ spec:
               # File storage
               FILE_STORAGE: local
               FILE_STORAGE_LOCAL_ROOT_DIR: /var/lib/outline/data
-              FILE_STORAGE_UPLOAD_MAX_SIZE: 26214400
+              FILE_STORAGE_UPLOAD_MAX_SIZE: '10485760'
               # OIDC
               OIDC_DISPLAY_NAME: Authentik
               OIDC_SCOPES: 'openid profile email'
