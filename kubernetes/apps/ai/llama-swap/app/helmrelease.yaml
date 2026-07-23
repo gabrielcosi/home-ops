@@ -34,7 +34,7 @@ spec:
             nameOverride: llama-swap
             image:
               repository: ghcr.io/mostlygeek/llama-swap
-              tag: v240-cpu-b10068-non-root
+              tag: v241-cpu-b10103-non-root
             args:
               - --config
               - /app/config.yaml
