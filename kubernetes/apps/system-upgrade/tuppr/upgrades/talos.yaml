@@ -22,3 +22,9 @@ spec:
       kind: CephCluster
       expr: |-
         status.ceph.health in ['HEALTH_OK']
+  silences:
+    - matchers:
+        - name: alertname
+          value: ^(CephMonDown|CephMonDownQuorumAtRisk|CephOSDDown|CephOSDDownHigh|CephOSDHostDown|CephHealthWarning|CephPGsUnclean|KubeNodeUnreachable|KubeletInstanceUnreachable|KubePodNotReady|KubePdbNotEnoughHealthyPods|KubeDeploymentReplicasMismatch|KubeDaemonSetMisScheduled|KubeDaemonSetRolloutStuck|TargetDown|TooManyScrapeErrors|TooManyLogs)$
+          matchType: "=~"
+      maxDuration: "2h"
