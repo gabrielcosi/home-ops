@@ -87,6 +87,12 @@ gateway:
   streaming:
     enabled: false
 
+session_reset:
+  mode: both
+  at_hour: 4
+  idle_minutes: 1440
+  notify: true
+
 approvals:
   mode: smart
   timeout: 60
