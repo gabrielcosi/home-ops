@@ -52,7 +52,7 @@ services:
       - zeus
 
   dcgm-exporter:
-    image: nvcr.io/nvidia/k8s/dcgm-exporter:4.8.3 # renovate: docker=nvcr.io/nvidia/k8s/dcgm-exporter versioning=loose
+    image: nvcr.io/nvidia/k8s/dcgm-exporter:4.8.3
     container_name: dcgm-exporter
     read_only: true
     cap_drop:

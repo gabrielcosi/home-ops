@@ -5,6 +5,16 @@
     ":timezone(Europe/Berlin)",
   ],
   assignees: ["@gabrielcosi"],
+  customManagers: [
+    {
+      customType: "regex",
+      description: "Process trailing-comment annotated dependencies",
+      managerFilePatterns: ["/\\.ya?ml$/", "/\\.ya?ml\\.j2$/"],
+      matchStrings: [
+        "(?<currentValue>[\\w+\\.\\-]*)['\",;]*\\s*#\\s?renovate: (?<datasource>docker|helm|npm|github-releases|github-tags)=(?<depName>\\S+)\\s?(registry=(?<registryUrl>\\S+))?\\s?(versioning=(?<versioning>\\S+))?",
+      ],
+    },
+  ],
   packageRules: [
     {
       description: "Auto-merge trusted OCI digests",
@@ -187,11 +197,6 @@
       versioning: "pep440",
       ignoreUnstable: false,
       allowedVersions: "/[.]dev\\d+$/",
-    },
-    {
-      description: "llama-swap CPU build versioning",
-      matchPackageNames: ["ghcr.io/mostlygeek/llama-swap"],
-      versioning: "regex:^v(?<major>\\d+)-cpu-b(?<build>\\d+)-non-root$",
     },
     {
       description: "Keep PG18 CNPG clusters on PG18 standard images",

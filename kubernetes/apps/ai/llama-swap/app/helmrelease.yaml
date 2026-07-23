@@ -34,7 +34,7 @@ spec:
             nameOverride: llama-swap
             image:
               repository: ghcr.io/mostlygeek/llama-swap
-              tag: v241-cpu-b10103-non-root
+              tag: v241-cpu-b10103-non-root # renovate: docker=ghcr.io/mostlygeek/llama-swap versioning=regex:^v(?<major>\d+)-cpu-b(?<build>\d+)-non-root$
             args:
               - --config
               - /app/config.yaml

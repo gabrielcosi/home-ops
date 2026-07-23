@@ -3,7 +3,6 @@ name: gatus
 
 services:
   gatus:
-    # renovate: datasource=docker depName=ghcr.io/twin/gatus
     image: ghcr.io/twin/gatus:v5.36.0
     container_name: gatus
     restart: unless-stopped

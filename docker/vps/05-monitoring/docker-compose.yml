@@ -3,7 +3,6 @@ name: monitoring
 
 services:
   vmagent:
-    # renovate: datasource=docker depName=quay.io/victoriametrics/vmagent
     image: quay.io/victoriametrics/vmagent:v1.148.0
     container_name: vmagent
     restart: unless-stopped
@@ -42,7 +41,6 @@ services:
         max-file: "3"
 
   node-exporter:
-    # renovate: datasource=docker depName=quay.io/prometheus/node-exporter
     image: quay.io/prometheus/node-exporter:v1.12.1
     container_name: node-exporter
     restart: unless-stopped
@@ -68,7 +66,6 @@ services:
     logging: *default-logging
 
   fluent-bit:
-    # renovate: datasource=docker depName=cr.fluentbit.io/fluent/fluent-bit
     image: cr.fluentbit.io/fluent/fluent-bit:5.0
     container_name: fluent-bit
     restart: unless-stopped
