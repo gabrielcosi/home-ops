@@ -26,16 +26,15 @@ spec:
           app:
             env:
               PAPERLESS_TIME_ZONE: Europe/Berlin
-              PAPERLESS_TIKA_ENABLED: 'true'
-              PAPERLESS_TIKA_ENDPOINT: http://localhost:9998
-              PAPERLESS_TIKA_GOTENBERG_ENDPOINT: http://localhost:3000
               PAPERLESS_URL: https://paperless.xcd.dev
               PAPERLESS_OCR_LANGUAGE: deu+eng+spa
               PAPERLESS_FILENAME_FORMAT: '{{ `{{ created_year }}/{{ document_type }}/{{ created_year }}-{{ created_month }}-{{ created_day }}_{{ title }}` }}'
               PAPERLESS_DATA_DIR: /paperless/data
               PAPERLESS_MEDIA_ROOT: /paperless/media
-              PAPERLESS_CONSUMPTION_DIR: /tmp/consume
+              PAPERLESS_CONSUMER_DISABLE: 'true'
               PAPERLESS_EXPORT_DIR: /tmp/export
+              PAPERLESS_WEBSERVER_WORKERS: '2'
+              PAPERLESS_TASK_WORKERS: '2'
               PAPERLESS_FILENAME_FORMAT_REMOVE_NONE: 'true'
               USER_IS_NON_ROOT: '1'
               S6_YES_I_WANT_A_WORLD_WRITABLE_RUN_BECAUSE_KUBERNETES: '1'
@@ -58,69 +57,23 @@ spec:
               capabilities:
                 drop: ['ALL']
 
-            # probes:
-            #   liveness:
-            #     enabled: true
-            #     type: HTTP
-            #   readiness:
-            #     enabled: true
-            #     type: HTTP
-            #   startup:
-            #     enabled: true
-            #     spec:
-            #       failureThreshold: 30
-            #       periodSeconds: 5
-            #     type: HTTP
+            probes:
+              liveness:
+                enabled: true
+              readiness:
+                enabled: true
+              startup:
+                enabled: true
+                spec:
+                  failureThreshold: 60
+                  periodSeconds: 5
 
             resources:
               requests:
                 cpu: 50m
-                memory: 640Mi
+                memory: 512Mi
               limits:
                 memory: 2Gi
-
-          gotenberg:
-            image:
-              repository: gotenberg/gotenberg
-              tag: 8.34.0
-              pullPolicy: IfNotPresent
-            command:
-              - 'gotenberg'
-              - '--chromium-disable-javascript=true'
-              - '--chromium-allow-list=file:///tmp/.*'
-            securityContext:
-              runAsUser: 65534
-              runAsGroup: 65534
-              runAsNonRoot: true
-              allowPrivilegeEscalation: false
-              readOnlyRootFilesystem: true
-              capabilities: { drop: ['ALL'] }
-
-            resources:
-              requests:
-                cpu: 10m
-                memory: 96Mi
-              limits:
-                memory: 192Mi
-
-          tika:
-            image:
-              repository: apache/tika
-              tag: 3.3.1.0
-            securityContext:
-              runAsUser: 65534
-              runAsGroup: 65534
-              runAsNonRoot: true
-              allowPrivilegeEscalation: false
-              readOnlyRootFilesystem: true
-              capabilities: { drop: ['ALL'] }
-
-            resources:
-              requests:
-                cpu: 10m
-                memory: 320Mi
-              limits:
-                memory: 512Mi
 
     service:
       app:

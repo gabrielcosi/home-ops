@@ -7,10 +7,7 @@ spec:
   components:
     - ../../../../components/kopiur/restore
     - ../../../../components/kopiur/backup
-    - ../../../../components/keda/http
   dependsOn:
-    - name: keda-http
-      namespace: monitoring
     - name: dragonfly
       namespace: database
     - name: rook-ceph-cluster
@@ -29,7 +26,4 @@ spec:
       APP: paperless-ngx
       KOPIUR_PUID: "5001"
       KOPIUR_PGID: "5001"
-      HTTP_SCALER_PORT: "8000"
-      HTTP_SCALER_SCALEDOWN: "600"
-      SUBDOMAIN: paperless
       KOPIUR_CAPACITY: "1Gi"
