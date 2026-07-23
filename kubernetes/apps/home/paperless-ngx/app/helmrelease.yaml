@@ -32,6 +32,7 @@ spec:
               PAPERLESS_DATA_DIR: /paperless/data
               PAPERLESS_MEDIA_ROOT: /paperless/media
               PAPERLESS_CONSUMER_DISABLE: 'true'
+              PAPERLESS_CONSUMPTION_DIR: /tmp/consume
               PAPERLESS_EXPORT_DIR: /tmp/export
               PAPERLESS_WEBSERVER_WORKERS: '2'
               PAPERLESS_TASK_WORKERS: '2'
