@@ -65,5 +65,6 @@ In CI, the in-cluster `konflate` renders each PR through the same pipeline; `.fo
 
 - Pin every version explicitly — source tags (`OCIRepository`/`HelmRepository` `ref`), container image tags, tool/provider versions; no floating tags or ranges. Renovate proposes the bumps.
 - Commit straight to `main`; no branches or PRs unless the user says otherwise.
+- Committing is fine unprompted; **pushing is not**. Never `git push` (or force-push) without the user's explicit say-so in the same conversation — approval for one push does not carry to the next.
 - Preserve `# renovate:` annotations; don't bump chart/provider/image versions unless asked.
 - Keep edits scoped to the request; don't reformat unrelated files.
