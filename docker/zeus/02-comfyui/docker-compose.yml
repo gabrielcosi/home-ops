@@ -3,7 +3,7 @@ name: comfyui
 
 services:
   comfyui:
-    image: yanwk/comfyui-boot:cu130-megapak-pt211-20260514 # renovate: docker=yanwk/comfyui-boot versioning=regex:^(?<compatibility>cu\d+-megapak-pt\d+)-(?<major>\d{8})$
+    image: yanwk/comfyui-boot:cu130-megapak-pt211-20260717 # renovate: docker=yanwk/comfyui-boot versioning=regex:^(?<compatibility>cu\d+-megapak-pt\d+)-(?<major>\d{8})$
     container_name: comfyui
     ports:
       - "8188:8188"
