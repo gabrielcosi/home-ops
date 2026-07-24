@@ -122,7 +122,7 @@ spec:
               S6_YES_I_WANT_A_WORLD_WRITABLE_RUN_BECAUSE_KUBERNETES: '1'
               S6_READ_ONLY_ROOT: '1'
               SEARXNG_URL: http://searxng.tools.svc.cluster.local:8080
-              MEMINI_URL: http://memini.ai.svc.cluster.local:8080
+              MEMINI_BASE_URL: http://memini.ai.svc.cluster.local:8080
               MEMINI_NAMESPACE: hermes
               OPENAI_BASE_URL: http://bifrost.ai.svc.cluster.local:8080/v1
               CRAWL4AI_API_URL: http://crawl4ai.ai.svc.cluster.local:11235
