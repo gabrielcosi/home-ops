@@ -30,6 +30,14 @@ spec:
       network:
         connections:
           requireMsgr2: true
+      placement:
+        all:
+          nodeAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              nodeSelectorTerms:
+                - matchExpressions:
+                    - key: node-role.kubernetes.io/control-plane
+                      operator: Exists
       resources:
         mgr:
           requests:
