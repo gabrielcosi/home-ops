@@ -10,7 +10,6 @@ spec:
   interval: 1h
   values:
     runtimeClassName: nvidia
-    failOnInitError: false
     affinity:
       nodeAffinity:
         requiredDuringSchedulingIgnoredDuringExecution:
