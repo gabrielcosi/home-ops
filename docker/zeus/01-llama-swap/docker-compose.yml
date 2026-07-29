@@ -3,7 +3,7 @@ name: llama-swap
 
 services:
   llama-swap:
-    image: ghcr.io/gabrielcosi/llama-swap:v243-cuda13-b10143 # renovate: docker=ghcr.io/gabrielcosi/llama-swap versioning=regex:^v(?<major>\d+)-(?<compatibility>cuda\d+)-b(?<build>\d+)$
+    image: ghcr.io/gabrielcosi/llama-swap:v244-cuda13-b10156 # renovate: docker=ghcr.io/gabrielcosi/llama-swap versioning=regex:^v(?<major>\d+)-(?<compatibility>cuda\d+)-b(?<build>\d+)$
     container_name: llama-swap
     ports:
       - "9292:8080"
