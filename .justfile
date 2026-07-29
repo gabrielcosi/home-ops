@@ -1,5 +1,6 @@
 #!/usr/bin/env -S just --justfile
 
+set default-list
 set default-script
 set lazy
 set quiet
@@ -21,10 +22,6 @@ mod talos "talos"
 # Ansible Recipes
 [group: 'Ansible']
 mod ansible "ansible"
-
-[private]
-default:
-    just -l
 
 [private]
 log lvl msg *args:
