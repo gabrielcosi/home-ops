@@ -60,6 +60,7 @@ build/
 
 # Talos
 talosconfig
+*.iso
 
 backups/
 **/logs/*

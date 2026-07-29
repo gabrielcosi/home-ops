@@ -1,0 +1,17 @@
+---
+customization:
+  extraKernelArgs:
+    - i915.force_probe=!7d67
+    - module_blacklist=igc
+    - xe.force_probe=7d67
+  systemExtensions:
+    officialExtensions:
+      - siderolabs/drbd
+      - siderolabs/i915
+      - siderolabs/intel-ucode
+      - siderolabs/kata-containers
+      - siderolabs/mei
+      - siderolabs/nvidia-container-toolkit-production
+      - siderolabs/nvidia-open-gpu-kernel-modules-production
+      - siderolabs/realtek-firmware
+      - siderolabs/xe

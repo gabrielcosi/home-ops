@@ -1,0 +1,11 @@
+---
+machine:
+  type: worker
+  kernel:
+    modules:
+      - name: nvidia
+      - name: nvidia_drm
+      - name: nvidia_modeset
+      - name: nvidia_uvm
+  sysctls:
+    net.core.bpf_jit_harden: "1"                # NVIDIA

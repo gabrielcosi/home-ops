@@ -3,9 +3,6 @@ version: v1alpha1
 machine:
   ca:
     crt: op://k8s/talos/MACHINE_CA_CRT
-    {% if ENV.CONTROLPLANE %}
-    key: op://k8s/talos/MACHINE_CA_KEY
-    {% endif %}
   token: op://k8s/talos/MACHINE_TOKEN
   kernel:
     modules:
@@ -25,14 +22,6 @@ machine:
     kubePrism:
       enabled: true
       port: 7445
-    {% if ENV.CONTROLPLANE %}
-    kubernetesTalosAPIAccess:
-      enabled: true
-      allowedRoles:
-        - os:admin
-      allowedKubernetesNamespaces:
-        - system-upgrade
-    {% endif %}
     rbac: true
   files:
     - op: create
@@ -54,7 +43,7 @@ machine:
         rsize=1048576
         wsize=1048576
   install:
-    image: factory.talos.dev/metal-installer/{{ ENV.SCHEMATIC }}:v1.13.7
+    image: factory.talos.dev/metal-installer/{{ schematic }}:v1.13.7
     wipe: false
   kubelet:
     defaultRuntimeSeccompProfileEnabled: true
@@ -69,7 +58,8 @@ machine:
         - 192.168.42.0/24
   nodeLabels:
     node.kubernetes.io/gpu: "true"
-    topology.kubernetes.io/region: homelab
+    topology.kubernetes.io/region: main
+    topology.kubernetes.io/zone: m
   sysctls:
     fs.inotify.max_user_instances: "8192"       # Watchdog
     fs.inotify.max_user_watches: "1048576"      # Watchdog
@@ -103,9 +93,6 @@ cluster:
   secretboxEncryptionSecret: op://k8s/talos/CLUSTER_SECRETBOXENCRYPTIONSECRET
   ca:
     crt: op://k8s/talos/CLUSTER_CA_CRT
-    {% if ENV.CONTROLPLANE %}
-    key: op://k8s/talos/CLUSTER_CA_KEY
-    {% endif %}
   clusterName: main
   controlPlane:
     endpoint: https://k8s.internal:6443
@@ -124,73 +111,6 @@ cluster:
         disabled: true
       service:
         disabled: false
-  {% if ENV.CONTROLPLANE %}
-  allowSchedulingOnControlPlanes: true
-  aggregatorCA:
-    crt: op://k8s/talos/CLUSTER_AGGREGATORCA_CRT
-    key: op://k8s/talos/CLUSTER_AGGREGATORCA_KEY
-  serviceAccount:
-    key: op://k8s/talos/CLUSTER_SERVICEACCOUNT_KEY
-  apiServer:
-    image: registry.k8s.io/kube-apiserver:v1.36.3
-    certSANs:
-      - k8s.internal
-    extraArgs:
-      enable-aggregator-routing: "true"
-      feature-gates: HPAScaleToZero=true
-    auditPolicy:
-      apiVersion: audit.k8s.io/v1
-      kind: Policy
-      rules:
-        - level: Metadata
-  controllerManager:
-    image: registry.k8s.io/kube-controller-manager:v1.36.3
-    extraArgs:
-      bind-address: 0.0.0.0
-      feature-gates: HPAScaleToZero=true
-  coreDNS:
-    disabled: true
-  proxy:
-    disabled: true
-    image: registry.k8s.io/kube-proxy:v1.36.3
-  scheduler:
-    image: registry.k8s.io/kube-scheduler:v1.36.3
-    config:
-      apiVersion: kubescheduler.config.k8s.io/v1
-      kind: KubeSchedulerConfiguration
-      profiles:
-        - schedulerName: default-scheduler
-          plugins:
-            score:
-              disabled:
-                - name: ImageLocality
-          pluginConfig:
-            - name: PodTopologySpread
-              args:
-                defaultingType: List
-                defaultConstraints:
-                  - maxSkew: 1
-                    topologyKey: kubernetes.io/hostname
-                    whenUnsatisfiable: ScheduleAnyway
-    extraArgs:
-      bind-address: 0.0.0.0
-  etcd:
-    advertisedSubnets:
-      - 192.168.42.0/24
-    ca:
-      crt: op://k8s/talos/CLUSTER_ETCD_CA_CRT
-      key: op://k8s/talos/CLUSTER_ETCD_CA_KEY
-    extraArgs:
-      listen-metrics-urls: http://0.0.0.0:2381
-  {% endif %}
----
-apiVersion: v1alpha1
-kind: RawVolumeConfig
-name: miroir
-provisioning:
-  diskSelector:
-    match: disk.model == "BC511 NVMe SK hynix 256GB" && !system_disk
-  minSize: 256GB
 ---
 apiVersion: v1alpha1
 kind: WatchdogTimerConfig
