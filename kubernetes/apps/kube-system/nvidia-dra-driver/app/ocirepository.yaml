@@ -2,12 +2,12 @@
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: OCIRepository
 metadata:
-  name: nvidia-device-plugin
+  name: nvidia-dra-driver
 spec:
   interval: 1h
   layerSelector:
     mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
     operation: copy
   ref:
-    tag: 0.19.3
-  url: oci://ghcr.io/home-operations/charts-mirror/nvidia-device-plugin
+    tag: 0.4.1
+  url: oci://registry.k8s.io/dra-driver-nvidia/charts/dra-driver-nvidia-gpu
