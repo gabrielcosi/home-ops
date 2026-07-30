@@ -9,6 +9,9 @@ spec:
     name: nvidia-dra-driver
   interval: 1h
   values:
+    featureGates:
+      MPSSupport: true
+      TimeSlicingSettings: true
     gpuResourcesEnabledOverride: true
     nvidiaDriverRoot: /usr/local
     resources:
