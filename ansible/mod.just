@@ -9,18 +9,18 @@ install-collections:
     ansible-galaxy collection install -r "{{ source_directory() }}/requirements.yml"
 
 [confirm('Bootstrap ' + target + ' [y|N] ?')]
-[doc('Bootstrap `vps` or `zeus` using its matching SSH host alias.')]
+[doc('Bootstrap `vps` using its matching SSH host alias.')]
 install target port="": install-collections
-    case "{{ target }}" in vps) user=debian; default_port=2222 ;; zeus) user=gabrielcosi; default_port=22 ;; *) printf 'target must be vps or zeus\n' >&2; exit 2 ;; esac
+    case "{{ target }}" in vps) user=debian; default_port=2222 ;; *) printf 'target must be vps\n' >&2; exit 2 ;; esac
     port="{{ port }}"
     port="${port:-$default_port}"
     export OP_SERVICE_ACCOUNT_TOKEN="$(op read 'op://{{ target }}/doco-cd/credential')"
     ansible-playbook -i "{{ target }}," -e ansible_user="$user" -e ansible_port="$port" "{{ source_directory() }}/{{ target }}/playbook.yaml"
 
 [confirm('Trigger ' + target + ' doco-cd deployment [y|N] ?')]
-[doc('Trigger doco-cd on `vps` or `zeus` using its matching SSH host alias.')]
+[doc('Trigger doco-cd on `vps` using its matching SSH host alias.')]
 deploy target port="":
-    case "{{ target }}" in vps) user=debian; default_port=2222 ;; zeus) user=gabrielcosi; default_port=22 ;; *) printf 'target must be vps or zeus\n' >&2; exit 2 ;; esac
+    case "{{ target }}" in vps) user=debian; default_port=2222 ;; *) printf 'target must be vps\n' >&2; exit 2 ;; esac
     port="{{ port }}"
     port="${port:-$default_port}"
     export OP_SERVICE_ACCOUNT_TOKEN="$(op read 'op://{{ target }}/doco-cd/credential')"

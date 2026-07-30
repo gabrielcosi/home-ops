@@ -9,7 +9,7 @@ Homelab infrastructure-as-code. Work from the repo root.
 - `kubernetes/` — Flux-managed cluster: `HelmRelease` + `OCIRepository`/`HelmRepository`, with reusable Kustomize Components.
 - `talos/` — Talos machine-config rendering (minijinja + `talosctl`).
 - `bootstrap/` — `just` module that brings up a fresh cluster (secrets, CRDs, core apps).
-- `ansible/` + `docker/` — off-cluster nodes (VPS edge, zeus GPU box). `ansible` provisions them (`just ansible install|deploy <target>`); `docker/` holds their Compose stacks, deployed by doco-cd (compose-GitOps), not Flux.
+- `ansible/` + `docker/` — off-cluster nodes (VPS edge). `ansible` provisions them (`just ansible install|deploy <target>`); `docker/` holds their Compose stacks, deployed by doco-cd (compose-GitOps), not Flux.
 
 ## Tooling
 
