@@ -13,6 +13,14 @@ spec:
       text-embeddings:
         strategy: Recreate
         pod:
+          affinity:
+            nodeAffinity:
+              preferredDuringSchedulingIgnoredDuringExecution:
+                - weight: 100
+                  preference:
+                    matchExpressions:
+                      - key: node-role.kubernetes.io/control-plane
+                        operator: DoesNotExist
           securityContext:
             runAsNonRoot: true
             runAsUser: 65534

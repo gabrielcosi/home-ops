@@ -51,6 +51,14 @@ containers:
         mountPath: /certs
         readOnly: true
 priorityClassName: batch-low
+affinity:
+  nodeAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 100
+        preference:
+          matchExpressions:
+            - key: node-role.kubernetes.io/control-plane
+              operator: DoesNotExist
 volumes:
   - name: docker-storage
     emptyDir: {}
