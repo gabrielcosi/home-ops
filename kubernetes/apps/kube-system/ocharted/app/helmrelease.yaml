@@ -14,11 +14,6 @@ spec:
       enabled: true
     httpRoute:
       enabled: true
-      annotations:
-        gatus.home-operations.com/endpoint: |
-          url: https://ocharted.xcd.dev/healthz
-          conditions:
-            - '[STATUS] == 200'
       parentRefs:
         - name: envoy-internal
           namespace: network
