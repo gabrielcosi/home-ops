@@ -4,7 +4,7 @@ kind: HelmRelease
 metadata:
   name: forgejo
   annotations:
-    anubis.home/skip-route-patch: "true"
+    anubis.home/skip-route-patch: 'true'
 spec:
   chartRef:
     kind: OCIRepository
@@ -56,7 +56,7 @@ spec:
     deployment:
       env:
         - name: GOMAXPROCS
-          value: "4"
+          value: '4'
         - name: FORGEJO__DATABASE__PASSWD
           valueFrom:
             secretKeyRef:
@@ -128,6 +128,7 @@ spec:
           DISABLED_REPO_UNITS: repo.ext_wiki,repo.ext_issues
           DISABLE_DOWNLOAD_SOURCE_ARCHIVES: true
           ROOT: /data/git/repositories
+          ENABLE_PUSH_CREATE_USER: true
 
         repository.signing:
           FORMAT: ssh
