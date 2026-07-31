@@ -10,4 +10,4 @@ spec:
     operation: copy
   ref:
     tag: 2.1.33
-  url: oci://ghcr.io/home-operations/charts-mirror/bifrost
+  url: oci://ocharted.xcd.dev/maximhq.github.io/bifrost/helm-charts/bifrost
