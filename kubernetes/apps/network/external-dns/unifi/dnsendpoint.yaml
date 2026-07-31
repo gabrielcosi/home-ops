@@ -15,15 +15,3 @@ spec:
       recordType: A
       targets:
         - *npm_ip
-    - dnsName: ai-proxy.xcd.dev
-      recordType: A
-      targets:
-        - *npm_ip
-    - dnsName: comfyui.xcd.dev
-      recordType: A
-      targets:
-        - *npm_ip
-    - dnsName: komodo.xcd.dev
-      recordType: A
-      targets:
-        - *npm_ip
