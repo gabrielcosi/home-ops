@@ -23,6 +23,21 @@ spec:
             matchLabels:
               dashboards: grafana
           allowCrossNamespaceImport: true
+      dashboards:
+        k8s-resources-windows-cluster:
+          enabled: false
+        k8s-resources-windows-namespace:
+          enabled: false
+        k8s-resources-windows-pod:
+          enabled: false
+        k8s-windows-cluster-rsrc-use:
+          enabled: false
+        k8s-windows-node-rsrc-use:
+          enabled: false
+        nodes-aix:
+          enabled: false
+        nodes-darwin:
+          enabled: false
 
     defaultRules:
       create: true
