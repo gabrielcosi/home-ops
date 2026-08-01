@@ -4,3 +4,10 @@ kind: Kustomization
 resources:
   - ./ocirepository.yaml
   - ./helmrelease.yaml
+  - ./externalsecret.yaml
+  - ./mcpgroup.yaml
+  - ./telemetry.yaml
+  - ./vmcpserver.yaml
+  - ./httproute.yaml
+  - ./servicemonitor.yaml
+  - ./grafanadashboard.yaml

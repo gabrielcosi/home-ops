@@ -28,6 +28,8 @@ spec:
   dependsOn:
     - name: toolhive-operator-crds
       namespace: ai
+    - name: dragonfly
+      namespace: database
   interval: 1h
   path: ./kubernetes/apps/ai/toolhive/app
   prune: true
@@ -43,24 +45,3 @@ spec:
       kind: HelmRelease
       name: toolhive-operator
       namespace: ai
----
-apiVersion: kustomize.toolkit.fluxcd.io/v1
-kind: Kustomization
-metadata:
-  name: toolhive-config
-spec:
-  dependsOn:
-    - name: toolhive-operator
-      namespace: ai
-    - name: dragonfly
-      namespace: database
-  interval: 1h
-  path: ./kubernetes/apps/ai/toolhive/config
-  prune: true
-  sourceRef:
-    kind: GitRepository
-    name: flux-system
-    namespace: flux-system
-  targetNamespace: ai
-  timeout: 5m
-  wait: true

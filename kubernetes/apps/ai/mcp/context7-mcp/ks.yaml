@@ -5,7 +5,7 @@ metadata:
   name: context7-mcp
 spec:
   dependsOn:
-    - name: toolhive-config
+    - name: toolhive-operator
       namespace: ai
   interval: 1h
   path: ./kubernetes/apps/ai/mcp/context7-mcp/app

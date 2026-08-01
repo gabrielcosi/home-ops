@@ -5,7 +5,7 @@ metadata:
   name: k8s-mcp
 spec:
   dependsOn:
-    - name: toolhive-config
+    - name: toolhive-operator
       namespace: ai
   interval: 1h
   path: ./kubernetes/apps/ai/mcp/k8s-mcp/app
