@@ -6,10 +6,17 @@ selector:
   match: link.driver == "r8169"
 ---
 apiVersion: v1alpha1
+kind: LinkAliasConfig
+name: net1
+selector:
+  match: link.driver == "igc"
+---
+apiVersion: v1alpha1
 kind: BondConfig
 name: bond0
 links:
   - net0
+  - net1
 bondMode: active-backup
 miimon: 100
 updelay: 200
