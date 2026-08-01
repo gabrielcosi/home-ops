@@ -1,0 +1,18 @@
+---
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: minecraft
+spec:
+  scaleTargetRef:
+    name: minecraft
+  minReplicaCount: 0
+  maxReplicaCount: 1
+  pollingInterval: 5
+  cooldownPeriod: 900
+  triggers:
+    - type: metrics-api
+      metadata:
+        url: http://gate-demand.games.svc.cluster.local:8080/demand
+        valueLocation: minecraft
+        targetValue: '1'

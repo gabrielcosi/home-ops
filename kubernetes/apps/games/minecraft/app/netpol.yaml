@@ -1,0 +1,17 @@
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: minecraft
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: minecraft
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            app.kubernetes.io/name: gate
+      toPorts:
+        - ports:
+            - port: '25565'
+              protocol: TCP

@@ -1,0 +1,75 @@
+bind = "0.0.0.0:30000"
+welcome_message = "Server is starting"
+action_bar = "Server is starting"
+default_game_mode = "spectator"
+hardcore = false
+fetch_player_skins = false
+reduced_debug_info = false
+accept_transfers = false
+
+[connection]
+keep_alive_interval_seconds = 15
+allow_unsupported_versions = false
+
+[fly]
+allow_flight = false
+flying = false
+flying_speed = 0.05
+
+[forwarding]
+method = "MODERN"
+secret = "${FORWARDING_SECRET}"
+
+[world]
+spawn_position = [0.0, 320.0, 0.0]
+spawn_rotation = [0.0, 0.0]
+dimension = "overworld"
+time = "day"
+
+[world.experimental]
+view_distance = 2
+schematic_file = ""
+lock_time = false
+
+[world.boundaries]
+enabled = true
+min_y = -64
+teleport_message = "<red>You have reached the bottom of the world.</red>"
+
+[server_list]
+reply_to_status = true
+max_players = 20
+message_of_the_day = "A Minecraft Server"
+show_online_player_count = true
+server_icon = "server-icon.png"
+
+[compression]
+threshold = -1
+level = 6
+
+[tab_list]
+enabled = true
+header = "<bold>xcd.dev</bold>"
+footer = "<green>Server is starting</green>"
+player_listed = true
+
+[boss_bar]
+enabled = true
+title = "<bold>Server is starting</bold>"
+health = 1.0
+color = "purple"
+division = 0
+
+[title]
+enabled = false
+title = "<bold>Welcome!</bold>"
+subtitle = "Enjoy your stay"
+fade_in = 10
+stay = 70
+fade_out = 20
+
+[commands]
+spawn = "spawn"
+fly = "fly"
+fly_speed = "flyspeed"
+transfer = "transfer"

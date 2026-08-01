@@ -8,3 +8,4 @@ components:
 resources:
   - ./namespace.yaml
   - ./minecraft/ks.yaml
+  - ./gate/ks.yaml

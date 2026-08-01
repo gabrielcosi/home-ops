@@ -4,3 +4,6 @@ kind: Kustomization
 resources:
   - ./ocirepository.yaml
   - ./helmrelease.yaml
+  - ./externalsecret.yaml
+  - ./netpol.yaml
+  - ./scaledobject.yaml

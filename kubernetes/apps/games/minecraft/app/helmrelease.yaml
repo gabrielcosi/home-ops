@@ -11,7 +11,6 @@ spec:
   values:
     controllers:
       minecraft:
-        replicas: 0
         strategy: Recreate
 
         pod:
@@ -29,7 +28,7 @@ spec:
         containers:
           app:
             image:
-              repository: docker.io/itzg/minecraft-server
+              repository: ghcr.io/itzg/minecraft-server
               tag: 2026.7.2-java25
             env:
               EULA: 'TRUE'
@@ -37,6 +36,11 @@ spec:
               VERSION: '26.2'
               MEMORY: 6G
               USE_AIKAR_FLAGS: 'true'
+              ONLINE_MODE: 'FALSE'
+              MODRINTH_PROJECTS: fabricproxy-lite
+              MODRINTH_DOWNLOAD_DEPENDENCIES: required
+              REMOVE_OLD_MODS: 'true'
+              FABRIC_PROXY_SECRET_FILE: /secrets/forwarding.secret
               ENABLE_RCON: 'FALSE'
               CREATE_CONSOLE_IN_PIPE: 'true'
               PAUSE_WHEN_EMPTY_SECONDS: '60'
@@ -77,12 +81,6 @@ spec:
 
     service:
       app:
-        annotations:
-          io.cilium/lb-ipam-ips: 192.168.69.184
-          external-dns.alpha.kubernetes.io/hostname: mc.xcd.dev
-        labels:
-          external-dns/instance: unifi
-        type: LoadBalancer
         ports:
           minecraft:
             port: 25565
@@ -94,6 +92,15 @@ spec:
           minecraft:
             app:
               - path: /data
+
+      secrets:
+        type: secret
+        name: minecraft-secrets
+        advancedMounts:
+          minecraft:
+            app:
+              - path: /secrets
+                readOnly: true
 
       tmp:
         type: emptyDir
