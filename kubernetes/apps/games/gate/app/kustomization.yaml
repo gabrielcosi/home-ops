@@ -5,6 +5,7 @@ resources:
   - ./ocirepository.yaml
   - ./helmrelease.yaml
   - ./externalsecret.yaml
+  - ./netpol.yaml
 configMapGenerator:
   - name: gate-config
     files:

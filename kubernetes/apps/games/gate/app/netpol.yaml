@@ -1,0 +1,39 @@
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: gate
+spec:
+  description: Restrict gate egress to DNS, the minecraft backend, and Mojang session auth, so a compromised proxy pod cannot reach the rest of the cluster. Ingress is intentionally left open — the LB serves the internet and warden gates entry by identity.
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: gate
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: kube-system
+            k8s:k8s-app: kube-dns
+      toPorts:
+        - ports:
+            - port: '53'
+              protocol: UDP
+            - port: '53'
+              protocol: TCP
+          rules:
+            dns:
+              - matchPattern: '*'
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: games
+            k8s:app.kubernetes.io/name: minecraft
+      toPorts:
+        - ports:
+            - port: '25565'
+              protocol: TCP
+    - toFQDNs:
+        - matchName: sessionserver.mojang.com
+        - matchName: api.mojang.com
+      toPorts:
+        - ports:
+            - port: '443'
+              protocol: TCP
