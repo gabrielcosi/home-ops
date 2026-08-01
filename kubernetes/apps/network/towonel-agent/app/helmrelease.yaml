@@ -32,6 +32,7 @@ spec:
         - name: minecraft
           origin: gate.games.svc.cluster.local:25565
           listen_port: 25565
+          proxy_protocol: v2
       inviteTokenSecret:
         name: towonel-secrets
         key: TOWONEL_INVITE_TOKEN

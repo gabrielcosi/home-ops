@@ -2,6 +2,9 @@ config:
   bind: 0.0.0.0:25565
   onlineMode: true
   shouldPreventClientProxyConnections: true
+  proxyProtocol: true
+  proxyProtocolTrustedProxies:
+    - 10.42.0.0/16
   servers:
     minecraft: minecraft.games.svc.cluster.local:25565
     limbo: 127.0.0.1:30000
