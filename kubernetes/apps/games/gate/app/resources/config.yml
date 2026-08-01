@@ -13,4 +13,4 @@ config:
   status:
     motd: "xcd.dev"
     showMaxPlayers: 20
-    favicon: ""
+    favicon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAJ0lEQVR4nO3BAQ0AAADCoPdPbQ43oAAAAAAAAAAAAAAAAAAAAIB3A0BAAAGP8slRAAAAAElFTkSuQmCC"
