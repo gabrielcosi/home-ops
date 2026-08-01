@@ -36,7 +36,7 @@ spec:
         redirectUrl: https://renovate.xcd.dev/auth/callback
         additionalScopes:
           - groups
-        allowedGroupPattern: '^Renovate Admins$'
+        allowedGroupPattern: '(?i)^renovate admins$'
 
     webhook:
       enabled: false
