@@ -16,6 +16,13 @@ spec:
 
     defaultDashboards:
       enabled: true
+      grafanaOperator:
+        enabled: true
+        spec:
+          instanceSelector:
+            matchLabels:
+              dashboards: grafana
+          allowCrossNamespaceImport: true
 
     defaultRules:
       create: true
@@ -24,8 +31,11 @@ spec:
           create: false
 
     defaultDatasources:
-      grafanaOperator:
-        enabled: false
+      victoriametrics:
+        datasources:
+          - type: prometheus
+            uid: victoriametrics
+            isDefault: true
 
     grafana:
       enabled: false
