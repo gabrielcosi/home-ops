@@ -29,6 +29,9 @@ spec:
         - name: monitoring-ingest
           origin: vmauth-ingest.monitoring.svc.cluster.local:8427
           listen_port: 18429
+        - name: minecraft
+          origin: gate.games.svc.cluster.local:25565
+          listen_port: 25565
       inviteTokenSecret:
         name: towonel-secrets
         key: TOWONEL_INVITE_TOKEN

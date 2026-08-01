@@ -28,6 +28,7 @@ services:
       - "8443"
     ports:
       - "22:2222"
+      - "25565:25565"
       - "51820:51820/udp"
     volumes:
       - /opt/towonel:/data

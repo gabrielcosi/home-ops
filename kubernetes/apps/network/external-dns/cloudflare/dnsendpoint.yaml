@@ -15,3 +15,7 @@ spec:
       recordType: CNAME
       targets:
         - towonel.xcd.dev
+    - dnsName: mc.xcd.dev
+      recordType: CNAME
+      targets:
+        - towonel.xcd.dev
