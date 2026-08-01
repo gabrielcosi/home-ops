@@ -4,7 +4,7 @@ kind: Kustomization
 resources:
   - ./ocirepository.yaml
   - ./helmrelease.yaml
-  - ./networkpolicy.yaml
+  - ./netpol.yaml
   - ./vmrule.yaml
 configMapGenerator:
   - name: cliproxyapi-config
