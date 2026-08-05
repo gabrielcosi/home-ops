@@ -297,6 +297,7 @@ spec:
                 weight: 1
                 allowed_models:
                   - deepseek-v4-flash
+                  - mimo-v2.5
                 key_ids:
                   - '*'
           - id: opencode
@@ -353,6 +354,7 @@ spec:
                 allowed_models:
                   - glm-5.2
                   - deepseek-v4-flash
+                  - mimo-v2.5
                 key_ids:
                   - '*'
           - id: open-webui
@@ -377,6 +379,7 @@ spec:
                 weight: 1
                 allowed_models:
                   - deepseek-v4-flash
+                  - mimo-v2.5
                 key_ids:
                   - '*'
           - id: cbas
@@ -462,6 +465,20 @@ spec:
               - b-glm5.2-5h
               - b-glm5.2-weekly
               - b-glm5.2-monthly
+        routingRules:
+          - id: rr-deepseek-v4-flash
+            name: deepseek-v4-flash fallback
+            description: opencode zen refuses deepseek-v4-flash with 401/402/403
+            scope: global
+            enabled: true
+            priority: 0
+            cel_expression: 'model == "deepseek-v4-flash" && provider == "opencode"'
+            targets:
+              - provider: opencode
+                model: deepseek-v4-flash
+                weight: 1
+            fallbacks:
+              - opencode/mimo-v2.5
       cluster:
         enabled: true
         discovery:
