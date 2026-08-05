@@ -52,7 +52,7 @@ spec:
           "id": 3, "type": "stat", "title": "TPS",
           "gridPos": { "x": 8, "y": 0, "w": 4, "h": 4 },
           "datasource": { "type": "prometheus", "uid": "victoriametrics" },
-          "targets": [{ "expr": "minecraft_tps", "refId": "A" }],
+          "targets": [{ "expr": "max(minecraft_tps)", "refId": "A" }],
           "fieldConfig": { "defaults": {
             "decimals": 1, "max": 20,
             "color": { "mode": "thresholds" },
@@ -68,7 +68,7 @@ spec:
           "id": 4, "type": "stat", "title": "MSPT (max)",
           "gridPos": { "x": 12, "y": 0, "w": 4, "h": 4 },
           "datasource": { "type": "prometheus", "uid": "victoriametrics" },
-          "targets": [{ "expr": "minecraft_mspt{type=\"max\"}", "refId": "A" }],
+          "targets": [{ "expr": "max(minecraft_mspt{type=\"max\"})", "refId": "A" }],
           "fieldConfig": { "defaults": {
             "unit": "ms", "decimals": 1,
             "color": { "mode": "thresholds" },
@@ -112,7 +112,7 @@ spec:
           "id": 11, "type": "timeseries", "title": "TPS",
           "gridPos": { "x": 12, "y": 4, "w": 12, "h": 8 },
           "datasource": { "type": "prometheus", "uid": "victoriametrics" },
-          "targets": [{ "expr": "minecraft_tps", "legendFormat": "tps", "refId": "A" }],
+          "targets": [{ "expr": "max(minecraft_tps)", "legendFormat": "tps", "refId": "A" }],
           "fieldConfig": { "defaults": {
             "min": 0, "max": 20, "decimals": 1,
             "color": { "mode": "fixed", "fixedColor": "green" },
@@ -124,7 +124,7 @@ spec:
           "id": 12, "type": "timeseries", "title": "MSPT",
           "gridPos": { "x": 0, "y": 12, "w": 12, "h": 8 },
           "datasource": { "type": "prometheus", "uid": "victoriametrics" },
-          "targets": [{ "expr": "minecraft_mspt", "legendFormat": "{{type}}", "refId": "A" }],
+          "targets": [{ "expr": "max by (type) (minecraft_mspt)", "legendFormat": "{{type}}", "refId": "A" }],
           "fieldConfig": { "defaults": {
             "unit": "ms", "min": 0,
             "custom": { "lineWidth": 2, "fillOpacity": 0, "spanNulls": false, "showPoints": "never" }
