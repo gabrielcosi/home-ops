@@ -22,7 +22,7 @@ spec:
           app:
             image:
               repository: ghcr.io/prymitive/karma
-              tag: v0.131
+              tag: v0.132
             env:
               ALERTMANAGER_URI: http://vmalertmanager-victoria-metrics-cluster.monitoring.svc.cluster.local:9093
               ALERTMANAGER_PROXY: true
