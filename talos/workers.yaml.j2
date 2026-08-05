@@ -1,6 +1,9 @@
 ---
 machine:
   type: worker
+  kubelet:
+    extraConfig:
+      maxPods: 220
   kernel:
     modules:
       - name: nvidia
