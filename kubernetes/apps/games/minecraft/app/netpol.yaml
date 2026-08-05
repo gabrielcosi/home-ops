@@ -15,3 +15,11 @@ spec:
         - ports:
             - port: '25565'
               protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: monitoring
+            k8s:app.kubernetes.io/name: vmagent
+      toPorts:
+        - ports:
+            - port: '25585'
+              protocol: TCP

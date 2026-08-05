@@ -37,7 +37,7 @@ spec:
               MEMORY: 6G
               USE_AIKAR_FLAGS: 'true'
               ONLINE_MODE: 'FALSE'
-              MODRINTH_PROJECTS: fabricproxy-lite
+              MODRINTH_PROJECTS: fabricproxy-lite,fabricexporter,spark
               MODRINTH_DOWNLOAD_DEPENDENCIES: required
               REMOVE_OLD_MODS: 'true'
               FABRIC_PROXY_SECRET_FILE: /secrets/forwarding.secret
@@ -84,6 +84,17 @@ spec:
         ports:
           minecraft:
             port: 25565
+          metrics:
+            port: 25585
+
+    serviceMonitor:
+      app:
+        serviceName: minecraft
+        endpoints:
+          - port: metrics
+            path: /metrics
+            interval: 30s
+            scrapeTimeout: 10s
 
     persistence:
       data:
