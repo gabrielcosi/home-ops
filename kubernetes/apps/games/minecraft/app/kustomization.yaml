@@ -7,3 +7,4 @@ resources:
   - ./externalsecret.yaml
   - ./netpol.yaml
   - ./scaledobject.yaml
+  - ./grafanadashboard.yaml
