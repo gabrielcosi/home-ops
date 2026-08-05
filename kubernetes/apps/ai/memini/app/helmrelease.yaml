@@ -39,6 +39,8 @@ spec:
               MEMINI_LLM_BASE_URL: http://bifrost.ai.svc.cluster.local:8080/v1
               MEMINI_LLM_API: openai
               MEMINI_LLM_MODEL: opencode/deepseek-v4-flash
+              MEMINI_LLM_MAX_TOKENS: '16384'
+              MEMINI_LLM_EXTRA_BODY: '{"reasoning":{"effort":"none"}}'
               MEMINI_DEMOTE_AFTER: 1440h
               MEMINI_TOMBSTONE_TTL: 720h
               TZ: Europe/Berlin
