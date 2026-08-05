@@ -13,7 +13,7 @@ spec:
 
     image:
       repository: ghcr.io/maximhq/bifrost
-      tag: v1.6.7
+      tag: v1.6.8
 
     deploymentAnnotations:
       reloader.stakater.com/auto: 'true'
