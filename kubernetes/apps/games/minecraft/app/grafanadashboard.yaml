@@ -24,7 +24,7 @@ spec:
           "id": 1, "type": "stat", "title": "Players online",
           "gridPos": { "x": 0, "y": 0, "w": 4, "h": 4 },
           "datasource": { "type": "prometheus", "uid": "victoriametrics" },
-          "targets": [{ "expr": "sum(minecraft_players_online)", "refId": "A" }],
+          "targets": [{ "expr": "sum(minecraft_players_online)", "refId": "A", "instant": true, "range": false }],
           "fieldConfig": { "defaults": {
             "color": { "mode": "fixed", "fixedColor": "blue" },
             "noValue": "0"
@@ -35,7 +35,7 @@ spec:
           "id": 2, "type": "stat", "title": "State",
           "gridPos": { "x": 4, "y": 0, "w": 4, "h": 4 },
           "datasource": { "type": "prometheus", "uid": "victoriametrics" },
-          "targets": [{ "expr": "kube_deployment_status_replicas_available{namespace=\"games\", deployment=\"minecraft\"}", "refId": "A" }],
+          "targets": [{ "expr": "max(kube_deployment_status_replicas_available{namespace=\"games\", deployment=\"minecraft\"})", "refId": "A", "instant": true, "range": false }],
           "fieldConfig": { "defaults": {
             "mappings": [
               { "type": "value", "options": {
@@ -52,8 +52,9 @@ spec:
           "id": 3, "type": "stat", "title": "TPS",
           "gridPos": { "x": 8, "y": 0, "w": 4, "h": 4 },
           "datasource": { "type": "prometheus", "uid": "victoriametrics" },
-          "targets": [{ "expr": "max(minecraft_tps)", "refId": "A" }],
+          "targets": [{ "expr": "max(minecraft_tps)", "refId": "A", "instant": true, "range": false }],
           "fieldConfig": { "defaults": {
+            "noValue": "-",
             "decimals": 1, "max": 20,
             "color": { "mode": "thresholds" },
             "thresholds": { "mode": "absolute", "steps": [
@@ -68,8 +69,9 @@ spec:
           "id": 4, "type": "stat", "title": "MSPT (max)",
           "gridPos": { "x": 12, "y": 0, "w": 4, "h": 4 },
           "datasource": { "type": "prometheus", "uid": "victoriametrics" },
-          "targets": [{ "expr": "max(minecraft_mspt{type=\"max\"})", "refId": "A" }],
+          "targets": [{ "expr": "max(minecraft_mspt{type=\"max\"})", "refId": "A", "instant": true, "range": false }],
           "fieldConfig": { "defaults": {
+            "noValue": "-",
             "unit": "ms", "decimals": 1,
             "color": { "mode": "thresholds" },
             "thresholds": { "mode": "absolute", "steps": [
@@ -84,16 +86,16 @@ spec:
           "id": 5, "type": "stat", "title": "Loaded chunks",
           "gridPos": { "x": 16, "y": 0, "w": 4, "h": 4 },
           "datasource": { "type": "prometheus", "uid": "victoriametrics" },
-          "targets": [{ "expr": "sum(minecraft_loaded_chunks)", "refId": "A" }],
-          "fieldConfig": { "defaults": { "color": { "mode": "fixed", "fixedColor": "purple" } }, "overrides": [] },
+          "targets": [{ "expr": "sum(minecraft_loaded_chunks)", "refId": "A", "instant": true, "range": false }],
+          "fieldConfig": { "defaults": { "color": { "mode": "fixed", "fixedColor": "purple" }, "noValue": "0" }, "overrides": [] },
           "options": { "graphMode": "area", "reduceOptions": { "calcs": ["lastNotNull"] } }
         },
         {
           "id": 6, "type": "stat", "title": "Entities",
           "gridPos": { "x": 20, "y": 0, "w": 4, "h": 4 },
           "datasource": { "type": "prometheus", "uid": "victoriametrics" },
-          "targets": [{ "expr": "sum(minecraft_entities)", "refId": "A" }],
-          "fieldConfig": { "defaults": { "color": { "mode": "fixed", "fixedColor": "orange" } }, "overrides": [] },
+          "targets": [{ "expr": "sum(minecraft_entities)", "refId": "A", "instant": true, "range": false }],
+          "fieldConfig": { "defaults": { "color": { "mode": "fixed", "fixedColor": "orange" }, "noValue": "0" }, "overrides": [] },
           "options": { "graphMode": "area", "reduceOptions": { "calcs": ["lastNotNull"] } }
         },
         {
