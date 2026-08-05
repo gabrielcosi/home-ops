@@ -71,9 +71,177 @@
     "provider": "opencode-anthropic",
     "base_model": "minimax-m3",
     "mode": "chat",
-    "input_cost_per_token": 0.0000001,
-    "output_cost_per_token": 0.0000004,
+    "input_cost_per_token": 0.0000003,
+    "output_cost_per_token": 0.0000012,
+    "cache_read_input_token_cost": 0.00000006
+  },
+  "opencode/deepseek-v4-pro": {
+    "provider": "opencode",
+    "base_model": "deepseek-v4-pro",
+    "mode": "chat",
+    "input_cost_per_token": 0.000000435,
+    "output_cost_per_token": 0.00000087,
+    "cache_read_input_token_cost": 0.000000003625
+  },
+  "opencode/glm-5.1": {
+    "provider": "opencode",
+    "base_model": "glm-5.1",
+    "mode": "chat",
+    "input_cost_per_token": 0.0000014,
+    "output_cost_per_token": 0.0000044,
+    "cache_read_input_token_cost": 0.00000026
+  },
+  "opencode/kimi-k2.5": {
+    "provider": "opencode",
+    "base_model": "kimi-k2.5",
+    "mode": "chat",
+    "input_cost_per_token": 0.0000006,
+    "output_cost_per_token": 0.000003,
+    "cache_read_input_token_cost": 0.0000001
+  },
+  "opencode/kimi-k2.6": {
+    "provider": "opencode",
+    "base_model": "kimi-k2.6",
+    "mode": "chat",
+    "input_cost_per_token": 0.00000095,
+    "output_cost_per_token": 0.000004,
+    "cache_read_input_token_cost": 0.00000016
+  },
+  "opencode/kimi-k2.7-code": {
+    "provider": "opencode",
+    "base_model": "kimi-k2.7-code",
+    "mode": "chat",
+    "input_cost_per_token": 0.00000095,
+    "output_cost_per_token": 0.000004,
+    "cache_read_input_token_cost": 0.00000019
+  },
+  "opencode/mimo-v2-omni": {
+    "provider": "opencode",
+    "base_model": "mimo-v2-omni",
+    "mode": "chat",
+    "input_cost_per_token": 0.0000004,
+    "output_cost_per_token": 0.000002,
+    "cache_read_input_token_cost": 0.00000008
+  },
+  "opencode/mimo-v2-pro": {
+    "provider": "opencode",
+    "base_model": "mimo-v2-pro",
+    "mode": "chat",
+    "input_cost_per_token": 0.000001,
+    "output_cost_per_token": 0.000003,
+    "cache_read_input_token_cost": 0.0000002
+  },
+  "opencode/mimo-v2.5": {
+    "provider": "opencode",
+    "base_model": "mimo-v2.5",
+    "mode": "chat",
+    "input_cost_per_token": 0.00000014,
+    "output_cost_per_token": 0.00000028,
+    "cache_read_input_token_cost": 0.0000000028
+  },
+  "opencode/mimo-v2.5-pro": {
+    "provider": "opencode",
+    "base_model": "mimo-v2.5-pro",
+    "mode": "chat",
+    "input_cost_per_token": 0.000000435,
+    "output_cost_per_token": 0.00000087,
+    "cache_read_input_token_cost": 0.000000003625
+  },
+  "opencode-anthropic/minimax-m2.5": {
+    "provider": "opencode-anthropic",
+    "base_model": "minimax-m2.5",
+    "mode": "chat",
+    "input_cost_per_token": 0.0000003,
+    "output_cost_per_token": 0.0000012,
+    "cache_read_input_token_cost": 0.00000003
+  },
+  "opencode-anthropic/minimax-m2.7": {
+    "provider": "opencode-anthropic",
+    "base_model": "minimax-m2.7",
+    "mode": "chat",
+    "input_cost_per_token": 0.0000003,
+    "output_cost_per_token": 0.0000012,
+    "cache_read_input_token_cost": 0.00000006
+  },
+  "opencode-anthropic/qwen3.5-plus": {
+    "provider": "opencode-anthropic",
+    "base_model": "qwen3.5-plus",
+    "mode": "chat",
+    "input_cost_per_token": 0.0000002,
+    "output_cost_per_token": 0.0000012,
     "cache_read_input_token_cost": 0.00000002
+  },
+  "opencode-anthropic/qwen3.6-plus": {
+    "provider": "opencode-anthropic",
+    "base_model": "qwen3.6-plus",
+    "mode": "chat",
+    "input_cost_per_token": 0.0000005,
+    "output_cost_per_token": 0.000003,
+    "cache_read_input_token_cost": 0.00000005
+  },
+  "opencode-anthropic/qwen3.7-max": {
+    "provider": "opencode-anthropic",
+    "base_model": "qwen3.7-max",
+    "mode": "chat",
+    "input_cost_per_token": 0.0000025,
+    "output_cost_per_token": 0.0000075,
+    "cache_read_input_token_cost": 0.0000005
+  },
+  "opencode-anthropic/qwen3.7-plus": {
+    "provider": "opencode-anthropic",
+    "base_model": "qwen3.7-plus",
+    "mode": "chat",
+    "input_cost_per_token": 0.0000004,
+    "output_cost_per_token": 0.0000016,
+    "cache_read_input_token_cost": 0.00000004
+  },
+  "opencode/glm-5": {
+    "provider": "opencode",
+    "base_model": "glm-5",
+    "mode": "chat",
+    "input_cost_per_token": 0.000001,
+    "output_cost_per_token": 0.0000032,
+    "cache_read_input_token_cost": 0.0000002
+  },
+  "opencode/kimi-k3": {
+    "provider": "opencode",
+    "base_model": "kimi-k3",
+    "mode": "chat",
+    "input_cost_per_token": 0.000003,
+    "output_cost_per_token": 0.000015,
+    "cache_read_input_token_cost": 0.0000003
+  },
+  "opencode/gpt-5.6-luna": {
+    "provider": "opencode",
+    "base_model": "gpt-5.6-luna",
+    "mode": "chat",
+    "input_cost_per_token": 0.0000001,
+    "output_cost_per_token": 0.0000006,
+    "cache_read_input_token_cost": 0.00000001
+  },
+  "opencode/grok-4.5": {
+    "provider": "opencode",
+    "base_model": "grok-4.5",
+    "mode": "chat",
+    "input_cost_per_token": 0.000002,
+    "output_cost_per_token": 0.000006,
+    "cache_read_input_token_cost": 0.0000005
+  },
+  "opencode/hy3": {
+    "provider": "opencode",
+    "base_model": "hy3",
+    "mode": "chat",
+    "input_cost_per_token": 0.00000014,
+    "output_cost_per_token": 0.00000058,
+    "cache_read_input_token_cost": 0.000000035
+  },
+  "opencode-anthropic/qwen3.8-max": {
+    "provider": "opencode-anthropic",
+    "base_model": "qwen3.8-max",
+    "mode": "chat",
+    "input_cost_per_token": 0.000002,
+    "output_cost_per_token": 0.000006,
+    "cache_read_input_token_cost": 0.00000025
   },
   "proxyapi/claude-fable-5": {
     "provider": "proxyapi",
