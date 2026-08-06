@@ -66,7 +66,7 @@ services:
     logging: *default-logging
 
   fluent-bit:
-    image: cr.fluentbit.io/fluent/fluent-bit:5.0
+    image: cr.fluentbit.io/fluent/fluent-bit:5.1
     container_name: fluent-bit
     restart: unless-stopped
     environment:
