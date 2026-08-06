@@ -9,28 +9,21 @@ spec:
       rules:
         - alert: BifrostVirtualKeyRateLimited
           expr: |-
-            sum by (virtual_key_name, provider) (rate(bifrost_error_requests_total{status_code=~"429|402"}[5m])) > 0
+            sum by (virtual_key_name, provider, model) (rate(bifrost_error_requests_total{status_code=~"429|402"}[5m])) > 0
           for: 5m
           annotations:
             summary: >-
-              Bifrost VK {{ $labels.virtual_key_name }} is being rate-limited
-            description: >-
-              Virtual key {{ $labels.virtual_key_name }} on provider {{ $labels.provider }} has been
-              returning 429/402 for 5m — its Bifrost rate limit/budget or the upstream provider limit
-              has been reached.
+              Virtual key {{ $labels.virtual_key_name }} is rate-limited on {{ $labels.model }} via {{ $labels.provider }}
           labels:
             severity: warning
 
         - alert: BifrostUpstreamProviderErrors
           expr: |-
-            sum by (provider) (increase(bifrost_error_requests_total{status_code=~"5.."}[15m])) >= 3
+            sum by (provider, model) (increase(bifrost_error_requests_total{status_code=~"5.."}[15m])) >= 3
           for: 5m
           annotations:
             summary: >-
-              Bifrost provider {{ $labels.provider }} returning server errors
-            description: >-
-              Provider {{ $labels.provider }} has returned 3 or more 5xx responses in 15m
-              (baseline is well under 1/day) — likely an upstream outage or misconfiguration.
+              Provider {{ $labels.provider }} is returning server errors for {{ $labels.model }}
           labels:
             severity: warning
 
@@ -40,11 +33,7 @@ spec:
           for: 5m
           annotations:
             summary: >-
-              Bifrost VK {{ $labels.virtual_key_name }} hitting allowlist denials
-            description: >-
-              Virtual key {{ $labels.virtual_key_name }} triggered 5 or more 403s in 15m
-              (baseline ~1/day) — a client requesting models outside the key's allowlist, or a
-              possibly-leaked key probing what it can reach.
+              Virtual key {{ $labels.virtual_key_name }} is hitting model allowlist denials
           labels:
             severity: warning
 
@@ -54,10 +43,6 @@ spec:
           for: 10m
           annotations:
             summary: >-
-              High rate of unauthenticated requests to Bifrost
-            description: >-
-              The public inference endpoint is receiving more than 1 invalid/missing-virtual-key
-              request per second for 10m (baseline is a handful per day) — possible virtual-key
-              brute-force or abuse.
+              Bifrost is receiving a flood of requests with invalid virtual keys
           labels:
             severity: warning
