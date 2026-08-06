@@ -11,3 +11,14 @@ spec:
       value: minecraft
     - name: namespace
       value: games
+---
+apiVersion: observability.giantswarm.io/v1alpha2
+kind: Silence
+metadata:
+  name: minecraft-scrapepool-scaled-to-zero
+spec:
+  matchers:
+    - name: alertname
+      value: ScrapePoolHasNoTargets
+    - name: scrape_job
+      value: serviceScrape/games/minecraft/0
