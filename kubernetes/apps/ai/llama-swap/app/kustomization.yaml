@@ -6,6 +6,7 @@ resources:
   - ./helmrelease.yaml
   - ./netpol.yaml
   - ./ocirepository.yaml
+  - ./resourceclaim.yaml
 configMapGenerator:
   - name: llama-swap-config
     files:

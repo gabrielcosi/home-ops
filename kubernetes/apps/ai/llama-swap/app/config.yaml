@@ -1,18 +1,78 @@
-models: {}
+healthCheckTimeout: 300
+globalTTL: 300
+
+models:
+  qwen3.6-35b-a3b:
+    capabilities:
+      in: [text, image]
+      out: [text]
+      tools: true
+      context: 131072
+    cmd: |
+      /app/llama-server \
+      --host 0.0.0.0 \
+      --port ${PORT} \
+      --model /models/Qwen3.6-35B-A3B-Uncensored-HauhauCS-Aggressive/Qwen3.6-35B-A3B-Uncensored-HauhauCS-Aggressive-Q4_K_M.gguf \
+      --mmproj /models/Qwen3.6-35B-A3B-Uncensored-HauhauCS-Aggressive/Qwen3.6-35B-A3B-Uncensored-HauhauCS-Aggressive-mmproj-f16.gguf \
+      --ctx-size 131072 \
+      --parallel 4 \
+      --kv-unified \
+      --jinja \
+      --cache-type-k q8_0 \
+      --cache-type-v q8_0 \
+      --temp 1.0 \
+      --top-p 0.95 \
+      --top-k 20 \
+      --min-p 0 \
+      --presence-penalty 1.5 \
+      --repeat-penalty 1.0 \
+      --reasoning-budget 10000 \
+      --reasoning-budget-message "...I got enough. Let's answer now." \
+      --flash-attn on \
+      --n-gpu-layers 99
+    useModelName: qwen3.6-35b-a3b
+    concurrencyLimit: 4
+
+  qwen3.6-27b:
+    capabilities:
+      in: [text]
+      out: [text]
+      tools: true
+      context: 131072
+    cmd: |
+      /app/llama-server \
+      --host 0.0.0.0 \
+      --port ${PORT} \
+      --model /models/Qwen3.6-27B-uncensored-heretic-v2-Native-MTP-Preserved/Qwen3.6-27B-uncensored-heretic-v2-Native-MTP-Preserved-Q4_K_M.gguf \
+      --ctx-size 131072 \
+      --parallel 4 \
+      --kv-unified \
+      --cache-reuse 256 \
+      --jinja \
+      --cache-type-k q8_0 \
+      --cache-type-v q8_0 \
+      --temp 1.0 \
+      --top-p 0.95 \
+      --top-k 20 \
+      --min-p 0.0 \
+      --presence-penalty 0.0 \
+      --repeat-penalty 1.0 \
+      --reasoning-budget 10000 \
+      --reasoning-budget-message "...I got enough. Let's answer now." \
+      --flash-attn on \
+      --n-gpu-layers 99 \
+      --spec-type draft-mtp \
+      --spec-draft-n-max 2
+    useModelName: qwen3.6-27b
+    concurrencyLimit: 4
+
+matrix:
+  vars:
+    q3635b: qwen3.6-35b-a3b
+    q3627b: qwen3.6-27b
+
+  sets:
+    default: 'q3635b | q3627b'
 
 apiKeys:
   - ${env.LS_API_KEY}
-
-peers:
-  zeus:
-    proxy: http://127.0.0.1:9999
-    models:
-      - fast
-      - general
-      - qwen3.6-35b-a3b
-      - qwen3.6-27b
-      - gemma4
-      - ocr
-      - embeddings
-      - tts
-      - stt

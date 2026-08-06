@@ -11,20 +11,18 @@ spec:
   values:
     controllers:
       llama-swap:
+        annotations:
+          reloader.stakater.com/auto: 'true'
+        strategy: Recreate
         pod:
-          annotations:
-            k8s.v1.cni.cncf.io/networks: |-
-              [{
-                "name": "servers",
-                "namespace": "kube-system",
-                "ips": ["192.168.42.4/24"],
-                "mac": "be:24:11:42:00:04"
-              }]
+          resourceClaims:
+            - name: gpu
+              resourceClaimTemplateName: llama-swap
           securityContext:
             runAsNonRoot: true
-            runAsUser: 65534
-            runAsGroup: 65534
-            fsGroup: 65534
+            runAsUser: 1000
+            runAsGroup: 1000
+            fsGroup: 1000
             fsGroupChangePolicy: OnRootMismatch
             seccompProfile:
               type: RuntimeDefault
@@ -34,7 +32,7 @@ spec:
             nameOverride: llama-swap
             image:
               repository: ghcr.io/mostlygeek/llama-swap
-              tag: v247-cpu-b10290-non-root # renovate: docker=ghcr.io/mostlygeek/llama-swap versioning=regex:^v(?<major>\d+)-cpu-b(?<build>\d+)-non-root$
+              tag: v247-cuda-b10290-non-root # renovate: docker=ghcr.io/mostlygeek/llama-swap versioning=regex:^v(?<major>\d+)-cuda-b(?<build>\d+)-non-root$
             args:
               - --config
               - /app/config.yaml
@@ -71,63 +69,13 @@ spec:
               capabilities:
                 drop: ['ALL']
             resources:
+              claims:
+                - name: gpu
               requests:
-                cpu: 1m
-                memory: 128Mi
+                cpu: 100m
+                memory: 4Gi
               limits:
-                memory: 1Gi
-
-          wol-proxy:
-            image:
-              repository: ghcr.io/gabrielcosi/llama-proxy
-              tag: sha-b0e83ff@sha256:bca70eb5419de38573ebb59549b79f97fae1accde2d8d7007e94de0e067029d7
-            envFrom:
-              - secretRef:
-                  name: llama-swap-secrets
-            args:
-              - -mac
-              - 38:05:25:35:3e:82
-              - -upstream
-              - http://192.168.42.50:9292
-              - -source-ip
-              - 192.168.42.4
-              - -listen
-              - 0.0.0.0:9999
-              - -timeout
-              - '180'
-            probes:
-              liveness:
-                enabled: true
-                custom: true
-                spec:
-                  httpGet:
-                    path: /status
-                    port: 9999
-                  initialDelaySeconds: 3
-                  periodSeconds: 10
-                  timeoutSeconds: 1
-                  failureThreshold: 3
-              readiness:
-                enabled: true
-                custom: true
-                spec:
-                  httpGet:
-                    path: /status
-                    port: 9999
-                  initialDelaySeconds: 3
-                  periodSeconds: 10
-                  timeoutSeconds: 1
-                  failureThreshold: 3
-            securityContext:
-              allowPrivilegeEscalation: false
-              capabilities:
-                drop: ['ALL']
-            resources:
-              requests:
-                cpu: 5m
-                memory: 64Mi
-              limits:
-                memory: 64Mi
+                memory: 24Gi
 
     service:
       app:
@@ -142,6 +90,21 @@ spec:
         globalMounts:
           - path: /app/config.yaml
             subPath: config.yaml
+            readOnly: true
+      models:
+        type: persistentVolumeClaim
+        accessMode: ReadWriteOnce
+        storageClass: miroir-client
+        size: 60Gi
+        retain: true
+        globalMounts:
+          - path: /models
+      library:
+        type: nfs
+        server: tank.internal
+        path: /mnt/home-pool/models
+        globalMounts:
+          - path: /library
             readOnly: true
       tmp:
         type: emptyDir
