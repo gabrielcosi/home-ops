@@ -12,10 +12,10 @@ model_aliases:
     model: opencode/glm-5.2
     provider: custom:bifrost
   qwen3.6-35b-a3b:
-    model: zeus/qwen3.6-35b-a3b
+    model: llama-swap/qwen3.6-35b-a3b
     provider: custom:bifrost
   qwen3.6-27b:
-    model: zeus/qwen3.6-27b
+    model: llama-swap/qwen3.6-27b
     provider: custom:bifrost
   minimax:
     model: opencode-anthropic/minimax-m3

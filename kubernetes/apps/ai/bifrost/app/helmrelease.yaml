@@ -77,7 +77,7 @@ spec:
           shouldDropParams: true
           shouldConvertParams: true
       providers:
-        zeus:
+        llama-swap:
           keys:
             - name: llama-swap-key
               value: env.LLAMA_SWAP_API_KEY
@@ -312,7 +312,7 @@ spec:
             is_active: true
             rate_limit_id: rl-opencode
             provider_configs:
-              - provider: zeus
+              - provider: llama-swap
                 weight: 1
                 allowed_models:
                   - '*'
@@ -342,7 +342,7 @@ spec:
             is_active: true
             rate_limit_id: rl-hermes
             provider_configs:
-              - provider: zeus
+              - provider: llama-swap
                 weight: 1
                 allowed_models:
                   - qwen3.6-35b-a3b
@@ -369,7 +369,7 @@ spec:
             is_active: true
             rate_limit_id: rl-open-webui
             provider_configs:
-              - provider: zeus
+              - provider: llama-swap
                 weight: 1
                 allowed_models:
                   - '*'
@@ -419,7 +419,7 @@ spec:
             is_active: true
             rate_limit_id: rl-wyoming
             provider_configs:
-              - provider: zeus
+              - provider: llama-swap
                 weight: 1
                 allowed_models:
                   - stt
@@ -444,7 +444,7 @@ spec:
             is_active: true
             rate_limit_id: rl-n8n
             provider_configs:
-              - provider: zeus
+              - provider: llama-swap
                 weight: 1
                 allowed_models:
                   - '*'
