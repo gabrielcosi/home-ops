@@ -8,6 +8,12 @@ spec:
     kind: OCIRepository
     name: dcgm-exporter
   interval: 1h
+  valuesFrom:
+    - kind: ConfigMap
+      name: dcgm-exporter-counters
+      valuesKey: counters.csv
+      targetPath: customMetrics
+      literal: true
   values:
     fullnameOverride: dcgm-exporter
     runtimeClassName: nvidia

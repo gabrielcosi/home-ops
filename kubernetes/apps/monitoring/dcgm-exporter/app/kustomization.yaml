@@ -5,3 +5,11 @@ resources:
   - ./ocirepository.yaml
   - ./helmrelease.yaml
   - ./grafanadashboard.yaml
+
+configMapGenerator:
+  - name: dcgm-exporter-counters
+    files:
+      - counters.csv
+
+generatorOptions:
+  disableNameSuffixHash: true
