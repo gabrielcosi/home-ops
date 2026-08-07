@@ -41,8 +41,11 @@ spec:
               ENABLE_EVALUATION_ARENA_MODELS: false
               ENABLE_COMMUNITY_SHARING: false
               ENABLE_TAGS_GENERATION: false
+              ENABLE_DIRECT_CONNECTIONS: false
               OFFLINE_MODE: true
               HF_HUB_OFFLINE: 1
+              ENABLE_VERSION_UPDATE_CHECK: false
+              ENABLE_PIP_INSTALL_FRONTMATTER_REQUIREMENTS: false
               RAG_EMBEDDING_MODEL_AUTO_UPDATE: false
               RAG_RERANKING_MODEL_AUTO_UPDATE: false
               WHISPER_MODEL_AUTO_UPDATE: false
@@ -55,6 +58,7 @@ spec:
               ENABLE_WEB_SEARCH: true
               WEB_SEARCH_ENGINE: searxng
               SEARXNG_QUERY_URL: 'http://searxng.tools.svc.cluster.local:8080/search?q=<query>'
+              BYPASS_WEB_SEARCH_WEB_LOADER: true
               # Audio
               AUDIO_STT_ENGINE: ''
               AUDIO_TTS_ENGINE: ''
