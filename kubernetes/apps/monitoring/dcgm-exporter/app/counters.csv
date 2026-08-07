@@ -7,7 +7,6 @@ DCGM_FI_DEV_SHUTDOWN_TEMP, gauge, Shutdown temperature threshold (in C).
 DCGM_FI_DEV_FAN_SPEED, gauge, Fan speed (in %).
 DCGM_FI_DEV_POWER_USAGE, gauge, Power draw (in W).
 DCGM_FI_DEV_ENFORCED_POWER_LIMIT, gauge, Enforced power limit (in W).
-DCGM_FI_DEV_TOTAL_ENERGY_CONSUMPTION, counter, Total energy consumption since boot (in mJ).
 DCGM_FI_DEV_POWER_VIOLATION, counter, Throttling duration due to power constraints (in ns).
 DCGM_FI_DEV_THERMAL_VIOLATION, counter, Throttling duration due to thermal constraints (in ns).
 DCGM_FI_DEV_GPU_UTIL, gauge, GPU utilization (in %).
