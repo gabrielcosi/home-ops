@@ -31,7 +31,7 @@ spec:
       "version": 1,
       "editable": true,
       "graphTooltip": 1,
-      "time": { "from": "now-3h", "to": "now" },
+      "time": {"from": "now-3h", "to": "now"},
       "timepicker": {},
       "refresh": "30s",
       "templating": {
@@ -40,11 +40,11 @@ spec:
             "name": "instance",
             "label": "Node",
             "type": "query",
-            "datasource": { "type": "prometheus", "uid": "victoriametrics" },
-            "query": { "qryType": 1, "query": "label_values(DCGM_FI_DEV_GPU_TEMP, instance)", "refId": "PrometheusVariableQueryEditor-VariableQuery" },
+            "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+            "query": {"qryType": 1, "query": "label_values(DCGM_FI_DEV_GPU_TEMP, instance)", "refId": "PrometheusVariableQueryEditor-VariableQuery"},
             "includeAll": true,
             "multi": true,
-            "current": { "selected": true, "text": ["All"], "value": ["$__all"] },
+            "current": {"selected": true, "text": ["All"], "value": ["$__all"]},
             "refresh": 2,
             "sort": 1
           },
@@ -52,286 +52,735 @@ spec:
             "name": "gpu",
             "label": "GPU",
             "type": "query",
-            "datasource": { "type": "prometheus", "uid": "victoriametrics" },
-            "query": { "qryType": 1, "query": "label_values(DCGM_FI_DEV_GPU_TEMP{instance=~\"$instance\"}, gpu)", "refId": "PrometheusVariableQueryEditor-VariableQuery" },
+            "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+            "query": {
+              "qryType": 1,
+              "query": "label_values(DCGM_FI_DEV_GPU_TEMP{instance=~\"$instance\"}, gpu)",
+              "refId": "PrometheusVariableQueryEditor-VariableQuery"
+            },
             "includeAll": true,
             "multi": true,
-            "current": { "selected": true, "text": ["All"], "value": ["$__all"] },
+            "current": {"selected": true, "text": ["All"], "value": ["$__all"]},
             "refresh": 2,
             "sort": 1
           }
         ]
       },
       "panels": [
-        { "type": "row", "title": "Overview", "id": 100, "collapsed": false, "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 }, "panels": [] },
+        {"type": "row", "title": "Overview", "id": 100, "collapsed": false, "gridPos": {"h": 1, "w": 24, "x": 0, "y": 0}, "panels": []},
         {
-          "type": "stat", "title": "Temperature",
-          "id": 1, "gridPos": { "h": 4, "w": 3, "x": 0, "y": 1 },
-          "datasource": { "type": "prometheus", "uid": "victoriametrics" },
-          "targets": [ { "refId": "A", "expr": "DCGM_FI_DEV_GPU_TEMP{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "core" } ],
-          "fieldConfig": { "defaults": { "unit": "celsius", "decimals": 0, "color": { "mode": "thresholds" }, "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null }, { "color": "#EAB839", "value": 75 }, { "color": "orange", "value": 85 }, { "color": "red", "value": 92 } ] } }, "overrides": [] },
-          "options": { "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "textMode": "auto", "colorMode": "background", "graphMode": "area" }
+          "type": "stat",
+          "title": "Temperature",
+          "id": 1,
+          "gridPos": {"h": 4, "w": 3, "x": 0, "y": 1},
+          "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+          "targets": [{"refId": "A", "expr": "DCGM_FI_DEV_GPU_TEMP{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "core"}],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "celsius",
+              "decimals": 0,
+              "color": {"mode": "thresholds"},
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [{"color": "green", "value": null}, {"color": "#EAB839", "value": 75}, {"color": "orange", "value": 90}, {"color": "red", "value": 100}]
+              }
+            },
+            "overrides": []
+          },
+          "options": {"reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false}, "textMode": "auto", "colorMode": "background", "graphMode": "area"}
         },
         {
-          "type": "stat", "title": "Peak Temp (range)",
-          "id": 2, "gridPos": { "h": 4, "w": 3, "x": 3, "y": 1 },
-          "datasource": { "type": "prometheus", "uid": "victoriametrics" },
-          "targets": [ { "refId": "A", "expr": "max_over_time(DCGM_FI_DEV_GPU_TEMP{instance=~\"$instance\",gpu=~\"$gpu\"}[$__range])", "instant": true, "legendFormat": "peak" } ],
-          "fieldConfig": { "defaults": { "unit": "celsius", "decimals": 0, "color": { "mode": "thresholds" }, "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null }, { "color": "#EAB839", "value": 75 }, { "color": "orange", "value": 85 }, { "color": "red", "value": 92 } ] } }, "overrides": [] },
-          "options": { "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "textMode": "auto", "colorMode": "background", "graphMode": "none" }
-        },
-        {
-          "type": "stat", "title": "Power Draw",
-          "id": 3, "gridPos": { "h": 4, "w": 3, "x": 6, "y": 1 },
-          "datasource": { "type": "prometheus", "uid": "victoriametrics" },
-          "targets": [ { "refId": "A", "expr": "DCGM_FI_DEV_POWER_USAGE{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "draw" } ],
-          "fieldConfig": { "defaults": { "unit": "watt", "decimals": 1, "color": { "mode": "thresholds" }, "thresholds": { "mode": "absolute", "steps": [ { "color": "blue", "value": null } ] } }, "overrides": [] },
-          "options": { "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "textMode": "auto", "colorMode": "background", "graphMode": "area" }
-        },
-        {
-          "type": "stat", "title": "SM Clock",
-          "id": 4, "gridPos": { "h": 4, "w": 3, "x": 9, "y": 1 },
-          "datasource": { "type": "prometheus", "uid": "victoriametrics" },
-          "targets": [ { "refId": "A", "expr": "DCGM_FI_DEV_SM_CLOCK{instance=~\"$instance\",gpu=~\"$gpu\"} * 1000000", "legendFormat": "sm" } ],
-          "fieldConfig": { "defaults": { "unit": "hertz", "decimals": 2, "color": { "mode": "thresholds" }, "thresholds": { "mode": "absolute", "steps": [ { "color": "blue", "value": null } ] } }, "overrides": [] },
-          "options": { "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "textMode": "auto", "colorMode": "background", "graphMode": "area" }
-        },
-        {
-          "type": "stat", "title": "GPU Utilization",
-          "id": 5, "gridPos": { "h": 4, "w": 4, "x": 12, "y": 1 },
-          "datasource": { "type": "prometheus", "uid": "victoriametrics" },
-          "targets": [ { "refId": "A", "expr": "DCGM_FI_DEV_GPU_UTIL{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "util" } ],
-          "fieldConfig": { "defaults": { "unit": "percent", "min": 0, "max": 100, "decimals": 0, "color": { "mode": "thresholds" }, "thresholds": { "mode": "absolute", "steps": [ { "color": "blue", "value": null } ] } }, "overrides": [] },
-          "options": { "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "textMode": "auto", "colorMode": "background", "graphMode": "area" }
-        },
-        {
-          "type": "stat", "title": "VRAM Used",
-          "id": 6, "gridPos": { "h": 4, "w": 4, "x": 16, "y": 1 },
-          "datasource": { "type": "prometheus", "uid": "victoriametrics" },
-          "targets": [ { "refId": "A", "expr": "100 * DCGM_FI_DEV_FB_USED{instance=~\"$instance\",gpu=~\"$gpu\"} / clamp_min(DCGM_FI_DEV_FB_USED{instance=~\"$instance\",gpu=~\"$gpu\"} + DCGM_FI_DEV_FB_FREE{instance=~\"$instance\",gpu=~\"$gpu\"}, 1)", "legendFormat": "used" } ],
-          "fieldConfig": { "defaults": { "unit": "percent", "min": 0, "max": 100, "decimals": 1, "color": { "mode": "thresholds" }, "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null }, { "color": "#EAB839", "value": 85 }, { "color": "red", "value": 95 } ] } }, "overrides": [] },
-          "options": { "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "textMode": "auto", "colorMode": "background", "graphMode": "area" }
-        },
-        {
-          "type": "stat", "title": "Fan Speed",
-          "id": 7, "gridPos": { "h": 4, "w": 4, "x": 20, "y": 1 },
-          "datasource": { "type": "prometheus", "uid": "victoriametrics" },
-          "targets": [ { "refId": "A", "expr": "DCGM_FI_DEV_FAN_SPEED{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "fan" } ],
-          "fieldConfig": { "defaults": { "unit": "percent", "min": 0, "max": 100, "decimals": 0, "noValue": "n/a", "color": { "mode": "thresholds" }, "thresholds": { "mode": "absolute", "steps": [ { "color": "blue", "value": null } ] } }, "overrides": [] },
-          "options": { "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "textMode": "auto", "colorMode": "background", "graphMode": "area" }
-        },
-
-        { "type": "row", "title": "Clocks, Utilization & Memory", "id": 101, "collapsed": false, "gridPos": { "h": 1, "w": 24, "x": 0, "y": 5 }, "panels": [] },
-        {
-          "type": "timeseries", "title": "Clocks",
-          "id": 10, "gridPos": { "h": 9, "w": 6, "x": 0, "y": 6 },
-          "datasource": { "type": "prometheus", "uid": "victoriametrics" },
+          "type": "stat",
+          "title": "Peak Temp (range)",
+          "id": 2,
+          "gridPos": {"h": 4, "w": 3, "x": 3, "y": 1},
+          "datasource": {"type": "prometheus", "uid": "victoriametrics"},
           "targets": [
-            { "refId": "A", "expr": "DCGM_FI_DEV_SM_CLOCK{instance=~\"$instance\",gpu=~\"$gpu\"} * 1000000", "legendFormat": "sm" },
-            { "refId": "B", "expr": "DCGM_FI_DEV_MEM_CLOCK{instance=~\"$instance\",gpu=~\"$gpu\"} * 1000000", "legendFormat": "memory" }
+            {
+              "refId": "A",
+              "expr": "max_over_time(DCGM_FI_DEV_GPU_TEMP{instance=~\"$instance\",gpu=~\"$gpu\"}[$__range])",
+              "instant": true,
+              "legendFormat": "peak"
+            }
           ],
-          "fieldConfig": { "defaults": { "unit": "hertz", "decimals": 2, "min": 0, "custom": { "drawStyle": "line", "lineWidth": 1, "fillOpacity": 10, "showPoints": "never", "spanNulls": true } }, "overrides": [ { "matcher": { "id": "byName", "options": "memory" }, "properties": [ { "id": "custom.axisPlacement", "value": "right" } ] } ] },
-          "options": { "legend": { "displayMode": "list", "placement": "bottom", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } }
+          "fieldConfig": {
+            "defaults": {
+              "unit": "celsius",
+              "decimals": 0,
+              "color": {"mode": "thresholds"},
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [{"color": "green", "value": null}, {"color": "#EAB839", "value": 75}, {"color": "orange", "value": 90}, {"color": "red", "value": 100}]
+              }
+            },
+            "overrides": []
+          },
+          "options": {"reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false}, "textMode": "auto", "colorMode": "background", "graphMode": "none"}
         },
         {
-          "type": "timeseries", "title": "Utilization",
-          "id": 11, "gridPos": { "h": 9, "w": 6, "x": 6, "y": 6 },
-          "datasource": { "type": "prometheus", "uid": "victoriametrics" },
+          "type": "stat",
+          "title": "Power Draw",
+          "id": 3,
+          "gridPos": {"h": 4, "w": 3, "x": 6, "y": 1},
+          "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+          "targets": [{"refId": "A", "expr": "DCGM_FI_DEV_POWER_USAGE{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "draw"}],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "watt",
+              "decimals": 1,
+              "color": {"mode": "thresholds"},
+              "thresholds": {"mode": "absolute", "steps": [{"color": "blue", "value": null}]}
+            },
+            "overrides": []
+          },
+          "options": {"reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false}, "textMode": "auto", "colorMode": "background", "graphMode": "area"}
+        },
+        {
+          "type": "stat",
+          "title": "SM Clock",
+          "id": 4,
+          "gridPos": {"h": 4, "w": 3, "x": 9, "y": 1},
+          "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+          "targets": [{"refId": "A", "expr": "DCGM_FI_DEV_SM_CLOCK{instance=~\"$instance\",gpu=~\"$gpu\"} * 1000000", "legendFormat": "sm"}],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "hertz",
+              "decimals": 2,
+              "color": {"mode": "thresholds"},
+              "thresholds": {"mode": "absolute", "steps": [{"color": "blue", "value": null}]}
+            },
+            "overrides": []
+          },
+          "options": {"reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false}, "textMode": "auto", "colorMode": "background", "graphMode": "area"}
+        },
+        {
+          "type": "stat",
+          "title": "GPU Utilization",
+          "id": 5,
+          "gridPos": {"h": 4, "w": 4, "x": 12, "y": 1},
+          "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+          "targets": [{"refId": "A", "expr": "DCGM_FI_DEV_GPU_UTIL{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "util"}],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percent",
+              "min": 0,
+              "max": 100,
+              "decimals": 0,
+              "color": {"mode": "thresholds"},
+              "thresholds": {"mode": "absolute", "steps": [{"color": "blue", "value": null}]}
+            },
+            "overrides": []
+          },
+          "options": {"reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false}, "textMode": "auto", "colorMode": "background", "graphMode": "area"}
+        },
+        {
+          "type": "stat",
+          "title": "VRAM Used",
+          "id": 6,
+          "gridPos": {"h": 4, "w": 4, "x": 16, "y": 1},
+          "datasource": {"type": "prometheus", "uid": "victoriametrics"},
           "targets": [
-            { "refId": "A", "expr": "DCGM_FI_DEV_GPU_UTIL{instance=~\"$instance\",gpu=~\"$gpu\"} / 100", "legendFormat": "gpu util" },
-            { "refId": "B", "expr": "DCGM_FI_PROF_GR_ENGINE_ACTIVE{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "graphics engine" },
-            { "refId": "C", "expr": "DCGM_FI_PROF_SM_ACTIVE{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "sm active" },
-            { "refId": "D", "expr": "DCGM_FI_PROF_SM_OCCUPANCY{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "sm occupancy" }
+            {
+              "refId": "A",
+              "expr": "100 * DCGM_FI_DEV_FB_USED{instance=~\"$instance\",gpu=~\"$gpu\"} / clamp_min(DCGM_FI_DEV_FB_USED{instance=~\"$instance\",gpu=~\"$gpu\"} + DCGM_FI_DEV_FB_FREE{instance=~\"$instance\",gpu=~\"$gpu\"}, 1)",
+              "legendFormat": "used"
+            }
           ],
-          "fieldConfig": { "defaults": { "unit": "percentunit", "decimals": 2, "min": 0, "max": 1, "custom": { "drawStyle": "line", "lineWidth": 1, "fillOpacity": 0, "showPoints": "never", "spanNulls": true } }, "overrides": [] },
-          "options": { "legend": { "displayMode": "list", "placement": "bottom", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } }
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percent",
+              "min": 0,
+              "max": 100,
+              "decimals": 1,
+              "color": {"mode": "thresholds"},
+              "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}, {"color": "#EAB839", "value": 85}, {"color": "red", "value": 95}]}
+            },
+            "overrides": []
+          },
+          "options": {"reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false}, "textMode": "auto", "colorMode": "background", "graphMode": "area"}
         },
         {
-          "type": "timeseries", "title": "Encoder / Decoder",
-          "id": 12, "gridPos": { "h": 9, "w": 6, "x": 12, "y": 6 },
-          "datasource": { "type": "prometheus", "uid": "victoriametrics" },
+          "type": "stat",
+          "title": "Fan Speed",
+          "id": 7,
+          "gridPos": {"h": 4, "w": 4, "x": 20, "y": 1},
+          "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+          "targets": [{"refId": "A", "expr": "DCGM_FI_DEV_FAN_SPEED{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "fan"}],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percent",
+              "min": 0,
+              "max": 100,
+              "decimals": 0,
+              "noValue": "n/a",
+              "color": {"mode": "thresholds"},
+              "thresholds": {"mode": "absolute", "steps": [{"color": "blue", "value": null}]}
+            },
+            "overrides": []
+          },
+          "options": {"reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false}, "textMode": "auto", "colorMode": "background", "graphMode": "area"}
+        },
+        {
+          "type": "row",
+          "title": "Clocks, Utilization & Memory",
+          "id": 101,
+          "collapsed": false,
+          "gridPos": {"h": 1, "w": 24, "x": 0, "y": 5},
+          "panels": []
+        },
+        {
+          "type": "timeseries",
+          "title": "Clocks",
+          "id": 10,
+          "gridPos": {"h": 8, "w": 8, "x": 0, "y": 6},
+          "datasource": {"type": "prometheus", "uid": "victoriametrics"},
           "targets": [
-            { "refId": "A", "expr": "DCGM_FI_DEV_ENC_UTIL{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "encoder" },
-            { "refId": "B", "expr": "DCGM_FI_DEV_DEC_UTIL{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "decoder" }
+            {"refId": "A", "expr": "DCGM_FI_DEV_SM_CLOCK{instance=~\"$instance\",gpu=~\"$gpu\"} * 1000000", "legendFormat": "sm"},
+            {"refId": "B", "expr": "DCGM_FI_DEV_MEM_CLOCK{instance=~\"$instance\",gpu=~\"$gpu\"} * 1000000", "legendFormat": "memory"}
           ],
-          "fieldConfig": { "defaults": { "unit": "percent", "decimals": 0, "min": 0, "max": 100, "custom": { "drawStyle": "line", "lineWidth": 1, "fillOpacity": 10, "showPoints": "never", "spanNulls": true } }, "overrides": [] },
-          "options": { "legend": { "displayMode": "list", "placement": "bottom", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } }
+          "fieldConfig": {
+            "defaults": {
+              "unit": "hertz",
+              "decimals": 2,
+              "min": 0,
+              "custom": {"drawStyle": "line", "lineWidth": 1, "fillOpacity": 10, "showPoints": "never", "spanNulls": true}
+            },
+            "overrides": [{"matcher": {"id": "byName", "options": "memory"}, "properties": [{"id": "custom.axisPlacement", "value": "right"}]}]
+          },
+          "options": {"legend": {"displayMode": "list", "placement": "bottom", "showLegend": true}, "tooltip": {"mode": "multi", "sort": "desc"}}
         },
         {
-          "type": "timeseries", "title": "Framebuffer",
-          "id": 13, "gridPos": { "h": 9, "w": 6, "x": 18, "y": 6 },
-          "datasource": { "type": "prometheus", "uid": "victoriametrics" },
+          "type": "timeseries",
+          "title": "Utilization",
+          "id": 11,
+          "gridPos": {"h": 8, "w": 8, "x": 8, "y": 6},
+          "datasource": {"type": "prometheus", "uid": "victoriametrics"},
           "targets": [
-            { "refId": "A", "expr": "DCGM_FI_DEV_FB_USED{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "used" },
-            { "refId": "B", "expr": "DCGM_FI_DEV_FB_FREE{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "free" },
-            { "refId": "C", "expr": "DCGM_FI_DEV_FB_RESERVED{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "reserved" },
-            { "refId": "D", "expr": "DCGM_FI_DEV_FB_TOTAL{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "total" }
+            {"refId": "A", "expr": "DCGM_FI_DEV_GPU_UTIL{instance=~\"$instance\",gpu=~\"$gpu\"} / 100", "legendFormat": "gpu util"},
+            {"refId": "B", "expr": "DCGM_FI_PROF_GR_ENGINE_ACTIVE{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "graphics engine"},
+            {"refId": "C", "expr": "DCGM_FI_PROF_SM_ACTIVE{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "sm active"},
+            {"refId": "D", "expr": "DCGM_FI_PROF_SM_OCCUPANCY{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "sm occupancy"}
           ],
-          "fieldConfig": { "defaults": { "unit": "mbytes", "decimals": 0, "min": 0, "custom": { "drawStyle": "line", "lineWidth": 1, "fillOpacity": 10, "showPoints": "never", "spanNulls": true } }, "overrides": [ { "matcher": { "id": "byName", "options": "total" }, "properties": [ { "id": "custom.fillOpacity", "value": 0 }, { "id": "custom.lineStyle", "value": { "fill": "dash", "dash": [10, 10] } }, { "id": "color", "value": { "mode": "fixed", "fixedColor": "text" } } ] } ] },
-          "options": { "legend": { "displayMode": "list", "placement": "bottom", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } }
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percentunit",
+              "decimals": 2,
+              "min": 0,
+              "max": 1,
+              "custom": {"drawStyle": "line", "lineWidth": 1, "fillOpacity": 0, "showPoints": "never", "spanNulls": true}
+            },
+            "overrides": []
+          },
+          "options": {"legend": {"displayMode": "list", "placement": "bottom", "showLegend": true}, "tooltip": {"mode": "multi", "sort": "desc"}}
         },
-
-        { "type": "row", "title": "Thermals & Power", "id": 102, "collapsed": false, "gridPos": { "h": 1, "w": 24, "x": 0, "y": 15 }, "panels": [] },
         {
-          "type": "timeseries", "title": "Temperature",
-          "id": 20, "gridPos": { "h": 8, "w": 8, "x": 0, "y": 16 },
-          "datasource": { "type": "prometheus", "uid": "victoriametrics" },
+          "type": "timeseries",
+          "title": "Workload Mix",
+          "id": 14,
+          "gridPos": {"h": 8, "w": 8, "x": 16, "y": 6},
+          "datasource": {"type": "prometheus", "uid": "victoriametrics"},
           "targets": [
-            { "refId": "A", "expr": "DCGM_FI_DEV_GPU_TEMP{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "core" },
-            { "refId": "B", "expr": "DCGM_FI_DEV_MEMORY_TEMP{instance=~\"$instance\",gpu=~\"$gpu\"} > 0", "legendFormat": "memory" },
-            { "refId": "C", "expr": "DCGM_FI_DEV_SLOWDOWN_TEMP{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "slowdown limit" },
-            { "refId": "D", "expr": "DCGM_FI_DEV_SHUTDOWN_TEMP{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "shutdown limit" }
+            {"refId": "A", "expr": "DCGM_FI_PROF_PIPE_TENSOR_ACTIVE{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "tensor"},
+            {"refId": "B", "expr": "DCGM_FI_PROF_PIPE_FP32_ACTIVE{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "fp32"},
+            {"refId": "C", "expr": "DCGM_FI_PROF_PIPE_FP16_ACTIVE{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "fp16"},
+            {"refId": "D", "expr": "DCGM_FI_PROF_DRAM_ACTIVE{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "memory interface"}
           ],
-          "fieldConfig": { "defaults": { "unit": "celsius", "decimals": 0, "min": 0, "custom": { "drawStyle": "line", "lineWidth": 1, "fillOpacity": 10, "showPoints": "never", "spanNulls": true } }, "overrides": [ { "matcher": { "id": "byRegexp", "options": ".*limit.*" }, "properties": [ { "id": "custom.fillOpacity", "value": 0 }, { "id": "custom.lineStyle", "value": { "fill": "dash", "dash": [10, 10] } }, { "id": "color", "value": { "mode": "fixed", "fixedColor": "red" } } ] } ] },
-          "options": { "legend": { "displayMode": "list", "placement": "bottom", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } }
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percentunit",
+              "decimals": 3,
+              "min": 0,
+              "max": 1,
+              "custom": {"drawStyle": "line", "lineWidth": 1, "fillOpacity": 10, "showPoints": "never", "spanNulls": true}
+            },
+            "overrides": []
+          },
+          "options": {"legend": {"displayMode": "list", "placement": "bottom", "showLegend": true}, "tooltip": {"mode": "multi", "sort": "desc"}}
         },
         {
-          "type": "timeseries", "title": "Power",
-          "id": 21, "gridPos": { "h": 8, "w": 8, "x": 8, "y": 16 },
-          "datasource": { "type": "prometheus", "uid": "victoriametrics" },
+          "type": "timeseries",
+          "title": "Encoder / Decoder",
+          "id": 12,
+          "gridPos": {"h": 8, "w": 12, "x": 12, "y": 14},
+          "datasource": {"type": "prometheus", "uid": "victoriametrics"},
           "targets": [
-            { "refId": "A", "expr": "DCGM_FI_DEV_POWER_USAGE{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "draw" },
-            { "refId": "B", "expr": "DCGM_FI_DEV_ENFORCED_POWER_LIMIT{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "enforced limit" }
+            {"refId": "A", "expr": "DCGM_FI_DEV_ENC_UTIL{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "encoder"},
+            {"refId": "B", "expr": "DCGM_FI_DEV_DEC_UTIL{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "decoder"}
           ],
-          "fieldConfig": { "defaults": { "unit": "watt", "decimals": 1, "min": 0, "custom": { "drawStyle": "line", "lineWidth": 1, "fillOpacity": 10, "showPoints": "never", "spanNulls": true } }, "overrides": [ { "matcher": { "id": "byName", "options": "enforced limit" }, "properties": [ { "id": "custom.fillOpacity", "value": 0 }, { "id": "custom.lineStyle", "value": { "fill": "dash", "dash": [10, 10] } }, { "id": "color", "value": { "mode": "fixed", "fixedColor": "red" } } ] } ] },
-          "options": { "legend": { "displayMode": "list", "placement": "bottom", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } }
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percent",
+              "decimals": 0,
+              "min": 0,
+              "max": 100,
+              "custom": {"drawStyle": "line", "lineWidth": 1, "fillOpacity": 10, "showPoints": "never", "spanNulls": true}
+            },
+            "overrides": []
+          },
+          "options": {"legend": {"displayMode": "list", "placement": "bottom", "showLegend": true}, "tooltip": {"mode": "multi", "sort": "desc"}}
         },
         {
-          "type": "timeseries", "title": "Fan Speed",
-          "id": 22, "gridPos": { "h": 8, "w": 8, "x": 16, "y": 16 },
-          "datasource": { "type": "prometheus", "uid": "victoriametrics" },
-          "targets": [ { "refId": "A", "expr": "DCGM_FI_DEV_FAN_SPEED{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "fan" } ],
-          "fieldConfig": { "defaults": { "unit": "percent", "min": 0, "max": 100, "decimals": 0, "noValue": "not reported by this GPU", "custom": { "drawStyle": "line", "lineWidth": 1, "fillOpacity": 10, "showPoints": "never", "spanNulls": true } }, "overrides": [] },
-          "options": { "legend": { "displayMode": "list", "placement": "bottom", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } }
-        },
-        {
-          "type": "state-timeline", "title": "Clock Events",
-          "id": 23, "gridPos": { "h": 6, "w": 24, "x": 0, "y": 24 },
-          "datasource": { "type": "prometheus", "uid": "victoriametrics" },
-          "targets": [ { "refId": "A", "expr": "clamp_max(DCGM_EXP_CLOCK_EVENTS_COUNT{instance=~\"$instance\",gpu=~\"$gpu\"}, 1)", "legendFormat": "{{clock_event}}" } ],
-          "fieldConfig": { "defaults": { "noValue": "no clock events recorded", "custom": { "fillOpacity": 80, "lineWidth": 0, "spanNulls": false }, "mappings": [ { "type": "value", "options": { "0": { "text": "clear", "color": "green", "index": 0 }, "1": { "text": "active", "color": "red", "index": 1 } } } ], "color": { "mode": "thresholds" }, "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null }, { "color": "red", "value": 1 } ] } }, "overrides": [] },
-          "options": { "mergeValues": true, "showValue": "never", "rowHeight": 0.9, "alignValue": "center", "legend": { "displayMode": "list", "placement": "bottom", "showLegend": false }, "tooltip": { "mode": "single", "sort": "none" } }
-        },
-
-        { "type": "row", "title": "Workload", "id": 103, "collapsed": false, "gridPos": { "h": 1, "w": 24, "x": 0, "y": 30 }, "panels": [] },
-        {
-          "type": "table", "title": "GPU Consumers",
-          "id": 30, "gridPos": { "h": 8, "w": 12, "x": 0, "y": 31 },
-          "datasource": { "type": "prometheus", "uid": "victoriametrics" },
+          "type": "timeseries",
+          "title": "VRAM",
+          "id": 13,
+          "gridPos": {"h": 8, "w": 12, "x": 0, "y": 14},
+          "datasource": {"type": "prometheus", "uid": "victoriametrics"},
           "targets": [
-            { "refId": "A", "expr": "sum by (instance, gpu, namespace, pod, container, dra_claim_name) (DCGM_FI_DEV_FB_USED{instance=~\"$instance\",gpu=~\"$gpu\"})", "instant": true, "format": "table" },
-            { "refId": "B", "expr": "sum by (instance, gpu, namespace, pod, container, dra_claim_name) (DCGM_FI_DEV_GPU_UTIL{instance=~\"$instance\",gpu=~\"$gpu\"})", "instant": true, "format": "table" },
-            { "refId": "C", "expr": "sum by (instance, gpu, namespace, pod, container, dra_claim_name) (DCGM_FI_DEV_POWER_USAGE{instance=~\"$instance\",gpu=~\"$gpu\"})", "instant": true, "format": "table" }
+            {"refId": "A", "expr": "DCGM_FI_DEV_FB_USED{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "used"},
+            {"refId": "B", "expr": "DCGM_FI_DEV_FB_FREE{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "free"},
+            {"refId": "C", "expr": "DCGM_FI_DEV_FB_RESERVED{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "reserved"},
+            {"refId": "D", "expr": "DCGM_FI_DEV_FB_TOTAL{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "total"}
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "mbytes",
+              "decimals": 0,
+              "min": 0,
+              "custom": {"drawStyle": "line", "lineWidth": 1, "fillOpacity": 10, "showPoints": "never", "spanNulls": true}
+            },
+            "overrides": [
+              {
+                "matcher": {"id": "byName", "options": "total"},
+                "properties": [
+                  {"id": "custom.fillOpacity", "value": 0},
+                  {"id": "custom.lineStyle", "value": {"fill": "dash", "dash": [10, 10]}},
+                  {"id": "color", "value": {"mode": "fixed", "fixedColor": "text"}}
+                ]
+              }
+            ]
+          },
+          "options": {"legend": {"displayMode": "list", "placement": "bottom", "showLegend": true}, "tooltip": {"mode": "multi", "sort": "desc"}}
+        },
+        {"type": "row", "title": "Thermals & Power", "id": 102, "collapsed": false, "gridPos": {"h": 1, "w": 24, "x": 0, "y": 22}, "panels": []},
+        {
+          "type": "timeseries",
+          "title": "Temperature",
+          "id": 20,
+          "gridPos": {"h": 8, "w": 8, "x": 0, "y": 23},
+          "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+          "targets": [
+            {"refId": "A", "expr": "DCGM_FI_DEV_GPU_TEMP{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "core"},
+            {"refId": "B", "expr": "DCGM_FI_DEV_MEMORY_TEMP{instance=~\"$instance\",gpu=~\"$gpu\"} > 0", "legendFormat": "memory"},
+            {"refId": "C", "expr": "DCGM_FI_DEV_SLOWDOWN_TEMP{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "slowdown limit"},
+            {"refId": "D", "expr": "DCGM_FI_DEV_SHUTDOWN_TEMP{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "shutdown limit"}
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "celsius",
+              "decimals": 0,
+              "min": 0,
+              "custom": {"drawStyle": "line", "lineWidth": 1, "fillOpacity": 10, "showPoints": "never", "spanNulls": true}
+            },
+            "overrides": [
+              {
+                "matcher": {"id": "byRegexp", "options": ".*limit.*"},
+                "properties": [
+                  {"id": "custom.fillOpacity", "value": 0},
+                  {"id": "custom.lineStyle", "value": {"fill": "dash", "dash": [10, 10]}},
+                  {"id": "color", "value": {"mode": "fixed", "fixedColor": "red"}}
+                ]
+              }
+            ]
+          },
+          "options": {"legend": {"displayMode": "list", "placement": "bottom", "showLegend": true}, "tooltip": {"mode": "multi", "sort": "desc"}}
+        },
+        {
+          "type": "timeseries",
+          "title": "Power",
+          "id": 21,
+          "gridPos": {"h": 8, "w": 8, "x": 8, "y": 23},
+          "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+          "targets": [
+            {"refId": "A", "expr": "DCGM_FI_DEV_POWER_USAGE{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "draw"},
+            {"refId": "B", "expr": "DCGM_FI_DEV_ENFORCED_POWER_LIMIT{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "enforced limit"}
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "watt",
+              "decimals": 1,
+              "min": 0,
+              "custom": {"drawStyle": "line", "lineWidth": 1, "fillOpacity": 10, "showPoints": "never", "spanNulls": true}
+            },
+            "overrides": [
+              {
+                "matcher": {"id": "byName", "options": "enforced limit"},
+                "properties": [
+                  {"id": "custom.fillOpacity", "value": 0},
+                  {"id": "custom.lineStyle", "value": {"fill": "dash", "dash": [10, 10]}},
+                  {"id": "color", "value": {"mode": "fixed", "fixedColor": "red"}}
+                ]
+              }
+            ]
+          },
+          "options": {"legend": {"displayMode": "list", "placement": "bottom", "showLegend": true}, "tooltip": {"mode": "multi", "sort": "desc"}}
+        },
+        {
+          "type": "timeseries",
+          "title": "Fan Speed",
+          "id": 22,
+          "gridPos": {"h": 8, "w": 8, "x": 16, "y": 23},
+          "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+          "targets": [{"refId": "A", "expr": "DCGM_FI_DEV_FAN_SPEED{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "fan"}],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percent",
+              "min": 0,
+              "max": 100,
+              "decimals": 0,
+              "noValue": "not reported by this GPU",
+              "custom": {"drawStyle": "line", "lineWidth": 1, "fillOpacity": 10, "showPoints": "never", "spanNulls": true}
+            },
+            "overrides": []
+          },
+          "options": {"legend": {"displayMode": "list", "placement": "bottom", "showLegend": true}, "tooltip": {"mode": "multi", "sort": "desc"}}
+        },
+        {
+          "type": "timeseries",
+          "title": "Throttling",
+          "id": 24,
+          "gridPos": {"h": 7, "w": 24, "x": 0, "y": 31},
+          "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+          "targets": [
+            {
+              "refId": "A",
+              "expr": "rate(DCGM_FI_DEV_POWER_VIOLATION{instance=~\"$instance\",gpu=~\"$gpu\"}[$__rate_interval]) / 1e7",
+              "legendFormat": "power"
+            },
+            {
+              "refId": "B",
+              "expr": "rate(DCGM_FI_DEV_THERMAL_VIOLATION{instance=~\"$instance\",gpu=~\"$gpu\"}[$__rate_interval]) / 1e7",
+              "legendFormat": "thermal"
+            },
+            {
+              "refId": "C",
+              "expr": "rate(DCGM_FI_DEV_BOARD_LIMIT_VIOLATION{instance=~\"$instance\",gpu=~\"$gpu\"}[$__rate_interval]) / 1e7",
+              "legendFormat": "board limit"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percent",
+              "min": 0,
+              "max": 100,
+              "decimals": 1,
+              "custom": {"drawStyle": "line", "lineWidth": 1, "fillOpacity": 20, "showPoints": "never", "spanNulls": true}
+            },
+            "overrides": [
+              {"matcher": {"id": "byName", "options": "thermal"}, "properties": [{"id": "color", "value": {"mode": "fixed", "fixedColor": "red"}}]},
+              {"matcher": {"id": "byName", "options": "board limit"}, "properties": [{"id": "color", "value": {"mode": "fixed", "fixedColor": "purple"}}]}
+            ]
+          },
+          "options": {
+            "legend": {"displayMode": "table", "placement": "right", "calcs": ["mean", "max", "lastNotNull"], "showLegend": true},
+            "tooltip": {"mode": "multi", "sort": "desc"}
+          }
+        },
+        {"type": "row", "title": "Workload", "id": 103, "collapsed": false, "gridPos": {"h": 1, "w": 24, "x": 0, "y": 37}, "panels": []},
+        {
+          "type": "table",
+          "title": "GPU Consumers",
+          "id": 30,
+          "gridPos": {"h": 8, "w": 12, "x": 0, "y": 38},
+          "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+          "targets": [
+            {
+              "refId": "A",
+              "expr": "sum by (instance, gpu, namespace, pod, container, dra_claim_name) (DCGM_FI_DEV_FB_USED{instance=~\"$instance\",gpu=~\"$gpu\"})",
+              "instant": true,
+              "format": "table"
+            },
+            {
+              "refId": "B",
+              "expr": "sum by (instance, gpu, namespace, pod, container, dra_claim_name) (DCGM_FI_DEV_GPU_UTIL{instance=~\"$instance\",gpu=~\"$gpu\"})",
+              "instant": true,
+              "format": "table"
+            },
+            {
+              "refId": "C",
+              "expr": "sum by (instance, gpu, namespace, pod, container, dra_claim_name) (DCGM_FI_DEV_POWER_USAGE{instance=~\"$instance\",gpu=~\"$gpu\"})",
+              "instant": true,
+              "format": "table"
+            }
           ],
           "transformations": [
-            { "id": "merge", "options": {} },
-            { "id": "organize", "options": {
-              "excludeByName": { "Time": true, "__name__": true, "instance": true, "dra_claim_name": true },
-              "renameByName": { "Value #A": "VRAM (MiB)", "Value #B": "GPU Util (%)", "Value #C": "Power (W)", "gpu": "GPU", "namespace": "Namespace", "pod": "Pod", "container": "Container" }
-            } }
+            {"id": "merge", "options": {}},
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {"Time": true, "__name__": true, "instance": true, "dra_claim_name": true},
+                "renameByName": {
+                  "Value #A": "VRAM (MiB)",
+                  "Value #B": "GPU Util (%)",
+                  "Value #C": "Power (W)",
+                  "gpu": "GPU",
+                  "namespace": "Namespace",
+                  "pod": "Pod",
+                  "container": "Container"
+                }
+              }
+            }
           ],
-          "fieldConfig": { "defaults": { "custom": { "align": "auto", "filterable": true } }, "overrides": [ { "matcher": { "id": "byName", "options": "VRAM (MiB)" }, "properties": [ { "id": "unit", "value": "mbytes" }, { "id": "custom.cellOptions", "value": { "type": "gauge", "mode": "gradient" } } ] }, { "matcher": { "id": "byName", "options": "Power (W)" }, "properties": [ { "id": "unit", "value": "watt" } ] } ] },
-          "options": { "showHeader": true, "footer": { "show": false, "reducer": ["sum"], "fields": "" } }
+          "fieldConfig": {
+            "defaults": {"custom": {"align": "auto", "filterable": true}},
+            "overrides": [
+              {
+                "matcher": {"id": "byName", "options": "VRAM (MiB)"},
+                "properties": [{"id": "unit", "value": "mbytes"}, {"id": "custom.cellOptions", "value": {"type": "gauge", "mode": "gradient"}}]
+              },
+              {"matcher": {"id": "byName", "options": "Power (W)"}, "properties": [{"id": "unit", "value": "watt"}]}
+            ]
+          },
+          "options": {"showHeader": true, "footer": {"show": false, "reducer": ["sum"], "fields": ""}}
         },
         {
-          "type": "timeseries", "title": "VRAM by Pod",
-          "id": 31, "gridPos": { "h": 8, "w": 12, "x": 12, "y": 31 },
-          "datasource": { "type": "prometheus", "uid": "victoriametrics" },
-          "targets": [ { "refId": "A", "expr": "sum by (namespace, pod) (DCGM_FI_DEV_FB_USED{instance=~\"$instance\",gpu=~\"$gpu\",pod!=\"\"})", "legendFormat": "{{namespace}}/{{pod}}" } ],
-          "fieldConfig": { "defaults": { "unit": "mbytes", "decimals": 0, "min": 0, "custom": { "drawStyle": "line", "lineWidth": 1, "fillOpacity": 20, "showPoints": "never", "spanNulls": false, "stacking": { "mode": "normal", "group": "A" } } }, "overrides": [] },
-          "options": { "legend": { "displayMode": "table", "placement": "right", "calcs": ["max", "lastNotNull"], "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } }
+          "type": "timeseries",
+          "title": "VRAM by Pod",
+          "id": 31,
+          "gridPos": {"h": 8, "w": 12, "x": 12, "y": 38},
+          "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+          "targets": [
+            {
+              "refId": "A",
+              "expr": "sum by (namespace, pod) (DCGM_FI_DEV_FB_USED{instance=~\"$instance\",gpu=~\"$gpu\",pod!=\"\"})",
+              "legendFormat": "{{namespace}}/{{pod}}"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "mbytes",
+              "decimals": 0,
+              "min": 0,
+              "custom": {
+                "drawStyle": "line",
+                "lineWidth": 1,
+                "fillOpacity": 20,
+                "showPoints": "never",
+                "spanNulls": false,
+                "stacking": {"mode": "normal", "group": "A"}
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "legend": {"displayMode": "table", "placement": "right", "calcs": ["max", "lastNotNull"], "showLegend": true},
+            "tooltip": {"mode": "multi", "sort": "desc"}
+          }
         },
         {
-          "type": "state-timeline", "title": "GPU Ownership",
-          "id": 32, "gridPos": { "h": 6, "w": 24, "x": 0, "y": 39 },
-          "datasource": { "type": "prometheus", "uid": "victoriametrics" },
-          "targets": [ { "refId": "A", "expr": "count by (namespace, pod, gpu) (DCGM_FI_DEV_FB_USED{instance=~\"$instance\",gpu=~\"$gpu\",pod!=\"\"})", "legendFormat": "{{namespace}}/{{pod}}" } ],
-          "fieldConfig": { "defaults": { "custom": { "fillOpacity": 80, "lineWidth": 0, "spanNulls": false }, "mappings": [ { "type": "range", "options": { "from": 1, "to": 100, "result": { "text": "allocated", "color": "blue", "index": 0 } } } ], "color": { "mode": "fixed", "fixedColor": "blue" } }, "overrides": [] },
-          "options": { "mergeValues": true, "showValue": "never", "rowHeight": 0.9, "alignValue": "center", "legend": { "displayMode": "list", "placement": "bottom", "showLegend": false }, "tooltip": { "mode": "single", "sort": "none" } }
+          "type": "state-timeline",
+          "title": "GPU Ownership",
+          "id": 32,
+          "gridPos": {"h": 6, "w": 24, "x": 0, "y": 46},
+          "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+          "targets": [
+            {
+              "refId": "A",
+              "expr": "count by (namespace, pod, gpu) (DCGM_FI_DEV_FB_USED{instance=~\"$instance\",gpu=~\"$gpu\",pod!=\"\"})",
+              "legendFormat": "{{namespace}}/{{pod}}"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "custom": {"fillOpacity": 80, "lineWidth": 0, "spanNulls": false},
+              "mappings": [{"type": "range", "options": {"from": 1, "to": 100, "result": {"text": "allocated", "color": "blue", "index": 0}}}],
+              "color": {"mode": "fixed", "fixedColor": "blue"}
+            },
+            "overrides": []
+          },
+          "options": {
+            "mergeValues": true,
+            "showValue": "never",
+            "rowHeight": 0.9,
+            "alignValue": "center",
+            "legend": {"displayMode": "list", "placement": "bottom", "showLegend": false},
+            "tooltip": {"mode": "single", "sort": "none"}
+          }
         },
-
         {
-          "type": "row", "title": "PCIe", "id": 104, "collapsed": true,
-          "gridPos": { "h": 1, "w": 24, "x": 0, "y": 45 },
+          "type": "row",
+          "title": "PCIe",
+          "id": 104,
+          "collapsed": true,
+          "gridPos": {"h": 1, "w": 24, "x": 0, "y": 52},
           "panels": [
             {
-              "type": "timeseries", "title": "PCIe Throughput",
-              "id": 40, "gridPos": { "h": 8, "w": 12, "x": 0, "y": 46 },
-              "datasource": { "type": "prometheus", "uid": "victoriametrics" },
+              "type": "timeseries",
+              "title": "PCIe Throughput",
+              "id": 40,
+              "gridPos": {"h": 8, "w": 12, "x": 0, "y": 46},
+              "datasource": {"type": "prometheus", "uid": "victoriametrics"},
               "targets": [
-                { "refId": "A", "expr": "DCGM_FI_PROF_PCIE_RX_BYTES{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "rx" },
-                { "refId": "B", "expr": "DCGM_FI_PROF_PCIE_TX_BYTES{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "tx" }
+                {"refId": "A", "expr": "DCGM_FI_PROF_PCIE_RX_BYTES{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "rx"},
+                {"refId": "B", "expr": "DCGM_FI_PROF_PCIE_TX_BYTES{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "tx"}
               ],
-              "fieldConfig": { "defaults": { "unit": "Bps", "decimals": 1, "min": 0, "custom": { "drawStyle": "line", "lineWidth": 1, "fillOpacity": 10, "showPoints": "never", "spanNulls": true } }, "overrides": [] },
-              "options": { "legend": { "displayMode": "table", "placement": "right", "calcs": ["mean", "max", "lastNotNull"], "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } }
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "Bps",
+                  "decimals": 1,
+                  "min": 0,
+                  "custom": {"drawStyle": "line", "lineWidth": 1, "fillOpacity": 10, "showPoints": "never", "spanNulls": true}
+                },
+                "overrides": []
+              },
+              "options": {
+                "legend": {"displayMode": "table", "placement": "right", "calcs": ["mean", "max", "lastNotNull"], "showLegend": true},
+                "tooltip": {"mode": "multi", "sort": "desc"}
+              }
             },
             {
-              "type": "timeseries", "title": "PCIe Replays",
-              "id": 41, "gridPos": { "h": 8, "w": 6, "x": 12, "y": 46 },
-              "datasource": { "type": "prometheus", "uid": "victoriametrics" },
-              "targets": [ { "refId": "A", "expr": "rate(DCGM_FI_DEV_PCIE_REPLAY_COUNTER{instance=~\"$instance\",gpu=~\"$gpu\"}[$__rate_interval])", "legendFormat": "replays" } ],
-              "fieldConfig": { "defaults": { "unit": "ops", "decimals": 2, "min": 0, "custom": { "drawStyle": "line", "lineWidth": 1, "fillOpacity": 10, "showPoints": "never", "spanNulls": true } }, "overrides": [] },
-              "options": { "legend": { "displayMode": "list", "placement": "bottom", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } }
+              "type": "timeseries",
+              "title": "PCIe Replays",
+              "id": 41,
+              "gridPos": {"h": 8, "w": 6, "x": 12, "y": 46},
+              "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+              "targets": [
+                {
+                  "refId": "A",
+                  "expr": "rate(DCGM_FI_DEV_PCIE_REPLAY_COUNTER{instance=~\"$instance\",gpu=~\"$gpu\"}[$__rate_interval])",
+                  "legendFormat": "replays"
+                }
+              ],
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "ops",
+                  "decimals": 2,
+                  "min": 0,
+                  "custom": {"drawStyle": "line", "lineWidth": 1, "fillOpacity": 10, "showPoints": "never", "spanNulls": true}
+                },
+                "overrides": []
+              },
+              "options": {"legend": {"displayMode": "list", "placement": "bottom", "showLegend": true}, "tooltip": {"mode": "multi", "sort": "desc"}}
             },
             {
-              "type": "stat", "title": "PCIe Link",
-              "id": 42, "gridPos": { "h": 8, "w": 6, "x": 18, "y": 46 },
-              "datasource": { "type": "prometheus", "uid": "victoriametrics" },
+              "type": "stat",
+              "title": "PCIe Link",
+              "id": 42,
+              "gridPos": {"h": 8, "w": 6, "x": 18, "y": 46},
+              "datasource": {"type": "prometheus", "uid": "victoriametrics"},
               "targets": [
-                { "refId": "A", "expr": "DCGM_FI_DEV_PCIE_LINK_GEN{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "gen" },
-                { "refId": "B", "expr": "DCGM_FI_DEV_PCIE_MAX_LINK_GEN{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "max gen" },
-                { "refId": "C", "expr": "DCGM_FI_DEV_PCIE_LINK_WIDTH{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "width" },
-                { "refId": "D", "expr": "DCGM_FI_DEV_PCIE_MAX_LINK_WIDTH{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "max width" }
+                {"refId": "A", "expr": "DCGM_FI_DEV_PCIE_LINK_GEN{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "gen"},
+                {"refId": "B", "expr": "DCGM_FI_DEV_PCIE_MAX_LINK_GEN{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "max gen"},
+                {"refId": "C", "expr": "DCGM_FI_DEV_PCIE_LINK_WIDTH{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "width"},
+                {"refId": "D", "expr": "DCGM_FI_DEV_PCIE_MAX_LINK_WIDTH{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "max width"}
               ],
-              "fieldConfig": { "defaults": { "unit": "none", "decimals": 0, "noValue": "n/a", "color": { "mode": "fixed", "fixedColor": "text" } }, "overrides": [] },
-              "options": { "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "orientation": "horizontal", "textMode": "value_and_name", "colorMode": "none", "graphMode": "none" }
+              "fieldConfig": {"defaults": {"unit": "none", "decimals": 0, "noValue": "n/a", "color": {"mode": "fixed", "fixedColor": "text"}}, "overrides": []},
+              "options": {
+                "reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false},
+                "orientation": "horizontal",
+                "textMode": "value_and_name",
+                "colorMode": "none",
+                "graphMode": "none"
+              }
             }
           ]
         },
         {
-          "type": "row", "title": "Health & Errors", "id": 105, "collapsed": true,
-          "gridPos": { "h": 1, "w": 24, "x": 0, "y": 46 },
+          "type": "row",
+          "title": "Health & Errors",
+          "id": 105,
+          "collapsed": true,
+          "gridPos": {"h": 1, "w": 24, "x": 0, "y": 53},
           "panels": [
             {
-              "type": "state-timeline", "title": "XID Errors",
-              "id": 50, "gridPos": { "h": 7, "w": 12, "x": 0, "y": 47 },
-              "datasource": { "type": "prometheus", "uid": "victoriametrics" },
-              "targets": [ { "refId": "A", "expr": "clamp_max(DCGM_EXP_XID_ERRORS_COUNT{instance=~\"$instance\",gpu=~\"$gpu\"}, 1)", "legendFormat": "xid {{xid}}" } ],
-              "fieldConfig": { "defaults": { "noValue": "no XID errors observed", "custom": { "fillOpacity": 80, "lineWidth": 0, "spanNulls": false }, "mappings": [ { "type": "value", "options": { "0": { "text": "clear", "color": "green", "index": 0 }, "1": { "text": "error", "color": "red", "index": 1 } } } ], "color": { "mode": "thresholds" }, "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null }, { "color": "red", "value": 1 } ] } }, "overrides": [] },
-              "options": { "mergeValues": true, "showValue": "never", "rowHeight": 0.9, "alignValue": "center", "legend": { "displayMode": "list", "placement": "bottom", "showLegend": true }, "tooltip": { "mode": "single", "sort": "none" } }
+              "type": "state-timeline",
+              "title": "XID Errors",
+              "id": 50,
+              "gridPos": {"h": 7, "w": 8, "x": 0, "y": 47},
+              "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+              "targets": [{"refId": "A", "expr": "clamp_max(DCGM_EXP_XID_ERRORS_COUNT{instance=~\"$instance\",gpu=~\"$gpu\"}, 1)", "legendFormat": "xid {{xid}}"}],
+              "fieldConfig": {
+                "defaults": {
+                  "noValue": "no XID errors observed",
+                  "custom": {"fillOpacity": 80, "lineWidth": 0, "spanNulls": false},
+                  "mappings": [
+                    {
+                      "type": "value",
+                      "options": {"0": {"text": "clear", "color": "green", "index": 0}, "1": {"text": "error", "color": "red", "index": 1}}
+                    }
+                  ],
+                  "color": {"mode": "thresholds"},
+                  "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}, {"color": "red", "value": 1}]}
+                },
+                "overrides": []
+              },
+              "options": {
+                "mergeValues": true,
+                "showValue": "never",
+                "rowHeight": 0.9,
+                "alignValue": "center",
+                "legend": {"displayMode": "list", "placement": "bottom", "showLegend": true},
+                "tooltip": {"mode": "single", "sort": "none"}
+              }
             },
             {
-              "type": "timeseries", "title": "ECC Errors",
-              "id": 51, "gridPos": { "h": 7, "w": 12, "x": 12, "y": 47 },
-              "datasource": { "type": "prometheus", "uid": "victoriametrics" },
+              "type": "stat",
+              "title": "Remapped Rows",
+              "id": 52,
+              "gridPos": {"h": 7, "w": 8, "x": 8, "y": 47},
+              "datasource": {"type": "prometheus", "uid": "victoriametrics"},
               "targets": [
-                { "refId": "A", "expr": "DCGM_FI_DEV_ECC_SBE_VOL_TOTAL{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "single-bit volatile" },
-                { "refId": "B", "expr": "DCGM_FI_DEV_ECC_DBE_VOL_TOTAL{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "double-bit volatile" },
-                { "refId": "C", "expr": "DCGM_FI_DEV_ECC_SBE_AGG_TOTAL{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "single-bit aggregate" },
-                { "refId": "D", "expr": "DCGM_FI_DEV_ECC_DBE_AGG_TOTAL{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "double-bit aggregate" }
+                {"refId": "A", "expr": "DCGM_FI_DEV_CORRECTABLE_REMAPPED_ROWS{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "correctable"},
+                {"refId": "B", "expr": "DCGM_FI_DEV_UNCORRECTABLE_REMAPPED_ROWS{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "uncorrectable"},
+                {"refId": "C", "expr": "DCGM_FI_DEV_ROW_REMAP_FAILURE{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "remap failure"}
               ],
-              "fieldConfig": { "defaults": { "unit": "short", "decimals": 0, "min": 0, "noValue": "ECC not reported by this GPU", "custom": { "drawStyle": "line", "lineWidth": 1, "fillOpacity": 10, "showPoints": "never", "spanNulls": true } }, "overrides": [] },
-              "options": { "legend": { "displayMode": "table", "placement": "right", "calcs": ["lastNotNull"], "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } }
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "short",
+                  "decimals": 0,
+                  "noValue": "n/a",
+                  "color": {"mode": "thresholds"},
+                  "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}, {"color": "red", "value": 1}]}
+                },
+                "overrides": []
+              },
+              "options": {
+                "reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false},
+                "orientation": "horizontal",
+                "textMode": "value_and_name",
+                "colorMode": "value",
+                "graphMode": "none"
+              }
             },
             {
-              "type": "stat", "title": "Remapped Rows",
-              "id": 52, "gridPos": { "h": 6, "w": 12, "x": 0, "y": 54 },
-              "datasource": { "type": "prometheus", "uid": "victoriametrics" },
+              "type": "state-timeline",
+              "title": "DCGM Health Watches",
+              "id": 53,
+              "gridPos": {"h": 7, "w": 8, "x": 16, "y": 47},
+              "datasource": {"type": "prometheus", "uid": "victoriametrics"},
               "targets": [
-                { "refId": "A", "expr": "DCGM_FI_DEV_CORRECTABLE_REMAPPED_ROWS{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "correctable" },
-                { "refId": "B", "expr": "DCGM_FI_DEV_UNCORRECTABLE_REMAPPED_ROWS{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "uncorrectable" },
-                { "refId": "C", "expr": "DCGM_FI_DEV_ROW_REMAP_FAILURE{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "remap failure" }
+                {
+                  "refId": "A",
+                  "expr": "max by (health_watch) (DCGM_EXP_GPU_HEALTH_STATUS{instance=~\"$instance\",gpu=~\"$gpu\"})",
+                  "legendFormat": "{{health_watch}}"
+                }
               ],
-              "fieldConfig": { "defaults": { "unit": "short", "decimals": 0, "noValue": "n/a", "color": { "mode": "thresholds" }, "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null }, { "color": "red", "value": 1 } ] } }, "overrides": [] },
-              "options": { "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "orientation": "horizontal", "textMode": "value_and_name", "colorMode": "value", "graphMode": "none" }
-            },
-            {
-              "type": "state-timeline", "title": "DCGM Health Watches",
-              "id": 53, "gridPos": { "h": 6, "w": 12, "x": 12, "y": 54 },
-              "datasource": { "type": "prometheus", "uid": "victoriametrics" },
-              "targets": [ { "refId": "A", "expr": "max by (health_watch) (DCGM_EXP_GPU_HEALTH_STATUS{instance=~\"$instance\",gpu=~\"$gpu\"})", "legendFormat": "{{health_watch}}" } ],
-              "fieldConfig": { "defaults": { "noValue": "no health data", "custom": { "fillOpacity": 80, "lineWidth": 0, "spanNulls": false }, "mappings": [ { "type": "value", "options": { "0": { "text": "pass", "color": "green", "index": 0 }, "10": { "text": "warn", "color": "orange", "index": 1 }, "20": { "text": "fail", "color": "red", "index": 2 } } } ], "color": { "mode": "thresholds" }, "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null }, { "color": "orange", "value": 10 }, { "color": "red", "value": 20 } ] } }, "overrides": [] },
-              "options": { "mergeValues": true, "showValue": "never", "rowHeight": 0.9, "alignValue": "center", "legend": { "displayMode": "list", "placement": "bottom", "showLegend": false }, "tooltip": { "mode": "single", "sort": "none" } }
+              "fieldConfig": {
+                "defaults": {
+                  "noValue": "no health data",
+                  "custom": {"fillOpacity": 80, "lineWidth": 0, "spanNulls": false},
+                  "mappings": [
+                    {
+                      "type": "value",
+                      "options": {
+                        "0": {"text": "pass", "color": "green", "index": 0},
+                        "10": {"text": "warn", "color": "orange", "index": 1},
+                        "20": {"text": "fail", "color": "red", "index": 2}
+                      }
+                    }
+                  ],
+                  "color": {"mode": "thresholds"},
+                  "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}, {"color": "orange", "value": 10}, {"color": "red", "value": 20}]}
+                },
+                "overrides": []
+              },
+              "options": {
+                "mergeValues": true,
+                "showValue": "never",
+                "rowHeight": 0.9,
+                "alignValue": "center",
+                "legend": {"displayMode": "list", "placement": "bottom", "showLegend": false},
+                "tooltip": {"mode": "single", "sort": "none"}
+              }
             }
           ]
         }
