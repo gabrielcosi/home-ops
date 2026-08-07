@@ -4,6 +4,9 @@ kind: Kustomization
 metadata:
   name: dcgm-exporter
 spec:
+  dependsOn:
+    - name: nvidia-dra-driver
+      namespace: kube-system
   interval: 1h
   path: ./kubernetes/apps/monitoring/dcgm-exporter/app
   prune: true
