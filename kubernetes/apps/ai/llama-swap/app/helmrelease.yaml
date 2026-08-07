@@ -83,6 +83,14 @@ spec:
           http:
             port: 8080
 
+    route:
+      app:
+        hostnames:
+          - 'llama.xcd.dev'
+        parentRefs:
+          - name: envoy-internal
+            namespace: network
+
     persistence:
       config:
         type: configMap
