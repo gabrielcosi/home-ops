@@ -7,7 +7,7 @@ metadata:
     app.kubernetes.io/instance: cliproxyapi
     app.kubernetes.io/name: cliproxyapi
 spec:
-  description: Lock cliproxyapi to Bifrost ingress and configured provider egress only; deny all other phone-home.
+  description: Restrict cliproxyapi to Bifrost ingress and configured provider egress only.
   endpointSelector:
     matchLabels:
       app.kubernetes.io/instance: cliproxyapi

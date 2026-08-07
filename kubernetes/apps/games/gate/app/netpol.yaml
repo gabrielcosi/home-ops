@@ -4,7 +4,7 @@ kind: CiliumNetworkPolicy
 metadata:
   name: gate
 spec:
-  description: Restrict gate egress to DNS, the minecraft backend, and Mojang session auth, so a compromised proxy pod cannot reach the rest of the cluster. Ingress is intentionally left open — the LB serves the internet and warden gates entry by identity.
+  description: Restrict gate egress to DNS, the minecraft backend, and Mojang session auth.
   endpointSelector:
     matchLabels:
       app.kubernetes.io/name: gate
