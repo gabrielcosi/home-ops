@@ -477,13 +477,13 @@ spec:
             },
             {
               "refId": "B",
-              "expr": "sum by (instance, gpu, namespace, pod, container, dra_claim_name) (DCGM_FI_DEV_GPU_UTIL{instance=~\"$instance\",gpu=~\"$gpu\"})",
+              "expr": "sum by (instance, gpu, namespace, pod, container, dra_claim_name) (avg_over_time(DCGM_FI_DEV_GPU_UTIL{instance=~\"$instance\",gpu=~\"$gpu\"}[$__range]))",
               "instant": true,
               "format": "table"
             },
             {
               "refId": "C",
-              "expr": "sum by (instance, gpu, namespace, pod, container, dra_claim_name) (DCGM_FI_DEV_POWER_USAGE{instance=~\"$instance\",gpu=~\"$gpu\"})",
+              "expr": "sum by (instance, gpu, namespace, pod, container, dra_claim_name) (avg_over_time(DCGM_FI_DEV_POWER_USAGE{instance=~\"$instance\",gpu=~\"$gpu\"}[$__range]))",
               "instant": true,
               "format": "table"
             }
@@ -496,8 +496,8 @@ spec:
                 "excludeByName": {"Time": true, "__name__": true, "instance": true, "dra_claim_name": true},
                 "renameByName": {
                   "Value #A": "VRAM (MiB)",
-                  "Value #B": "GPU Util (%)",
-                  "Value #C": "Power (W)",
+                  "Value #B": "GPU Util (avg %)",
+                  "Value #C": "Power (avg W)",
                   "gpu": "GPU",
                   "namespace": "Namespace",
                   "pod": "Pod",
@@ -509,11 +509,12 @@ spec:
           "fieldConfig": {
             "defaults": {"custom": {"align": "auto", "filterable": true}},
             "overrides": [
+              {"matcher": {"id": "byName", "options": "VRAM (MiB)"}, "properties": [{"id": "unit", "value": "mbytes"}]},
               {
-                "matcher": {"id": "byName", "options": "VRAM (MiB)"},
-                "properties": [{"id": "unit", "value": "mbytes"}, {"id": "custom.cellOptions", "value": {"type": "gauge", "mode": "gradient"}}]
+                "matcher": {"id": "byName", "options": "GPU Util (avg %)"},
+                "properties": [{"id": "unit", "value": "percent"}, {"id": "decimals", "value": 0}]
               },
-              {"matcher": {"id": "byName", "options": "Power (W)"}, "properties": [{"id": "unit", "value": "watt"}]}
+              {"matcher": {"id": "byName", "options": "Power (avg W)"}, "properties": [{"id": "unit", "value": "watt"}, {"id": "decimals", "value": 1}]}
             ]
           },
           "options": {"showHeader": true, "footer": {"show": false, "reducer": ["sum"], "fields": ""}}
@@ -550,36 +551,6 @@ spec:
           "options": {
             "legend": {"displayMode": "table", "placement": "right", "calcs": ["max", "lastNotNull"], "showLegend": true},
             "tooltip": {"mode": "multi", "sort": "desc"}
-          }
-        },
-        {
-          "type": "state-timeline",
-          "title": "GPU Ownership",
-          "id": 32,
-          "gridPos": {"h": 6, "w": 24, "x": 0, "y": 46},
-          "datasource": {"type": "prometheus", "uid": "victoriametrics"},
-          "targets": [
-            {
-              "refId": "A",
-              "expr": "count by (namespace, pod, gpu) (DCGM_FI_DEV_FB_USED{instance=~\"$instance\",gpu=~\"$gpu\",pod!=\"\"})",
-              "legendFormat": "{{namespace}}/{{pod}}"
-            }
-          ],
-          "fieldConfig": {
-            "defaults": {
-              "custom": {"fillOpacity": 80, "lineWidth": 0, "spanNulls": false},
-              "mappings": [{"type": "range", "options": {"from": 1, "to": 100, "result": {"text": "allocated", "color": "blue", "index": 0}}}],
-              "color": {"mode": "fixed", "fixedColor": "blue"}
-            },
-            "overrides": []
-          },
-          "options": {
-            "mergeValues": true,
-            "showValue": "never",
-            "rowHeight": 0.9,
-            "alignValue": "center",
-            "legend": {"displayMode": "list", "placement": "bottom", "showLegend": false},
-            "tooltip": {"mode": "single", "sort": "none"}
           }
         },
         {
@@ -645,9 +616,7 @@ spec:
               "datasource": {"type": "prometheus", "uid": "victoriametrics"},
               "targets": [
                 {"refId": "A", "expr": "DCGM_FI_DEV_PCIE_LINK_GEN{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "gen"},
-                {"refId": "B", "expr": "DCGM_FI_DEV_PCIE_MAX_LINK_GEN{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "max gen"},
-                {"refId": "C", "expr": "DCGM_FI_DEV_PCIE_LINK_WIDTH{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "width"},
-                {"refId": "D", "expr": "DCGM_FI_DEV_PCIE_MAX_LINK_WIDTH{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "max width"}
+                {"refId": "B", "expr": "DCGM_FI_DEV_PCIE_LINK_WIDTH{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "width"}
               ],
               "fieldConfig": {"defaults": {"unit": "none", "decimals": 0, "noValue": "n/a", "color": {"mode": "fixed", "fixedColor": "text"}}, "overrides": []},
               "options": {
@@ -655,7 +624,9 @@ spec:
                 "orientation": "horizontal",
                 "textMode": "value_and_name",
                 "colorMode": "none",
-                "graphMode": "none"
+                "graphMode": "none",
+                "justifyMode": "auto",
+                "wideLayout": true
               }
             }
           ]
