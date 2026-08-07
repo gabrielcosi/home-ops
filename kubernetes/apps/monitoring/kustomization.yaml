@@ -7,6 +7,7 @@ components:
 resources:
   - ./namespace.yaml
   - ./blackbox-exporter/ks.yaml
+  - ./dcgm-exporter/ks.yaml
   - ./gatus/ks.yaml
   - ./grafana-operator/ks.yaml
   - ./karma/ks.yaml

@@ -1,0 +1,38 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: dcgm-exporter
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: dcgm-exporter
+  interval: 1h
+  values:
+    fullnameOverride: dcgm-exporter
+    runtimeClassName: nvidia
+    affinity:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+            - matchExpressions:
+                - key: extensions.talos.dev/nvidia-open-gpu-kernel-modules-production
+                  operator: Exists
+    kubernetesDRA:
+      enabled: true
+    serviceMonitor:
+      enabled: true
+      honorLabels: true
+      relabelings:
+        - action: replace
+          regex: (.*)
+          replacement: $1.internal
+          sourceLabels:
+            - __meta_kubernetes_endpoint_node_name
+          targetLabel: instance
+    resources:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+      limits:
+        memory: 512Mi
