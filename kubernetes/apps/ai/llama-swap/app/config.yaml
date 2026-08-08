@@ -80,7 +80,7 @@ models:
       --port ${PORT} \
       --model /models/Qwen3-Embedding-0.6B-Q8_0.gguf \
       --embeddings \
-      --ctx-size 2048 \
+      --ctx-size 32768 \
       --ubatch-size 2048 \
       --parallel 16 \
       --threads 8 \
