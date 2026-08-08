@@ -47,6 +47,8 @@ spec:
               - /data
               - --max-client-batch-size
               - "2048"
+              - --max-batch-tokens
+              - "2048"
             env:
               OMP_NUM_THREADS: "16"
               RAYON_NUM_THREADS: "16"
@@ -94,7 +96,7 @@ spec:
                 cpu: 2000m
                 memory: 2Gi
               limits:
-                memory: 6Gi
+                memory: 8Gi
 
     service:
       app:
