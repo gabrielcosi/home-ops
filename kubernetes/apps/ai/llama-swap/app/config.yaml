@@ -82,9 +82,12 @@ models:
       --embeddings \
       --ctx-size 2048 \
       --ubatch-size 2048 \
+      --parallel 16 \
+      --threads 8 \
+      --threads-batch 16 \
       --device none
     useModelName: embeddings
-    concurrencyLimit: 4
+    concurrencyLimit: 16
 
 matrix:
   vars:

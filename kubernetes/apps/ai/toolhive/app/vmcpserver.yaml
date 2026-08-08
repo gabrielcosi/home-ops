@@ -38,7 +38,6 @@ spec:
       embeddingProvider: openai
       embeddingService: http://bifrost.ai.svc.cluster.local:8080/v1
       embeddingModel: embeddings
-      embeddingServiceTimeout: 60s
     operational:
       failureHandling:
         healthCheckInterval: 5m
