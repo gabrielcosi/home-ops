@@ -48,7 +48,7 @@ spec:
               - --max-client-batch-size
               - "2048"
               - --max-batch-tokens
-              - "2048"
+              - "16384"
             env:
               OMP_NUM_THREADS: "16"
               RAYON_NUM_THREADS: "16"
