@@ -29,7 +29,9 @@ models:
       --reasoning-budget 2000 \
       --reasoning-budget-message "I have enough. Final answer now, no reconsidering." \
       --flash-attn on \
-      --n-gpu-layers 99
+      --n-gpu-layers 99 \
+      --fit off \
+      --reasoning-preserve
     useModelName: qwen3.6-35b-a3b
     concurrencyLimit: 4
 
@@ -60,6 +62,8 @@ models:
       --reasoning-budget-message "I have enough. Final answer now, no reconsidering." \
       --flash-attn on \
       --n-gpu-layers 99 \
+      --fit off \
+      --reasoning-preserve \
       --spec-type draft-mtp \
       --spec-draft-n-max 2
     useModelName: qwen3.6-27b
