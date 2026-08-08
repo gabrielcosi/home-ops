@@ -52,7 +52,7 @@ spec:
               CORS_ALLOW_ORIGIN: https://chat.xcd.dev
               # RAG
               RAG_EMBEDDING_ENGINE: openai
-              RAG_EMBEDDING_MODEL: zeus/embeddings
+              RAG_EMBEDDING_MODEL: llama-swap/embeddings
               RAG_OPENAI_API_BASE_URL: 'http://bifrost.ai.svc.cluster.local:8080/v1'
               # Web search
               ENABLE_WEB_SEARCH: true

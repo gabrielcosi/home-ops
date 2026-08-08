@@ -432,10 +432,10 @@ spec:
             is_active: true
             rate_limit_id: rl-toolhive
             provider_configs:
-              - provider: text-embeddings
+              - provider: llama-swap
                 weight: 1
                 allowed_models:
-                  - sentence-transformers/all-MiniLM-L6-v2
+                  - embeddings
                 key_ids:
                   - '*'
           - id: n8n

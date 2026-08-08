@@ -37,7 +37,7 @@ spec:
     optimizer:
       embeddingProvider: openai
       embeddingService: http://bifrost.ai.svc.cluster.local:8080/v1
-      embeddingModel: sentence-transformers/all-MiniLM-L6-v2
+      embeddingModel: embeddings
       embeddingServiceTimeout: 60s
     operational:
       failureHandling:
