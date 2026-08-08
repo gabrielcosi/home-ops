@@ -24,10 +24,10 @@ models:
       --top-p 0.95 \
       --top-k 20 \
       --min-p 0 \
-      --presence-penalty 1.5 \
+      --presence-penalty 0.0 \
       --repeat-penalty 1.0 \
-      --reasoning-budget 10000 \
-      --reasoning-budget-message "...I got enough. Let's answer now." \
+      --reasoning-budget 2000 \
+      --reasoning-budget-message "I have enough. Final answer now, no reconsidering." \
       --flash-attn on \
       --n-gpu-layers 99
     useModelName: qwen3.6-35b-a3b
@@ -47,7 +47,6 @@ models:
       --ctx-size 131072 \
       --parallel 4 \
       --kv-unified \
-      --cache-reuse 256 \
       --jinja \
       --cache-type-k q8_0 \
       --cache-type-v q8_0 \
@@ -57,8 +56,8 @@ models:
       --min-p 0.0 \
       --presence-penalty 0.0 \
       --repeat-penalty 1.0 \
-      --reasoning-budget 10000 \
-      --reasoning-budget-message "...I got enough. Let's answer now." \
+      --reasoning-budget 2000 \
+      --reasoning-budget-message "I have enough. Final answer now, no reconsidering." \
       --flash-attn on \
       --n-gpu-layers 99 \
       --spec-type draft-mtp \
