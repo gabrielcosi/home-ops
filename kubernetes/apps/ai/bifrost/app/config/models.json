@@ -1,10 +1,4 @@
 {
-  "llama-swap/embeddings": {
-    "provider": "llama-swap",
-    "base_model": "embeddings",
-    "mode": "embedding",
-    "max_input_tokens": 2048
-  },
   "llama-swap/qwen3.6-35b-a3b": {
     "provider": "llama-swap",
     "base_model": "qwen3.6-35b-a3b",

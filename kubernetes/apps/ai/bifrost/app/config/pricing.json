@@ -1,11 +1,4 @@
 {
-  "llama-swap/embeddings": {
-    "provider": "llama-swap",
-    "base_model": "embeddings",
-    "mode": "embedding",
-    "input_cost_per_token": 0.00000002,
-    "output_cost_per_token": 0
-  },
   "llama-swap/qwen3.6-35b-a3b": {
     "provider": "llama-swap",
     "base_model": "qwen3.6-35b-a3b",

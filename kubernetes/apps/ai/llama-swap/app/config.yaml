@@ -69,34 +69,13 @@ models:
     useModelName: qwen3.6-27b
     concurrencyLimit: 4
 
-  embeddings:
-    capabilities:
-      in: [text]
-      out: [text]
-      context: 2048
-    cmd: |
-      /app/llama-server \
-      --host 0.0.0.0 \
-      --port ${PORT} \
-      --model /models/Qwen3-Embedding-0.6B-Q8_0.gguf \
-      --embeddings \
-      --ctx-size 32768 \
-      --ubatch-size 2048 \
-      --parallel 16 \
-      --threads 8 \
-      --threads-batch 16 \
-      --device none
-    useModelName: embeddings
-    concurrencyLimit: 16
-
 matrix:
   vars:
     q3635b: qwen3.6-35b-a3b
     q3627b: qwen3.6-27b
-    emb: embeddings
 
   sets:
-    default: '(q3635b | q3627b) & emb'
+    default: 'q3635b | q3627b'
 
 apiKeys:
   - ${env.LS_API_KEY}
