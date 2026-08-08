@@ -60,7 +60,7 @@ spec:
           "id": 1,
           "gridPos": {"h": 4, "w": 3, "x": 0, "y": 1},
           "datasource": {"type": "prometheus", "uid": "victoriametrics"},
-          "targets": [{"refId": "A", "expr": "DCGM_FI_DEV_GPU_TEMP{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "core"}],
+          "targets": [{"refId": "A", "expr": "max by (instance, gpu) (DCGM_FI_DEV_GPU_TEMP{instance=~\"$instance\",gpu=~\"$gpu\"})", "legendFormat": "core"}],
           "fieldConfig": {
             "defaults": {
               "unit": "celsius",
@@ -84,7 +84,7 @@ spec:
           "targets": [
             {
               "refId": "A",
-              "expr": "max_over_time(DCGM_FI_DEV_GPU_TEMP{instance=~\"$instance\",gpu=~\"$gpu\"}[$__range])",
+              "expr": "max by (instance, gpu) (max_over_time(DCGM_FI_DEV_GPU_TEMP{instance=~\"$instance\",gpu=~\"$gpu\"}[$__range]))",
               "instant": true,
               "legendFormat": "peak"
             }
@@ -109,7 +109,7 @@ spec:
           "id": 3,
           "gridPos": {"h": 4, "w": 3, "x": 6, "y": 1},
           "datasource": {"type": "prometheus", "uid": "victoriametrics"},
-          "targets": [{"refId": "A", "expr": "DCGM_FI_DEV_POWER_USAGE{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "draw"}],
+          "targets": [{"refId": "A", "expr": "max by (instance, gpu) (DCGM_FI_DEV_POWER_USAGE{instance=~\"$instance\",gpu=~\"$gpu\"})", "legendFormat": "draw"}],
           "fieldConfig": {
             "defaults": {
               "unit": "watt",
@@ -127,7 +127,7 @@ spec:
           "id": 4,
           "gridPos": {"h": 4, "w": 3, "x": 9, "y": 1},
           "datasource": {"type": "prometheus", "uid": "victoriametrics"},
-          "targets": [{"refId": "A", "expr": "DCGM_FI_DEV_SM_CLOCK{instance=~\"$instance\",gpu=~\"$gpu\"} * 1000000", "legendFormat": "sm"}],
+          "targets": [{"refId": "A", "expr": "max by (instance, gpu) (DCGM_FI_DEV_SM_CLOCK{instance=~\"$instance\",gpu=~\"$gpu\"}) * 1000000", "legendFormat": "sm"}],
           "fieldConfig": {
             "defaults": {
               "unit": "hertz",
@@ -145,7 +145,7 @@ spec:
           "id": 5,
           "gridPos": {"h": 4, "w": 4, "x": 12, "y": 1},
           "datasource": {"type": "prometheus", "uid": "victoriametrics"},
-          "targets": [{"refId": "A", "expr": "DCGM_FI_DEV_GPU_UTIL{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "util"}],
+          "targets": [{"refId": "A", "expr": "max by (instance, gpu) (DCGM_FI_DEV_GPU_UTIL{instance=~\"$instance\",gpu=~\"$gpu\"})", "legendFormat": "util"}],
           "fieldConfig": {
             "defaults": {
               "unit": "percent",
@@ -168,7 +168,7 @@ spec:
           "targets": [
             {
               "refId": "A",
-              "expr": "100 * DCGM_FI_DEV_FB_USED{instance=~\"$instance\",gpu=~\"$gpu\"} / clamp_min(DCGM_FI_DEV_FB_USED{instance=~\"$instance\",gpu=~\"$gpu\"} + DCGM_FI_DEV_FB_FREE{instance=~\"$instance\",gpu=~\"$gpu\"}, 1)",
+              "expr": "100 * max by (instance, gpu) (DCGM_FI_DEV_FB_USED{instance=~\"$instance\",gpu=~\"$gpu\"}) / clamp_min(max by (instance, gpu) (DCGM_FI_DEV_FB_USED{instance=~\"$instance\",gpu=~\"$gpu\"}) + max by (instance, gpu) (DCGM_FI_DEV_FB_FREE{instance=~\"$instance\",gpu=~\"$gpu\"}), 1)",
               "legendFormat": "used"
             }
           ],
@@ -191,7 +191,7 @@ spec:
           "id": 7,
           "gridPos": {"h": 4, "w": 4, "x": 20, "y": 1},
           "datasource": {"type": "prometheus", "uid": "victoriametrics"},
-          "targets": [{"refId": "A", "expr": "DCGM_FI_DEV_FAN_SPEED{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "fan"}],
+          "targets": [{"refId": "A", "expr": "max by (instance, gpu) (DCGM_FI_DEV_FAN_SPEED{instance=~\"$instance\",gpu=~\"$gpu\"})", "legendFormat": "fan"}],
           "fieldConfig": {
             "defaults": {
               "unit": "percent",
@@ -221,8 +221,12 @@ spec:
           "gridPos": {"h": 8, "w": 8, "x": 0, "y": 6},
           "datasource": {"type": "prometheus", "uid": "victoriametrics"},
           "targets": [
-            {"refId": "A", "expr": "DCGM_FI_DEV_SM_CLOCK{instance=~\"$instance\",gpu=~\"$gpu\"} * 1000000", "legendFormat": "sm"},
-            {"refId": "B", "expr": "DCGM_FI_DEV_MEM_CLOCK{instance=~\"$instance\",gpu=~\"$gpu\"} * 1000000", "legendFormat": "memory"}
+            {"refId": "A", "expr": "max by (instance, gpu) (DCGM_FI_DEV_SM_CLOCK{instance=~\"$instance\",gpu=~\"$gpu\"}) * 1000000", "legendFormat": "sm"},
+            {
+              "refId": "B",
+              "expr": "max by (instance, gpu) (DCGM_FI_DEV_MEM_CLOCK{instance=~\"$instance\",gpu=~\"$gpu\"}) * 1000000",
+              "legendFormat": "memory"
+            }
           ],
           "fieldConfig": {
             "defaults": {
@@ -242,10 +246,22 @@ spec:
           "gridPos": {"h": 8, "w": 8, "x": 8, "y": 6},
           "datasource": {"type": "prometheus", "uid": "victoriametrics"},
           "targets": [
-            {"refId": "A", "expr": "DCGM_FI_DEV_GPU_UTIL{instance=~\"$instance\",gpu=~\"$gpu\"} / 100", "legendFormat": "gpu util"},
-            {"refId": "B", "expr": "DCGM_FI_PROF_GR_ENGINE_ACTIVE{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "graphics engine"},
-            {"refId": "C", "expr": "DCGM_FI_PROF_SM_ACTIVE{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "sm active"},
-            {"refId": "D", "expr": "DCGM_FI_PROF_SM_OCCUPANCY{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "sm occupancy"}
+            {
+              "refId": "A",
+              "expr": "max by (instance, gpu) (DCGM_FI_DEV_GPU_UTIL{instance=~\"$instance\",gpu=~\"$gpu\"}) / 100",
+              "legendFormat": "gpu util"
+            },
+            {
+              "refId": "B",
+              "expr": "max by (instance, gpu) (DCGM_FI_PROF_GR_ENGINE_ACTIVE{instance=~\"$instance\",gpu=~\"$gpu\"})",
+              "legendFormat": "graphics engine"
+            },
+            {"refId": "C", "expr": "max by (instance, gpu) (DCGM_FI_PROF_SM_ACTIVE{instance=~\"$instance\",gpu=~\"$gpu\"})", "legendFormat": "sm active"},
+            {
+              "refId": "D",
+              "expr": "max by (instance, gpu) (DCGM_FI_PROF_SM_OCCUPANCY{instance=~\"$instance\",gpu=~\"$gpu\"})",
+              "legendFormat": "sm occupancy"
+            }
           ],
           "fieldConfig": {
             "defaults": {
@@ -266,10 +282,26 @@ spec:
           "gridPos": {"h": 8, "w": 8, "x": 16, "y": 6},
           "datasource": {"type": "prometheus", "uid": "victoriametrics"},
           "targets": [
-            {"refId": "A", "expr": "DCGM_FI_PROF_PIPE_TENSOR_ACTIVE{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "tensor"},
-            {"refId": "B", "expr": "DCGM_FI_PROF_PIPE_FP32_ACTIVE{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "fp32"},
-            {"refId": "C", "expr": "DCGM_FI_PROF_PIPE_FP16_ACTIVE{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "fp16"},
-            {"refId": "D", "expr": "DCGM_FI_PROF_DRAM_ACTIVE{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "memory interface"}
+            {
+              "refId": "A",
+              "expr": "max by (instance, gpu) (DCGM_FI_PROF_PIPE_TENSOR_ACTIVE{instance=~\"$instance\",gpu=~\"$gpu\"})",
+              "legendFormat": "tensor"
+            },
+            {
+              "refId": "B",
+              "expr": "max by (instance, gpu) (DCGM_FI_PROF_PIPE_FP32_ACTIVE{instance=~\"$instance\",gpu=~\"$gpu\"})",
+              "legendFormat": "fp32"
+            },
+            {
+              "refId": "C",
+              "expr": "max by (instance, gpu) (DCGM_FI_PROF_PIPE_FP16_ACTIVE{instance=~\"$instance\",gpu=~\"$gpu\"})",
+              "legendFormat": "fp16"
+            },
+            {
+              "refId": "D",
+              "expr": "max by (instance, gpu) (DCGM_FI_PROF_DRAM_ACTIVE{instance=~\"$instance\",gpu=~\"$gpu\"})",
+              "legendFormat": "memory interface"
+            }
           ],
           "fieldConfig": {
             "defaults": {
@@ -290,8 +322,8 @@ spec:
           "gridPos": {"h": 8, "w": 12, "x": 12, "y": 14},
           "datasource": {"type": "prometheus", "uid": "victoriametrics"},
           "targets": [
-            {"refId": "A", "expr": "DCGM_FI_DEV_ENC_UTIL{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "encoder"},
-            {"refId": "B", "expr": "DCGM_FI_DEV_DEC_UTIL{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "decoder"}
+            {"refId": "A", "expr": "max by (instance, gpu) (DCGM_FI_DEV_ENC_UTIL{instance=~\"$instance\",gpu=~\"$gpu\"})", "legendFormat": "encoder"},
+            {"refId": "B", "expr": "max by (instance, gpu) (DCGM_FI_DEV_DEC_UTIL{instance=~\"$instance\",gpu=~\"$gpu\"})", "legendFormat": "decoder"}
           ],
           "fieldConfig": {
             "defaults": {
@@ -312,10 +344,10 @@ spec:
           "gridPos": {"h": 8, "w": 12, "x": 0, "y": 14},
           "datasource": {"type": "prometheus", "uid": "victoriametrics"},
           "targets": [
-            {"refId": "A", "expr": "DCGM_FI_DEV_FB_USED{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "used"},
-            {"refId": "B", "expr": "DCGM_FI_DEV_FB_FREE{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "free"},
-            {"refId": "C", "expr": "DCGM_FI_DEV_FB_RESERVED{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "reserved"},
-            {"refId": "D", "expr": "DCGM_FI_DEV_FB_TOTAL{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "total"}
+            {"refId": "A", "expr": "max by (instance, gpu) (DCGM_FI_DEV_FB_USED{instance=~\"$instance\",gpu=~\"$gpu\"})", "legendFormat": "used"},
+            {"refId": "B", "expr": "max by (instance, gpu) (DCGM_FI_DEV_FB_FREE{instance=~\"$instance\",gpu=~\"$gpu\"})", "legendFormat": "free"},
+            {"refId": "C", "expr": "max by (instance, gpu) (DCGM_FI_DEV_FB_RESERVED{instance=~\"$instance\",gpu=~\"$gpu\"})", "legendFormat": "reserved"},
+            {"refId": "D", "expr": "max by (instance, gpu) (DCGM_FI_DEV_FB_TOTAL{instance=~\"$instance\",gpu=~\"$gpu\"})", "legendFormat": "total"}
           ],
           "fieldConfig": {
             "defaults": {
@@ -345,10 +377,22 @@ spec:
           "gridPos": {"h": 8, "w": 8, "x": 0, "y": 23},
           "datasource": {"type": "prometheus", "uid": "victoriametrics"},
           "targets": [
-            {"refId": "A", "expr": "DCGM_FI_DEV_GPU_TEMP{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "core"},
-            {"refId": "B", "expr": "DCGM_FI_DEV_MEMORY_TEMP{instance=~\"$instance\",gpu=~\"$gpu\"} > 0", "legendFormat": "memory"},
-            {"refId": "C", "expr": "DCGM_FI_DEV_SLOWDOWN_TEMP{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "slowdown limit"},
-            {"refId": "D", "expr": "DCGM_FI_DEV_SHUTDOWN_TEMP{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "shutdown limit"}
+            {"refId": "A", "expr": "max by (instance, gpu) (DCGM_FI_DEV_GPU_TEMP{instance=~\"$instance\",gpu=~\"$gpu\"})", "legendFormat": "core"},
+            {
+              "refId": "B",
+              "expr": "max by (instance, gpu) (DCGM_FI_DEV_MEMORY_TEMP{instance=~\"$instance\",gpu=~\"$gpu\"}) > 0",
+              "legendFormat": "memory"
+            },
+            {
+              "refId": "C",
+              "expr": "max by (instance, gpu) (DCGM_FI_DEV_SLOWDOWN_TEMP{instance=~\"$instance\",gpu=~\"$gpu\"})",
+              "legendFormat": "slowdown limit"
+            },
+            {
+              "refId": "D",
+              "expr": "max by (instance, gpu) (DCGM_FI_DEV_SHUTDOWN_TEMP{instance=~\"$instance\",gpu=~\"$gpu\"})",
+              "legendFormat": "shutdown limit"
+            }
           ],
           "fieldConfig": {
             "defaults": {
@@ -377,8 +421,12 @@ spec:
           "gridPos": {"h": 8, "w": 8, "x": 8, "y": 23},
           "datasource": {"type": "prometheus", "uid": "victoriametrics"},
           "targets": [
-            {"refId": "A", "expr": "DCGM_FI_DEV_POWER_USAGE{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "draw"},
-            {"refId": "B", "expr": "DCGM_FI_DEV_ENFORCED_POWER_LIMIT{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "enforced limit"}
+            {"refId": "A", "expr": "max by (instance, gpu) (DCGM_FI_DEV_POWER_USAGE{instance=~\"$instance\",gpu=~\"$gpu\"})", "legendFormat": "draw"},
+            {
+              "refId": "B",
+              "expr": "max by (instance, gpu) (DCGM_FI_DEV_ENFORCED_POWER_LIMIT{instance=~\"$instance\",gpu=~\"$gpu\"})",
+              "legendFormat": "enforced limit"
+            }
           ],
           "fieldConfig": {
             "defaults": {
@@ -406,7 +454,7 @@ spec:
           "id": 22,
           "gridPos": {"h": 8, "w": 8, "x": 16, "y": 23},
           "datasource": {"type": "prometheus", "uid": "victoriametrics"},
-          "targets": [{"refId": "A", "expr": "DCGM_FI_DEV_FAN_SPEED{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "fan"}],
+          "targets": [{"refId": "A", "expr": "max by (instance, gpu) (DCGM_FI_DEV_FAN_SPEED{instance=~\"$instance\",gpu=~\"$gpu\"})", "legendFormat": "fan"}],
           "fieldConfig": {
             "defaults": {
               "unit": "percent",
@@ -429,17 +477,17 @@ spec:
           "targets": [
             {
               "refId": "A",
-              "expr": "rate(DCGM_FI_DEV_POWER_VIOLATION{instance=~\"$instance\",gpu=~\"$gpu\"}[$__rate_interval]) / 1e7",
+              "expr": "max by (instance, gpu) (rate(DCGM_FI_DEV_POWER_VIOLATION{instance=~\"$instance\",gpu=~\"$gpu\"}[$__rate_interval])) / 1e7",
               "legendFormat": "power"
             },
             {
               "refId": "B",
-              "expr": "rate(DCGM_FI_DEV_THERMAL_VIOLATION{instance=~\"$instance\",gpu=~\"$gpu\"}[$__rate_interval]) / 1e7",
+              "expr": "max by (instance, gpu) (rate(DCGM_FI_DEV_THERMAL_VIOLATION{instance=~\"$instance\",gpu=~\"$gpu\"}[$__rate_interval])) / 1e7",
               "legendFormat": "thermal"
             },
             {
               "refId": "C",
-              "expr": "rate(DCGM_FI_DEV_BOARD_LIMIT_VIOLATION{instance=~\"$instance\",gpu=~\"$gpu\"}[$__rate_interval]) / 1e7",
+              "expr": "max by (instance, gpu) (rate(DCGM_FI_DEV_BOARD_LIMIT_VIOLATION{instance=~\"$instance\",gpu=~\"$gpu\"}[$__rate_interval])) / 1e7",
               "legendFormat": "board limit"
             }
           ],
@@ -477,13 +525,13 @@ spec:
             },
             {
               "refId": "B",
-              "expr": "sum by (instance, gpu, namespace, pod, container, dra_claim_name) (avg_over_time(DCGM_FI_DEV_GPU_UTIL{instance=~\"$instance\",gpu=~\"$gpu\"}[$__range]))",
+              "expr": "sum by (instance, gpu, namespace, pod, container, dra_claim_name) (avg_over_time(DCGM_FI_DEV_GPU_UTIL{instance=~\"$instance\",gpu=~\"$gpu\"}[5m])) and on (pod) (DCGM_FI_DEV_FB_USED{instance=~\"$instance\",gpu=~\"$gpu\"})",
               "instant": true,
               "format": "table"
             },
             {
               "refId": "C",
-              "expr": "sum by (instance, gpu, namespace, pod, container, dra_claim_name) (avg_over_time(DCGM_FI_DEV_POWER_USAGE{instance=~\"$instance\",gpu=~\"$gpu\"}[$__range]))",
+              "expr": "sum by (instance, gpu, namespace, pod, container, dra_claim_name) (avg_over_time(DCGM_FI_DEV_POWER_USAGE{instance=~\"$instance\",gpu=~\"$gpu\"}[5m])) and on (pod) (DCGM_FI_DEV_FB_USED{instance=~\"$instance\",gpu=~\"$gpu\"})",
               "instant": true,
               "format": "table"
             }
@@ -496,8 +544,8 @@ spec:
                 "excludeByName": {"Time": true, "__name__": true, "instance": true, "dra_claim_name": true},
                 "renameByName": {
                   "Value #A": "VRAM (MiB)",
-                  "Value #B": "GPU Util (avg %)",
-                  "Value #C": "Power (avg W)",
+                  "Value #B": "GPU Util (5m avg %)",
+                  "Value #C": "Power (5m avg W)",
                   "gpu": "GPU",
                   "namespace": "Namespace",
                   "pod": "Pod",
@@ -511,10 +559,13 @@ spec:
             "overrides": [
               {"matcher": {"id": "byName", "options": "VRAM (MiB)"}, "properties": [{"id": "unit", "value": "mbytes"}]},
               {
-                "matcher": {"id": "byName", "options": "GPU Util (avg %)"},
+                "matcher": {"id": "byName", "options": "GPU Util (5m avg %)"},
                 "properties": [{"id": "unit", "value": "percent"}, {"id": "decimals", "value": 0}]
               },
-              {"matcher": {"id": "byName", "options": "Power (avg W)"}, "properties": [{"id": "unit", "value": "watt"}, {"id": "decimals", "value": 1}]}
+              {
+                "matcher": {"id": "byName", "options": "Power (5m avg W)"},
+                "properties": [{"id": "unit", "value": "watt"}, {"id": "decimals", "value": 1}]
+              }
             ]
           },
           "options": {"showHeader": true, "footer": {"show": false, "reducer": ["sum"], "fields": ""}}
@@ -567,8 +618,8 @@ spec:
               "gridPos": {"h": 8, "w": 12, "x": 0, "y": 46},
               "datasource": {"type": "prometheus", "uid": "victoriametrics"},
               "targets": [
-                {"refId": "A", "expr": "DCGM_FI_PROF_PCIE_RX_BYTES{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "rx"},
-                {"refId": "B", "expr": "DCGM_FI_PROF_PCIE_TX_BYTES{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "tx"}
+                {"refId": "A", "expr": "max by (instance, gpu) (DCGM_FI_PROF_PCIE_RX_BYTES{instance=~\"$instance\",gpu=~\"$gpu\"})", "legendFormat": "rx"},
+                {"refId": "B", "expr": "max by (instance, gpu) (DCGM_FI_PROF_PCIE_TX_BYTES{instance=~\"$instance\",gpu=~\"$gpu\"})", "legendFormat": "tx"}
               ],
               "fieldConfig": {
                 "defaults": {
@@ -593,7 +644,7 @@ spec:
               "targets": [
                 {
                   "refId": "A",
-                  "expr": "rate(DCGM_FI_DEV_PCIE_REPLAY_COUNTER{instance=~\"$instance\",gpu=~\"$gpu\"}[$__rate_interval])",
+                  "expr": "max by (instance, gpu) (rate(DCGM_FI_DEV_PCIE_REPLAY_COUNTER{instance=~\"$instance\",gpu=~\"$gpu\"}[$__rate_interval]))",
                   "legendFormat": "replays"
                 }
               ],
@@ -615,8 +666,12 @@ spec:
               "gridPos": {"h": 8, "w": 6, "x": 18, "y": 46},
               "datasource": {"type": "prometheus", "uid": "victoriametrics"},
               "targets": [
-                {"refId": "A", "expr": "DCGM_FI_DEV_PCIE_LINK_GEN{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "gen"},
-                {"refId": "B", "expr": "DCGM_FI_DEV_PCIE_LINK_WIDTH{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "width"}
+                {"refId": "A", "expr": "max by (instance, gpu) (DCGM_FI_DEV_PCIE_LINK_GEN{instance=~\"$instance\",gpu=~\"$gpu\"})", "legendFormat": "gen"},
+                {
+                  "refId": "B",
+                  "expr": "max by (instance, gpu) (DCGM_FI_DEV_PCIE_LINK_WIDTH{instance=~\"$instance\",gpu=~\"$gpu\"})",
+                  "legendFormat": "width"
+                }
               ],
               "fieldConfig": {"defaults": {"unit": "none", "decimals": 0, "noValue": "n/a", "color": {"mode": "fixed", "fixedColor": "text"}}, "overrides": []},
               "options": {
@@ -644,7 +699,13 @@ spec:
               "id": 50,
               "gridPos": {"h": 7, "w": 8, "x": 0, "y": 47},
               "datasource": {"type": "prometheus", "uid": "victoriametrics"},
-              "targets": [{"refId": "A", "expr": "clamp_max(DCGM_EXP_XID_ERRORS_COUNT{instance=~\"$instance\",gpu=~\"$gpu\"}, 1)", "legendFormat": "xid {{xid}}"}],
+              "targets": [
+                {
+                  "refId": "A",
+                  "expr": "max by (instance, gpu, xid) (clamp_max(DCGM_EXP_XID_ERRORS_COUNT{instance=~\"$instance\",gpu=~\"$gpu\"}, 1))",
+                  "legendFormat": "xid {{xid}}"
+                }
+              ],
               "fieldConfig": {
                 "defaults": {
                   "noValue": "no XID errors observed",
@@ -676,9 +737,21 @@ spec:
               "gridPos": {"h": 7, "w": 8, "x": 8, "y": 47},
               "datasource": {"type": "prometheus", "uid": "victoriametrics"},
               "targets": [
-                {"refId": "A", "expr": "DCGM_FI_DEV_CORRECTABLE_REMAPPED_ROWS{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "correctable"},
-                {"refId": "B", "expr": "DCGM_FI_DEV_UNCORRECTABLE_REMAPPED_ROWS{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "uncorrectable"},
-                {"refId": "C", "expr": "DCGM_FI_DEV_ROW_REMAP_FAILURE{instance=~\"$instance\",gpu=~\"$gpu\"}", "legendFormat": "remap failure"}
+                {
+                  "refId": "A",
+                  "expr": "max by (instance, gpu) (DCGM_FI_DEV_CORRECTABLE_REMAPPED_ROWS{instance=~\"$instance\",gpu=~\"$gpu\"})",
+                  "legendFormat": "correctable"
+                },
+                {
+                  "refId": "B",
+                  "expr": "max by (instance, gpu) (DCGM_FI_DEV_UNCORRECTABLE_REMAPPED_ROWS{instance=~\"$instance\",gpu=~\"$gpu\"})",
+                  "legendFormat": "uncorrectable"
+                },
+                {
+                  "refId": "C",
+                  "expr": "max by (instance, gpu) (DCGM_FI_DEV_ROW_REMAP_FAILURE{instance=~\"$instance\",gpu=~\"$gpu\"})",
+                  "legendFormat": "remap failure"
+                }
               ],
               "fieldConfig": {
                 "defaults": {
@@ -707,7 +780,7 @@ spec:
               "targets": [
                 {
                   "refId": "A",
-                  "expr": "max by (health_watch) (DCGM_EXP_GPU_HEALTH_STATUS{instance=~\"$instance\",gpu=~\"$gpu\",health_error_code!=\"DCGM_FR_CLOCK_THROTTLE_POWER\"})",
+                  "expr": "max by (instance, gpu, health_watch) (DCGM_EXP_GPU_HEALTH_STATUS{instance=~\"$instance\",gpu=~\"$gpu\",health_error_code!=\"DCGM_FR_CLOCK_THROTTLE_POWER\"})",
                   "legendFormat": "{{health_watch}}"
                 }
               ],
