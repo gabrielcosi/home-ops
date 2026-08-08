@@ -78,7 +78,7 @@ models:
       --embeddings \
       --ctx-size 2048 \
       --ubatch-size 2048 \
-      --n-gpu-layers 0
+      --device none
     useModelName: embeddings
     concurrencyLimit: 4
 
