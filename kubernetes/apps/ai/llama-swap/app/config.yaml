@@ -77,9 +77,8 @@ models:
       --model /models/Qwen3-Embedding-0.6B-Q8_0.gguf \
       --embeddings \
       --ctx-size 2048 \
-      --ubatch-size 512 \
-      --flash-attn on \
-      --n-gpu-layers 99
+      --ubatch-size 2048 \
+      --n-gpu-layers 0
     useModelName: embeddings
     concurrencyLimit: 4
 
