@@ -37,7 +37,7 @@ spec:
               MEMORY: 6G
               USE_AIKAR_FLAGS: 'true'
               ONLINE_MODE: 'FALSE'
-              MODRINTH_PROJECTS: fabric-api,fabricproxy-lite,fabricexporter,spark,lithium,ferrite-core,krypton,dynamic-lights,ping-wheel
+              MODRINTH_PROJECTS: fabric-api,fabricproxy-lite,fabricexporter,spark,lithium,ferrite-core,krypton,dynamic-lights,ping-wheel,rei,architectury-api,cloth-config
               REMOVE_OLD_MODS: 'true'
               FABRIC_PROXY_SECRET_FILE: /secrets/forwarding.secret
               ENABLE_RCON: 'FALSE'
