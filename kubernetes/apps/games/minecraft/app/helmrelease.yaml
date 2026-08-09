@@ -44,6 +44,7 @@ spec:
               CREATE_CONSOLE_IN_PIPE: 'true'
               PAUSE_WHEN_EMPTY_SECONDS: '60'
               DIFFICULTY: hard
+              SPAWN_PROTECTION: '0'
               TZ: Europe/Berlin
             probes:
               readiness:
