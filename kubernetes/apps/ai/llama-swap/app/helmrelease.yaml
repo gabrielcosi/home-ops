@@ -103,7 +103,7 @@ spec:
         type: persistentVolumeClaim
         accessMode: ReadWriteOnce
         storageClass: miroir-client
-        size: 60Gi
+        size: 100Gi
         retain: true
         globalMounts:
           - path: /models
