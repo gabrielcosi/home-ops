@@ -10,7 +10,7 @@ spec:
     any: true
   selector:
     matchLabels:
-      app: dragonfly
+      app.kubernetes.io/name: dragonfly
   podTargetLabels:
     - app
     - role

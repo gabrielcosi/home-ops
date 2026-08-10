@@ -15,6 +15,7 @@ spec:
       enabled: false
     grafanaDashboard:
       enabled: true
+      folder: dragonfly-system
       grafanaOperator:
         enabled: true
         allowCrossNamespaceImport: true

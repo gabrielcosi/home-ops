@@ -4,6 +4,7 @@ kind: CiliumNetworkPolicy
 metadata:
   name: minecraft
 spec:
+  description: Restrict minecraft ingress to gate and the vmagent metrics scrape.
   endpointSelector:
     matchLabels:
       app.kubernetes.io/name: minecraft

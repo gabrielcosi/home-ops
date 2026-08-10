@@ -11,23 +11,23 @@ spec:
       rules:
         - alert: DragonflyMasterDown
           expr: |
-            count by (namespace) (dragonfly_master == 1) != 1
+            count by (namespace, app) (dragonfly_master == 1) != 1
           for: 5m
           labels:
             severity: critical
           annotations:
-            summary: "Dragonfly master is down in {{ $labels.namespace }}"
-            description: "The Dragonfly master instance in namespace {{ $labels.namespace }} is not functioning."
+            summary: "Dragonfly master is down for {{ $labels.app }} in {{ $labels.namespace }}"
+            description: "The Dragonfly master for {{ $labels.app }} in namespace {{ $labels.namespace }} is not functioning."
 
         - alert: DragonflyReplicaCountLow
           expr: |
-            count by (namespace) (dragonfly_master == 0) < 1
+            count by (namespace, app) (dragonfly_master == 0) < 1
           for: 5m
           labels:
             severity: critical
           annotations:
-            summary: "Dragonfly replica count is low in {{ $labels.namespace }}"
-            description: "Expected at least 1 replica in namespace {{ $labels.namespace }}, but found {{ $value }} (master is a single point of failure)."
+            summary: "Dragonfly replica count is low for {{ $labels.app }} in {{ $labels.namespace }}"
+            description: "Expected at least 1 replica for {{ $labels.app }} in namespace {{ $labels.namespace }}, but found {{ $value }} (master is a single point of failure)."
 
         - alert: DragonflyReplicaLagging
           expr: |
