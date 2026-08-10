@@ -5,7 +5,7 @@ metadata:
   name: forgejo-runner-jobs
   namespace: tools
 spec:
-  description: Restrict CI job pods to DNS, forgejo, crawl4ai, the runner cache, the external gateway, and internet 80/443.
+  description: Restrict CI job pods to DNS, forgejo, crawl4ai, the runner cache, the external gateway proxies, and internet 80/443.
   endpointSelector:
     matchLabels:
       app.kubernetes.io/name: forgejo-runner-instance
@@ -51,12 +51,10 @@ spec:
               protocol: TCP
             - port: "8089"
               protocol: TCP
-    - toCIDR:
-        - 192.168.69.182/32
-      toPorts:
-        - ports:
-            - port: "443"
-              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: network
+            k8s:gateway.envoyproxy.io/owning-gateway-name: envoy-external
     - toCIDRSet:
         - cidrGroupRef: internet
       toPorts:
@@ -71,9 +69,9 @@ spec:
           except:
             - 10.42.0.0/16
             - 10.43.0.0/16
-    - toCIDRSet:
-        - cidr: 192.168.0.0/16
-          except:
-            - 192.168.69.182/32
     - toCIDR:
+        - 192.168.0.0/16
         - 172.16.0.0/12
+    - toEntities:
+        - host
+        - remote-node
