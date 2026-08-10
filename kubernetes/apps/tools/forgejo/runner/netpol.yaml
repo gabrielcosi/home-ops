@@ -5,7 +5,7 @@ metadata:
   name: forgejo-runner-jobs
   namespace: tools
 spec:
-  description: Restrict CI job pods to DNS, forgejo, konflate, bifrost, crawl4ai, the runner cache, and internet 80/443.
+  description: Restrict CI job pods to DNS, forgejo, crawl4ai, the runner cache, the external gateway, and internet 80/443.
   endpointSelector:
     matchLabels:
       app.kubernetes.io/name: forgejo-runner-instance
@@ -35,22 +35,6 @@ spec:
               protocol: TCP
     - toEndpoints:
         - matchLabels:
-            k8s:io.kubernetes.pod.namespace: tools
-            k8s:app.kubernetes.io/name: konflate
-      toPorts:
-        - ports:
-            - port: "8080"
-              protocol: TCP
-    - toEndpoints:
-        - matchLabels:
-            k8s:io.kubernetes.pod.namespace: ai
-            k8s:app.kubernetes.io/name: bifrost
-      toPorts:
-        - ports:
-            - port: "8080"
-              protocol: TCP
-    - toEndpoints:
-        - matchLabels:
             k8s:io.kubernetes.pod.namespace: ai
             k8s:app.kubernetes.io/name: crawl4ai
       toPorts:
@@ -67,6 +51,12 @@ spec:
               protocol: TCP
             - port: "8089"
               protocol: TCP
+    - toCIDR:
+        - 192.168.69.182/32
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
     - toCIDRSet:
         - cidrGroupRef: internet
       toPorts:
@@ -81,6 +71,9 @@ spec:
           except:
             - 10.42.0.0/16
             - 10.43.0.0/16
+    - toCIDRSet:
+        - cidr: 192.168.0.0/16
+          except:
+            - 192.168.69.182/32
     - toCIDR:
         - 172.16.0.0/12
-        - 192.168.0.0/16

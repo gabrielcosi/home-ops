@@ -27,7 +27,7 @@ jobs:
       FORGEJO_API: http://forgejo-http.tools.svc.cluster.local:3000/api/v1
       REPO: ${{ forgejo.repository }}
       PR: ${{ forgejo.event.pull_request.number }}
-      KONFLATE_URL: http://konflate.tools.svc.cluster.local:8080
+      KONFLATE_URL: https://konflate.xcd.dev
       MARKER: '<!-- ai-pr-review -->'
       DISABLE_AUTOUPDATER: '1'
       CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC: '1'
@@ -66,7 +66,7 @@ jobs:
 
       - name: Review
         env:
-          ANTHROPIC_BASE_URL: http://bifrost.ai.svc.cluster.local:8080/anthropic
+          ANTHROPIC_BASE_URL: https://ai.xcd.dev/anthropic
           ANTHROPIC_AUTH_TOKEN: ${{ steps.secrets.outputs.AI_AUTH_TOKEN }}
           ANTHROPIC_MODEL: opencode-anthropic/minimax-m3
           ANTHROPIC_SMALL_FAST_MODEL: opencode-anthropic/minimax-m3
