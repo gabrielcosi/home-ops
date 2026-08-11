@@ -22,6 +22,10 @@ releases:
     namespace: kube-system
     inherit:
       - template: default
+    values:
+      - hubble:
+          relay:
+            enabled: false
     hooks:
       - command: kubectl
         args:
