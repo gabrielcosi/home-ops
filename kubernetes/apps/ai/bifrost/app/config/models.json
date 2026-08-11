@@ -23,6 +23,18 @@
     "supports_reasoning": true,
     "supports_vision": false
   },
+  "llama-swap/muse-glimmer-30b": {
+    "provider": "llama-swap",
+    "base_model": "muse-glimmer-30b",
+    "mode": "chat",
+    "max_input_tokens": 131072,
+    "max_output_tokens": 131072,
+    "max_tokens": 131072,
+    "supports_function_calling": true,
+    "supports_tool_choice": true,
+    "supports_reasoning": true,
+    "supports_vision": true
+  },
   "opencode/deepseek-v4-flash": {
     "provider": "opencode",
     "base_model": "deepseek-v4-flash",

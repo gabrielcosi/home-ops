@@ -55,7 +55,7 @@ models:
       --temp 1.0 \
       --top-p 0.95 \
       --top-k 20 \
-      --min-p 0.0 \
+      --min-p 0 \
       --presence-penalty 0.0 \
       --repeat-penalty 1.0 \
       --reasoning-budget 2000 \
@@ -69,13 +69,45 @@ models:
     useModelName: qwen3.6-27b
     concurrencyLimit: 4
 
+  muse-glimmer-30b:
+    capabilities:
+      in: [text, image]
+      out: [text]
+      tools: true
+      context: 131072
+    cmd: |
+      /app/llama-server \
+      --host 0.0.0.0 \
+      --port ${PORT} \
+      --model /models/Muse-Glimmer-30B/Muse-Glimmer-30B-UD-Q4_K_XL.gguf \
+      --mmproj /models/Muse-Glimmer-30B/Muse-Glimmer-30B-mmproj-kquant.gguf \
+      --ctx-size 262144 \
+      --parallel 2 \
+      --jinja \
+      --temp 1.0 \
+      --top-p 0.95 \
+      --top-k 64 \
+      --min-p 0 \
+      --presence-penalty 0.0 \
+      --repeat-penalty 1.0 \
+      --flash-attn on \
+      --n-gpu-layers 99 \
+      --fit off \
+      --reasoning-preserve \
+      --spec-type draft-dflash \
+      --spec-draft-model /models/Muse-Glimmer-30B/Muse-Glimmer-30B-dflash-kquant.gguf \
+      --spec-draft-n-max 15
+    useModelName: muse-glimmer-30b
+    concurrencyLimit: 2
+
 matrix:
   vars:
     q3635b: qwen3.6-35b-a3b
     q3627b: qwen3.6-27b
+    muse30b: muse-glimmer-30b
 
   sets:
-    default: 'q3635b | q3627b'
+    default: 'q3635b | q3627b | muse30b'
 
 apiKeys:
   - ${env.LS_API_KEY}
