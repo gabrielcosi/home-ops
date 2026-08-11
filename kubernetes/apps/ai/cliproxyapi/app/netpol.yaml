@@ -29,6 +29,7 @@ spec:
         - matchName: chatgpt.com
         - matchPattern: "*.chatgpt.com"
         - matchName: api.anthropic.com
+        - matchName: platform.claude.com
       toPorts:
         - ports:
             - port: "443"
