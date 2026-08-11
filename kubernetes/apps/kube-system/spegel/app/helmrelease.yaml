@@ -20,8 +20,4 @@ spec:
       containerdRegistryConfigPath: /etc/cri/conf.d/hosts
     grafanaDashboard:
       enabled: true
-      mode: GrafanaOperator
-      grafanaOperator:
-        allowCrossNamespaceImport: true
-        matchLabels:
-          dashboards: grafana
+      mode: Sidecar
