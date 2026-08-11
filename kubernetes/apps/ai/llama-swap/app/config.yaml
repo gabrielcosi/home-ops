@@ -84,12 +84,15 @@ models:
       --ctx-size 262144 \
       --parallel 2 \
       --jinja \
+      --chat-template-kwargs '{"reasoning_strength":"high"}' \
       --temp 1.0 \
       --top-p 0.95 \
       --top-k 64 \
       --min-p 0 \
       --presence-penalty 0.0 \
       --repeat-penalty 1.0 \
+      --reasoning-budget 4000 \
+      --reasoning-budget-message "I have enough. Final answer now, no reconsidering." \
       --flash-attn on \
       --n-gpu-layers 99 \
       --fit off \
