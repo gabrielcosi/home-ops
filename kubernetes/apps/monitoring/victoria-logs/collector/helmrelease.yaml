@@ -17,6 +17,21 @@ spec:
     remoteWrite:
       - url: http://victoria-logs.monitoring.svc.cluster.local:9428
 
+    fileCollector:
+      - glob: /var/run/cilium/hubble/events.log
+        extraFields: '{"app":"hubble"}'
+
+    extraVolumes:
+      - name: hubble-export
+        hostPath:
+          path: /var/run/cilium/hubble
+          type: DirectoryOrCreate
+
+    extraVolumeMounts:
+      - name: hubble-export
+        mountPath: /var/run/cilium/hubble
+        readOnly: true
+
     resources:
       requests:
         cpu: 50m

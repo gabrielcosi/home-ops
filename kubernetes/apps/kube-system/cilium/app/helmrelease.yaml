@@ -144,15 +144,42 @@ spec:
       enabled: true
       metrics:
         enabled:
-          - "dns:query;sourceContext=workload|pod;destinationContext=workload|pod|ip;labelsContext=source_namespace,destination_namespace"
-          - "drop:sourceContext=workload|pod;destinationContext=workload|pod|ip;labelsContext=source_namespace,destination_namespace"
-          - "flow:sourceContext=workload|pod;destinationContext=workload|pod|ip;labelsContext=source_namespace,destination_namespace"
-          - "tcp:sourceContext=workload|pod;destinationContext=workload|pod|ip;labelsContext=source_namespace,destination_namespace"
-          - "icmp:sourceContext=workload|pod;destinationContext=workload|pod|ip;labelsContext=source_namespace,destination_namespace"
+          - "dns:query;sourceContext=workload|pod;destinationContext=workload|pod|ip;labelsContext=source_namespace,destination_namespace,source_workload,destination_workload"
+          - "drop:sourceContext=workload|pod;destinationContext=workload|pod|ip;labelsContext=source_namespace,destination_namespace,source_workload,destination_workload"
+          - "flow:sourceContext=workload|pod;destinationContext=workload|pod|ip;labelsContext=source_namespace,destination_namespace,source_workload,destination_workload"
+          - "tcp:sourceContext=workload|pod;destinationContext=workload|pod|ip;labelsContext=source_namespace,destination_namespace,source_workload,destination_workload"
+          - "icmp:sourceContext=workload|pod;destinationContext=workload|pod|ip;labelsContext=source_namespace,destination_namespace,source_workload,destination_workload"
         serviceMonitor:
           enabled: true
         dashboards:
+          enabled: false
+      export:
+        aggregationInterval: "30s"
+        static:
           enabled: true
+          filePath: /var/run/cilium/hubble/events.log
+          fieldMask:
+            - time
+            - node_name
+            - verdict
+            - drop_reason_desc
+            - is_reply
+            - source.namespace
+            - source.pod_name
+            - destination.namespace
+            - destination.pod_name
+            - IP
+            - l4
+          fieldAggregate:
+            - source.namespace
+            - source.pod_name
+            - destination.namespace
+            - destination.pod_name
+            - IP
+            - verdict
+          fileMaxSizeMb: 100
+          fileMaxBackups: 3
+          fileCompress: false
       relay:
         enabled: true
         prometheus:
