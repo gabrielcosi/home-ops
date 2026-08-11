@@ -104,6 +104,9 @@ spec:
           enabled: true
     
     rollOutCiliumPods: true
+    updateStrategy:
+      rollingUpdate:
+        maxUnavailable: 1
     resources:
       limits:
         memory: 1Gi
