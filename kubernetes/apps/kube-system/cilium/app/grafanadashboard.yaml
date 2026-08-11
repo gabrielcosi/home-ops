@@ -34,31 +34,178 @@ spec:
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDashboard
 metadata:
-  name: hubble-network-overview
+  name: hubble-traffic
 spec:
   allowCrossNamespaceImport: true
   instanceSelector:
     matchLabels:
       dashboards: grafana
-  datasources:
-    - datasourceName: VictoriaMetrics
-      inputName: DS_PROMETHEUS
-  configMapRef:
-    name: hubble-network-overview-namespace
-    key: hubble-network-overview-namespace.json
----
-apiVersion: grafana.integreatly.org/v1beta1
-kind: GrafanaDashboard
-metadata:
-  name: hubble-dns
-spec:
-  allowCrossNamespaceImport: true
-  instanceSelector:
-    matchLabels:
-      dashboards: grafana
-  datasources:
-    - datasourceName: VictoriaMetrics
-      inputName: DS_PROMETHEUS
-  configMapRef:
-    name: hubble-dns-namespace
-    key: hubble-dns-namespace.json
+  json: |
+    {
+      "uid": "hubble-traffic",
+      "title": "Hubble / Traffic",
+      "tags": ["hubble", "cilium", "network"],
+      "schemaVersion": 39,
+      "version": 1,
+      "editable": true,
+      "graphTooltip": 1,
+      "time": {"from": "now-6h", "to": "now"},
+      "timepicker": {},
+      "refresh": "30s",
+      "templating": {
+        "list": [
+          {
+            "name": "namespace",
+            "label": "Namespace",
+            "type": "query",
+            "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+            "query": {"qryType": 1, "query": "label_values(hubble_flows_processed_total, source_namespace)", "refId": "PrometheusVariableQueryEditor-VariableQuery"},
+            "includeAll": true,
+            "allValue": ".*",
+            "multi": true,
+            "current": {"selected": true, "text": ["All"], "value": ["$__all"]},
+            "refresh": 2,
+            "sort": 1
+          },
+          {
+            "name": "workload",
+            "label": "Workload",
+            "type": "query",
+            "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+            "query": {"qryType": 1, "query": "label_values(hubble_flows_processed_total{source_namespace=~\"$namespace\"}, source)", "refId": "PrometheusVariableQueryEditor-VariableQuery"},
+            "includeAll": true,
+            "allValue": ".*",
+            "multi": true,
+            "current": {"selected": true, "text": ["All"], "value": ["$__all"]},
+            "refresh": 2,
+            "sort": 1
+          }
+        ]
+      },
+      "panels": [
+        {"type": "row", "title": "Overview", "id": 100, "collapsed": false, "gridPos": {"h": 1, "w": 24, "x": 0, "y": 0}, "panels": []},
+        {
+          "type": "stat",
+          "title": "Egress flows",
+          "description": "Flow events per second leaving the selected workloads.",
+          "id": 1,
+          "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+          "gridPos": {"h": 4, "w": 6, "x": 0, "y": 1},
+          "fieldConfig": {"defaults": {"unit": "reqps", "decimals": 0, "color": {"mode": "fixed", "fixedColor": "text"}}, "overrides": []},
+          "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "graphMode": "area", "textMode": "auto", "colorMode": "none"},
+          "targets": [{"refId": "A", "datasource": {"type": "prometheus", "uid": "victoriametrics"}, "expr": "sum(rate(hubble_flows_processed_total{source_namespace=~\"$namespace\", source=~\"$workload\"}[$__rate_interval]))", "legendFormat": "flows"}]
+        },
+        {
+          "type": "stat",
+          "title": "Dropped",
+          "description": "Policy or datapath drops per second. Non-zero is worth investigating.",
+          "id": 2,
+          "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+          "gridPos": {"h": 4, "w": 6, "x": 6, "y": 1},
+          "fieldConfig": {"defaults": {"unit": "reqps", "decimals": 2, "color": {"mode": "thresholds"}, "thresholds": {"mode": "absolute", "steps": [{"color": "text", "value": null}, {"color": "red", "value": 0.001}]}}, "overrides": []},
+          "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "graphMode": "area", "textMode": "auto", "colorMode": "value"},
+          "targets": [{"refId": "A", "datasource": {"type": "prometheus", "uid": "victoriametrics"}, "expr": "sum(rate(hubble_drop_total{source_namespace=~\"$namespace\", source=~\"$workload\"}[$__rate_interval]))", "legendFormat": "drops"}]
+        },
+        {
+          "type": "stat",
+          "title": "DNS queries",
+          "description": "Only resolves for pods whose DNS traverses the Cilium proxy, i.e. those under an L7 DNS policy.",
+          "id": 3,
+          "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+          "gridPos": {"h": 4, "w": 6, "x": 12, "y": 1},
+          "fieldConfig": {"defaults": {"unit": "reqps", "decimals": 1, "color": {"mode": "fixed", "fixedColor": "text"}}, "overrides": []},
+          "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "graphMode": "area", "textMode": "auto", "colorMode": "none"},
+          "targets": [{"refId": "A", "datasource": {"type": "prometheus", "uid": "victoriametrics"}, "expr": "sum(rate(hubble_dns_queries_total{source_namespace=~\"$namespace\", source=~\"$workload\"}[$__rate_interval]))", "legendFormat": "queries"}]
+        },
+        {
+          "type": "stat",
+          "title": "External destinations",
+          "description": "Distinct addresses outside the cluster contacted by the selection.",
+          "id": 4,
+          "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+          "gridPos": {"h": 4, "w": 6, "x": 18, "y": 1},
+          "fieldConfig": {"defaults": {"unit": "short", "decimals": 0, "color": {"mode": "fixed", "fixedColor": "text"}}, "overrides": []},
+          "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "graphMode": "area", "textMode": "auto", "colorMode": "none"},
+          "targets": [{"refId": "A", "datasource": {"type": "prometheus", "uid": "victoriametrics"}, "expr": "count(count by (destination) (rate(hubble_flows_processed_total{source_namespace=~\"$namespace\", source=~\"$workload\", destination_namespace=\"\"}[$__rate_interval]) > 0))", "legendFormat": "destinations"}]
+        },
+        {"type": "row", "title": "Where traffic goes", "id": 101, "collapsed": false, "gridPos": {"h": 1, "w": 24, "x": 0, "y": 5}},
+        {
+          "type": "table",
+          "title": "Top destinations",
+          "description": "Every destination the selection reaches. In-cluster resolves to namespace/workload; anything outside falls through to its address.",
+          "id": 10,
+          "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+          "gridPos": {"h": 10, "w": 12, "x": 0, "y": 6},
+          "fieldConfig": {"defaults": {"unit": "reqps", "decimals": 2, "custom": {"align": "auto", "cellOptions": {"type": "auto"}}}, "overrides": []},
+          "options": {"showHeader": true, "sortBy": [{"displayName": "Flows/s", "desc": true}], "footer": {"show": false}},
+          "targets": [{"refId": "A", "datasource": {"type": "prometheus", "uid": "victoriametrics"}, "expr": "topk(25, sum by (source, destination) (rate(hubble_flows_processed_total{source_namespace=~\"$namespace\", source=~\"$workload\"}[$__rate_interval])))", "format": "table", "instant": true}],
+          "transformations": [{"id": "organize", "options": {"excludeByName": {"Time": true}, "renameByName": {"source": "Source", "destination": "Destination", "Value": "Flows/s"}}}]
+        },
+        {
+          "type": "table",
+          "title": "External destinations",
+          "description": "Traffic leaving the cluster, by address. This is the panel to read after a suspected compromise.",
+          "id": 11,
+          "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+          "gridPos": {"h": 10, "w": 12, "x": 12, "y": 6},
+          "fieldConfig": {"defaults": {"unit": "reqps", "decimals": 2, "custom": {"align": "auto", "cellOptions": {"type": "auto"}}}, "overrides": []},
+          "options": {"showHeader": true, "sortBy": [{"displayName": "Flows/s", "desc": true}], "footer": {"show": false}},
+          "targets": [{"refId": "A", "datasource": {"type": "prometheus", "uid": "victoriametrics"}, "expr": "topk(25, sum by (source, destination) (rate(hubble_flows_processed_total{source_namespace=~\"$namespace\", source=~\"$workload\", destination_namespace=\"\"}[$__rate_interval])))", "format": "table", "instant": true}],
+          "transformations": [{"id": "organize", "options": {"excludeByName": {"Time": true}, "renameByName": {"source": "Source", "destination": "Address", "Value": "Flows/s"}}}]
+        },
+        {
+          "type": "table",
+          "title": "DNS names resolved",
+          "description": "Search-domain expansions (*.cluster.local) are filtered out; ndots:5 makes every external lookup emit three extra NXDOMAIN queries.",
+          "id": 12,
+          "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+          "gridPos": {"h": 10, "w": 12, "x": 0, "y": 16},
+          "fieldConfig": {"defaults": {"unit": "reqps", "decimals": 2, "custom": {"align": "auto", "cellOptions": {"type": "auto"}}}, "overrides": []},
+          "options": {"showHeader": true, "sortBy": [{"displayName": "Queries/s", "desc": true}], "footer": {"show": false}},
+          "targets": [{"refId": "A", "datasource": {"type": "prometheus", "uid": "victoriametrics"}, "expr": "topk(25, sum by (source, query) (rate(hubble_dns_queries_total{source_namespace=~\"$namespace\", source=~\"$workload\", query!~\".*\\\\.cluster\\\\.local\\\\.\"}[$__rate_interval])))", "format": "table", "instant": true}],
+          "transformations": [{"id": "organize", "options": {"excludeByName": {"Time": true}, "renameByName": {"source": "Source", "query": "Name", "Value": "Queries/s"}}}]
+        },
+        {
+          "type": "table",
+          "title": "Top ingress sources",
+          "description": "Who reaches the selected workloads.",
+          "id": 13,
+          "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+          "gridPos": {"h": 10, "w": 12, "x": 12, "y": 16},
+          "fieldConfig": {"defaults": {"unit": "reqps", "decimals": 2, "custom": {"align": "auto", "cellOptions": {"type": "auto"}}}, "overrides": []},
+          "options": {"showHeader": true, "sortBy": [{"displayName": "Flows/s", "desc": true}], "footer": {"show": false}},
+          "targets": [{"refId": "A", "datasource": {"type": "prometheus", "uid": "victoriametrics"}, "expr": "topk(25, sum by (source, destination) (rate(hubble_flows_processed_total{destination_namespace=~\"$namespace\", destination=~\"$workload\"}[$__rate_interval])))", "format": "table", "instant": true}],
+          "transformations": [{"id": "organize", "options": {"excludeByName": {"Time": true}, "renameByName": {"source": "Source", "destination": "Destination", "Value": "Flows/s"}}}]
+        },
+        {"type": "row", "title": "Verdicts", "id": 102, "collapsed": false, "gridPos": {"h": 1, "w": 24, "x": 0, "y": 26}},
+        {
+          "type": "timeseries",
+          "title": "Flow rate by verdict",
+          "description": "Forwarded versus dropped over time for the selection.",
+          "id": 20,
+          "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+          "gridPos": {"h": 9, "w": 12, "x": 0, "y": 27},
+          "fieldConfig": {
+            "defaults": {"unit": "reqps", "decimals": 1, "custom": {"drawStyle": "line", "lineWidth": 2, "fillOpacity": 8, "showPoints": "never", "pointSize": 8, "axisSoftMin": 0}},
+            "overrides": [
+              {"matcher": {"id": "byName", "options": "DROPPED"}, "properties": [{"id": "color", "value": {"mode": "fixed", "fixedColor": "red"}}]},
+              {"matcher": {"id": "byName", "options": "FORWARDED"}, "properties": [{"id": "color", "value": {"mode": "fixed", "fixedColor": "green"}}]}
+            ]
+          },
+          "options": {"legend": {"displayMode": "list", "placement": "bottom", "showLegend": true, "calcs": []}, "tooltip": {"mode": "multi", "sort": "desc"}},
+          "targets": [{"refId": "A", "datasource": {"type": "prometheus", "uid": "victoriametrics"}, "expr": "sum by (verdict) (rate(hubble_flows_processed_total{source_namespace=~\"$namespace\", source=~\"$workload\"}[$__rate_interval]))", "legendFormat": "{{verdict}}"}]
+        },
+        {
+          "type": "table",
+          "title": "Drops by reason",
+          "description": "Empty is the healthy state. Populated rows name the peer and the datapath reason.",
+          "id": 21,
+          "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+          "gridPos": {"h": 9, "w": 12, "x": 12, "y": 27},
+          "fieldConfig": {"defaults": {"unit": "reqps", "decimals": 3, "custom": {"align": "auto", "cellOptions": {"type": "auto"}}}, "overrides": []},
+          "options": {"showHeader": true, "sortBy": [{"displayName": "Drops/s", "desc": true}], "footer": {"show": false}},
+          "targets": [{"refId": "A", "datasource": {"type": "prometheus", "uid": "victoriametrics"}, "expr": "topk(25, sum by (source, destination, reason) (rate(hubble_drop_total{source_namespace=~\"$namespace\", source=~\"$workload\"}[$__rate_interval])))", "format": "table", "instant": true}],
+          "transformations": [{"id": "organize", "options": {"excludeByName": {"Time": true}, "renameByName": {"source": "Source", "destination": "Destination", "reason": "Reason", "Value": "Drops/s"}}}]
+        }
+      ]
+    }
