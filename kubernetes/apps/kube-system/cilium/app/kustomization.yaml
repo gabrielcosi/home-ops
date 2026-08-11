@@ -7,4 +7,6 @@ resources:
   - ./pool.yaml
   - ./l2.yaml
   - ./l3.yaml
+  - ./cidrgroup.yaml
+  - ./dns.yaml
   - ./grafanadashboard.yaml

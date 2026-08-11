@@ -4,24 +4,11 @@ kind: CiliumNetworkPolicy
 metadata:
   name: gate
 spec:
-  description: Restrict gate egress to DNS, the minecraft backend, and Mojang session auth.
+  description: Restrict gate egress to the minecraft backend and Mojang session auth.
   endpointSelector:
     matchLabels:
       app.kubernetes.io/name: gate
   egress:
-    - toEndpoints:
-        - matchLabels:
-            k8s:io.kubernetes.pod.namespace: kube-system
-            k8s:k8s-app: kube-dns
-      toPorts:
-        - ports:
-            - port: '53'
-              protocol: UDP
-            - port: '53'
-              protocol: TCP
-          rules:
-            dns:
-              - matchPattern: '*'
     - toEndpoints:
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: games

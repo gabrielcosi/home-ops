@@ -7,11 +7,13 @@ metadata:
     app.kubernetes.io/instance: llama-swap
     app.kubernetes.io/name: llama-swap
 spec:
-  description: Restrict llama-swap to Bifrost and Envoy Gateway ingress and DNS egress only.
+  description: Restrict llama-swap to Bifrost and Envoy Gateway ingress, with no egress beyond cluster-wide DNS.
   endpointSelector:
     matchLabels:
       app.kubernetes.io/instance: llama-swap
       app.kubernetes.io/name: llama-swap
+  enableDefaultDeny:
+    egress: true
   ingress:
     - fromEndpoints:
         - matchLabels:
@@ -26,17 +28,3 @@ spec:
         - ports:
             - port: "8080"
               protocol: TCP
-  egress:
-    - toEndpoints:
-        - matchLabels:
-            k8s:io.kubernetes.pod.namespace: kube-system
-            k8s:k8s-app: kube-dns
-      toPorts:
-        - ports:
-            - port: "53"
-              protocol: UDP
-            - port: "53"
-              protocol: TCP
-          rules:
-            dns:
-              - matchPattern: "*"
