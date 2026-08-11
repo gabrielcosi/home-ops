@@ -154,32 +154,43 @@ spec:
         dashboards:
           enabled: false
       export:
-        aggregationInterval: "30s"
-        static:
+        dynamic:
           enabled: true
-          filePath: /var/run/cilium/hubble/events.log
-          fieldMask:
-            - time
-            - node_name
-            - verdict
-            - drop_reason_desc
-            - is_reply
-            - source.namespace
-            - source.pod_name
-            - destination.namespace
-            - destination.pod_name
-            - IP
-            - l4
-          fieldAggregate:
-            - source.namespace
-            - source.pod_name
-            - destination.namespace
-            - destination.pod_name
-            - IP
-            - verdict
-          fileMaxSizeMb: 100
-          fileMaxBackups: 3
-          fileCompress: false
+          config:
+            createConfigMap: true
+            content:
+              - name: traffic
+                filePath: /var/run/cilium/hubble/traffic.log
+                aggregationInterval: "5m"
+                fieldAggregate:
+                  - source.namespace
+                  - source.pod_name
+                  - destination.namespace
+                  - destination.pod_name
+                  - IP
+                  - verdict
+                fileMaxSizeMb: 100
+                fileMaxBackups: 3
+                fileCompress: false
+              - name: denied
+                filePath: /var/run/cilium/hubble/denied.log
+                includeFilters:
+                  - verdict: ["DROPPED", "ERROR"]
+                fieldMask:
+                  - time
+                  - node_name
+                  - verdict
+                  - drop_reason_desc
+                  - is_reply
+                  - source.namespace
+                  - source.pod_name
+                  - destination.namespace
+                  - destination.pod_name
+                  - IP
+                  - l4
+                fileMaxSizeMb: 20
+                fileMaxBackups: 3
+                fileCompress: false
       relay:
         enabled: true
         prometheus:

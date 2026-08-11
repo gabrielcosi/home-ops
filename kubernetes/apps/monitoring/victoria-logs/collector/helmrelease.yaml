@@ -18,8 +18,10 @@ spec:
       - url: http://victoria-logs.monitoring.svc.cluster.local:9428
 
     fileCollector:
-      - glob: /var/run/cilium/hubble/events.log
-        extraFields: '{"app":"hubble"}'
+      - glob: /var/run/cilium/hubble/traffic.log
+        extraFields: '{"app":"hubble","kind":"traffic"}'
+      - glob: /var/run/cilium/hubble/denied.log
+        extraFields: '{"app":"hubble","kind":"denied"}'
 
     extraVolumes:
       - name: hubble-export
