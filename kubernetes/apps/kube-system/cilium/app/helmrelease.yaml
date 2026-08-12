@@ -154,6 +154,19 @@ spec:
           - "icmp:sourceContext=workload|pod;destinationContext=workload|pod|ip;labelsContext=source_namespace,destination_namespace,source_workload,destination_workload"
         serviceMonitor:
           enabled: true
+          metricRelabelings:
+            - sourceLabels: ["__name__", "source_workload"]
+              regex: "hubble_(flows_processed|tcp_flags)_total;.+-[0-9]{14}"
+              action: drop
+            - sourceLabels: ["__name__", "destination_workload"]
+              regex: "hubble_(flows_processed|tcp_flags)_total;.+-[0-9]{14}"
+              action: drop
+            - sourceLabels: ["__name__", "source_workload"]
+              regex: "hubble_(flows_processed|tcp_flags)_total;forgejo-.+-[a-z0-9]{13}"
+              action: drop
+            - sourceLabels: ["__name__", "destination_workload"]
+              regex: "hubble_(flows_processed|tcp_flags)_total;forgejo-.+-[a-z0-9]{13}"
+              action: drop
         dashboards:
           enabled: false
       export:
