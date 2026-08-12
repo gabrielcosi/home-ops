@@ -147,11 +147,11 @@ spec:
       enabled: true
       metrics:
         enabled:
-          - "dns:query;sourceContext=workload|pod;destinationContext=workload|pod|ip;labelsContext=source_namespace,destination_namespace,source_workload,destination_workload"
-          - "drop:sourceContext=workload|pod;destinationContext=workload|pod|ip;labelsContext=source_namespace,destination_namespace,source_workload,destination_workload"
-          - "flow:sourceContext=workload|pod;destinationContext=workload|pod|ip;labelsContext=source_namespace,destination_namespace,source_workload,destination_workload"
-          - "tcp:sourceContext=workload|pod;destinationContext=workload|pod|ip;labelsContext=source_namespace,destination_namespace,source_workload,destination_workload"
-          - "icmp:sourceContext=workload|pod;destinationContext=workload|pod|ip;labelsContext=source_namespace,destination_namespace,source_workload,destination_workload"
+          - "dns:query;sourceContext=workload|pod;destinationContext=workload|pod|dns|ip;labelsContext=source_namespace,destination_namespace,source_workload,destination_workload"
+          - "drop:sourceContext=workload|pod;destinationContext=workload|pod|dns|ip;labelsContext=source_namespace,destination_namespace,source_workload,destination_workload"
+          - "flow:sourceContext=workload|pod;destinationContext=workload|pod|dns|ip;labelsContext=source_namespace,destination_namespace,source_workload,destination_workload"
+          - "tcp:sourceContext=workload|pod;destinationContext=workload|pod|dns|ip;labelsContext=source_namespace,destination_namespace,source_workload,destination_workload"
+          - "icmp:sourceContext=workload|pod;destinationContext=workload|pod|dns|ip;labelsContext=source_namespace,destination_namespace,source_workload,destination_workload"
         serviceMonitor:
           enabled: true
           metricRelabelings:

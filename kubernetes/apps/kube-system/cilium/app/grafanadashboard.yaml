@@ -87,21 +87,21 @@ spec:
         {"type": "row", "title": "Overview", "id": 100, "collapsed": false, "gridPos": {"h": 1, "w": 24, "x": 0, "y": 0}, "panels": []},
         {
           "type": "stat", "title": "Flows", "id": 1,
-          "description": "Flow events per second from the current selection.",
+          "description": "Flow events over the selected range.",
           "datasource": {"type": "prometheus", "uid": "victoriametrics"},
           "gridPos": {"h": 4, "w": 3, "x": 0, "y": 1},
-          "fieldConfig": {"defaults": {"unit": "reqps", "decimals": 0, "color": {"mode": "fixed", "fixedColor": "text"}}, "overrides": []},
+          "fieldConfig": {"defaults": {"unit": "short", "decimals": 0, "color": {"mode": "fixed", "fixedColor": "text"}}, "overrides": []},
           "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "graphMode": "area", "textMode": "auto", "colorMode": "none"},
-          "targets": [{"refId": "A", "datasource": {"type": "prometheus", "uid": "victoriametrics"}, "expr": "sum(rate(hubble_flows_processed_total{source_namespace=~\"$namespace\", source_workload=~\"$workload\"}[$__rate_interval]))"}]
+          "targets": [{"refId": "A", "datasource": {"type": "prometheus", "uid": "victoriametrics"}, "instant": true, "expr": "sum(increase(hubble_flows_processed_total{source_namespace=~\"$namespace\", source_workload=~\"$workload\"}[$__range]))"}]
         },
         {
           "type": "stat", "title": "Dropped", "id": 2,
           "description": "Flows denied by policy or the datapath.",
           "datasource": {"type": "prometheus", "uid": "victoriametrics"},
           "gridPos": {"h": 4, "w": 3, "x": 3, "y": 1},
-          "fieldConfig": {"defaults": {"unit": "reqps", "decimals": 2, "color": {"mode": "thresholds"}, "thresholds": {"mode": "absolute", "steps": [{"color": "text", "value": null}, {"color": "orange", "value": 0.01}, {"color": "red", "value": 1}]}}, "overrides": []},
+          "fieldConfig": {"defaults": {"unit": "short", "decimals": 0, "color": {"mode": "thresholds"}, "thresholds": {"mode": "absolute", "steps": [{"color": "text", "value": null}, {"color": "orange", "value": 0.01}, {"color": "red", "value": 1}]}}, "overrides": []},
           "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "graphMode": "area", "textMode": "auto", "colorMode": "value"},
-          "targets": [{"refId": "A", "datasource": {"type": "prometheus", "uid": "victoriametrics"}, "expr": "sum(rate(hubble_drop_total{source_namespace=~\"$namespace\", source_workload=~\"$workload\"}[$__rate_interval]))"}]
+          "targets": [{"refId": "A", "datasource": {"type": "prometheus", "uid": "victoriametrics"}, "instant": true, "expr": "sum(increase(hubble_drop_total{source_namespace=~\"$namespace\", source_workload=~\"$workload\"}[$__range]))"}]
         },
         {
           "type": "stat", "title": "Drop ratio", "id": 3,
@@ -110,7 +110,7 @@ spec:
           "gridPos": {"h": 4, "w": 3, "x": 6, "y": 1},
           "fieldConfig": {"defaults": {"unit": "percentunit", "decimals": 2, "min": 0, "color": {"mode": "thresholds"}, "thresholds": {"mode": "absolute", "steps": [{"color": "text", "value": null}, {"color": "orange", "value": 0.01}, {"color": "red", "value": 0.05}]}}, "overrides": []},
           "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "graphMode": "area", "textMode": "auto", "colorMode": "value"},
-          "targets": [{"refId": "A", "datasource": {"type": "prometheus", "uid": "victoriametrics"}, "expr": "sum(rate(hubble_drop_total{source_namespace=~\"$namespace\", source_workload=~\"$workload\"}[$__rate_interval])) / clamp_min(sum(rate(hubble_flows_processed_total{source_namespace=~\"$namespace\", source_workload=~\"$workload\"}[$__rate_interval])), 1)"}]
+          "targets": [{"refId": "A", "datasource": {"type": "prometheus", "uid": "victoriametrics"}, "instant": true, "expr": "sum(increase(hubble_drop_total{source_namespace=~\"$namespace\", source_workload=~\"$workload\"}[$__range])) / clamp_min(sum(increase(hubble_flows_processed_total{source_namespace=~\"$namespace\", source_workload=~\"$workload\"}[$__range])), 1)"}]
         },
         {
           "type": "stat", "title": "Namespaces", "id": 4,
@@ -119,7 +119,7 @@ spec:
           "gridPos": {"h": 4, "w": 3, "x": 9, "y": 1},
           "fieldConfig": {"defaults": {"unit": "short", "decimals": 0, "color": {"mode": "fixed", "fixedColor": "text"}}, "overrides": []},
           "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "graphMode": "area", "textMode": "auto", "colorMode": "none"},
-          "targets": [{"refId": "A", "datasource": {"type": "prometheus", "uid": "victoriametrics"}, "expr": "count(count by (source_namespace) (rate(hubble_flows_processed_total{source_namespace=~\"$namespace\", source_workload=~\"$workload\", source_namespace!=\"\"}[$__rate_interval]) > 0))"}]
+          "targets": [{"refId": "A", "datasource": {"type": "prometheus", "uid": "victoriametrics"}, "instant": true, "expr": "count(count by (source_namespace) (increase(hubble_flows_processed_total{source_namespace=~\"$namespace\", source_workload=~\"$workload\", source_namespace!=\"\"}[$__range]) > 0))"}]
         },
         {
           "type": "stat", "title": "Workloads", "id": 5,
@@ -128,7 +128,7 @@ spec:
           "gridPos": {"h": 4, "w": 3, "x": 12, "y": 1},
           "fieldConfig": {"defaults": {"unit": "short", "decimals": 0, "color": {"mode": "fixed", "fixedColor": "text"}}, "overrides": []},
           "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "graphMode": "area", "textMode": "auto", "colorMode": "none"},
-          "targets": [{"refId": "A", "datasource": {"type": "prometheus", "uid": "victoriametrics"}, "expr": "count(count by (source) (rate(hubble_flows_processed_total{source_namespace=~\"$namespace\", source_workload=~\"$workload\", source!=\"\"}[$__rate_interval]) > 0))"}]
+          "targets": [{"refId": "A", "datasource": {"type": "prometheus", "uid": "victoriametrics"}, "instant": true, "expr": "count(count by (source) (increase(hubble_flows_processed_total{source_namespace=~\"$namespace\", source_workload=~\"$workload\", source!=\"\"}[$__range]) > 0))"}]
         },
         {
           "type": "stat", "title": "Internet peers", "id": 6,
@@ -137,25 +137,25 @@ spec:
           "gridPos": {"h": 4, "w": 3, "x": 15, "y": 1},
           "fieldConfig": {"defaults": {"unit": "short", "decimals": 0, "color": {"mode": "fixed", "fixedColor": "text"}}, "overrides": []},
           "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "graphMode": "area", "textMode": "auto", "colorMode": "none"},
-          "targets": [{"refId": "A", "datasource": {"type": "prometheus", "uid": "victoriametrics"}, "expr": "count(count by (destination) (rate(hubble_flows_processed_total{source_namespace=~\"$namespace\", source_workload=~\"$workload\", destination=~\"^[0-9]+[.].*\", destination!~\"^(10[.]|172[.](1[6-9]|2[0-9]|3[01])[.]|192[.]168[.]|127[.]|169[.]254[.]).*\"}[$__rate_interval]) > 0))"}]
+          "targets": [{"refId": "A", "datasource": {"type": "prometheus", "uid": "victoriametrics"}, "instant": true, "expr": "count(count by (destination) (increase(hubble_flows_processed_total{source_namespace=~\"$namespace\", source_workload=~\"$workload\", destination=~\"^[0-9]+[.].*\", destination!~\"^(10[.]|172[.](1[6-9]|2[0-9]|3[01])[.]|192[.]168[.]|127[.]|169[.]254[.]).*\"}[$__range]) > 0))"}]
         },
         {
           "type": "stat", "title": "DNS", "id": 7,
-          "description": "Queries per second seen by the Cilium DNS proxy.",
+          "description": "Queries seen by the Cilium DNS proxy over the selected range.",
           "datasource": {"type": "prometheus", "uid": "victoriametrics"},
           "gridPos": {"h": 4, "w": 3, "x": 18, "y": 1},
-          "fieldConfig": {"defaults": {"unit": "reqps", "decimals": 1, "color": {"mode": "fixed", "fixedColor": "text"}}, "overrides": []},
+          "fieldConfig": {"defaults": {"unit": "short", "decimals": 1, "color": {"mode": "fixed", "fixedColor": "text"}}, "overrides": []},
           "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "graphMode": "area", "textMode": "auto", "colorMode": "none"},
-          "targets": [{"refId": "A", "datasource": {"type": "prometheus", "uid": "victoriametrics"}, "expr": "sum(rate(hubble_dns_queries_total{source_namespace=~\"$namespace\", source_workload=~\"$workload\"}[$__rate_interval]))"}]
+          "targets": [{"refId": "A", "datasource": {"type": "prometheus", "uid": "victoriametrics"}, "instant": true, "expr": "sum(increase(hubble_dns_queries_total{source_namespace=~\"$namespace\", source_workload=~\"$workload\"}[$__range]))"}]
         },
         {
           "type": "stat", "title": "New connections", "id": 8,
-          "description": "TCP SYN rate from the selection.",
+          "description": "TCP SYNs over the selected range.",
           "datasource": {"type": "prometheus", "uid": "victoriametrics"},
           "gridPos": {"h": 4, "w": 3, "x": 21, "y": 1},
-          "fieldConfig": {"defaults": {"unit": "reqps", "decimals": 1, "color": {"mode": "fixed", "fixedColor": "text"}}, "overrides": []},
+          "fieldConfig": {"defaults": {"unit": "short", "decimals": 1, "color": {"mode": "fixed", "fixedColor": "text"}}, "overrides": []},
           "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "graphMode": "area", "textMode": "auto", "colorMode": "none"},
-          "targets": [{"refId": "A", "datasource": {"type": "prometheus", "uid": "victoriametrics"}, "expr": "sum(rate(hubble_tcp_flags_total{source_namespace=~\"$namespace\", source_workload=~\"$workload\", flag=\"SYN\"}[$__rate_interval]))"}]
+          "targets": [{"refId": "A", "datasource": {"type": "prometheus", "uid": "victoriametrics"}, "instant": true, "expr": "sum(increase(hubble_tcp_flags_total{source_namespace=~\"$namespace\", source_workload=~\"$workload\", flag=\"SYN\"}[$__range]))"}]
         },
         {"type": "row", "title": "Over time", "id": 101, "collapsed": false, "gridPos": {"h": 1, "w": 24, "x": 0, "y": 5}},
         {
@@ -197,20 +197,20 @@ spec:
           "description": "Source to destination inside the cluster.",
           "datasource": {"type": "prometheus", "uid": "victoriametrics"},
           "gridPos": {"h": 9, "w": 12, "x": 0, "y": 15},
-          "fieldConfig": {"defaults": {"unit": "reqps", "decimals": 2, "custom": {"align": "auto", "cellOptions": {"type": "auto"}, "filterable": true}}, "overrides": []},
-          "options": {"showHeader": true, "sortBy": [{"displayName": "Flows/s", "desc": true}], "footer": {"show": false}},
-          "targets": [{"refId": "A", "datasource": {"type": "prometheus", "uid": "victoriametrics"}, "expr": "topk(25, sum by (source, destination) (rate(hubble_flows_processed_total{source_namespace=~\"$namespace\", source_workload=~\"$workload\", destination_namespace!=\"\"}[$__rate_interval])))", "format": "table", "instant": true}],
-          "transformations": [{"id": "organize", "options": {"excludeByName": {"Time": true}, "renameByName": {"source": "Source", "destination": "Destination", "Value": "Flows/s"}}}]
+          "fieldConfig": {"defaults": {"unit": "short", "decimals": 0, "custom": {"align": "auto", "cellOptions": {"type": "auto"}, "filterable": true}}, "overrides": []},
+          "options": {"showHeader": true, "sortBy": [{"displayName": "Flows", "desc": true}], "footer": {"show": false}},
+          "targets": [{"refId": "A", "datasource": {"type": "prometheus", "uid": "victoriametrics"}, "expr": "topk(25, sum by (source, destination) (increase(hubble_flows_processed_total{source_namespace=~\"$namespace\", source_workload=~\"$workload\", destination_namespace!=\"\"}[$__range]))) > 0", "format": "table", "instant": true}],
+          "transformations": [{"id": "organize", "options": {"excludeByName": {"Time": true}, "renameByName": {"source": "Source", "destination": "Destination", "Value": "Flows"}}}]
         },
         {
           "type": "table", "title": "Internet peers", "id": 21,
           "description": "Public addresses only. Cluster, node and LAN ranges are excluded.",
           "datasource": {"type": "prometheus", "uid": "victoriametrics"},
           "gridPos": {"h": 9, "w": 12, "x": 12, "y": 15},
-          "fieldConfig": {"defaults": {"unit": "reqps", "decimals": 2, "custom": {"align": "auto", "cellOptions": {"type": "auto"}, "filterable": true}}, "overrides": []},
-          "options": {"showHeader": true, "sortBy": [{"displayName": "Flows/s", "desc": true}], "footer": {"show": false}},
-          "targets": [{"refId": "A", "datasource": {"type": "prometheus", "uid": "victoriametrics"}, "expr": "topk(25, sum by (source, destination) (rate(hubble_flows_processed_total{source_namespace=~\"$namespace\", source_workload=~\"$workload\", destination=~\"^[0-9]+[.].*\", destination!~\"^(10[.]|172[.](1[6-9]|2[0-9]|3[01])[.]|192[.]168[.]|127[.]|169[.]254[.]).*\"}[$__rate_interval])))", "format": "table", "instant": true}],
-          "transformations": [{"id": "organize", "options": {"excludeByName": {"Time": true}, "renameByName": {"source": "Source", "destination": "Address", "Value": "Flows/s"}}}]
+          "fieldConfig": {"defaults": {"unit": "short", "decimals": 0, "custom": {"align": "auto", "cellOptions": {"type": "auto"}, "filterable": true}}, "overrides": []},
+          "options": {"showHeader": true, "sortBy": [{"displayName": "Flows", "desc": true}], "footer": {"show": false}},
+          "targets": [{"refId": "A", "datasource": {"type": "prometheus", "uid": "victoriametrics"}, "expr": "topk(25, sum by (source, destination) (increase(hubble_flows_processed_total{source_namespace=~\"$namespace\", source_workload=~\"$workload\", destination=~\"^[0-9]+[.].*\", destination!~\"^(10[.]|172[.](1[6-9]|2[0-9]|3[01])[.]|192[.]168[.]|127[.]|169[.]254[.]).*\"}[$__range]))) > 0", "format": "table", "instant": true}],
+          "transformations": [{"id": "organize", "options": {"excludeByName": {"Time": true}, "renameByName": {"source": "Source", "destination": "Address", "Value": "Flows"}}}]
         },
         {"type": "row", "title": "Names and drops", "id": 103, "collapsed": false, "gridPos": {"h": 1, "w": 24, "x": 0, "y": 24}},
         {
@@ -218,20 +218,20 @@ spec:
           "description": "Search-domain expansions under cluster.local are excluded; ndots:5 emits three of them per external lookup.",
           "datasource": {"type": "prometheus", "uid": "victoriametrics"},
           "gridPos": {"h": 9, "w": 12, "x": 0, "y": 25},
-          "fieldConfig": {"defaults": {"unit": "reqps", "decimals": 2, "custom": {"align": "auto", "cellOptions": {"type": "auto"}, "filterable": true}}, "overrides": []},
-          "options": {"showHeader": true, "sortBy": [{"displayName": "Queries/s", "desc": true}], "footer": {"show": false}},
-          "targets": [{"refId": "A", "datasource": {"type": "prometheus", "uid": "victoriametrics"}, "expr": "topk(25, sum by (source, query) (rate(hubble_dns_queries_total{source_namespace=~\"$namespace\", source_workload=~\"$workload\", query!~\".*[.]cluster[.]local[.]\"}[$__rate_interval])))", "format": "table", "instant": true}],
-          "transformations": [{"id": "organize", "options": {"excludeByName": {"Time": true}, "renameByName": {"source": "Source", "query": "Name", "Value": "Queries/s"}}}]
+          "fieldConfig": {"defaults": {"unit": "short", "decimals": 0, "custom": {"align": "auto", "cellOptions": {"type": "auto"}, "filterable": true}}, "overrides": []},
+          "options": {"showHeader": true, "sortBy": [{"displayName": "Queries", "desc": true}], "footer": {"show": false}},
+          "targets": [{"refId": "A", "datasource": {"type": "prometheus", "uid": "victoriametrics"}, "expr": "label_replace(topk(25, sum by (source, query) (increase(hubble_dns_queries_total{source_namespace=~\"$namespace\", source_workload=~\"$workload\", query!~\".*[.]cluster[.]local[.]\"}[$__range]))), \"query\", \"$1\", \"query\", \"(.*)[.]\") > 0", "format": "table", "instant": true}],
+          "transformations": [{"id": "organize", "options": {"excludeByName": {"Time": true}, "renameByName": {"source": "Source", "query": "Name", "Value": "Queries"}}}]
         },
         {
           "type": "table", "title": "Drops", "id": 31,
           "description": "Peer and datapath reason for each denied flow.",
           "datasource": {"type": "prometheus", "uid": "victoriametrics"},
           "gridPos": {"h": 9, "w": 12, "x": 12, "y": 25},
-          "fieldConfig": {"defaults": {"unit": "reqps", "decimals": 3, "custom": {"align": "auto", "cellOptions": {"type": "auto"}, "filterable": true}}, "overrides": []},
-          "options": {"showHeader": true, "sortBy": [{"displayName": "Drops/s", "desc": true}], "footer": {"show": false}},
-          "targets": [{"refId": "A", "datasource": {"type": "prometheus", "uid": "victoriametrics"}, "expr": "topk(25, sum by (source, destination, reason) (rate(hubble_drop_total{source_namespace=~\"$namespace\", source_workload=~\"$workload\"}[$__rate_interval])))", "format": "table", "instant": true}],
-          "transformations": [{"id": "organize", "options": {"excludeByName": {"Time": true}, "renameByName": {"source": "Source", "destination": "Destination", "reason": "Reason", "Value": "Drops/s"}}}]
+          "fieldConfig": {"defaults": {"unit": "short", "decimals": 0, "custom": {"align": "auto", "cellOptions": {"type": "auto"}, "filterable": true}}, "overrides": []},
+          "options": {"showHeader": true, "sortBy": [{"displayName": "Drops", "desc": true}], "footer": {"show": false}},
+          "targets": [{"refId": "A", "datasource": {"type": "prometheus", "uid": "victoriametrics"}, "expr": "topk(25, sum by (source, destination, reason) (increase(hubble_drop_total{source_namespace=~\"$namespace\", source_workload=~\"$workload\"}[$__range]))) > 0", "format": "table", "instant": true}],
+          "transformations": [{"id": "organize", "options": {"excludeByName": {"Time": true}, "renameByName": {"source": "Source", "destination": "Destination", "reason": "Reason", "Value": "Drops"}}}]
         }
       ]
     }
