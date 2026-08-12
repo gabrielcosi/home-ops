@@ -96,21 +96,21 @@ spec:
         },
         {
           "type": "stat", "title": "Dropped", "id": 2,
-          "description": "Flows denied by policy or the datapath.",
+          "description": "Flows denied by network policy. The Drops table also lists datapath drops, which no policy caused.",
           "datasource": {"type": "prometheus", "uid": "victoriametrics"},
           "gridPos": {"h": 4, "w": 3, "x": 3, "y": 1},
           "fieldConfig": {"defaults": {"unit": "short", "decimals": 0, "color": {"mode": "thresholds"}, "thresholds": {"mode": "absolute", "steps": [{"color": "text", "value": null}, {"color": "orange", "value": 0.01}, {"color": "red", "value": 1}]}}, "overrides": []},
           "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "graphMode": "area", "textMode": "auto", "colorMode": "value"},
-          "targets": [{"refId": "A", "datasource": {"type": "prometheus", "uid": "victoriametrics"}, "instant": true, "expr": "sum(increase(hubble_drop_total{source_namespace=~\"$namespace\", source_workload=~\"$workload\"}[$__range]))"}]
+          "targets": [{"refId": "A", "datasource": {"type": "prometheus", "uid": "victoriametrics"}, "instant": true, "expr": "sum(increase(hubble_drop_total{source_namespace=~\"$namespace\", source_workload=~\"$workload\", reason=~\"POLICY_.*\"}[$__range]))"}]
         },
         {
           "type": "stat", "title": "Drop ratio", "id": 3,
-          "description": "Dropped flows as a share of all flows.",
+          "description": "Policy-denied flows as a share of all flows.",
           "datasource": {"type": "prometheus", "uid": "victoriametrics"},
           "gridPos": {"h": 4, "w": 3, "x": 6, "y": 1},
           "fieldConfig": {"defaults": {"unit": "percentunit", "decimals": 2, "min": 0, "color": {"mode": "thresholds"}, "thresholds": {"mode": "absolute", "steps": [{"color": "text", "value": null}, {"color": "orange", "value": 0.01}, {"color": "red", "value": 0.05}]}}, "overrides": []},
           "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "graphMode": "area", "textMode": "auto", "colorMode": "value"},
-          "targets": [{"refId": "A", "datasource": {"type": "prometheus", "uid": "victoriametrics"}, "instant": true, "expr": "sum(increase(hubble_drop_total{source_namespace=~\"$namespace\", source_workload=~\"$workload\"}[$__range])) / clamp_min(sum(increase(hubble_flows_processed_total{source_namespace=~\"$namespace\", source_workload=~\"$workload\"}[$__range])), 1)"}]
+          "targets": [{"refId": "A", "datasource": {"type": "prometheus", "uid": "victoriametrics"}, "instant": true, "expr": "sum(increase(hubble_drop_total{source_namespace=~\"$namespace\", source_workload=~\"$workload\", reason=~\"POLICY_.*\"}[$__range])) / clamp_min(sum(increase(hubble_flows_processed_total{source_namespace=~\"$namespace\", source_workload=~\"$workload\"}[$__range])), 1)"}]
         },
         {
           "type": "stat", "title": "Namespaces", "id": 4,
