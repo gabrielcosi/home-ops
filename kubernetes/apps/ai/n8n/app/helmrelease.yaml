@@ -29,7 +29,7 @@ spec:
             nameOverride: n8n
             image:
               repository: ghcr.io/n8n-io/n8n
-              tag: 2.35.0
+              tag: 2.35.1
             env:
               N8N_LOG_LEVEL: debug
               TZ: Europe/Berlin
@@ -95,7 +95,7 @@ spec:
           task-runner:
             image:
               repository: ghcr.io/n8n-io/runners
-              tag: 2.35.0
+              tag: 2.35.1
             env:
               GENERIC_TIMEZONE: Europe/Berlin
               N8N_RUNNERS_AUTH_TOKEN:
