@@ -48,6 +48,9 @@ spec:
               N8N_TEMPLATES_ENABLED: false
               N8N_DIAGNOSTICS_ENABLED: false
               N8N_HIRING_BANNER_ENABLED: false
+              N8N_DYNAMIC_BANNERS_ENABLED: false
+              N8N_VERIFIED_PACKAGES_ENABLED: false
+              N8N_DISABLED_MODULES: mcp-registry
               N8N_DIAGNOSTICS_CONFIG_FRONTEND: ''
               N8N_DIAGNOSTICS_CONFIG_BACKEND: ''
               EXTERNAL_FRONTEND_HOOKS_URLS: ''
