@@ -15,6 +15,7 @@ spec:
             k8s:gateway.envoyproxy.io/owning-gateway-name: envoy-external
     - toCIDR:
         - 192.168.42.20/32
+        - 192.168.69.20/32
       toPorts:
         - ports:
             - port: "443"
