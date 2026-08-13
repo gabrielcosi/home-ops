@@ -53,9 +53,6 @@ spec:
         spec:
           containers:
             - name: grafana
-              env:
-                - name: GF_INSTALL_PLUGINS
-                  value: grafana-clock-panel
               volumeMounts:
                 - name: oauth-secret
                   mountPath: /etc/secrets/auth_generic_oauth
