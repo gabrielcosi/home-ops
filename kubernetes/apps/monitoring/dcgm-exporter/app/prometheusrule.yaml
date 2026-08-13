@@ -1,0 +1,88 @@
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: dcgm-exporter
+spec:
+  groups:
+    - name: dcgm-exporter.rules
+      rules:
+        - alert: NvidiaGpuWedgedAtHighClock
+          expr: |
+            DCGM_FI_DEV_SM_CLOCK > 1000 and DCGM_FI_DEV_FB_USED < 500
+          for: 15m
+          annotations:
+            summary: >-
+              GPU {{ $labels.gpu }} on {{ $labels.Hostname }} is clocked at {{ $value }} MHz with an empty framebuffer
+          labels:
+            severity: warning
+
+        - alert: NvidiaGpuXidError
+          expr: |
+            increase(DCGM_EXP_XID_ERRORS_TOTAL[10m]) > 0
+          for: 0m
+          annotations:
+            summary: >-
+              GPU {{ $labels.gpu }} on {{ $labels.Hostname }} reported XID error {{ $labels.xid }}
+          labels:
+            severity: critical
+
+        - alert: NvidiaGpuHealthDegraded
+          expr: |
+            DCGM_EXP_GPU_HEALTH_STATUS > 0
+          for: 10m
+          annotations:
+            summary: >-
+              GPU {{ $labels.gpu }} on {{ $labels.Hostname }} reports DCGM health status {{ $value }}
+          labels:
+            severity: warning
+
+        - alert: NvidiaGpuRowRemapFailure
+          expr: |
+            DCGM_FI_DEV_ROW_REMAP_FAILURE > 0
+          for: 0m
+          annotations:
+            summary: >-
+              GPU {{ $labels.gpu }} on {{ $labels.Hostname }} failed to remap a bad memory row
+          labels:
+            severity: critical
+
+        - alert: NvidiaGpuUncorrectableRemappedRows
+          expr: |
+            increase(DCGM_FI_DEV_UNCORRECTABLE_REMAPPED_ROWS[1h]) > 0
+          for: 0m
+          annotations:
+            summary: >-
+              GPU {{ $labels.gpu }} on {{ $labels.Hostname }} remapped a row after an uncorrectable memory error
+          labels:
+            severity: critical
+
+        - alert: NvidiaGpuThermalThrottling
+          expr: |
+            increase(DCGM_FI_DEV_THERMAL_VIOLATION[15m]) > 0
+          for: 5m
+          annotations:
+            summary: >-
+              GPU {{ $labels.gpu }} on {{ $labels.Hostname }} is throttling on temperature
+          labels:
+            severity: warning
+
+        - alert: NvidiaGpuNearSlowdownTemp
+          expr: |
+            DCGM_FI_DEV_GPU_TEMP > (DCGM_FI_DEV_SLOWDOWN_TEMP - 8)
+          for: 5m
+          annotations:
+            summary: >-
+              GPU {{ $labels.gpu }} on {{ $labels.Hostname }} is at {{ $value }}C, near its slowdown threshold
+          labels:
+            severity: warning
+
+        - alert: NvidiaGpuPcieReplayErrors
+          expr: |
+            increase(DCGM_FI_DEV_PCIE_REPLAY_COUNTER[15m]) > 10
+          for: 5m
+          annotations:
+            summary: >-
+              GPU {{ $labels.gpu }} on {{ $labels.Hostname }} logged {{ $value }} PCIe replays
+          labels:
+            severity: warning

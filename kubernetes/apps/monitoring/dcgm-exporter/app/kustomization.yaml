@@ -5,6 +5,7 @@ resources:
   - ./ocirepository.yaml
   - ./helmrelease.yaml
   - ./grafanadashboard.yaml
+  - ./prometheusrule.yaml
 
 configMapGenerator:
   - name: dcgm-exporter-counters
