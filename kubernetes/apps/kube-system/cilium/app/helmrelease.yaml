@@ -178,6 +178,11 @@ spec:
               - name: traffic
                 filePath: /var/run/cilium/hubble/traffic.log
                 aggregationInterval: "5m"
+                excludeFilters:
+                  - event_type:
+                      - type: 130
+                        match_sub_type: true
+                        sub_type: 5
                 fieldAggregate:
                   - source.namespace
                   - source.pod_name

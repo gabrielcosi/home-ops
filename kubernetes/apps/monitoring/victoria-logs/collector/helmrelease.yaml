@@ -23,6 +23,9 @@ spec:
       - glob: /var/run/cilium/hubble/denied.log
         extraFields: '{"app":"hubble","kind":"denied"}'
 
+    extraArgs:
+      fileCollector.msgField: "flow.drop_reason_desc,flow.verdict,agent_event.type"
+
     extraVolumes:
       - name: hubble-export
         hostPath:
