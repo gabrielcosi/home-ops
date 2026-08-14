@@ -55,8 +55,12 @@ upgrade-node node *args:
     talosctl -n "{{ node }}" upgrade -i "$(just talos machine-image "{{ node }}")" -m powercycle --timeout=10m {{ args }}
 
 [private]
-config-early:
-    just template "{{ source_directory() }}/networking/controlplane.yaml.j2" | zstd --compress --ultra -22 | base64 | tr -d '\n'
+config-early node="":
+    role="controlplane"
+    if [[ -f "{{ source_directory() }}/nodes/workers/{{ node }}.yaml.j2" ]]; then
+        role="workers"
+    fi
+    just template "{{ source_directory() }}/networking/${role}.yaml.j2" | zstd --compress --ultra -22 | base64 | tr -d '\n'
 
 [private]
 schematic-file node="":
@@ -70,7 +74,7 @@ schematic-file node="":
 
 [private]
 schematic-id node="":
-    curl -sX POST --data-binary @<(just template "$(just talos schematic-file "{{ node }}")" -D "config_early=$(just talos config-early)") "https://factory.talos.dev/schematics" | jq -r '.id'
+    curl -sX POST --data-binary @<(just template "$(just talos schematic-file "{{ node }}")" -D "config_early=$(just talos config-early "{{ node }}")") "https://factory.talos.dev/schematics" | jq -r '.id'
 
 [private]
 machine-image node="":
