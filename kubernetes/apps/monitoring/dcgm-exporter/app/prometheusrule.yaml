@@ -29,7 +29,7 @@ spec:
 
         - alert: NvidiaGpuHealthDegraded
           expr: |
-            DCGM_EXP_GPU_HEALTH_STATUS > 0
+            DCGM_EXP_GPU_HEALTH_STATUS{health_error_severity!="MONITOR"} > 0
           for: 10m
           annotations:
             summary: >-
