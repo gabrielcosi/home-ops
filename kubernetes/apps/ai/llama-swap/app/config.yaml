@@ -17,6 +17,7 @@ models:
       --ctx-size 131072 \
       --parallel 1 \
       --jinja \
+      --chat-template-kwargs '{"reasoning_effort":"medium"}' \
       --cache-type-k q8_0 \
       --cache-type-v q8_0 \
       --temp 1.0 \
@@ -25,8 +26,6 @@ models:
       --min-p 0 \
       --presence-penalty 0.0 \
       --repeat-penalty 1.0 \
-      --reasoning-budget 4000 \
-      --reasoning-budget-message "I have enough. Final answer now, no reconsidering." \
       --flash-attn on \
       --n-gpu-layers 99 \
       --fit off \
@@ -58,8 +57,6 @@ models:
       --min-p 0 \
       --presence-penalty 0.0 \
       --repeat-penalty 1.0 \
-      --reasoning-budget 4000 \
-      --reasoning-budget-message "I have enough. Final answer now, no reconsidering." \
       --flash-attn on \
       --n-gpu-layers 99 \
       --fit off \
