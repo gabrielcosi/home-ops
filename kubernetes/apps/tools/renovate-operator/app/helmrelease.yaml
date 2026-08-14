@@ -38,6 +38,16 @@ spec:
           - groups
         allowedGroupPattern: '(?i)^renovate admins$'
 
+    authorization:
+      defaults:
+        adminGroups:
+          - renovate admins
+
+    policy:
+      enabled: true
+      allowedHosts:
+        - git.xcd.dev
+
     webhook:
       enabled: false
       route:
