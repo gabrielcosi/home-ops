@@ -12,7 +12,7 @@ on:
       - labeled
 
 concurrency:
-  group: ${{ forgejo.workflow }}-${{ forgejo.event.pull_request.number || forgejo.ref }}${{ forgejo.event.action == 'labeled' && format('-label-{0}', forgejo.run_id) || '' }}
+  group: ${{ forgejo.workflow }}-${{ forgejo.event.pull_request.number || forgejo.ref }}${{ startsWith(forgejo.event.action, 'label') && format('-label-{0}', forgejo.run_id) || '' }}
   cancel-in-progress: true
 
 jobs:
@@ -20,7 +20,7 @@ jobs:
     name: AI PR Review
     if: >-
       ${{ startsWith(forgejo.event.pull_request.head.ref, 'renovate/')
-      && (forgejo.event.action != 'labeled' || forgejo.event.label.name == 'ai-review') }}
+      && (!startsWith(forgejo.event.action, 'label') || forgejo.event.label.name == 'ai-review') }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     env:
