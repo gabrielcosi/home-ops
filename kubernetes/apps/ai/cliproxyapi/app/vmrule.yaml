@@ -11,13 +11,18 @@ spec:
       rules:
         - alert: CliProxyApiReauthNeeded
           expr: |
-            _time:15m {kubernetes.pod_namespace="ai", kubernetes.pod_name=~"cliproxyapi.*"} ("invalid_grant" OR "refresh_token_reused") | stats by () count() as hits | filter hits:>0
+            _time:15m {kubernetes.pod_namespace="ai", kubernetes.pod_name=~"cliproxyapi.*"}
+            ("invalid_grant" OR "refresh_token_reused" OR "refresh_token_expired" OR "refresh_token_revoked")
+            | extract_regexp `\[(?P<provider>anthropic|openai)_auth\.go:`
+            | stats by (provider) count() as hits
+            | filter hits:>0
           for: 2m
           labels:
             severity: critical
           annotations:
-            summary: CLIProxyAPI needs an interactive re-login
+            summary: CLIProxyAPI {{ $labels.provider }} needs an interactive re-login
             description: >-
-              CLIProxyAPI logged OpenAI/Codex auth or refresh-token failures in the last 10m.
-              The subscription token chain is likely broken — re-run the interactive login and
-              kubectl cp the refreshed auth file into the cliproxyapi /data PVC.
+              CLIProxyAPI logged {{ $value }} terminal {{ $labels.provider }} token-refresh failures in the
+              last 15m. Terminal refresh errors are never retried, so the credential stays dead until it is
+              replaced — re-run the interactive login (-claude-login / -codex-login) and kubectl cp the
+              refreshed auth file into the cliproxyapi /data PVC.
