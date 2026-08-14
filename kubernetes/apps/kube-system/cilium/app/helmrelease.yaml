@@ -146,12 +146,48 @@ spec:
     hubble:
       enabled: true
       metrics:
-        enabled:
-          - "dns:query;sourceContext=workload|pod;destinationContext=workload|pod|dns|ip;labelsContext=source_namespace,destination_namespace,source_workload,destination_workload"
-          - "drop:sourceContext=workload|pod;destinationContext=workload|pod|dns|ip;labelsContext=source_namespace,destination_namespace,source_workload,destination_workload"
-          - "flow:sourceContext=workload|pod;destinationContext=workload|pod|dns|ip;labelsContext=source_namespace,destination_namespace,source_workload,destination_workload"
-          - "tcp:sourceContext=workload|pod;destinationContext=workload|pod|dns|ip;labelsContext=source_namespace,destination_namespace,source_workload,destination_workload"
-          - "icmp:sourceContext=workload|pod;destinationContext=workload|pod|dns|ip;labelsContext=source_namespace,destination_namespace,source_workload,destination_workload"
+        dynamic:
+          enabled: true
+          config:
+            createConfigMap: true
+            content:
+              - name: dns
+                contextOptions:
+                  - name: query
+                  - name: sourceContext
+                    values: ["workload", "pod"]
+                  - name: destinationContext
+                    values: ["workload", "pod", "dns", "ip"]
+                  - name: labelsContext
+                    values:
+                      - source_namespace
+                      - destination_namespace
+                      - source_workload
+                      - destination_workload
+              - name: drop
+                contextOptions: &hubbleContext
+                  - name: sourceContext
+                    values: ["workload", "pod"]
+                  - name: destinationContext
+                    values: ["workload", "pod", "dns", "ip"]
+                  - name: labelsContext
+                    values:
+                      - source_namespace
+                      - destination_namespace
+                      - source_workload
+                      - destination_workload
+              - name: icmp
+                contextOptions: *hubbleContext
+              - name: flow
+                contextOptions: *hubbleContext
+                excludeFilters: &hubbleChurn
+                  - source_label: ["app.kubernetes.io/managed-by=kopiur"]
+                  - destination_label: ["app.kubernetes.io/managed-by=kopiur"]
+                  - source_label: ["renovate-operator.mogenius.com/renovatejob=forgejo"]
+                  - destination_label: ["renovate-operator.mogenius.com/renovatejob=forgejo"]
+              - name: tcp
+                contextOptions: *hubbleContext
+                excludeFilters: *hubbleChurn
         serviceMonitor:
           enabled: true
           metricRelabelings:
