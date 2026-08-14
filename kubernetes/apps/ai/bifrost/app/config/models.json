@@ -1,7 +1,7 @@
 {
-  "llama-swap/qwen3.6-35b-a3b": {
+  "llama-swap/qwen3.8-27b": {
     "provider": "llama-swap",
-    "base_model": "qwen3.6-35b-a3b",
+    "base_model": "qwen3.8-27b",
     "mode": "chat",
     "max_input_tokens": 131072,
     "max_output_tokens": 131072,
@@ -10,18 +10,6 @@
     "supports_tool_choice": true,
     "supports_reasoning": true,
     "supports_vision": true
-  },
-  "llama-swap/qwen3.6-27b": {
-    "provider": "llama-swap",
-    "base_model": "qwen3.6-27b",
-    "mode": "chat",
-    "max_input_tokens": 131072,
-    "max_output_tokens": 131072,
-    "max_tokens": 131072,
-    "supports_function_calling": true,
-    "supports_tool_choice": true,
-    "supports_reasoning": true,
-    "supports_vision": false
   },
   "llama-swap/muse-glimmer-30b": {
     "provider": "llama-swap",

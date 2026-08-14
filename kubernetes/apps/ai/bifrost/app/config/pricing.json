@@ -1,16 +1,7 @@
 {
-  "llama-swap/qwen3.6-35b-a3b": {
+  "llama-swap/qwen3.8-27b": {
     "provider": "llama-swap",
-    "base_model": "qwen3.6-35b-a3b",
-    "mode": "chat",
-    "input_cost_per_token": 0.00000016,
-    "output_cost_per_token": 0.00000095,
-    "cache_creation_input_token_cost": 0.00000016,
-    "cache_read_input_token_cost": 0.00000004
-  },
-  "llama-swap/qwen3.6-27b": {
-    "provider": "llama-swap",
-    "base_model": "qwen3.6-27b",
+    "base_model": "qwen3.8-27b",
     "mode": "chat",
     "input_cost_per_token": 0.00000025,
     "output_cost_per_token": 0.00000150,
