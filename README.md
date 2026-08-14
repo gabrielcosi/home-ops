@@ -29,7 +29,7 @@ _... managed with [Flux](https://github.com/fluxcd/flux2), [Renovate](https://gi
 
 ## <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f4a1/512.webp" alt="💡" width="20" height="20"> Overview
 
-This is a mono repository for my home infrastructure and Kubernetes cluster. I try to keep everything as code, from the operating system on the nodes down to the individual application releases, including the two hosts that run outside the cluster.
+This is a mono repository for my home infrastructure and Kubernetes cluster. I try to keep everything as code, from the operating system on the nodes down to the individual application releases, including the hosts that run outside the cluster.
 
 - [Talos Linux](https://github.com/siderolabs/talos) — immutable, API-driven OS that runs nothing but Kubernetes.
 - [Flux](https://github.com/fluxcd/flux2) — reconciles the cluster against this repository.
@@ -40,7 +40,7 @@ This is a mono repository for my home infrastructure and Kubernetes cluster. I t
 
 ## <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f331/512.webp" alt="🌱" width="20" height="20"> Kubernetes
 
-My cluster runs on three mini PCs with [Talos](https://www.talos.dev), all of them control plane. It is hyper-converged, workloads and block storage share the same resources on the nodes, while a separate ZFS server provides NFS shares and holds the backups.
+My cluster runs on [Talos](https://www.talos.dev), three mini PCs as control plane plus a GPU box joined as a worker. It is hyper-converged, workloads and block storage share the same resources on the control plane nodes, while a separate ZFS server provides NFS shares and holds the backups.
 
 ### Core components
 
@@ -61,7 +61,7 @@ Renovate watches the entire repository for dependency updates and opens a PR whe
 ```sh
 📁 ansible     # provisioning for the off-cluster hosts
 📁 bootstrap   # bringing a fresh cluster up from nothing
-📁 docker      # compose stacks for the edge VPS and the GPU box
+📁 docker      # compose stacks for the off-cluster hosts
 📁 kubernetes  # the cluster itself
 📁 talos       # machine config rendering
 ```
@@ -99,10 +99,11 @@ graph TD
 - **Miroir** — 256 GB SK hynix BC511 NVMe, replicated with DRBD
 - **Network** — 1 G onboard (disabled) + Mellanox 10/25 G SFP+
 
-**MS-02 Ultra (Core Ultra 9 285HX) · 96 GB RAM DDR5 · Ubuntu**
+**MS-02 Ultra (Core Ultra 9 285HX) · 96 GB DDR5 · Talos / Kubernetes**
 
 - **GPU** — NVIDIA RTX PRO 4000 Blackwell SFF, 24 GB
-- **Disk** — 2 TB Samsung 9100 PRO NVMe
+- **OS & Miroir** — 1 TB SK hynix Platinum P41 NVMe
+- **Network** — 10 G Realtek + 2.5 G Intel, active-backup bond
 
 ### Storage
 
