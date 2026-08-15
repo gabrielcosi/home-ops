@@ -12,14 +12,14 @@ models:
       /app/llama-server \
       --host 0.0.0.0 \
       --port ${PORT} \
-      --model /models/Qwen3.8-27B/Qwen3.8-27B-Q4_K_M.gguf \
+      --model /models/Qwen3.8-27B/Qwen3.8-27B-NVFP4-Q8_0.gguf \
       --mmproj /models/Qwen3.8-27B/Qwen3.8-27B-mmproj-F16.gguf \
       --ctx-size 131072 \
       --parallel 1 \
       --jinja \
       --chat-template-kwargs '{"reasoning_effort":"medium"}' \
       --cache-type-k q8_0 \
-      --cache-type-v q8_0 \
+      --cache-type-v f16 \
       --temp 1.0 \
       --top-p 0.95 \
       --top-k 20 \
@@ -31,8 +31,8 @@ models:
       --fit off \
       --reasoning-preserve \
       --spec-type draft-mtp \
-      --spec-draft-n-max 1 \
-      --spec-draft-p-min 0.75
+      --spec-draft-n-max 2 \
+      --spec-draft-p-min 0.0
     useModelName: qwen3.8-27b
     concurrencyLimit: 1
 
