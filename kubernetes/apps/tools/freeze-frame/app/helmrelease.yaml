@@ -27,7 +27,7 @@ spec:
           app:
             image:
               repository: reg.xcd.dev/private/freeze-frame
-              tag: latest@sha256:e55d93d9c839ece1bdf57f3c9282859342d1f154d041e83989945429a7bd092b
+              tag: latest@sha256:98f63ddbdc76654f49f5aaa341e4848cceb35476809b8cf47f13b25c08b3a8f3
             resources:
               requests:
                 cpu: 1m
