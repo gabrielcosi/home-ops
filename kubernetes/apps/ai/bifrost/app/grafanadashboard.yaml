@@ -166,7 +166,7 @@ spec:
           "targets": [
             { "refId": "A", "expr": "sum by (model) (rate(bifrost_stream_inter_token_latency_seconds_count{provider=~\"$provider\",model=~\"$model\",virtual_key_name=~\"$vkey\",method=~\"$method\"}[$__rate_interval])) / sum by (model) (rate(bifrost_stream_inter_token_latency_seconds_sum{provider=~\"$provider\",model=~\"$model\",virtual_key_name=~\"$vkey\",method=~\"$method\"}[$__rate_interval]))", "legendFormat": "{{model}}" }
           ],
-          "fieldConfig": { "defaults": { "unit": "suffix:tok/s", "decimals": 1, "min": 0, "custom": { "drawStyle": "line", "fillOpacity": 10, "lineInterpolation": "smooth", "showPoints": "always", "pointSize": 6, "spanNulls": 3600000 } }, "overrides": [] },
+          "fieldConfig": { "defaults": { "unit": "suffix:tok/s", "decimals": 1, "min": 0, "custom": { "drawStyle": "line", "fillOpacity": 10, "lineInterpolation": "smooth", "lineWidth": 2, "showPoints": "auto", "spanNulls": 3600000 } }, "overrides": [] },
           "options": { "legend": { "displayMode": "table", "placement": "right", "showLegend": true, "calcs": ["mean","max"] }, "tooltip": { "mode": "multi", "sort": "desc" } }
         },
         {
@@ -177,7 +177,7 @@ spec:
           "targets": [
             { "refId": "A", "expr": "sum by (model) (rate(bifrost_output_tokens_total{provider=~\"$provider\",model=~\"$model\",virtual_key_name=~\"$vkey\",method=~\"$method\"}[$__rate_interval])) / sum by (model) (rate(bifrost_upstream_latency_seconds_sum{provider=~\"$provider\",model=~\"$model\",virtual_key_name=~\"$vkey\",method=~\"$method\",is_success=\"true\"}[$__rate_interval]))", "legendFormat": "{{model}}" }
           ],
-          "fieldConfig": { "defaults": { "unit": "suffix:tok/s", "decimals": 1, "min": 0, "custom": { "drawStyle": "line", "fillOpacity": 10, "lineInterpolation": "smooth", "showPoints": "always", "pointSize": 6, "spanNulls": 3600000 } }, "overrides": [] },
+          "fieldConfig": { "defaults": { "unit": "suffix:tok/s", "decimals": 1, "min": 0, "custom": { "drawStyle": "line", "fillOpacity": 10, "lineInterpolation": "smooth", "lineWidth": 2, "showPoints": "auto", "spanNulls": 3600000 } }, "overrides": [] },
           "options": { "legend": { "displayMode": "table", "placement": "right", "showLegend": true, "calcs": ["mean","max"] }, "tooltip": { "mode": "multi", "sort": "desc" } }
         },
 
@@ -189,7 +189,7 @@ spec:
           "targets": [
             { "refId": "A", "expr": "histogram_quantile(0.95, sum by (model, le) (rate(bifrost_stream_first_token_latency_seconds_bucket{provider=~\"$provider\",model=~\"$model\",virtual_key_name=~\"$vkey\",method=~\"$method\"}[$__rate_interval])))", "legendFormat": "{{model}}" }
           ],
-          "fieldConfig": { "defaults": { "unit": "s", "decimals": 2, "min": 0, "custom": { "drawStyle": "line", "fillOpacity": 10, "lineInterpolation": "smooth", "showPoints": "always", "pointSize": 6, "spanNulls": 3600000 } }, "overrides": [] },
+          "fieldConfig": { "defaults": { "unit": "s", "decimals": 2, "min": 0, "custom": { "drawStyle": "line", "fillOpacity": 10, "lineInterpolation": "smooth", "lineWidth": 2, "showPoints": "auto", "spanNulls": 3600000 } }, "overrides": [] },
           "options": { "legend": { "displayMode": "table", "placement": "right", "showLegend": true, "calcs": ["mean","max"] }, "tooltip": { "mode": "multi", "sort": "desc" } }
         },
         {
@@ -199,7 +199,7 @@ spec:
           "targets": [
             { "refId": "A", "expr": "histogram_quantile(0.95, sum by (model, le) (rate(bifrost_upstream_latency_seconds_bucket{provider=~\"$provider\",model=~\"$model\",virtual_key_name=~\"$vkey\",method=~\"$method\",is_success=\"true\"}[$__rate_interval])))", "legendFormat": "{{model}}" }
           ],
-          "fieldConfig": { "defaults": { "unit": "s", "decimals": 2, "min": 0, "custom": { "drawStyle": "line", "fillOpacity": 10, "lineInterpolation": "smooth", "showPoints": "always", "pointSize": 6, "spanNulls": 3600000 } }, "overrides": [] },
+          "fieldConfig": { "defaults": { "unit": "s", "decimals": 2, "min": 0, "custom": { "drawStyle": "line", "fillOpacity": 10, "lineInterpolation": "smooth", "lineWidth": 2, "showPoints": "auto", "spanNulls": 3600000 } }, "overrides": [] },
           "options": { "legend": { "displayMode": "table", "placement": "right", "showLegend": true, "calcs": ["mean","max"] }, "tooltip": { "mode": "multi", "sort": "desc" } }
         },
 
