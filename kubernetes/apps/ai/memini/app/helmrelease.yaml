@@ -72,6 +72,10 @@ spec:
         existingClaim: memini
         globalMounts:
           - path: /data
+      tmp:
+        type: emptyDir
+        globalMounts:
+          - path: /tmp
 
     serviceMonitor:
       main:
