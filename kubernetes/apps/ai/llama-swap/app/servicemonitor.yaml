@@ -1,0 +1,59 @@
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: llama-swap
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: llama-swap
+      app.kubernetes.io/name: llama-swap
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 30s
+      scrapeTimeout: 10s
+      authorization:
+        type: Bearer
+        credentials:
+          name: llama-swap-secrets
+          key: LS_API_KEY
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: llama-swap-upstream
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: llama-swap
+      app.kubernetes.io/name: llama-swap
+  endpoints:
+    - port: http
+      path: /upstream/qwen3.8-27b/metrics
+      interval: 30s
+      scrapeTimeout: 10s
+      authorization:
+        type: Bearer
+        credentials:
+          name: llama-swap-secrets
+          key: LS_API_KEY
+      relabelings:
+        - targetLabel: job
+          replacement: llama-swap-upstream
+        - targetLabel: model
+          replacement: qwen3.8-27b
+    - port: http
+      path: /upstream/muse-glimmer-30b/metrics
+      interval: 30s
+      scrapeTimeout: 10s
+      authorization:
+        type: Bearer
+        credentials:
+          name: llama-swap-secrets
+          key: LS_API_KEY
+      relabelings:
+        - targetLabel: job
+          replacement: llama-swap-upstream
+        - targetLabel: model
+          replacement: muse-glimmer-30b

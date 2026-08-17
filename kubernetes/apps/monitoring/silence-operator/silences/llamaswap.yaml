@@ -1,0 +1,13 @@
+---
+apiVersion: observability.giantswarm.io/v1alpha2
+kind: Silence
+metadata:
+  name: llama-swap-upstream-unloaded
+spec:
+  matchers:
+    - name: alertname
+      value: TargetDown
+    - name: job
+      value: llama-swap-upstream
+    - name: namespace
+      value: ai

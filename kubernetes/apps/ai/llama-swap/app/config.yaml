@@ -12,6 +12,7 @@ models:
       /app/llama-server \
       --host 0.0.0.0 \
       --port ${PORT} \
+      --metrics \
       --model /models/Qwen3.8-27B/Qwen3.8-27B-NVFP4-Q8_0.gguf \
       --mmproj /models/Qwen3.8-27B/Qwen3.8-27B-mmproj-F16.gguf \
       --ctx-size 131072 \
@@ -46,6 +47,7 @@ models:
       /app/llama-server \
       --host 0.0.0.0 \
       --port ${PORT} \
+      --metrics \
       --model /models/Muse-Glimmer-30B/Muse-Glimmer-30B-UD-Q4_K_XL.gguf \
       --mmproj /models/Muse-Glimmer-30B/Muse-Glimmer-30B-mmproj-kquant.gguf \
       --ctx-size 262144 \
@@ -75,6 +77,11 @@ matrix:
 
   sets:
     default: 'q3827b | muse30b'
+
+upstream:
+  ignorePaths:
+    - '.*\.(js|json|css|png|gif|jpg|jpeg|ico|txt)$'
+    - '^/metrics$'
 
 apiKeys:
   - ${env.LS_API_KEY}
