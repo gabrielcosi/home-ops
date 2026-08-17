@@ -33,7 +33,7 @@ spec:
             nameOverride: llama-swap
             image:
               repository: ghcr.io/mostlygeek/llama-swap
-              tag: v250-cuda-b10450-non-root # renovate: docker=ghcr.io/mostlygeek/llama-swap versioning=regex:^v(?<major>\d+)-cuda-b(?<build>\d+)-non-root$
+              tag: v250-cuda-b10454-non-root # renovate: docker=ghcr.io/mostlygeek/llama-swap versioning=regex:^v(?<major>\d+)-cuda-b(?<build>\d+)-non-root$
             args:
               - --config
               - /app/config.yaml
