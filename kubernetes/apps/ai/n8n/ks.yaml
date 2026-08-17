@@ -22,6 +22,6 @@ spec:
   postBuild:
     substitute:
       APP: n8n
-      KOPIUR_PUID: "1000"
-      KOPIUR_PGID: "1000"
-      KOPIUR_CAPACITY: "2Gi"
+      KOPIUR_PUID: '1000'
+      KOPIUR_PGID: '1000'
+      KOPIUR_CAPACITY: '10Gi'
