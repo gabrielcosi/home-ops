@@ -78,10 +78,5 @@ matrix:
   sets:
     default: 'q3827b | muse30b'
 
-upstream:
-  ignorePaths:
-    - '.*\.(js|json|css|png|gif|jpg|jpeg|ico|txt)$'
-    - '^/metrics$'
-
 apiKeys:
   - ${env.LS_API_KEY}

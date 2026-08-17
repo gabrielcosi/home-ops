@@ -7,7 +7,6 @@ resources:
   - ./netpol.yaml
   - ./ocirepository.yaml
   - ./resourceclaim.yaml
-  - ./servicemonitor.yaml
 configMapGenerator:
   - name: llama-swap-config
     files:
