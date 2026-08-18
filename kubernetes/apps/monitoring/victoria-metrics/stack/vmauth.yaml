@@ -7,6 +7,8 @@ spec:
   userSelector:
     matchLabels:
       app.kubernetes.io/part-of: external-ingest
+  nodeSelector:
+    node-role.kubernetes.io/control-plane: ''
   resources:
     requests:
       cpu: 10m

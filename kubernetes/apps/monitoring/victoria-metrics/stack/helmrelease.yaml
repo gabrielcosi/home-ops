@@ -122,6 +122,8 @@ spec:
           - alertmanager-secret
         image:
           repository: quay.io/prometheus/alertmanager
+        nodeSelector:
+          node-role.kubernetes.io/control-plane: ''
         topologySpreadConstraints:
           - maxSkew: 1
             topologyKey: kubernetes.io/hostname
@@ -150,6 +152,8 @@ spec:
 
     kube-state-metrics:
       fullnameOverride: kube-state-metrics
+      nodeSelector:
+        node-role.kubernetes.io/control-plane: ''
       resources:
         requests:
           cpu: 10m
@@ -264,6 +268,8 @@ spec:
       spec:
         selectAllByDefault: true
         scrapeInterval: 30s
+        nodeSelector:
+          node-role.kubernetes.io/control-plane: ''
         resources:
           requests:
             cpu: 100m
@@ -279,6 +285,8 @@ spec:
       spec:
         selectAllByDefault: true
         evaluationInterval: 30s
+        nodeSelector:
+          node-role.kubernetes.io/control-plane: ''
         resources:
           requests:
             cpu: 50m
@@ -291,6 +299,8 @@ spec:
     vmauth:
       enabled: true
       spec:
+        nodeSelector:
+          node-role.kubernetes.io/control-plane: ''
         resources:
           requests:
             cpu: 50m
@@ -318,6 +328,8 @@ spec:
     vmsingle:
       spec:
         retentionPeriod: 90d
+        nodeSelector:
+          node-role.kubernetes.io/control-plane: ''
         resources:
           requests:
             cpu: 150m
