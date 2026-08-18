@@ -3,8 +3,8 @@ alerting:
     application-token: ${PUSHOVER_TOKEN}
     user-key: ${PUSHOVER_USER_KEY}
     title: Gatus
-    priority: 1
-    resolved-priority: 0
+    priority: 0
+    resolved-priority: -2
     default-alert:
       description: health-check failed
       failure-threshold: 3

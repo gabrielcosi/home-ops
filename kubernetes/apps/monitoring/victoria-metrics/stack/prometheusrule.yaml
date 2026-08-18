@@ -17,6 +17,22 @@ spec:
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
+  name: alertstorm
+spec:
+  groups:
+    - name: alertstorm
+      rules:
+        - alert: AlertStorm
+          expr: count(ALERTS{alertstate="firing",alertname!~"AlertStorm|Watchdog|InfoInhibitor"}) > 15
+          for: 5m
+          annotations:
+            summary: '{{ $value }} alerts are firing at once. Individual notifications are muted until this clears.'
+          labels:
+            severity: critical
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
   name: oom
 spec:
   groups:

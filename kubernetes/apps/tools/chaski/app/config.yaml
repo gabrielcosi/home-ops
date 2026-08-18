@@ -24,7 +24,7 @@ routes:
       <small><b>Client:</b> {{ .payload.downloadClient | default "unknown" }}</small>
     params:
       format: html
-      priority: '{{ if eq .payload.eventType "ManualInteractionRequired" }}high{{ else }}low{{ end }}'
+      priority: '{{ if eq .payload.eventType "ManualInteractionRequired" }}normal{{ else }}low{{ end }}'
       url: >-
         {{- if eq .payload.eventType "ManualInteractionRequired" -}}
         {{ .payload.applicationUrl }}/activity/queue
@@ -54,7 +54,7 @@ routes:
       <small><b>Client:</b> {{ .payload.downloadClient | default "unknown" }}</small>
     params:
       format: html
-      priority: '{{ if eq .payload.eventType "ManualInteractionRequired" }}high{{ else }}low{{ end }}'
+      priority: '{{ if eq .payload.eventType "ManualInteractionRequired" }}normal{{ else }}low{{ end }}'
       url: >-
         {{- if eq .payload.eventType "ManualInteractionRequired" -}}
         {{ .payload.applicationUrl }}/activity/queue

@@ -62,7 +62,7 @@ spec:
         route:
           group_by: ['alertname', 'job']
           group_wait: 1m
-          group_interval: 5m
+          group_interval: 30m
           repeat_interval: 12h
           receiver: 'pushover'
           routes:
@@ -95,9 +95,8 @@ spec:
                 send_resolved: true
                 html: true
                 ttl: 24h
-                sound: gamelan
                 priority: |-
-                  {{ if eq .Status "firing" }}1{{ else }}0{{ end }}
+                  {{ if eq .Status "resolved" }}-2{{ else if eq .CommonLabels.severity "critical" }}0{{ else }}-1{{ end }}
                 title: |-
                   [{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}] {{ .CommonLabels.alertname }}
                 message: |-
@@ -116,6 +115,10 @@ spec:
               severity: 'critical'
             target_match:
               severity: 'warning'
+          - source_matchers:
+              - alertname = "AlertStorm"
+            target_matchers:
+              - alertname !~ "AlertStorm|Watchdog"
       spec:
         replicaCount: 2
         secrets:
