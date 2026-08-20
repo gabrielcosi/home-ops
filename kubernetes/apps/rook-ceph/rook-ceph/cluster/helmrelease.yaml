@@ -10,9 +10,6 @@ spec:
   interval: 1h
   timeout: 15m
   values:
-    cephImage:
-      repository: quay.io/ceph/ceph
-      tag: v19.2.6
     cephClusterSpec:
       cleanupPolicy:
         wipeDevicesFromOtherClusters: true
@@ -28,6 +25,16 @@ spec:
         urlPrefix: /
         ssl: false
         prometheusEndpoint: http://vmsingle-victoria-metrics-cluster.monitoring.svc.cluster.local:8428
+      healthCheck:
+        muteHealthWarning:
+          AUTH_INSECURE_ROTATING_SERVICE_KEY_TYPE:
+            policy: mute
+          AUTH_INSECURE_CLIENT_KEY_TYPE:
+            policy: mute
+          AUTH_INSECURE_KEYS_ALLOWED:
+            policy: mute
+          AUTH_INSECURE_KEYS_CREATABLE:
+            policy: mute
       mgr:
         modules:
           - name: pg_autoscaler
