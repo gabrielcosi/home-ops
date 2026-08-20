@@ -15,16 +15,17 @@ spec:
           resources:
             requests:
               cpu: 10m
-              memory: 64Mi
+              memory: 96Mi
             limits:
               cpu: null
-              memory: 128Mi
+              memory: 192Mi
     image:
       repository: ghcr.io/rook/ceph
     monitoring:
       enabled: true
     resources:
       requests:
-        cpu: 100m # unchangeable
-        memory: 128Mi # unchangeable
-      limits: {}
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        memory: 512Mi

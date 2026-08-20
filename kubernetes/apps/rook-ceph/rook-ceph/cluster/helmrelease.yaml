@@ -51,20 +51,66 @@ spec:
                     - key: node-role.kubernetes.io/control-plane
                       operator: Exists
       resources:
+        cleanup:
+          requests:
+            cpu: 50m
+            memory: 128Mi
+          limits:
+            memory: 1Gi
+        cmd-reporter:
+          requests:
+            cpu: 50m
+            memory: 64Mi
+          limits:
+            memory: 512Mi
+        crashcollector:
+          requests:
+            cpu: 10m
+            memory: 32Mi
+          limits:
+            memory: 64Mi
+        exporter:
+          requests:
+            cpu: 10m
+            memory: 48Mi
+          limits:
+            memory: 128Mi
+        logcollector:
+          requests:
+            cpu: 10m
+            memory: 32Mi
+          limits:
+            memory: 128Mi
         mgr:
           requests:
-            cpu: 100m
+            cpu: 50m
             memory: 1Gi
           limits:
             memory: 4Gi
+        mgr-sidecar:
+          requests:
+            cpu: 25m
+            memory: 96Mi
+          limits:
+            memory: 128Mi
         mon:
           requests:
-            cpu: 100m
+            cpu: 50m
+            memory: 1280Mi
+          limits:
+            memory: 2Gi
         osd:
           requests:
-            cpu: 100m
+            cpu: 150m
+            memory: 3584Mi
           limits:
             memory: 8Gi # Required for bootstrap
+        prepareosd:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            memory: 256Mi
       security:
         cephx:
           daemon:
@@ -81,6 +127,12 @@ spec:
       createPrometheusRules: true
     toolbox:
       enabled: true
+      resources:
+        requests:
+          cpu: 10m
+          memory: 64Mi
+        limits:
+          memory: 256Mi
     route:
       dashboard:
         host:
@@ -149,8 +201,8 @@ spec:
             priorityClassName: system-cluster-critical
             resources:
               requests:
-                cpu: 100m
-                memory: 1Gi
+                cpu: 50m
+                memory: 768Mi
               limits:
                 memory: 4Gi
         storageClass:
