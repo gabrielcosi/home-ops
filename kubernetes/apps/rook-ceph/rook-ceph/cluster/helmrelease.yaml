@@ -10,12 +10,17 @@ spec:
   interval: 1h
   timeout: 15m
   values:
+    cephImage:
+      repository: quay.io/ceph/ceph
+      tag: v19.2.6
     cephClusterSpec:
       cleanupPolicy:
         wipeDevicesFromOtherClusters: true
       crashCollector:
         disable: false
       csi:
+        cephfs:
+          kernelMountOptions: ms_mode=prefer-crc
         readAffinity:
           enabled: false # https://github.com/ceph/ceph-csi/issues/5772
       dashboard:

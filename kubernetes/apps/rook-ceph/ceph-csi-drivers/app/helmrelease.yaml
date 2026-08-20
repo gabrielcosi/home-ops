@@ -1,0 +1,83 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: ceph-csi-drivers
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: ceph-csi-drivers
+  interval: 1h
+  values:
+    operatorConfig:
+      namespace: rook-ceph
+      driverSpecDefaults:
+        clusterName: rook-ceph
+        grpcTimeout: 150
+        snapshotPolicy: volumeSnapshot
+        imageSet:
+          name: rook-csi-operator-image-set-configmap
+        log:
+          rotation:
+            enabled: false
+        controllerPlugin:
+          priorityClassName: system-cluster-critical
+          resources:
+            attacher:
+              requests:
+                cpu: 10m
+                memory: 128Mi
+            plugin:
+              requests:
+                cpu: 10m
+                memory: 128Mi
+            provisioner:
+              requests:
+                cpu: 10m
+                memory: 128Mi
+            resizer:
+              requests:
+                cpu: 10m
+                memory: 128Mi
+            snapshotter:
+              requests:
+                cpu: 10m
+                memory: 128Mi
+        nodePlugin:
+          priorityClassName: system-node-critical
+          resources:
+            plugin:
+              requests:
+                cpu: 10m
+                memory: 128Mi
+            registrar:
+              requests:
+                cpu: 10m
+                memory: 64Mi
+    drivers:
+      rbd:
+        enabled: true
+        name: rook-ceph.rbd.csi.ceph.com
+        grpcTimeout: 150
+        snapshotPolicy: volumeGroupSnapshot
+        log:
+          rotation:
+            enabled: false
+        controllerPlugin:
+          replicas: 2
+      cephfs:
+        enabled: true
+        name: rook-ceph.cephfs.csi.ceph.com
+        grpcTimeout: 150
+        snapshotPolicy: volumeGroupSnapshot
+        log:
+          rotation:
+            enabled: false
+        controllerPlugin:
+          replicas: 2
+      nfs:
+        enabled: false
+        name: rook-ceph.nfs.csi.ceph.com
+      nvmeof:
+        enabled: false
+        name: rook-ceph.nvmeof.csi.ceph.com

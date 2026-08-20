@@ -182,11 +182,6 @@
       ],
     },
     {
-      description: "Hold Rook-Ceph at v1.19.x — v1.20 (Tentacle) is flaky",
-      matchPackageNames: ["ghcr.io/rook/rook-ceph", "ghcr.io/rook/rook-ceph-cluster"],
-      allowedVersions: "<1.20.0",
-    },
-    {
       description: "Hold bifrost — the 2.1.36 upstream index digest mismatch aborts the run",
       matchPackageNames: ["ocharted.xcd.dev/maximhq.github.io/bifrost/helm-charts/bifrost"],
       enabled: false,
