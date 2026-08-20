@@ -8,19 +8,66 @@ spec:
     kind: OCIRepository
     name: ceph-csi-drivers
   interval: 1h
-  upgrade:
-    force: true
   values:
     operatorConfig:
       namespace: rook-ceph
       driverSpecDefaults:
         clusterName: rook-ceph
+        grpcTimeout: 150
+        snapshotPolicy: volumeSnapshot
         imageSet:
           name: rook-csi-operator-image-set-configmap
+        log:
+          rotation:
+            enabled: false
         controllerPlugin:
           priorityClassName: system-cluster-critical
+          resources:
+            attacher:
+              requests:
+                cpu: 10m
+                memory: 128Mi
+              limits:
+                memory: 256Mi
+            plugin:
+              requests:
+                cpu: 10m
+                memory: 192Mi
+              limits:
+                memory: 512Mi
+            provisioner:
+              requests:
+                cpu: 10m
+                memory: 128Mi
+              limits:
+                memory: 256Mi
+            resizer:
+              requests:
+                cpu: 10m
+                memory: 128Mi
+              limits:
+                memory: 256Mi
+            snapshotter:
+              requests:
+                cpu: 10m
+                memory: 128Mi
+              limits:
+                memory: 256Mi
         nodePlugin:
           priorityClassName: system-node-critical
+          resources:
+            plugin:
+              requests:
+                cpu: 10m
+                memory: 192Mi
+              limits:
+                memory: 512Mi
+            registrar:
+              requests:
+                cpu: 10m
+                memory: 64Mi
+              limits:
+                memory: 128Mi
     drivers:
       rbd:
         enabled: true
