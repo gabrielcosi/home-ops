@@ -17,6 +17,16 @@ spec:
           labels:
             severity: warning
 
+        - alert: UniFiDeviceCPUCreep
+          expr: |-
+            avg_over_time(unpoller_device_cpu_utilization_ratio[2h]) > 0.35
+          for: 30m
+          annotations:
+            summary: >-
+              UniFi device {{ $labels.name }} has averaged {{ $value | humanizePercentage }} CPU over the last 2 hours
+          labels:
+            severity: warning
+
         - alert: UniFiDeviceHighMemory
           expr: |-
             avg_over_time(unpoller_device_memory_utilization_ratio[15m]) > 0.9
@@ -24,6 +34,17 @@ spec:
           annotations:
             summary: >-
               UniFi device {{ $labels.name }} has averaged {{ $value | humanizePercentage }} memory over the last 15 minutes
+          labels:
+            severity: warning
+
+        - alert: UniFiDeviceMemoryLeak
+          expr: |-
+            predict_linear(unpoller_device_memory_utilization_ratio[12h], 24 * 3600) > 0.95
+              and unpoller_device_memory_utilization_ratio > 0.85
+          for: 1h
+          annotations:
+            summary: >-
+              UniFi device {{ $labels.name }} is trending toward memory exhaustion within 24 hours
           labels:
             severity: warning
 
