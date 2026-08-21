@@ -182,11 +182,6 @@
       ],
     },
     {
-      description: "Hold bifrost — the 2.1.36 upstream index digest mismatch aborts the run",
-      matchPackageNames: ["ocharted.xcd.dev/maximhq.github.io/bifrost/helm-charts/bifrost"],
-      enabled: false,
-    },
-    {
       description: "Group ToolHive operator chart updates",
       groupName: "ToolHive",
       matchFileNames: ["kubernetes/apps/ai/toolhive/**"],
