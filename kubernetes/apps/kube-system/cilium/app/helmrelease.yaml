@@ -214,7 +214,7 @@ spec:
                   - destination.pod_name
                   - IP
                   - verdict
-                fileMaxSizeMb: 100
+                fileMaxSizeMb: 40
                 fileMaxBackups: 3
                 fileCompress: false
               - name: denied
@@ -233,7 +233,7 @@ spec:
                   - destination.pod_name
                   - IP
                   - l4
-                fileMaxSizeMb: 20
+                fileMaxSizeMb: 10
                 fileMaxBackups: 3
                 fileCompress: false
       relay:
