@@ -24,6 +24,12 @@ spec:
     keepDaily: 7
     keepWeekly: 4
   mover:
+    cache:
+      mode: Persistent
+      capacity: ${KOPIUR_CACHE_CAPACITY:=2Gi}
+      storageClassName: ${KOPIUR_CACHE_STORAGECLASS:=miroir-replicated}
+      contentCacheSizeMb: ${KOPIUR_CACHE_CONTENT_MB:=1024}
+      metadataCacheSizeMb: ${KOPIUR_CACHE_METADATA_MB:=512}
     securityContext:
       runAsUser: ${KOPIUR_PUID:=1000}
       runAsGroup: ${KOPIUR_PGID:=1000}

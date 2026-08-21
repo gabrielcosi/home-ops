@@ -24,16 +24,14 @@ spec:
     hostnameExpr: "namespace"
     usernameExpr: "policyName"
   moverDefaults:
+    nodeSelector:
+      node-role.kubernetes.io/control-plane: ""
     securityContext:
       runAsUser: 1000
       runAsGroup: 1000
     podSecurityContext:
       fsGroup: 1000
       fsGroupChangePolicy: OnRootMismatch
-    cache:
-      mode: Ephemeral
-      capacity: 5Gi
-      storageClassName: miroir-local
     ttlSecondsAfterFinished: 300
   scheduleDefaults:
     timezone: Europe/Berlin
