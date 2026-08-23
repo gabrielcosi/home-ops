@@ -36,7 +36,7 @@ spec:
           app:
             image:
               repository: reg.xcd.dev/private/gabrielcosi.dev
-              tag: latest@sha256:71021677474d931a9be12e95ce0fb9eecc7453fa15b367bce8ab2e26d56ec08a
+              tag: latest@sha256:2e19efc4167bc7fb2b6756c1c7e07a2f8e2d220d17a652792156400861e319af
             envFrom:
               - secretRef:
                   name: gabrielcosi-secrets
