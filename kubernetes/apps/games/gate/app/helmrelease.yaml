@@ -30,7 +30,7 @@ spec:
           app:
             image:
               repository: reg.xcd.dev/private/warden
-              tag: 0.1.7
+              tag: 0.1.8
             args:
               - --config
               - /etc/gate/config.yml
