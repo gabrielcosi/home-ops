@@ -44,6 +44,12 @@ spec:
       rules:
         RecordingRulesNoData:
           create: false
+        etcdDatabaseHighFragmentationRatio:
+          spec:
+            expr: >-
+              ((last_over_time(etcd_mvcc_db_total_size_in_use_in_bytes{job=~".*etcd.*"}[5m]) /
+              last_over_time(etcd_mvcc_db_total_size_in_bytes{job=~".*etcd.*"}[5m])) < 0.5) and
+              (etcd_mvcc_db_total_size_in_use_in_bytes{job=~".*etcd.*"} > 367001600)
 
     defaultDatasources:
       victoriametrics:
