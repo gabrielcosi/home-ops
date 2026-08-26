@@ -1,0 +1,142 @@
+---
+bifrost:
+  providers:
+    llama-swap:
+      keys:
+        - name: llama-swap-key
+          value: env.LLAMA_SWAP_API_KEY
+          models:
+            - '*'
+          weight: 1
+      network_config:
+        base_url: http://llama-swap.ai.svc.cluster.local:8080
+        allow_private_network: true
+        default_request_timeout_in_seconds: 600
+        max_retries: 3
+        retry_backoff_initial_ms: 250
+        retry_backoff_max_ms: 5000
+        stream_idle_timeout_in_seconds: 120
+      custom_provider_config:
+        base_provider_type: openai
+        allowed_requests:
+          list_models: true
+          text_completion: true
+          text_completion_stream: true
+          chat_completion: true
+          chat_completion_stream: true
+          responses: true
+          responses_stream: true
+          embedding: true
+          transcription: true
+          transcription_stream: true
+          speech: true
+          speech_stream: true
+      concurrency_and_buffer_size:
+        concurrency: 100
+        buffer_size: 500
+
+    opencode:
+      keys:
+        - name: opencode-key
+          value: env.OPENCODE_API_KEY
+          models:
+            - deepseek-v4-flash-vision-exp
+            - glm-5
+            - glm-5.1
+            - glm-5.2
+            - glm-5.3
+            - glm-5.3-flash
+            - gpt-5.6-luna
+            - grok-4.5
+            - grok-4.6
+            - hy3
+            - kimi-k2.5
+            - kimi-k2.6
+            - kimi-k2.7-code
+            - kimi-k3
+            - longcat-2.0
+            - mimo-v2.5
+            - mimo-v2.5-pro
+          weight: 1
+      network_config:
+        base_url: https://opencode.ai/zen/go
+        default_request_timeout_in_seconds: 300
+        max_retries: 3
+      custom_provider_config:
+        base_provider_type: openai
+        allowed_requests:
+          list_models: true
+          text_completion: true
+          text_completion_stream: true
+          chat_completion: true
+          chat_completion_stream: true
+          responses: true
+          responses_stream: true
+
+    opencode-anthropic:
+      keys:
+        - name: opencode-anthropic-key
+          value: env.OPENCODE_API_KEY
+          models:
+            - minimax-m2.5
+            - minimax-m2.7
+            - minimax-m3
+            - qwen3.5-plus
+            - qwen3.6-plus
+            - qwen3.7-max
+            - qwen3.7-plus
+            - qwen3.8-max
+          weight: 1
+      network_config:
+        base_url: https://opencode.ai/zen/go
+        default_request_timeout_in_seconds: 300
+        max_retries: 3
+      custom_provider_config:
+        base_provider_type: anthropic
+        allowed_requests:
+          list_models: true
+          chat_completion: true
+          chat_completion_stream: true
+          responses: true
+          responses_stream: true
+
+    text-embeddings:
+      keys:
+        - name: text-embeddings-key
+          value: env.TEXT_EMBEDDINGS_API_KEY
+          models:
+            - '*'
+          weight: 1
+      network_config:
+        base_url: http://text-embeddings.ai.svc.cluster.local:8080
+        allow_private_network: true
+        default_request_timeout_in_seconds: 60
+        max_retries: 3
+      custom_provider_config:
+        base_provider_type: openai
+        allowed_requests:
+          embedding: true
+
+    proxyapi:
+      keys:
+        - name: cliproxyapi-key
+          value: cliproxyapi-local
+          models:
+            - '*'
+          weight: 1
+      network_config:
+        base_url: http://cliproxyapi.ai.svc.cluster.local:8317
+        allow_private_network: true
+        default_request_timeout_in_seconds: 300
+        max_retries: 2
+      custom_provider_config:
+        base_provider_type: openai
+        allowed_requests:
+          list_models: true
+          text_completion: true
+          text_completion_stream: true
+          chat_completion: true
+          chat_completion_stream: true
+          responses: true
+          responses_stream: true
+          websocket_responses: true

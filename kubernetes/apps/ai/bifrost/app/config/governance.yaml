@@ -1,0 +1,176 @@
+---
+bifrost:
+  governance:
+    rateLimits:
+      - id: rl-memini
+        request_max_limit: 500
+        request_reset_duration: '5m'
+        token_max_limit: 8000000
+        token_reset_duration: '1d'
+      - id: rl-hermes
+        request_max_limit: 300
+        request_reset_duration: '5m'
+        token_max_limit: 80000000
+        token_reset_duration: '1d'
+      - id: rl-open-webui
+        request_max_limit: 300
+        request_reset_duration: '5m'
+        token_max_limit: 10000000
+        token_reset_duration: '1d'
+      - id: rl-toolhive
+        request_max_limit: 500
+        request_reset_duration: '5m'
+        token_max_limit: 8000000
+        token_reset_duration: '1d'
+      - id: rl-n8n
+        request_max_limit: 500
+        request_reset_duration: '5m'
+        token_max_limit: 8000000
+        token_reset_duration: '1d'
+      - id: rl-pr-reviewer
+        request_max_limit: 100
+        request_reset_duration: '5m'
+        token_max_limit: 40000000
+        token_reset_duration: '1d'
+
+    budgets:
+      - id: b-opencode-go-5h
+        max_limit: 12
+        reset_duration: '5h'
+      - id: b-opencode-go-weekly
+        max_limit: 30
+        reset_duration: '1w'
+      - id: b-opencode-go-monthly
+        max_limit: 60
+        reset_duration: '1M'
+
+    virtualKeys:
+      - id: memini
+        name: memini
+        value: env.BIFROST_VK_MEMINI
+        is_active: true
+        rate_limit_id: rl-memini
+        provider_configs:
+          - provider: text-embeddings
+            weight: 1
+            allowed_models:
+              - sentence-transformers/all-MiniLM-L6-v2
+            key_ids:
+              - '*'
+          - provider: opencode
+            weight: 1
+            allowed_models:
+              - mimo-v2.5-pro
+            key_ids:
+              - '*'
+          - provider: llama-swap
+            allowed_models:
+              - qwen3.8-27b
+            key_ids:
+              - '*'
+      - id: hermes
+        name: hermes
+        value: env.BIFROST_VK_HERMES
+        is_active: true
+        rate_limit_id: rl-hermes
+        provider_configs:
+          - provider: llama-swap
+            allowed_models:
+              - qwen3.8-27b
+            key_ids:
+              - '*'
+          - provider: opencode-anthropic
+            weight: 1
+            allowed_models:
+              - minimax-m3
+            key_ids:
+              - '*'
+          - provider: opencode
+            weight: 1
+            allowed_models:
+              - mimo-v2.5-pro
+            key_ids:
+              - '*'
+      - id: open-webui
+        name: open-webui
+        value: env.BIFROST_VK_OPENWEBUI
+        is_active: true
+        rate_limit_id: rl-open-webui
+        provider_configs:
+          - provider: llama-swap
+            weight: 1
+            allowed_models:
+              - '*'
+            key_ids:
+              - '*'
+      - id: toolhive
+        name: toolhive
+        value: env.BIFROST_VK_TOOLHIVE
+        is_active: true
+        rate_limit_id: rl-toolhive
+        provider_configs:
+          - provider: text-embeddings
+            weight: 1
+            allowed_models:
+              - sentence-transformers/all-MiniLM-L6-v2
+            key_ids:
+              - '*'
+      - id: n8n
+        name: n8n
+        value: env.BIFROST_VK_N8N
+        is_active: true
+        rate_limit_id: rl-n8n
+        provider_configs:
+          - provider: llama-swap
+            weight: 1
+            allowed_models:
+              - '*'
+            key_ids:
+              - '*'
+      - id: pr-reviewer
+        name: pr-reviewer
+        value: env.BIFROST_VK_PR_REVIEWER
+        is_active: true
+        rate_limit_id: rl-pr-reviewer
+        provider_configs:
+          - provider: opencode-anthropic
+            weight: 1
+            allowed_models:
+              - minimax-m3
+            key_ids:
+              - '*'
+          - provider: llama-swap
+            allowed_models:
+              - qwen3.8-27b
+            key_ids:
+              - '*'
+    modelConfigs:
+      - id: mc-opencode-go
+        model_name: '*'
+        provider: opencode
+        scope: global
+        budget_ids:
+          - b-opencode-go-5h
+          - b-opencode-go-weekly
+          - b-opencode-go-monthly
+      - id: mc-opencode-go-anthropic
+        model_name: '*'
+        provider: opencode-anthropic
+        scope: global
+        budget_ids:
+          - b-opencode-go-5h
+          - b-opencode-go-weekly
+          - b-opencode-go-monthly
+
+    routingRules:
+      - id: rr-opencode-go-drain
+        name: opencode go pool drain
+        description: shed to the local gpu before the shared zen go pool blocks
+        scope: global
+        enabled: true
+        priority: 0
+        cel_expression: '(provider == "opencode" || provider == "opencode-anthropic") && budget_used > 95'
+        targets:
+          - provider: llama-swap
+            model: qwen3.8-27b
+            weight: 1

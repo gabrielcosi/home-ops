@@ -38,7 +38,7 @@ spec:
               MEMINI_EMBED_MAX_CONCURRENCY: '2'
               MEMINI_LLM_BASE_URL: http://bifrost.ai.svc.cluster.local:8080/v1
               MEMINI_LLM_API: openai
-              MEMINI_LLM_MODEL: opencode/deepseek-v4-flash
+              MEMINI_LLM_MODEL: opencode/mimo-v2.5-pro
               MEMINI_LLM_MAX_TOKENS: '16384'
               MEMINI_DEMOTE_AFTER: 1440h
               MEMINI_TOMBSTONE_TTL: 720h

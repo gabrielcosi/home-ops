@@ -18,6 +18,10 @@ configMapGenerator:
       - models.json=config/models.json
     literals:
       - "mcp-library.json={}"
+  - name: bifrost-values
+    files:
+      - providers.yaml=config/providers.yaml
+      - governance.yaml=config/governance.yaml
 generatorOptions:
   disableNameSuffixHash: true
   annotations:
