@@ -169,7 +169,7 @@ bifrost:
         scope: global
         enabled: true
         priority: 0
-        cel_expression: '(provider == "opencode" || provider == "opencode-anthropic") && budget_used > 95'
+        cel_expression: '(provider == "opencode" || provider == "opencode-anthropic") && budget_used > 95.0'
         targets:
           - provider: llama-swap
             model: qwen3.8-27b
