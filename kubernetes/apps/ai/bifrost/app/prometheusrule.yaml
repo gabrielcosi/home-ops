@@ -37,6 +37,38 @@ spec:
           labels:
             severity: warning
 
+        - alert: BifrostPromptCacheDegraded
+          expr: |-
+            sum(increase(bifrost_cache_read_input_tokens_total[6h]))
+              / clamp_min(sum(increase(bifrost_input_tokens_total[6h])) + sum(increase(bifrost_cache_read_input_tokens_total[6h])), 1) < 0.20
+            and sum(increase(bifrost_input_tokens_total[6h])) > 1000000
+          for: 1h
+          annotations:
+            summary: >-
+              Provider prompt cache is serving under 20% of input tokens over the last 6h
+          labels:
+            severity: warning
+
+        - alert: BifrostRoutingRuleRedirecting
+          expr: |-
+            sum by (virtual_key_name, routing_rule_name) (increase(bifrost_input_tokens_total{routing_rule_id!=""}[1h])) > 0
+          for: 30m
+          annotations:
+            summary: >-
+              Routing rule {{ $labels.routing_rule_name }} is redirecting traffic for {{ $labels.virtual_key_name }}
+          labels:
+            severity: warning
+
+        - alert: BifrostRoutingFallbackActive
+          expr: |-
+            sum by (virtual_key_name, model) (increase(bifrost_input_tokens_total{fallback_index!="0"}[1h])) > 0
+          for: 30m
+          annotations:
+            summary: >-
+              Virtual key {{ $labels.virtual_key_name }} is being served by a fallback, not its primary model
+          labels:
+            severity: warning
+
         - alert: BifrostUnauthorizedFlood
           expr: |-
             sum(rate(bifrost_error_requests_total{status_code="401"}[5m])) > 1
