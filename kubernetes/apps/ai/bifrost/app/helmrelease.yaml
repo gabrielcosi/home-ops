@@ -81,8 +81,8 @@ spec:
           - X-Correlation-ID
           - X-Tenant-ID
         compat:
-          shouldDropParams: false
-          shouldConvertParams: false
+          shouldDropParams: true
+          shouldConvertParams: true
       plugins:
         telemetry:
           enabled: true
