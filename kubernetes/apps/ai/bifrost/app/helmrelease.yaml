@@ -82,7 +82,7 @@ spec:
           - X-Tenant-ID
         compat:
           shouldDropParams: false
-          shouldConvertParams: true
+          shouldConvertParams: false
       plugins:
         telemetry:
           enabled: true
