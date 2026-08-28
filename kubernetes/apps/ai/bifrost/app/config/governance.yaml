@@ -133,10 +133,10 @@ bifrost:
         is_active: true
         rate_limit_id: rl-pr-reviewer
         provider_configs:
-          - provider: opencode-anthropic
+          - provider: proxyapi
             weight: 1
             allowed_models:
-              - minimax-m3
+              - claude-sonnet-5
             key_ids:
               - '*'
           - provider: llama-swap

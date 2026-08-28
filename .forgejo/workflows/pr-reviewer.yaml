@@ -68,8 +68,8 @@ jobs:
         env:
           ANTHROPIC_BASE_URL: https://ai.xcd.dev/anthropic
           ANTHROPIC_AUTH_TOKEN: ${{ steps.secrets.outputs.AI_AUTH_TOKEN }}
-          ANTHROPIC_MODEL: opencode-anthropic/minimax-m3
-          ANTHROPIC_SMALL_FAST_MODEL: opencode-anthropic/minimax-m3
+          ANTHROPIC_MODEL: proxyapi/claude-sonnet-5
+          ANTHROPIC_SMALL_FAST_MODEL: proxyapi/claude-sonnet-5
           CRAWL4AI_TOKEN: ${{ steps.secrets.outputs.CRAWL4AI_TOKEN }}
           GH_TOKEN: ${{ steps.secrets.outputs.GH_TOKEN }}
         run: |-
