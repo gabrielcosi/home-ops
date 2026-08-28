@@ -44,6 +44,8 @@ Read the manifests, HelmReleases, ConfigMaps, and env consuming the component, p
 
 Some apps pin `image.tag` in values on top of the chart ref, so chart and image bump as independent Renovate PRs and order can matter; where no tag is pinned the chart's appVersion carries the image and only the chart moves. Check which shape this component is, and when it's the two-PR kind ask konflate for the open PR list and look for a sibling on it. A chart whose new templates only work against the newer app lands with or after the image; an image needing a flag or schema the current chart can't express lands after the chart; where we pin `image.tag`, a chart bump usually doesn't touch the running container. Speak up ONLY when order matters — if THIS PR must not merge first, `request_changes` naming the sibling by number, because automerge won't order them.
 
+**Find what actuates the bump.** A version string in the diff is a request; something else in this repo carries it out — an operator that reconciles it, a controller that watches it, a CLI pinned into a job image. That actuator is pinned separately, keeps its own supported-version range, and does not appear in this diff. Identify it, read its pinned version from the repo, and check its range against the new target. A target outside the range fails when it runs, not when it renders, so a clean konflate render says nothing about it. The constraint runs both ways: an actuator too old to drive the new target, or a target too old for an actuator that already moved. When the target falls outside the range, `request_changes` and name the actuator, its pinned version, and the range it supports. The fix may be a bump you also control, or an upstream release that does not exist yet.
+
 Sort every finding into exactly one bucket: **breaking** (needs a change to keep working), **deprecated** (works, warns, breaks later), **changed** (everything else). One release can populate all three.
 
 ## Do NOT flag these (intentional — from AGENTS.md)
@@ -59,7 +61,7 @@ No generic GitOps/Helm/Flux best-practice notes. No Standards, Evidence-provider
 
 `request_changes` when either holds:
 
-- **You can name the problem and the file it hits** — a breaking change in something we use that this PR doesn't handle; a render failure or hard caution (data-loss / immutable-field / RBAC / suspend-prune) on a resource it changes; a major bump whose upgrade notes need a manual step absent from the diff; an open companion PR this one must merge after.
+- **You can name the problem and the file it hits** — a breaking change in something we use that this PR doesn't handle; a render failure or hard caution (data-loss / immutable-field / RBAC / suspend-prune) on a resource it changes; a major bump whose upgrade notes need a manual step absent from the diff; an open companion PR this one must merge after; a target outside the supported-version range of the pinned tool that applies it.
 - **You could not establish what the change does** — no reachable changelog, notes, or commit range; a rebuild you cannot attribute; a private, moved, or deleted upstream. Write `Changes required — could not verify <what>` and list under **Changes** each source you tried and how it failed, so a human can merge it by hand.
 
 Everything else is `approve`: deprecations that still work, cosmetic changes, features we don't use, an attributed rebuild. With the notes in hand, uncertainty about how much it matters here is not a blocker — `approve` and note the caveat.
