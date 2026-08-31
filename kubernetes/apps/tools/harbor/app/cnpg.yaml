@@ -58,6 +58,7 @@ spec:
       max_slot_wal_keep_size: '1GB'
       wal_compression: 'on'
       wal_keep_size: '0'
+      idle_in_transaction_session_timeout: '30min'
 
   plugins:
     - name: barman-cloud.cloudnative-pg.io
