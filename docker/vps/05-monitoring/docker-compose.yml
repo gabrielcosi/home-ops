@@ -3,7 +3,7 @@ name: monitoring
 
 services:
   vmagent:
-    image: quay.io/victoriametrics/vmagent:v1.150.0
+    image: quay.io/victoriametrics/vmagent:v1.151.0
     container_name: vmagent
     restart: unless-stopped
     group_add:
