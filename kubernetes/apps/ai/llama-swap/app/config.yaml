@@ -4,7 +4,7 @@ globalTTL: 300
 models:
   qwen3.8-27b:
     capabilities:
-      in: [text, image]
+      in: [text, image, video]
       out: [text]
       tools: true
       context: 131072
