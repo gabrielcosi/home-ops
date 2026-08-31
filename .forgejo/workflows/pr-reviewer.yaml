@@ -92,6 +92,8 @@ jobs:
             cat .forgejo/pr-review.prompt.md
           } > /tmp/prompt.md
 
+          rm -f CLAUDE.md AGENTS.md
+
           timeout 600 claude -p "$(cat /tmp/prompt.md)" \
             --model "${ANTHROPIC_MODEL}" \
             --permission-mode default \
