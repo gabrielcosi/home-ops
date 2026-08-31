@@ -65,8 +65,8 @@ models:
       --fit off \
       --reasoning-preserve \
       --spec-type draft-dflash \
-      --spec-draft-model /models/Muse-Glimmer-30B/Muse-Glimmer-30B-dflash-kquant.gguf \
-      --spec-draft-n-max 15
+      --spec-draft-model /models/Muse-Glimmer-30B/Muse-Glimmer-30B-dflash2-Q4_K_M.gguf \
+      --spec-draft-n-max 5
     useModelName: muse-glimmer-30b
     concurrencyLimit: 4
 
