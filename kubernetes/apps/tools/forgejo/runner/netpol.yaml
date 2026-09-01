@@ -2,6 +2,40 @@
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
+  name: forgejo-runner
+  namespace: tools
+spec:
+  description: Restrict the runner daemon egress to forgejo, the kube-apiserver, and the action sources.
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/instance: forgejo-runner
+      app.kubernetes.io/name: forgejo-runner
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: tools
+            k8s:app.kubernetes.io/name: forgejo
+      toPorts:
+        - ports:
+            - port: "3000"
+              protocol: TCP
+    - toEntities:
+        - kube-apiserver
+      toPorts:
+        - ports:
+            - port: "6443"
+              protocol: TCP
+    - toFQDNs:
+        - matchName: data.forgejo.org
+        - matchName: github.com
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
   name: forgejo-runner-jobs
   namespace: tools
 spec:
