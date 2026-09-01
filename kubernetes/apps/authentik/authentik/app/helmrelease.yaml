@@ -12,6 +12,7 @@ spec:
     authentik:
       secret_key: file:///authentik-secrets/secret_key
       disable_update_check: true
+      disable_startup_analytics: true
 
       postgresql:
         host: authentik-pooler.authentik.svc.cluster.local
