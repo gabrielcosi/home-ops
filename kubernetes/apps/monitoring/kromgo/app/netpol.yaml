@@ -1,0 +1,21 @@
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: kromgo
+spec:
+  description: Restrict kromgo egress to vmauth.
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/instance: kromgo
+      app.kubernetes.io/name: kromgo
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: monitoring
+            k8s:app.kubernetes.io/instance: victoria-metrics-cluster
+            k8s:app.kubernetes.io/name: vmauth
+      toPorts:
+        - ports:
+            - port: "8427"
+              protocol: TCP

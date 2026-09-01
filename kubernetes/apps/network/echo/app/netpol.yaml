@@ -1,0 +1,13 @@
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: echo
+spec:
+  description: Restrict echo to ingress only, with no egress beyond cluster-wide DNS.
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/instance: echo
+      app.kubernetes.io/name: echo
+  enableDefaultDeny:
+    egress: true

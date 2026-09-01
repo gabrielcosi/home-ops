@@ -4,6 +4,7 @@ kind: Kustomization
 resources:
   - ./ocirepository.yaml
   - ./helmrelease.yaml
+  - ./netpol.yaml
 configMapGenerator:
   - name: kromgo-config
     files:

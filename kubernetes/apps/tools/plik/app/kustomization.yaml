@@ -5,6 +5,7 @@ resources:
   - ./ocirepository.yaml
   - ./externalsecret.yaml
   - ./helmrelease.yaml
+  - ./netpol.yaml
   - ./trafficpolicy.yaml
 configMapGenerator:
   - name: plik-config
