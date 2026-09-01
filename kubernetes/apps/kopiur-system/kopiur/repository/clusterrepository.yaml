@@ -23,6 +23,14 @@ spec:
   identityDefaults:
     hostnameExpr: "namespace"
     usernameExpr: "policyName"
+  maintenance:
+    schedule:
+      quick:
+        cron: "0 */2 * * *"
+        jitter: "30m"
+      full:
+        cron: "0 3 * * *"
+        jitter: "1h"
   moverDefaults:
     nodeSelector:
       node-role.kubernetes.io/control-plane: ""
@@ -33,5 +41,8 @@ spec:
       fsGroup: 1000
       fsGroupChangePolicy: OnRootMismatch
     ttlSecondsAfterFinished: 300
+  parameters:
+    epoch:
+      minDuration: "1h"
   scheduleDefaults:
     timezone: Europe/Berlin
