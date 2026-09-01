@@ -26,7 +26,7 @@ spec:
   mover:
     cache:
       mode: Persistent
-      capacity: ${KOPIUR_CACHE_CAPACITY:=2Gi}
+      capacity: ${KOPIUR_CACHE_CAPACITY:=4Gi}
       storageClassName: ${KOPIUR_CACHE_STORAGECLASS:=miroir-replicated}
       contentCacheSizeMb: ${KOPIUR_CACHE_CONTENT_MB:=1024}
       metadataCacheSizeMb: ${KOPIUR_CACHE_METADATA_MB:=512}
