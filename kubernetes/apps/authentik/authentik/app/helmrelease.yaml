@@ -11,6 +11,7 @@ spec:
   values:
     authentik:
       secret_key: file:///authentik-secrets/secret_key
+      disable_update_check: true
 
       postgresql:
         host: authentik-pooler.authentik.svc.cluster.local
@@ -18,10 +19,6 @@ spec:
         conn_max_age: 300
         conn_health_checks: true
         disable_server_side_cursors: true
-
-      redis:
-        host: dragonfly.database.svc.cluster.local
-        db: 2
 
       email:
         host: smtp-relay.tools.svc.cluster.local

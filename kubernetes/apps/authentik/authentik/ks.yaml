@@ -9,8 +9,6 @@ spec:
       namespace: cnpg-system
     - name: plugin-barman-cloud
       namespace: cnpg-system
-    - name: dragonfly
-      namespace: database
     - name: rook-ceph-cluster
       namespace: rook-ceph
   healthChecks:

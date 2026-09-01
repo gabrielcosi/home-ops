@@ -10,5 +10,6 @@ resources:
   - ./backup.yaml
   - ./externalsecret.yaml
   - ./httproute.yaml
+  - ./netpol.yaml
   - ./referencegrant.yaml
   - ./grafanadashboard.yaml
