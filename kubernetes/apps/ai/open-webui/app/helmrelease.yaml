@@ -40,7 +40,6 @@ spec:
               TASK_MODEL_EXTERNAL: llama-swap/muse-glimmer-30b
               DEFAULT_MODEL_METADATA: '{"capabilities": {"web_search": true}, "defaultFeatureIds": ["web_search"]}'
               DEFAULT_PROMPT_SUGGESTIONS: 'null'
-              DEFAULT_MODEL_PARAMS: '{"system": "{{ "Today is {{CURRENT_WEEKDAY}}, {{CURRENT_DATE}}." }}\n\nYou are a helpful assistant. Answer directly and concisely; expand only when the question needs it. Use Markdown and tag code blocks with their language.\n\nIf you are unsure or lack the information, say so instead of guessing. When a question depends on current information, use your search tools rather than relying on memory."}'
               ENABLE_FOLLOW_UP_GENERATION: false
               ENABLE_AUTOCOMPLETE_GENERATION: false
               ENABLE_EVALUATION_ARENA_MODELS: false
