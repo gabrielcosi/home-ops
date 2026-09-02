@@ -30,15 +30,21 @@ spec:
             env:
               # Open-webui settings
               WEBUI_URL: 'https://chat.xcd.dev'
+              ENABLE_PERSISTENT_CONFIG: false
+              BYPASS_ADMIN_ACCESS_CONTROL: false
               ENABLE_PUBLIC_ACTIVE_USERS_COUNT: false
               ENABLE_AUDIT_STDOUT: true
               ENABLE_OLLAMA_API: false
               ENABLE_OPENAI_API: true
               OPENAI_API_BASE_URL: 'http://bifrost.ai.svc.cluster.local:8080/v1'
-              TASK_MODEL: zeus/fast
+              TASK_MODEL_EXTERNAL: llama-swap/muse-glimmer-30b
+              DEFAULT_MODEL_METADATA: '{"capabilities": {"web_search": true}, "defaultFeatureIds": ["web_search"]}'
               ENABLE_FOLLOW_UP_GENERATION: false
               ENABLE_AUTOCOMPLETE_GENERATION: false
               ENABLE_EVALUATION_ARENA_MODELS: false
+              ENABLE_CALENDAR: false
+              ENABLE_CODE_INTERPRETER: false
+              ENABLE_AUTOMATIONS: false
               ENABLE_COMMUNITY_SHARING: false
               ENABLE_TAGS_GENERATION: false
               ENABLE_DIRECT_CONNECTIONS: false
@@ -58,7 +64,9 @@ spec:
               ENABLE_WEB_SEARCH: true
               WEB_SEARCH_ENGINE: searxng
               SEARXNG_QUERY_URL: 'http://searxng.tools.svc.cluster.local:8080/search?q=<query>'
-              BYPASS_WEB_SEARCH_WEB_LOADER: true
+              BYPASS_WEB_SEARCH_WEB_LOADER: false
+              WEB_LOADER_ENGINE: external
+              EXTERNAL_WEB_LOADER_URL: 'http://n8n.ai.svc.cluster.local:5678/webhook/owui-loader'
               # Audio
               AUDIO_STT_ENGINE: ''
               AUDIO_TTS_ENGINE: ''

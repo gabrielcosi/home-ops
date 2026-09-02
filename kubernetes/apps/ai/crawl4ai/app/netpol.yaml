@@ -1,0 +1,36 @@
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: crawl4ai
+  namespace: ai
+spec:
+  description: Restrict crawl4ai ingress to hermes, n8n, and the CI job pods, and egress to the internet.
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/instance: crawl4ai
+      app.kubernetes.io/name: crawl4ai
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: ai
+            k8s:app.kubernetes.io/name: hermes
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: ai
+            k8s:app.kubernetes.io/name: n8n
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: tools
+            k8s:app.kubernetes.io/name: forgejo-runner-instance
+      toPorts:
+        - ports:
+            - port: "11235"
+              protocol: TCP
+  egress:
+    - toCIDRSet:
+        - cidrGroupRef: internet
+      toPorts:
+        - ports:
+            - port: "80"
+              protocol: TCP
+            - port: "443"
+              protocol: TCP
