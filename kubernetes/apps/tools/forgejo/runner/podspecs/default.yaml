@@ -7,10 +7,12 @@ containers:
         value: noninteractive
     resources:
       requests:
-        cpu: 100m
-        memory: 256Mi
-      limits:
+        cpu: 500m
         memory: 4Gi
+      limits:
+        cpu: 4
+        memory: 8Gi
+runtimeClassName: kata
 priorityClassName: batch-low
 restartPolicy: Never
 affinity:

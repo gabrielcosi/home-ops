@@ -9,10 +9,11 @@ initContainers:
         value: /certs
     resources:
       requests:
-        cpu: 100m
-        memory: 256Mi
+        cpu: 250m
+        memory: 1Gi
       limits:
-        memory: 4Gi
+        cpu: 1
+        memory: 2Gi
     volumeMounts:
       - name: docker-storage
         mountPath: /var/lib/docker
@@ -41,15 +42,17 @@ containers:
       - name: DOCKER_CERT_PATH
         value: /certs/client
     resources:
-      limits:
-        memory: 2Gi
       requests:
-        cpu: 100m
-        memory: 256Mi
+        cpu: 500m
+        memory: 4Gi
+      limits:
+        cpu: 4
+        memory: 8Gi
     volumeMounts:
       - name: docker-certs
         mountPath: /certs
         readOnly: true
+runtimeClassName: kata
 priorityClassName: batch-low
 affinity:
   nodeAffinity:
