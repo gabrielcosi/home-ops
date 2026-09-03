@@ -20,11 +20,8 @@ initContainers:
       - name: docker-certs
         mountPath: /certs
     startupProbe:
-      exec:
-        command:
-          - sh
-          - -c
-          - docker --tlsverify --tlscacert=/certs/client/ca.pem --tlscert=/certs/client/cert.pem --tlskey=/certs/client/key.pem -H tcp://localhost:2376 info
+      tcpSocket:
+        port: 2376
       initialDelaySeconds: 5
       periodSeconds: 1
       failureThreshold: 30
