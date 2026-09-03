@@ -9,11 +9,11 @@ initContainers:
         value: /certs
     resources:
       requests:
-        cpu: 250m
+        cpu: 500m
         memory: 1Gi
       limits:
-        cpu: 1
-        memory: 2Gi
+        cpu: 4
+        memory: 6Gi
     volumeMounts:
       - name: docker-storage
         mountPath: /var/lib/docker
@@ -40,11 +40,11 @@ containers:
         value: /certs/client
     resources:
       requests:
-        cpu: 500m
-        memory: 4Gi
+        cpu: 250m
+        memory: 512Mi
       limits:
-        cpu: 4
-        memory: 8Gi
+        cpu: 2
+        memory: 2Gi
     volumeMounts:
       - name: docker-certs
         mountPath: /certs
@@ -61,7 +61,9 @@ affinity:
               operator: DoesNotExist
 volumes:
   - name: docker-storage
-    emptyDir: {}
+    emptyDir:
+      medium: Memory
+      sizeLimit: 4Gi
   - name: docker-certs
     emptyDir: {}
 restartPolicy: Never
