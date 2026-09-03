@@ -3,7 +3,7 @@ name: crowdsec
 
 services:
   crowdsec:
-    image: docker.io/crowdsecurity/crowdsec:v1.8.0
+    image: docker.io/crowdsecurity/crowdsec:v1.8.1
     container_name: crowdsec
     restart: unless-stopped
     environment:
