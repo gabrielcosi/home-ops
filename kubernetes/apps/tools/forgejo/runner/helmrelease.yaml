@@ -24,6 +24,13 @@ spec:
   values:
     replicaCount: 2
 
+    command:
+      - sh
+      - -ec
+      - |
+        cat /config/runner.yaml /etc/forgejo-runner-secret/connections.yaml > /tmp/runner.yaml
+        exec /bin/forgejo-runner daemon --config /tmp/runner.yaml
+
     forgejo:
       url: http://forgejo-http.tools.svc.cluster.local:3000
       existingSecret: forgejo-runner-secret
