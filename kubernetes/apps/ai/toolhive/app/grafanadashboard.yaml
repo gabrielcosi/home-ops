@@ -12,315 +12,1167 @@ spec:
     {
       "uid": "toolhive-overview",
       "title": "ToolHive MCP Gateway",
-      "tags": ["toolhive", "mcp", "ai"],
+      "tags": [
+        "toolhive",
+        "mcp",
+        "ai"
+      ],
       "schemaVersion": 39,
-      "version": 3,
+      "version": 11,
       "editable": true,
       "graphTooltip": 1,
-      "time": { "from": "now-1h", "to": "now" },
+      "time": {
+        "from": "now-24h",
+        "to": "now"
+      },
       "timepicker": {},
-      "refresh": "30s",
+      "refresh": "",
       "templating": {
-        "list": [
-          {
-            "name": "server",
-            "label": "Server",
-            "type": "query",
-            "datasource": { "type": "prometheus", "uid": "victoriametrics" },
-            "query": { "qryType": 1, "query": "label_values(toolhive_mcp_requests_total, server)", "refId": "PrometheusVariableQueryEditor-VariableQuery" },
-            "includeAll": true,
-            "multi": true,
-            "current": { "selected": true, "text": ["All"], "value": ["$__all"] },
-            "refresh": 2,
-            "sort": 1
-          },
-          {
-            "name": "method",
-            "label": "MCP Method",
-            "type": "query",
-            "datasource": { "type": "prometheus", "uid": "victoriametrics" },
-            "query": { "qryType": 1, "query": "label_values(toolhive_mcp_requests_total{server=~\"$server\"}, mcp_method)", "refId": "PrometheusVariableQueryEditor-VariableQuery" },
-            "includeAll": true,
-            "multi": true,
-            "current": { "selected": true, "text": ["All"], "value": ["$__all"] },
-            "refresh": 2,
-            "sort": 1
-          },
-          {
-            "name": "backend",
-            "label": "vMCP Backend",
-            "type": "query",
-            "datasource": { "type": "prometheus", "uid": "victoriametrics" },
-            "query": { "qryType": 1, "query": "label_values(toolhive_vmcp_backend_requests_total, target_workload_name)", "refId": "PrometheusVariableQueryEditor-VariableQuery" },
-            "includeAll": true,
-            "multi": true,
-            "current": { "selected": true, "text": ["All"], "value": ["$__all"] },
-            "refresh": 2,
-            "sort": 1
-          }
-        ]
+        "list": []
       },
       "panels": [
         {
-          "type": "row", "title": "Overview", "id": 1000, "collapsed": false,
-          "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 }
-        },
-        {
-          "type": "stat", "title": "Requests (range)",
-          "id": 1, "gridPos": { "h": 4, "w": 4, "x": 0, "y": 1 },
-          "datasource": { "type": "prometheus", "uid": "victoriametrics" },
+          "id": 1,
+          "type": "stat",
+          "title": "Connected now",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "victoriametrics"
+          },
+          "gridPos": {
+            "h": 4,
+            "w": 3,
+            "x": 0,
+            "y": 0
+          },
           "targets": [
-            { "refId": "A", "expr": "sum(increase(toolhive_mcp_requests_total{server=~\"$server\",mcp_method=~\"$method\"}[$__range]))", "instant": true, "legendFormat": "requests" }
+            {
+              "refId": "A",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "victoriametrics"
+              },
+              "expr": "sum(toolhive_mcp_active_connections{server=\"mcp-gateway\"})",
+              "instant": true,
+              "range": false
+            }
           ],
-          "fieldConfig": { "defaults": { "unit": "short", "decimals": 0, "color": { "mode": "thresholds" }, "thresholds": { "mode": "absolute", "steps": [ { "color": "blue", "value": null } ] } } },
-          "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "background", "graphMode": "area" }
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "decimals": 0,
+              "color": {
+                "mode": "thresholds"
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "text",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "textMode": "auto",
+            "graphMode": "none",
+            "colorMode": "value",
+            "justifyMode": "auto",
+            "orientation": "auto"
+          }
         },
         {
-          "type": "stat", "title": "Success Rate",
-          "id": 2, "gridPos": { "h": 4, "w": 4, "x": 4, "y": 1 },
-          "datasource": { "type": "prometheus", "uid": "victoriametrics" },
+          "id": 2,
+          "type": "stat",
+          "title": "Connections",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "victoriametrics"
+          },
+          "description": "initialize on the gateway only; backend proxies excluded.",
+          "gridPos": {
+            "h": 4,
+            "w": 3,
+            "x": 3,
+            "y": 0
+          },
           "targets": [
-            { "refId": "A", "expr": "sum(rate(toolhive_mcp_requests_total{server=~\"$server\",mcp_method=~\"$method\",status=\"success\"}[$__range])) / clamp_min(sum(rate(toolhive_mcp_requests_total{server=~\"$server\",mcp_method=~\"$method\"}[$__range])), 1e-9)", "instant": true, "legendFormat": "success" }
+            {
+              "refId": "A",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "victoriametrics"
+              },
+              "expr": "sum(increase(toolhive_mcp_requests_total{server=\"mcp-gateway\",mcp_method=\"initialize\"}[$__range]))",
+              "instant": true,
+              "range": false
+            }
           ],
-          "fieldConfig": { "defaults": { "unit": "percentunit", "decimals": 2, "min": 0, "max": 1, "color": { "mode": "thresholds" }, "thresholds": { "mode": "absolute", "steps": [ { "color": "red", "value": null }, { "color": "orange", "value": 0.95 }, { "color": "green", "value": 0.99 } ] } } },
-          "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "background", "graphMode": "none" }
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "decimals": 0,
+              "color": {
+                "mode": "thresholds"
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "text",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "textMode": "auto",
+            "graphMode": "none",
+            "colorMode": "value",
+            "justifyMode": "auto",
+            "orientation": "auto"
+          }
         },
         {
-          "type": "stat", "title": "Error Rate",
-          "id": 3, "gridPos": { "h": 4, "w": 4, "x": 8, "y": 1 },
-          "datasource": { "type": "prometheus", "uid": "victoriametrics" },
+          "id": 3,
+          "type": "stat",
+          "title": "Tool calls",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "victoriametrics"
+          },
+          "gridPos": {
+            "h": 4,
+            "w": 4,
+            "x": 6,
+            "y": 0
+          },
           "targets": [
-            { "refId": "A", "expr": "sum(rate(toolhive_mcp_requests_total{server=~\"$server\",mcp_method=~\"$method\",status=\"error\"}[$__rate_interval]))", "instant": true, "legendFormat": "errors" }
+            {
+              "refId": "A",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "victoriametrics"
+              },
+              "expr": "sum(increase(toolhive_mcp_tool_calls_total{server=\"mcp-gateway\",tool=\"call_tool\"}[$__range]))",
+              "instant": true,
+              "range": false
+            }
           ],
-          "fieldConfig": { "defaults": { "unit": "reqps", "decimals": 2, "color": { "mode": "thresholds" }, "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null }, { "color": "orange", "value": 0.1 }, { "color": "red", "value": 1 } ] } } },
-          "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "background", "graphMode": "area" }
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "decimals": 0,
+              "color": {
+                "mode": "thresholds"
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "text",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "textMode": "auto",
+            "graphMode": "none",
+            "colorMode": "value",
+            "justifyMode": "auto",
+            "orientation": "auto"
+          }
         },
         {
-          "type": "stat", "title": "p95 Latency",
-          "id": 4, "gridPos": { "h": 4, "w": 4, "x": 12, "y": 1 },
-          "datasource": { "type": "prometheus", "uid": "victoriametrics" },
+          "id": 4,
+          "type": "stat",
+          "title": "Failed calls",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "victoriametrics"
+          },
+          "gridPos": {
+            "h": 4,
+            "w": 4,
+            "x": 10,
+            "y": 0
+          },
           "targets": [
-            { "refId": "A", "expr": "histogram_quantile(0.95, sum by (le) (rate(toolhive_mcp_request_duration_seconds_bucket{server=~\"$server\",mcp_method=~\"$method\"}[$__rate_interval]))) * 1000", "instant": true, "legendFormat": "p95" }
+            {
+              "refId": "A",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "victoriametrics"
+              },
+              "expr": "sum(increase(toolhive_mcp_tool_calls_total{server=\"mcp-gateway\",status=\"error\"}[$__range]))",
+              "instant": true,
+              "range": false
+            }
           ],
-          "fieldConfig": { "defaults": { "unit": "ms", "decimals": 0, "color": { "mode": "thresholds" }, "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null }, { "color": "orange", "value": 500 }, { "color": "red", "value": 2000 } ] } } },
-          "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "background", "graphMode": "area" }
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "decimals": 0,
+              "color": {
+                "mode": "thresholds"
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 1
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "textMode": "auto",
+            "graphMode": "none",
+            "colorMode": "value",
+            "justifyMode": "auto",
+            "orientation": "auto"
+          }
         },
         {
-          "type": "stat", "title": "Active Connections",
-          "id": 5, "gridPos": { "h": 4, "w": 4, "x": 16, "y": 1 },
-          "datasource": { "type": "prometheus", "uid": "victoriametrics" },
+          "id": 5,
+          "type": "stat",
+          "title": "Tool not found",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "victoriametrics"
+          },
+          "description": "call_tool for a name not in the catalogue.",
+          "gridPos": {
+            "h": 4,
+            "w": 3,
+            "x": 14,
+            "y": 0
+          },
           "targets": [
-            { "refId": "A", "expr": "sum(toolhive_mcp_active_connections{server=~\"$server\"})", "instant": true, "legendFormat": "connections" }
+            {
+              "refId": "A",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "victoriametrics"
+              },
+              "expr": "sum(increase(toolhive_vmcp_optimizer_call_tool_not_found_total[$__range]))",
+              "instant": true,
+              "range": false
+            }
           ],
-          "fieldConfig": { "defaults": { "unit": "short", "decimals": 0, "color": { "mode": "thresholds" }, "thresholds": { "mode": "absolute", "steps": [ { "color": "blue", "value": null } ] } } },
-          "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "background", "graphMode": "area" }
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "decimals": 0,
+              "color": {
+                "mode": "thresholds"
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "orange",
+                    "value": 1
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "textMode": "auto",
+            "graphMode": "none",
+            "colorMode": "value",
+            "justifyMode": "auto",
+            "orientation": "auto"
+          }
         },
         {
-          "type": "stat", "title": "Backends Discovered",
-          "id": 6, "gridPos": { "h": 4, "w": 4, "x": 20, "y": 1 },
-          "datasource": { "type": "prometheus", "uid": "victoriametrics" },
+          "id": 6,
+          "type": "stat",
+          "title": "Mean connect time",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "victoriametrics"
+          },
+          "description": "sum/count. Percentiles are bucket artefacts here.",
+          "gridPos": {
+            "h": 4,
+            "w": 4,
+            "x": 17,
+            "y": 0
+          },
           "targets": [
-            { "refId": "A", "expr": "count(count by (target_workload_name) (toolhive_vmcp_backends_discovered))", "instant": true, "legendFormat": "backends" }
+            {
+              "refId": "A",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "victoriametrics"
+              },
+              "expr": "sum(increase(toolhive_mcp_request_duration_seconds_sum{server=\"mcp-gateway\",mcp_method=\"initialize\"}[$__range])) / clamp_min(sum(increase(toolhive_mcp_request_duration_seconds_count{server=\"mcp-gateway\",mcp_method=\"initialize\"}[$__range])), 1)",
+              "instant": true,
+              "range": false
+            }
           ],
-          "fieldConfig": { "defaults": { "unit": "short", "decimals": 0, "color": { "mode": "thresholds" }, "thresholds": { "mode": "absolute", "steps": [ { "color": "purple", "value": null } ] } } },
-          "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "background", "graphMode": "none" }
+          "fieldConfig": {
+            "defaults": {
+              "unit": "s",
+              "decimals": 2,
+              "color": {
+                "mode": "thresholds"
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "orange",
+                    "value": 3
+                  },
+                  {
+                    "color": "red",
+                    "value": 10
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "textMode": "auto",
+            "graphMode": "none",
+            "colorMode": "value",
+            "justifyMode": "auto",
+            "orientation": "auto"
+          }
         },
-
         {
-          "type": "row", "title": "Traffic & Errors", "id": 1001, "collapsed": false,
-          "gridPos": { "h": 1, "w": 24, "x": 0, "y": 5 }
-        },
-        {
-          "type": "timeseries", "title": "Request rate (success vs error)",
-          "id": 10, "gridPos": { "h": 8, "w": 12, "x": 0, "y": 6 },
-          "datasource": { "type": "prometheus", "uid": "victoriametrics" },
+          "id": 7,
+          "type": "stat",
+          "title": "Slow connects (>5s)",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "victoriametrics"
+          },
+          "description": "Usually the embedding cache rebuilding after a restart.",
+          "gridPos": {
+            "h": 4,
+            "w": 3,
+            "x": 21,
+            "y": 0
+          },
           "targets": [
-            { "refId": "A", "expr": "sum(rate(toolhive_mcp_requests_total{server=~\"$server\",mcp_method=~\"$method\",status=\"success\"}[$__rate_interval]))", "legendFormat": "success" },
-            { "refId": "B", "expr": "sum(rate(toolhive_mcp_requests_total{server=~\"$server\",mcp_method=~\"$method\",status=\"error\"}[$__rate_interval]))", "legendFormat": "error" }
+            {
+              "refId": "A",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "victoriametrics"
+              },
+              "expr": "sum(increase(toolhive_mcp_request_duration_seconds_count{server=\"mcp-gateway\",mcp_method=\"initialize\"}[$__range])) - sum(increase(toolhive_mcp_request_duration_seconds_bucket{server=\"mcp-gateway\",mcp_method=\"initialize\",le=\"5\"}[$__range]))",
+              "instant": true,
+              "range": false
+            }
           ],
-          "fieldConfig": { "defaults": { "unit": "reqps", "custom": { "drawStyle": "bars", "fillOpacity": 70, "stacking": { "mode": "normal", "group": "A" }, "lineWidth": 0 } }, "overrides": [
-            { "matcher": { "id": "byName", "options": "success" }, "properties": [ { "id": "color", "value": { "mode": "fixed", "fixedColor": "green" } } ] },
-            { "matcher": { "id": "byName", "options": "error" }, "properties": [ { "id": "color", "value": { "mode": "fixed", "fixedColor": "red" } } ] }
-          ] },
-          "options": { "legend": { "displayMode": "list", "placement": "bottom", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } }
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "decimals": 0,
+              "color": {
+                "mode": "thresholds"
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "orange",
+                    "value": 1
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "textMode": "auto",
+            "graphMode": "none",
+            "colorMode": "value",
+            "justifyMode": "auto",
+            "orientation": "auto"
+          }
         },
         {
-          "type": "timeseries", "title": "Errors by status code",
-          "id": 11, "gridPos": { "h": 8, "w": 12, "x": 12, "y": 6 },
-          "datasource": { "type": "prometheus", "uid": "victoriametrics" },
+          "id": 8,
+          "type": "timeseries",
+          "title": "Activity",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "victoriametrics"
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 16,
+            "x": 0,
+            "y": 4
+          },
           "targets": [
-            { "refId": "A", "expr": "sum by (status_code, server) (rate(toolhive_mcp_requests_total{server=~\"$server\",mcp_method=~\"$method\",status=\"error\"}[$__rate_interval]))", "legendFormat": "{{server}} {{status_code}}" }
+            {
+              "refId": "A",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "victoriametrics"
+              },
+              "expr": "sum(increase(toolhive_mcp_requests_total{server=\"mcp-gateway\",mcp_method=\"initialize\"}[$__interval]))",
+              "legendFormat": "connections"
+            },
+            {
+              "refId": "B",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "victoriametrics"
+              },
+              "expr": "sum by (tool) (increase(toolhive_mcp_tool_calls_total{server=\"mcp-gateway\"}[$__interval]))",
+              "legendFormat": "{{tool}}"
+            }
           ],
-          "fieldConfig": { "defaults": { "unit": "reqps", "custom": { "drawStyle": "bars", "fillOpacity": 80, "stacking": { "mode": "normal", "group": "A" }, "lineWidth": 0 } } },
-          "options": { "legend": { "displayMode": "table", "placement": "right", "showLegend": true, "calcs": ["sum", "max"] }, "tooltip": { "mode": "multi", "sort": "desc" } }
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "min": 0,
+              "custom": {
+                "drawStyle": "bars",
+                "lineWidth": 1,
+                "fillOpacity": 80,
+                "showPoints": "never",
+                "spanNulls": true,
+                "stacking": {
+                  "mode": "normal",
+                  "group": "A"
+                }
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "legend": {
+              "displayMode": "table",
+              "placement": "bottom",
+              "calcs": [
+                "sum"
+              ],
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "desc"
+            }
+          },
+          "interval": "1h"
         },
-
         {
-          "type": "row", "title": "Latency", "id": 1002, "collapsed": false,
-          "gridPos": { "h": 1, "w": 24, "x": 0, "y": 14 }
-        },
-        {
-          "type": "timeseries", "title": "MCP latency (p50 / p95 / p99)",
-          "id": 20, "gridPos": { "h": 8, "w": 12, "x": 0, "y": 15 },
-          "datasource": { "type": "prometheus", "uid": "victoriametrics" },
+          "id": 9,
+          "type": "bargauge",
+          "title": "Clients",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "victoriametrics"
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 8,
+            "x": 16,
+            "y": 4
+          },
           "targets": [
-            { "refId": "A", "expr": "histogram_quantile(0.50, sum by (le) (rate(toolhive_mcp_request_duration_seconds_bucket{server=~\"$server\",mcp_method=~\"$method\"}[$__rate_interval]))) * 1000", "legendFormat": "p50" },
-            { "refId": "B", "expr": "histogram_quantile(0.95, sum by (le) (rate(toolhive_mcp_request_duration_seconds_bucket{server=~\"$server\",mcp_method=~\"$method\"}[$__rate_interval]))) * 1000", "legendFormat": "p95" },
-            { "refId": "C", "expr": "histogram_quantile(0.99, sum by (le) (rate(toolhive_mcp_request_duration_seconds_bucket{server=~\"$server\",mcp_method=~\"$method\"}[$__rate_interval]))) * 1000", "legendFormat": "p99" }
+            {
+              "refId": "A",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "victoriametrics"
+              },
+              "expr": "sum by (mcp_resource_id) (increase(toolhive_mcp_requests_total{server=\"mcp-gateway\",mcp_method=\"initialize\"}[$__range]))",
+              "legendFormat": "{{mcp_resource_id}}",
+              "instant": true,
+              "range": false
+            }
           ],
-          "fieldConfig": { "defaults": { "unit": "ms", "custom": { "drawStyle": "line", "fillOpacity": 10, "lineInterpolation": "smooth" } } },
-          "options": { "legend": { "displayMode": "list", "placement": "bottom", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } }
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "decimals": 0,
+              "min": 0,
+              "color": {
+                "mode": "continuous-BlPu"
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "text",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "orientation": "horizontal",
+            "displayMode": "gradient",
+            "valueMode": "text",
+            "showUnfilled": true,
+            "sortBy": "Value",
+            "sortOrder": "Descending",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            }
+          }
         },
         {
-          "type": "timeseries", "title": "p95 latency by server",
-          "id": 21, "gridPos": { "h": 8, "w": 12, "x": 12, "y": 15 },
-          "datasource": { "type": "prometheus", "uid": "victoriametrics" },
+          "id": 10,
+          "type": "table",
+          "title": "Backends \u2014 activity, not health",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "victoriametrics"
+          },
+          "description": "No health metric exists. A dead backend reads 0, same as an idle one. Health lives on the VirtualMCPServer object.",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 13
+          },
           "targets": [
-            { "refId": "A", "expr": "histogram_quantile(0.95, sum by (le, server) (rate(toolhive_mcp_request_duration_seconds_bucket{server=~\"$server\",mcp_method=~\"$method\"}[$__rate_interval]))) * 1000", "legendFormat": "{{server}}" }
-          ],
-          "fieldConfig": { "defaults": { "unit": "ms", "custom": { "drawStyle": "line", "fillOpacity": 10, "lineInterpolation": "smooth" } } },
-          "options": { "legend": { "displayMode": "table", "placement": "right", "showLegend": true, "calcs": ["mean", "max"] }, "tooltip": { "mode": "multi", "sort": "desc" } }
-        },
-
-        {
-          "type": "row", "title": "Per-server activity", "id": 1003, "collapsed": false,
-          "gridPos": { "h": 1, "w": 24, "x": 0, "y": 23 }
-        },
-        {
-          "type": "timeseries", "title": "Request rate by server",
-          "id": 30, "gridPos": { "h": 8, "w": 12, "x": 0, "y": 24 },
-          "datasource": { "type": "prometheus", "uid": "victoriametrics" },
-          "targets": [
-            { "refId": "A", "expr": "sum by (server) (rate(toolhive_mcp_requests_total{server=~\"$server\",mcp_method=~\"$method\"}[$__rate_interval]))", "legendFormat": "{{server}}" }
-          ],
-          "fieldConfig": { "defaults": { "unit": "reqps", "custom": { "drawStyle": "line", "fillOpacity": 20, "lineInterpolation": "smooth", "stacking": { "mode": "normal", "group": "A" } } } },
-          "options": { "legend": { "displayMode": "table", "placement": "right", "showLegend": true, "calcs": ["mean", "max"] }, "tooltip": { "mode": "multi", "sort": "desc" } }
-        },
-        {
-          "type": "timeseries", "title": "Active connections by server",
-          "id": 31, "gridPos": { "h": 8, "w": 12, "x": 12, "y": 24 },
-          "datasource": { "type": "prometheus", "uid": "victoriametrics" },
-          "targets": [
-            { "refId": "A", "expr": "sum by (server, transport) (toolhive_mcp_active_connections{server=~\"$server\"})", "legendFormat": "{{server}} {{transport}}" }
-          ],
-          "fieldConfig": { "defaults": { "unit": "short", "decimals": 0, "custom": { "drawStyle": "line", "fillOpacity": 20, "lineInterpolation": "stepAfter" } } },
-          "options": { "legend": { "displayMode": "table", "placement": "right", "showLegend": true, "calcs": ["lastNotNull", "max"] }, "tooltip": { "mode": "multi", "sort": "desc" } }
-        },
-
-        {
-          "type": "row", "title": "Tool calls", "id": 1004, "collapsed": false,
-          "gridPos": { "h": 1, "w": 24, "x": 0, "y": 32 }
-        },
-        {
-          "type": "timeseries", "title": "Tool call rate (by tool, status)",
-          "id": 40, "gridPos": { "h": 9, "w": 12, "x": 0, "y": 33 },
-          "datasource": { "type": "prometheus", "uid": "victoriametrics" },
-          "targets": [
-            { "refId": "A", "expr": "sum by (tool, status) (rate(toolhive_mcp_tool_calls_total{server=~\"$server\"}[$__rate_interval]))", "legendFormat": "{{tool}} {{status}}" }
-          ],
-          "fieldConfig": { "defaults": { "unit": "reqps", "custom": { "drawStyle": "bars", "fillOpacity": 75, "stacking": { "mode": "normal", "group": "A" }, "lineWidth": 0 } } },
-          "options": { "legend": { "displayMode": "table", "placement": "right", "showLegend": true, "calcs": ["sum", "max"] }, "tooltip": { "mode": "multi", "sort": "desc" } }
-        },
-        {
-          "type": "table", "title": "Top tools (range)",
-          "id": 41, "gridPos": { "h": 9, "w": 12, "x": 12, "y": 33 },
-          "datasource": { "type": "prometheus", "uid": "victoriametrics" },
-          "targets": [
-            { "refId": "A", "expr": "sum by (server, tool) (increase(toolhive_mcp_tool_calls_total{server=~\"$server\",status=\"success\"}[$__range]))", "instant": true, "format": "table" },
-            { "refId": "B", "expr": "sum by (server, tool) (increase(toolhive_mcp_tool_calls_total{server=~\"$server\",status=\"error\"}[$__range]))", "instant": true, "format": "table" }
+            {
+              "refId": "A",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "victoriametrics"
+              },
+              "expr": "sum by (target_workload_name) (increase(toolhive_vmcp_backend_requests_total[$__range]))",
+              "instant": true,
+              "range": false,
+              "format": "table"
+            },
+            {
+              "refId": "B",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "victoriametrics"
+              },
+              "expr": "sum by (target_workload_name) (increase(toolhive_vmcp_backend_errors_total[$__range]))",
+              "instant": true,
+              "range": false,
+              "format": "table"
+            },
+            {
+              "refId": "C",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "victoriametrics"
+              },
+              "expr": "sum by (target_workload_name) (increase(toolhive_vmcp_backend_requests_duration_seconds_sum[$__range])) / clamp_min(sum by (target_workload_name) (increase(toolhive_vmcp_backend_requests_duration_seconds_count[$__range])), 1)",
+              "instant": true,
+              "range": false,
+              "format": "table"
+            }
           ],
           "transformations": [
-            { "id": "merge", "options": {} },
-            { "id": "organize", "options": { "excludeByName": { "Time": true }, "renameByName": { "server": "Server", "tool": "Tool", "Value #A": "Success", "Value #B": "Errors" }, "indexByName": { "server": 0, "tool": 1, "Value #A": 2, "Value #B": 3 } } }
+            {
+              "id": "joinByField",
+              "options": {
+                "byField": "target_workload_name",
+                "mode": "outer"
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Time": true,
+                  "Time 1": true,
+                  "Time 2": true,
+                  "Time 3": true
+                },
+                "renameByName": {
+                  "target_workload_name": "Backend",
+                  "Value #A": "Requests",
+                  "Value #B": "Errors",
+                  "Value #C": "Mean"
+                },
+                "indexByName": {}
+              }
+            }
           ],
-          "fieldConfig": { "defaults": { "custom": { "align": "auto" } }, "overrides": [
-            { "matcher": { "id": "byName", "options": "Success" }, "properties": [ { "id": "unit", "value": "short" }, { "id": "decimals", "value": 0 } ] },
-            { "matcher": { "id": "byName", "options": "Errors" }, "properties": [ { "id": "unit", "value": "short" }, { "id": "decimals", "value": 0 }, { "id": "custom.cellOptions", "value": { "type": "color-background", "mode": "gradient" } }, { "id": "thresholds", "value": { "mode": "absolute", "steps": [ { "color": "transparent", "value": null }, { "color": "orange", "value": 1 }, { "color": "red", "value": 10 } ] } } ] }
-          ] },
-          "options": { "showHeader": true, "footer": { "show": false }, "sortBy": [{ "displayName": "Success", "desc": true }] }
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "align": "auto",
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "filterable": false
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "text",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Errors"
+                },
+                "properties": [
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-text"
+                    }
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "text",
+                          "value": null
+                        },
+                        {
+                          "color": "red",
+                          "value": 1
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Mean"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "s"
+                  },
+                  {
+                    "id": "decimals",
+                    "value": 2
+                  },
+                  {
+                    "id": "noValue",
+                    "value": "\u2014"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Requests"
+                },
+                "properties": [
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "auto"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "options": {
+            "showHeader": true,
+            "footer": {
+              "show": false
+            },
+            "sortBy": [
+              {
+                "displayName": "Requests",
+                "desc": true
+              }
+            ]
+          }
         },
-
         {
-          "type": "row", "title": "vMCP Gateway — Backends", "id": 1005, "collapsed": false,
-          "gridPos": { "h": 1, "w": 24, "x": 0, "y": 42 }
-        },
-        {
-          "type": "timeseries", "title": "Backend request rate",
-          "id": 50, "gridPos": { "h": 8, "w": 8, "x": 0, "y": 43 },
-          "datasource": { "type": "prometheus", "uid": "victoriametrics" },
+          "id": 11,
+          "type": "bargauge",
+          "title": "Top tools",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "victoriametrics"
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 8,
+            "x": 12,
+            "y": 13
+          },
           "targets": [
-            { "refId": "A", "expr": "sum by (target_workload_name) (rate(toolhive_vmcp_backend_requests_total{target_workload_name=~\"$backend\"}[$__rate_interval]))", "legendFormat": "{{target_workload_name}}" }
+            {
+              "refId": "A",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "victoriametrics"
+              },
+              "expr": "topk(10, sum by (target_workload_name, tool_name) (increase(toolhive_vmcp_backend_requests_total[$__range]))) > 0",
+              "legendFormat": "{{target_workload_name}}/{{tool_name}}",
+              "instant": true,
+              "range": false
+            }
           ],
-          "fieldConfig": { "defaults": { "unit": "reqps", "custom": { "drawStyle": "line", "fillOpacity": 20, "lineInterpolation": "smooth", "stacking": { "mode": "normal", "group": "A" } } } },
-          "options": { "legend": { "displayMode": "table", "placement": "right", "showLegend": true, "calcs": ["mean", "max"] }, "tooltip": { "mode": "multi", "sort": "desc" } }
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "decimals": 0,
+              "min": 0,
+              "color": {
+                "mode": "continuous-BlPu"
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "text",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "orientation": "horizontal",
+            "displayMode": "gradient",
+            "valueMode": "text",
+            "showUnfilled": true,
+            "sortBy": "Value",
+            "sortOrder": "Descending",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            }
+          }
         },
         {
-          "type": "timeseries", "title": "Backend p95 latency",
-          "id": 51, "gridPos": { "h": 8, "w": 8, "x": 8, "y": 43 },
-          "datasource": { "type": "prometheus", "uid": "victoriametrics" },
+          "id": 12,
+          "type": "stat",
+          "title": "Mean search time",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "victoriametrics"
+          },
+          "gridPos": {
+            "h": 4,
+            "w": 4,
+            "x": 20,
+            "y": 13
+          },
           "targets": [
-            { "refId": "A", "expr": "histogram_quantile(0.95, sum by (le, target_workload_name) (rate(toolhive_vmcp_backend_requests_duration_seconds_bucket{target_workload_name=~\"$backend\"}[$__rate_interval]))) * 1000", "legendFormat": "{{target_workload_name}}" }
+            {
+              "refId": "A",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "victoriametrics"
+              },
+              "expr": "sum(increase(toolhive_vmcp_optimizer_find_tool_duration_seconds_sum[$__range])) / clamp_min(sum(increase(toolhive_vmcp_optimizer_find_tool_duration_seconds_count[$__range])), 1)",
+              "instant": true,
+              "range": false
+            }
           ],
-          "fieldConfig": { "defaults": { "unit": "ms", "custom": { "drawStyle": "line", "fillOpacity": 10, "lineInterpolation": "smooth" } } },
-          "options": { "legend": { "displayMode": "table", "placement": "right", "showLegend": true, "calcs": ["mean", "max"] }, "tooltip": { "mode": "multi", "sort": "desc" } }
+          "fieldConfig": {
+            "defaults": {
+              "unit": "s",
+              "decimals": 2,
+              "color": {
+                "mode": "thresholds"
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "orange",
+                    "value": 1
+                  },
+                  {
+                    "color": "red",
+                    "value": 3
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "textMode": "auto",
+            "graphMode": "none",
+            "colorMode": "value",
+            "justifyMode": "auto",
+            "orientation": "auto"
+          }
         },
         {
-          "type": "timeseries", "title": "Backend errors",
-          "id": 52, "gridPos": { "h": 8, "w": 8, "x": 16, "y": 43 },
-          "datasource": { "type": "prometheus", "uid": "victoriametrics" },
+          "id": 13,
+          "type": "stat",
+          "title": "Empty searches",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "victoriametrics"
+          },
+          "gridPos": {
+            "h": 4,
+            "w": 4,
+            "x": 20,
+            "y": 17
+          },
           "targets": [
-            { "refId": "A", "expr": "sum by (target_workload_name) (rate(toolhive_vmcp_backend_errors_total{target_workload_name=~\"$backend\"}[$__rate_interval]))", "legendFormat": "{{target_workload_name}}" }
+            {
+              "refId": "A",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "victoriametrics"
+              },
+              "expr": "sum(increase(toolhive_vmcp_optimizer_find_tool_results_bucket{le=\"0\"}[$__range]))",
+              "instant": true,
+              "range": false
+            }
           ],
-          "fieldConfig": { "defaults": { "unit": "reqps", "custom": { "drawStyle": "bars", "fillOpacity": 80, "stacking": { "mode": "normal", "group": "A" }, "lineWidth": 0 } }, "color": { "mode": "palette-classic" } },
-          "options": { "legend": { "displayMode": "table", "placement": "right", "showLegend": true, "calcs": ["sum", "max"] }, "tooltip": { "mode": "multi", "sort": "desc" } }
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "decimals": 0,
+              "color": {
+                "mode": "thresholds"
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "orange",
+                    "value": 1
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "textMode": "auto",
+            "graphMode": "none",
+            "colorMode": "value",
+            "justifyMode": "auto",
+            "orientation": "auto"
+          }
         },
-
         {
-          "type": "row", "title": "vMCP Optimizer", "id": 1006, "collapsed": false,
-          "gridPos": { "h": 1, "w": 24, "x": 0, "y": 51 }
-        },
-        {
-          "type": "timeseries", "title": "Optimizer call_tool & find_tool rate",
-          "id": 60, "gridPos": { "h": 8, "w": 8, "x": 0, "y": 52 },
-          "datasource": { "type": "prometheus", "uid": "victoriametrics" },
+          "id": 14,
+          "type": "table",
+          "title": "Gateway errors",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "victoriametrics"
+          },
+          "description": "unknown + 404/405/409 = bare GET/HEAD from clients, benign.",
+          "gridPos": {
+            "h": 6,
+            "w": 10,
+            "x": 0,
+            "y": 21
+          },
           "targets": [
-            { "refId": "A", "expr": "sum(rate(toolhive_vmcp_optimizer_call_tool_requests_total[$__rate_interval]))", "legendFormat": "call_tool" },
-            { "refId": "B", "expr": "sum(rate(toolhive_vmcp_optimizer_find_tool_requests_total[$__rate_interval]))", "legendFormat": "find_tool" },
-            { "refId": "C", "expr": "sum(rate(toolhive_vmcp_optimizer_call_tool_not_found_total[$__rate_interval]))", "legendFormat": "not_found" }
-          ],
-          "fieldConfig": { "defaults": { "unit": "reqps", "custom": { "drawStyle": "line", "fillOpacity": 15, "lineInterpolation": "smooth" } }, "overrides": [
-            { "matcher": { "id": "byName", "options": "not_found" }, "properties": [ { "id": "color", "value": { "mode": "fixed", "fixedColor": "red" } } ] }
-          ] },
-          "options": { "legend": { "displayMode": "list", "placement": "bottom", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } }
-        },
-        {
-          "type": "timeseries", "title": "Token savings % (p50 / p95)",
-          "id": 61, "gridPos": { "h": 8, "w": 8, "x": 8, "y": 52 },
-          "datasource": { "type": "prometheus", "uid": "victoriametrics" },
-          "targets": [
-            { "refId": "A", "expr": "histogram_quantile(0.50, sum by (le) (rate(toolhive_vmcp_optimizer_token_savings_percent_bucket[$__rate_interval])))", "legendFormat": "p50" },
-            { "refId": "B", "expr": "histogram_quantile(0.95, sum by (le) (rate(toolhive_vmcp_optimizer_token_savings_percent_bucket[$__rate_interval])))", "legendFormat": "p95" }
-          ],
-          "fieldConfig": { "defaults": { "unit": "percent", "min": 0, "max": 100, "custom": { "drawStyle": "line", "fillOpacity": 20, "lineInterpolation": "smooth" } } },
-          "options": { "legend": { "displayMode": "list", "placement": "bottom", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } }
-        },
-        {
-          "type": "table", "title": "Top optimized tools (range)",
-          "id": 62, "gridPos": { "h": 8, "w": 8, "x": 16, "y": 52 },
-          "datasource": { "type": "prometheus", "uid": "victoriametrics" },
-          "targets": [
-            { "refId": "A", "expr": "sum by (tool_name) (increase(toolhive_vmcp_optimizer_call_tool_requests_total[$__range]))", "instant": true, "format": "table" },
-            { "refId": "B", "expr": "sum by (tool_name) (increase(toolhive_vmcp_optimizer_call_tool_not_found_total[$__range]))", "instant": true, "format": "table" }
+            {
+              "refId": "A",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "victoriametrics"
+              },
+              "expr": "sum by (mcp_method, status_code) (increase(toolhive_mcp_requests_total{server=\"mcp-gateway\",status=\"error\"}[$__range])) > 0",
+              "instant": true,
+              "range": false,
+              "format": "table"
+            }
           ],
           "transformations": [
-            { "id": "merge", "options": {} },
-            { "id": "organize", "options": { "excludeByName": { "Time": true }, "renameByName": { "tool_name": "Tool", "Value #A": "Calls", "Value #B": "Not Found" }, "indexByName": { "tool_name": 0, "Value #A": 1, "Value #B": 2 } } }
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Time": true
+                },
+                "renameByName": {
+                  "mcp_method": "Method",
+                  "status_code": "Code",
+                  "Value #A": "Count",
+                  "Value": "Count"
+                },
+                "indexByName": {}
+              }
+            }
           ],
-          "fieldConfig": { "defaults": { "custom": { "align": "auto" } }, "overrides": [
-            { "matcher": { "id": "byName", "options": "Calls" }, "properties": [ { "id": "unit", "value": "short" }, { "id": "decimals", "value": 0 } ] },
-            { "matcher": { "id": "byName", "options": "Not Found" }, "properties": [ { "id": "unit", "value": "short" }, { "id": "decimals", "value": 0 }, { "id": "custom.cellOptions", "value": { "type": "color-background", "mode": "gradient" } }, { "id": "thresholds", "value": { "mode": "absolute", "steps": [ { "color": "transparent", "value": null }, { "color": "orange", "value": 1 } ] } } ] }
-          ] },
-          "options": { "showHeader": true, "footer": { "show": false }, "sortBy": [{ "displayName": "Calls", "desc": true }] }
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "align": "auto",
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "filterable": false
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "text",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "showHeader": true,
+            "footer": {
+              "show": false
+            },
+            "sortBy": [
+              {
+                "displayName": "Count",
+                "desc": true
+              }
+            ]
+          }
+        },
+        {
+          "id": 15,
+          "type": "timeseries",
+          "title": "Gateway memory",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "victoriametrics"
+          },
+          "gridPos": {
+            "h": 6,
+            "w": 10,
+            "x": 10,
+            "y": 21
+          },
+          "targets": [
+            {
+              "refId": "A",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "victoriametrics"
+              },
+              "expr": "process_resident_memory_bytes{job=\"vmcp-mcp-gateway\"}",
+              "legendFormat": "{{pod}}"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "bytes",
+              "min": 0,
+              "custom": {
+                "drawStyle": "line",
+                "lineWidth": 2,
+                "fillOpacity": 10,
+                "showPoints": "never",
+                "spanNulls": true,
+                "stacking": {
+                  "mode": "none",
+                  "group": "A"
+                }
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "legend": {
+              "displayMode": "table",
+              "placement": "bottom",
+              "calcs": [
+                "lastNotNull"
+              ],
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "desc"
+            }
+          }
+        },
+        {
+          "id": 16,
+          "type": "stat",
+          "title": "Gateway uptime",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "victoriametrics"
+          },
+          "gridPos": {
+            "h": 6,
+            "w": 4,
+            "x": 20,
+            "y": 21
+          },
+          "targets": [
+            {
+              "refId": "A",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "victoriametrics"
+              },
+              "expr": "time() - process_start_time_seconds{job=\"vmcp-mcp-gateway\"}",
+              "instant": true,
+              "range": false
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "dtdurations",
+              "decimals": null,
+              "color": {
+                "mode": "thresholds"
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "text",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "textMode": "auto",
+            "graphMode": "none",
+            "colorMode": "value",
+            "justifyMode": "auto",
+            "orientation": "auto"
+          }
         }
       ]
     }

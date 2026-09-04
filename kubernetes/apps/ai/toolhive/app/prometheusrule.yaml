@@ -1,0 +1,81 @@
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: toolhive
+spec:
+  groups:
+    - name: toolhive.rules
+      rules:
+        - alert: ToolHiveGatewayDown
+          expr: |-
+            up{job="vmcp-mcp-gateway"} == 0
+          for: 5m
+          annotations:
+            summary: >-
+              MCP gateway is not scrapeable, every MCP client is offline
+          labels:
+            severity: critical
+
+        - alert: ToolHiveSessionSetupSlow
+          expr: |-
+            sum(increase(toolhive_mcp_request_duration_seconds_sum{server="mcp-gateway",mcp_method="initialize"}[6h]))
+              / clamp_min(sum(increase(toolhive_mcp_request_duration_seconds_count{server="mcp-gateway",mcp_method="initialize"}[6h])), 1) > 10
+            and sum(increase(toolhive_mcp_request_duration_seconds_count{server="mcp-gateway",mcp_method="initialize"}[6h])) >= 3
+          for: 1h
+          annotations:
+            summary: >-
+              MCP session setup averages {{ $value | humanizeDuration }}, back to pre-v0.45.0 levels, the tool catalog is being re-embedded on CPU
+          labels:
+            severity: warning
+
+        - alert: ToolHiveToolCallErrors
+          expr: |-
+            sum(increase(toolhive_mcp_requests_total{server="mcp-gateway",mcp_method="tools/call",status="error"}[1h])) >= 3
+          for: 15m
+          annotations:
+            summary: >-
+              MCP gateway returned {{ $value | printf "%.0f" }} tool-call errors in the last hour
+          labels:
+            severity: warning
+
+        - alert: ToolHiveToolNotFound
+          expr: |-
+            sum by (tool_name) (increase(toolhive_vmcp_optimizer_call_tool_not_found_total[1h])) >= 5
+          for: 15m
+          annotations:
+            summary: >-
+              Tool {{ $labels.tool_name }} was called but does not exist, its backend is likely dropped from the catalog
+          labels:
+            severity: warning
+
+        - alert: ToolHiveBackendErrors
+          expr: |-
+            sum by (target_workload_name) (increase(toolhive_vmcp_backend_errors_total[1h])) >= 5
+          for: 15m
+          annotations:
+            summary: >-
+              Backend {{ $labels.target_workload_name }} returned {{ $value | printf "%.0f" }} errors in the last hour
+          labels:
+            severity: warning
+
+        - alert: ToolHiveBackendSlow
+          expr: |-
+            histogram_quantile(0.95, sum by (le, target_workload_name) (rate(toolhive_vmcp_backend_requests_duration_seconds_bucket[1h]))) > 10
+          for: 30m
+          annotations:
+            summary: >-
+              Backend {{ $labels.target_workload_name }} p95 is {{ $value | humanizeDuration }}
+          labels:
+            severity: warning
+
+        - alert: ToolHiveSearchReturnsNothing
+          expr: |-
+            histogram_quantile(0.50, sum by (le) (rate(toolhive_vmcp_optimizer_find_tool_results_bucket[6h]))) < 1
+            and sum(increase(toolhive_vmcp_optimizer_find_tool_requests_total[6h])) >= 5
+          for: 1h
+          annotations:
+            summary: >-
+              Half of find_tool searches are returning no tools, semantic search or the catalog is broken
+          labels:
+            severity: warning

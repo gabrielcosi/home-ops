@@ -10,4 +10,5 @@ resources:
   - ./vmcpserver.yaml
   - ./httproute.yaml
   - ./servicemonitor.yaml
+  - ./prometheusrule.yaml
   - ./grafanadashboard.yaml
