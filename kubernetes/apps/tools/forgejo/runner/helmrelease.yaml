@@ -28,7 +28,7 @@ spec:
       - sh
       - -ec
       - |
-        cat /config/runner.yaml /etc/forgejo-runner-secret/connections.yaml > /tmp/runner.yaml
+        { cat /config/runner.yaml; echo; cat /etc/forgejo-runner-secret/connections.yaml; } > /tmp/runner.yaml
         exec /bin/forgejo-runner daemon --config /tmp/runner.yaml
 
     forgejo:
