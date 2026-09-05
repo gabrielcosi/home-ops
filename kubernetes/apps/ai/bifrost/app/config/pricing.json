@@ -17,14 +17,6 @@
     "cache_creation_input_token_cost": 0.00000010,
     "cache_read_input_token_cost": 0.000000025
   },
-  "opencode/deepseek-v4-flash": {
-    "provider": "opencode",
-    "base_model": "deepseek-v4-flash",
-    "mode": "chat",
-    "input_cost_per_token": 0.00000022,
-    "output_cost_per_token": 0.00000066,
-    "cache_read_input_token_cost": 0.000000007
-  },
   "opencode/glm-5.2": {
     "provider": "opencode",
     "base_model": "glm-5.2",
@@ -40,14 +32,6 @@
     "input_cost_per_token": 0.0000003,
     "output_cost_per_token": 0.0000012,
     "cache_read_input_token_cost": 0.00000006
-  },
-  "opencode/deepseek-v4-pro": {
-    "provider": "opencode",
-    "base_model": "deepseek-v4-pro",
-    "mode": "chat",
-    "input_cost_per_token": 0.00000066,
-    "output_cost_per_token": 0.00000198,
-    "cache_read_input_token_cost": 0.000000022
   },
   "opencode/glm-5.1": {
     "provider": "opencode",
@@ -186,9 +170,9 @@
     "provider": "opencode",
     "base_model": "hy3",
     "mode": "chat",
-    "input_cost_per_token": 0.0000000175,
-    "output_cost_per_token": 0.0000000725,
-    "cache_read_input_token_cost": 0.000000004375
+    "input_cost_per_token": 0.00000014,
+    "output_cost_per_token": 0.00000058,
+    "cache_read_input_token_cost": 0.000000035
   },
   "opencode-anthropic/qwen3.8-max": {
     "provider": "opencode-anthropic",
@@ -239,13 +223,22 @@
     "output_cost_per_token": 0.0000012,
     "cache_read_input_token_cost": 0.000000006
   },
-  "opencode/muse-spark-1.2-contributor": {
+  "opencode/hy4-preview": {
     "provider": "opencode",
-    "base_model": "muse-spark-1.2-contributor",
+    "base_model": "hy4-preview",
     "mode": "chat",
-    "input_cost_per_token": 0.0000001,
-    "output_cost_per_token": 0.0000002,
-    "cache_read_input_token_cost": 0.000000002
+    "input_cost_per_token": 0.000000834,
+    "output_cost_per_token": 0.000002501,
+    "cache_read_input_token_cost": 0.000000042
+  },
+  "opencode-anthropic/qwen3.8-flash": {
+    "provider": "opencode-anthropic",
+    "base_model": "qwen3.8-flash",
+    "mode": "chat",
+    "input_cost_per_token": 0.00000015,
+    "output_cost_per_token": 0.00000047,
+    "cache_read_input_token_cost": 0.000000016,
+    "cache_creation_input_token_cost": 0.0000002
   },
   "proxyapi/claude-fable-5": {
     "provider": "proxyapi",
@@ -255,6 +248,15 @@
     "output_cost_per_token": 0.000050,
     "cache_creation_input_token_cost": 0.0000125,
     "cache_read_input_token_cost": 0.000001
+  },
+  "proxyapi/claude-fable-5-1": {
+    "provider": "proxyapi",
+    "base_model": "claude-fable-5-1",
+    "mode": "chat",
+    "input_cost_per_token": 0.000010,
+    "output_cost_per_token": 0.000050,
+    "cache_creation_input_token_cost": 0.0000125,
+    "cache_read_input_token_cost": 0.00000025
   },
   "proxyapi/claude-opus-5": {
     "provider": "proxyapi",
@@ -269,25 +271,45 @@
     "provider": "proxyapi",
     "base_model": "claude-sonnet-5",
     "mode": "chat",
-    "input_cost_per_token": 0.000003,
-    "output_cost_per_token": 0.000015,
-    "cache_creation_input_token_cost": 0.00000375,
-    "cache_read_input_token_cost": 0.0000003
+    "input_cost_per_token": 0.000002,
+    "output_cost_per_token": 0.000010,
+    "cache_creation_input_token_cost": 0.0000025,
+    "cache_read_input_token_cost": 0.0000002
   },
   "proxyapi/gpt-5.6-terra": {
     "provider": "proxyapi",
     "base_model": "gpt-5.6-terra",
     "mode": "chat",
-    "input_cost_per_token": 0.0000025,
-    "output_cost_per_token": 0.000015,
-    "cache_read_input_token_cost": 0.00000025
+    "input_cost_per_token": 0.000002,
+    "output_cost_per_token": 0.000012,
+    "cache_creation_input_token_cost": 0.0000025,
+    "cache_read_input_token_cost": 0.0000002
   },
   "proxyapi/gpt-5.6-luna": {
     "provider": "proxyapi",
     "base_model": "gpt-5.6-luna",
     "mode": "chat",
-    "input_cost_per_token": 0.000001,
-    "output_cost_per_token": 0.000006,
-    "cache_read_input_token_cost": 0.0000001
+    "input_cost_per_token": 0.0000002,
+    "output_cost_per_token": 0.0000012,
+    "cache_creation_input_token_cost": 0.00000025,
+    "cache_read_input_token_cost": 0.00000002
+  },
+  "proxyapi/gpt-5.6-sol": {
+    "provider": "proxyapi",
+    "base_model": "gpt-5.6-sol",
+    "mode": "chat",
+    "input_cost_per_token": 0.000004,
+    "output_cost_per_token": 0.000020,
+    "cache_creation_input_token_cost": 0.000005,
+    "cache_read_input_token_cost": 0.0000004
+  },
+  "proxyapi/gpt-6-astra": {
+    "provider": "proxyapi",
+    "base_model": "gpt-6-astra",
+    "mode": "chat",
+    "input_cost_per_token": 0.000010,
+    "output_cost_per_token": 0.000050,
+    "cache_creation_input_token_cost": 0.0000125,
+    "cache_read_input_token_cost": 0.000001
   }
 }

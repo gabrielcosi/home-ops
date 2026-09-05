@@ -23,30 +23,6 @@
     "supports_reasoning": true,
     "supports_vision": true
   },
-  "opencode/deepseek-v4-flash": {
-    "provider": "opencode",
-    "base_model": "deepseek-v4-flash",
-    "mode": "chat",
-    "max_input_tokens": 1000000,
-    "max_output_tokens": 384000,
-    "max_tokens": 384000,
-    "supports_function_calling": true,
-    "supports_tool_choice": true,
-    "supports_reasoning": true,
-    "supports_vision": false
-  },
-  "opencode/deepseek-v4-pro": {
-    "provider": "opencode",
-    "base_model": "deepseek-v4-pro",
-    "mode": "chat",
-    "max_input_tokens": 1000000,
-    "max_output_tokens": 384000,
-    "max_tokens": 384000,
-    "supports_function_calling": true,
-    "supports_tool_choice": true,
-    "supports_reasoning": true,
-    "supports_vision": false
-  },
   "opencode/glm-5.1": {
     "provider": "opencode",
     "base_model": "glm-5.1",
@@ -347,11 +323,23 @@
     "supports_reasoning": true,
     "supports_vision": false
   },
-  "opencode/muse-spark-1.2-contributor": {
+  "opencode/hy4-preview": {
     "provider": "opencode",
-    "base_model": "muse-spark-1.2-contributor",
+    "base_model": "hy4-preview",
     "mode": "chat",
-    "max_input_tokens": 1048576,
+    "max_input_tokens": 1024000,
+    "max_output_tokens": 64000,
+    "max_tokens": 64000,
+    "supports_function_calling": true,
+    "supports_tool_choice": true,
+    "supports_reasoning": true,
+    "supports_vision": false
+  },
+  "opencode-anthropic/qwen3.8-flash": {
+    "provider": "opencode-anthropic",
+    "base_model": "qwen3.8-flash",
+    "mode": "chat",
+    "max_input_tokens": 1000000,
     "max_output_tokens": 131072,
     "max_tokens": 131072,
     "supports_function_calling": true,
@@ -362,6 +350,18 @@
   "proxyapi/claude-fable-5": {
     "provider": "proxyapi",
     "base_model": "claude-fable-5",
+    "mode": "chat",
+    "max_input_tokens": 1000000,
+    "max_output_tokens": 128000,
+    "max_tokens": 128000,
+    "supports_function_calling": true,
+    "supports_tool_choice": true,
+    "supports_reasoning": true,
+    "supports_vision": true
+  },
+  "proxyapi/claude-fable-5-1": {
+    "provider": "proxyapi",
+    "base_model": "claude-fable-5-1",
     "mode": "chat",
     "max_input_tokens": 1000000,
     "max_output_tokens": 128000,
@@ -399,7 +399,7 @@
     "provider": "proxyapi",
     "base_model": "gpt-5.6-terra",
     "mode": "chat",
-    "max_input_tokens": 372000,
+    "max_input_tokens": 1050000,
     "max_output_tokens": 128000,
     "max_tokens": 128000,
     "supports_function_calling": true,
@@ -411,7 +411,31 @@
     "provider": "proxyapi",
     "base_model": "gpt-5.6-luna",
     "mode": "chat",
-    "max_input_tokens": 372000,
+    "max_input_tokens": 1050000,
+    "max_output_tokens": 128000,
+    "max_tokens": 128000,
+    "supports_function_calling": true,
+    "supports_tool_choice": true,
+    "supports_reasoning": true,
+    "supports_vision": true
+  },
+  "proxyapi/gpt-5.6-sol": {
+    "provider": "proxyapi",
+    "base_model": "gpt-5.6-sol",
+    "mode": "chat",
+    "max_input_tokens": 1050000,
+    "max_output_tokens": 128000,
+    "max_tokens": 128000,
+    "supports_function_calling": true,
+    "supports_tool_choice": true,
+    "supports_reasoning": true,
+    "supports_vision": true
+  },
+  "proxyapi/gpt-6-astra": {
+    "provider": "proxyapi",
+    "base_model": "gpt-6-astra",
+    "mode": "chat",
+    "max_input_tokens": 1050000,
     "max_output_tokens": 128000,
     "max_tokens": 128000,
     "supports_function_calling": true,

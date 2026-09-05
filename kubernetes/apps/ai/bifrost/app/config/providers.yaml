@@ -50,6 +50,7 @@ bifrost:
             - grok-4.5
             - grok-4.6
             - hy3
+            - hy4-preview
             - kimi-k2.5
             - kimi-k2.6
             - kimi-k2.7-code
@@ -85,6 +86,7 @@ bifrost:
             - qwen3.6-plus
             - qwen3.7-max
             - qwen3.7-plus
+            - qwen3.8-flash
             - qwen3.8-max
           weight: 1
       network_config:
