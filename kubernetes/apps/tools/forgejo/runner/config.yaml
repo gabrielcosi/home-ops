@@ -21,6 +21,11 @@ plugins:
       poll_timeout: 10m
       labels: "app.kubernetes.io/name=forgejo-runner-instance"
 runner:
+  allowed_repos:
+    - "gabrielcosi/*"
+    - "xcd/*"
+  blacklist_mode: false
+  reject_text: "This runner is not allowed to run this job in this repository: {REPO}."
   capacity: 2
   envs:
     FORGEJO_PUBLIC_URL: https://git.xcd.dev
