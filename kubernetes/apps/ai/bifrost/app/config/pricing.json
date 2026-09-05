@@ -41,14 +41,6 @@
     "output_cost_per_token": 0.0000044,
     "cache_read_input_token_cost": 0.00000026
   },
-  "opencode/kimi-k2.5": {
-    "provider": "opencode",
-    "base_model": "kimi-k2.5",
-    "mode": "chat",
-    "input_cost_per_token": 0.0000006,
-    "output_cost_per_token": 0.000003,
-    "cache_read_input_token_cost": 0.0000001
-  },
   "opencode/kimi-k2.6": {
     "provider": "opencode",
     "base_model": "kimi-k2.6",
@@ -81,14 +73,6 @@
     "output_cost_per_token": 0.00000087,
     "cache_read_input_token_cost": 0.000000003625
   },
-  "opencode-anthropic/minimax-m2.5": {
-    "provider": "opencode-anthropic",
-    "base_model": "minimax-m2.5",
-    "mode": "chat",
-    "input_cost_per_token": 0.0000003,
-    "output_cost_per_token": 0.0000012,
-    "cache_read_input_token_cost": 0.00000003
-  },
   "opencode-anthropic/minimax-m2.7": {
     "provider": "opencode-anthropic",
     "base_model": "minimax-m2.7",
@@ -96,15 +80,6 @@
     "input_cost_per_token": 0.0000003,
     "output_cost_per_token": 0.0000012,
     "cache_read_input_token_cost": 0.00000006
-  },
-  "opencode-anthropic/qwen3.5-plus": {
-    "provider": "opencode-anthropic",
-    "base_model": "qwen3.5-plus",
-    "mode": "chat",
-    "input_cost_per_token": 0.0000002,
-    "output_cost_per_token": 0.0000012,
-    "cache_read_input_token_cost": 0.00000002,
-    "cache_creation_input_token_cost": 0.00000025
   },
   "opencode-anthropic/qwen3.6-plus": {
     "provider": "opencode-anthropic",
@@ -133,37 +108,12 @@
     "cache_read_input_token_cost": 0.00000004,
     "cache_creation_input_token_cost": 0.0000005
   },
-  "opencode/glm-5": {
-    "provider": "opencode",
-    "base_model": "glm-5",
-    "mode": "chat",
-    "input_cost_per_token": 0.000001,
-    "output_cost_per_token": 0.0000032,
-    "cache_read_input_token_cost": 0.0000002
-  },
   "opencode/kimi-k3": {
     "provider": "opencode",
     "base_model": "kimi-k3",
     "mode": "chat",
     "input_cost_per_token": 0.000003,
     "output_cost_per_token": 0.000015,
-    "cache_read_input_token_cost": 0.0000003
-  },
-  "opencode/gpt-5.6-luna": {
-    "provider": "opencode",
-    "base_model": "gpt-5.6-luna",
-    "mode": "chat",
-    "input_cost_per_token": 0.0000002,
-    "output_cost_per_token": 0.0000012,
-    "cache_read_input_token_cost": 0.00000002,
-    "cache_creation_input_token_cost": 0.00000025
-  },
-  "opencode/grok-4.5": {
-    "provider": "opencode",
-    "base_model": "grok-4.5",
-    "mode": "chat",
-    "input_cost_per_token": 0.000002,
-    "output_cost_per_token": 0.000006,
     "cache_read_input_token_cost": 0.0000003
   },
   "opencode/hy3": {
@@ -206,14 +156,6 @@
     "input_cost_per_token": 0.000000075,
     "output_cost_per_token": 0.00000025,
     "cache_read_input_token_cost": 0.000000015
-  },
-  "opencode/grok-4.6": {
-    "provider": "opencode",
-    "base_model": "grok-4.6",
-    "mode": "chat",
-    "input_cost_per_token": 0.000002,
-    "output_cost_per_token": 0.000006,
-    "cache_read_input_token_cost": 0.0000005
   },
   "opencode/longcat-2.0": {
     "provider": "opencode",

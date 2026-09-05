@@ -41,17 +41,12 @@ bifrost:
           value: env.OPENCODE_API_KEY
           models:
             - deepseek-v4-flash-vision-exp
-            - glm-5
             - glm-5.1
             - glm-5.2
             - glm-5.3
             - glm-5.3-flash
-            - gpt-5.6-luna
-            - grok-4.5
-            - grok-4.6
             - hy3
             - hy4-preview
-            - kimi-k2.5
             - kimi-k2.6
             - kimi-k2.7-code
             - kimi-k3
@@ -79,10 +74,8 @@ bifrost:
         - name: opencode-anthropic-key
           value: env.OPENCODE_API_KEY
           models:
-            - minimax-m2.5
             - minimax-m2.7
             - minimax-m3
-            - qwen3.5-plus
             - qwen3.6-plus
             - qwen3.7-max
             - qwen3.7-plus
