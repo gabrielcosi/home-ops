@@ -27,7 +27,19 @@ spec:
           pluginConfig:
             - name: DefaultEvictor
               args:
+                minPodAge: 10m
+                labelSelector:
+                  matchExpressions:
+                    - key: cnpg.io/instanceRole
+                      operator: DoesNotExist
+                    - key: app.kubernetes.io/part-of
+                      operator: NotIn
+                      values:
+                        - dragonfly
                 podProtections:
+                  extraEnabled:
+                    - PodsWithPVC
+                    - PodsWithResourceClaims
                   defaultDisabled:
                     - FailedBarePods
                     - PodsWithLocalStorage
