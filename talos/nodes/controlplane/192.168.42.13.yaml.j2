@@ -1,8 +1,9 @@
 ---
-machine:
-  install:
-    diskSelector:
-      model: "Micron_5400*"
+apiVersion: v1alpha1
+kind: UnattendedInstallConfig
+provisioning:
+  diskSelector:
+    match: disk.model.startsWith("Micron_5400")
 ---
 apiVersion: v1alpha1
 kind: HostnameConfig

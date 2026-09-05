@@ -1,8 +1,9 @@
 ---
-machine:
-  install:
-    diskSelector:
-      model: "SHPP41-1000GM*"
+apiVersion: v1alpha1
+kind: UnattendedInstallConfig
+provisioning:
+  diskSelector:
+    match: disk.model.startsWith("SHPP41-1000GM")
 ---
 apiVersion: v1alpha1
 kind: HostnameConfig
