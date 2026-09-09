@@ -1,0 +1,43 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: cachette
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: cachette
+  interval: 1h
+  values:
+    controllers:
+      main:
+        containers:
+          main:
+            env:
+              CACHETTE_EXTERNAL_URL: https://registry.xcd.dev
+
+    persistence:
+      data:
+        storageClass: ceph-block
+        size: 20Gi
+
+    route:
+      main:
+        annotations:
+          gatus.home-operations.com/endpoint: |
+            url: https://registry.xcd.dev/v2/
+            conditions:
+              - '[STATUS] == 200'
+        hostnames:
+          - 'registry.xcd.dev'
+        parentRefs:
+          - name: envoy-internal
+            namespace: network
+        rules:
+          - backendRefs:
+              - identifier: main
+                port: http
+
+    serviceMonitor:
+      main:
+        enabled: true
