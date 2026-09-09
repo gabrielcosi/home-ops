@@ -10,4 +10,4 @@ spec:
     operation: copy
   ref:
     tag: v0.7.23
-  url: oci://registry.erwanleboucher.dev/eleboucher/charts/memini
+  url: oci://registry.xcd.dev/x/registry.erwanleboucher.dev/eleboucher/charts/memini
