@@ -24,7 +24,6 @@ spec:
       - --label-filter=external-dns/instance!=unifi
     triggerLoopOnEvent: true
     policy: sync
-    annotationPrefix: external-dns.alpha.kubernetes.io/
     sources:
       - crd
       - gateway-httproute
