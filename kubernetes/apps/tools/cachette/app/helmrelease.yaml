@@ -15,6 +15,7 @@ spec:
           main:
             env:
               CACHETTE_EXTERNAL_URL: https://registry.xcd.dev
+              CACHETTE_UPSTREAM_ANONYMOUS_PULL: "true"
 
     persistence:
       data:
@@ -27,7 +28,8 @@ spec:
           gatus.home-operations.com/endpoint: |
             url: https://registry.xcd.dev/v2/
             conditions:
-              - '[STATUS] == 200'
+              - '[STATUS] == 401'
+              - '[BODY].errors[0].code == UNAUTHORIZED'
         hostnames:
           - 'registry.xcd.dev'
         parentRefs:
