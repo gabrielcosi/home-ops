@@ -64,8 +64,7 @@ metadata:
   name: envoy-external
   namespace: network
   annotations:
-    external-dns.alpha.kubernetes.io/target: &hostname external.xcd.dev
-    external-dns.kubernetes.io/target: *hostname
+    external-dns.kubernetes.io/target: &hostname external.xcd.dev
     gatus.home-operations.com/endpoint: |-
       client:
         dns-resolver: tcp://1.1.1.1:53
@@ -74,7 +73,6 @@ spec:
   gatewayClassName: envoy
   infrastructure:
     annotations:
-      external-dns.alpha.kubernetes.io/hostname: *hostname
       external-dns.kubernetes.io/hostname: *hostname
       io.cilium/lb-ipam-ips: '192.168.69.182'
   listeners:

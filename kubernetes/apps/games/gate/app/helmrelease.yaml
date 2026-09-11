@@ -115,7 +115,6 @@ spec:
         primary: true
         annotations:
           io.cilium/lb-ipam-ips: 192.168.69.184
-          external-dns.alpha.kubernetes.io/hostname: mc.xcd.dev
           external-dns.kubernetes.io/hostname: mc.xcd.dev
         labels:
           external-dns/instance: unifi

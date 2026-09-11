@@ -49,7 +49,6 @@ spec:
         type: LoadBalancer
         annotations:
           io.cilium/lb-ipam-ips: '192.168.69.188'
-          external-dns.alpha.kubernetes.io/hostname: mqtt.xcd.dev
           external-dns.kubernetes.io/hostname: mqtt.xcd.dev
         ports:
           mqtt:
