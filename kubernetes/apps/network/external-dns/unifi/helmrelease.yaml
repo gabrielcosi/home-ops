@@ -44,6 +44,7 @@ spec:
             memory: 128Mi
     triggerLoopOnEvent: true
     policy: sync
+    annotationPrefix: external-dns.alpha.kubernetes.io/
     extraArgs:
       - --label-filter=external-dns/instance!=cloudflare
     sources:
