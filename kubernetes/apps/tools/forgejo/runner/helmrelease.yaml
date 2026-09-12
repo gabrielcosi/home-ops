@@ -30,10 +30,11 @@ spec:
 
     image:
       repository: git.xcd.dev/gabrielcosi/runner
-      tag: "12.13.0@sha256:ae90653c9dbbbbd7a97dbc817168ef8075d72384f13c7080c573d920acf6d794"
+      tag: "13.1.0@sha256:a6e71fa99e8e2cf8c2a5bdf9b0a01b3c4daca545943cf889664829a00a425a30"
     plugin:
       image:
         repository: registry.xcd.dev/x/registry.erwanleboucher.dev/eleboucher/runner-k8s-plugin
+        tag: "13.1.0"
 
     podLabels:
       app.kubernetes.io/component: forgejo-runner
