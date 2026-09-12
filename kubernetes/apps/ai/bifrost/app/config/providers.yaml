@@ -40,7 +40,7 @@ bifrost:
         - name: opencode-key
           value: env.OPENCODE_API_KEY
           models:
-            - deepseek-v4-flash-vision-exp
+            - deepseek-v4.1-flash
             - glm-5.1
             - glm-5.2
             - glm-5.3

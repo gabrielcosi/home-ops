@@ -171,9 +171,9 @@
     "provider": "opencode",
     "base_model": "hy3",
     "mode": "chat",
-    "max_input_tokens": 256000,
-    "max_output_tokens": 64000,
-    "max_tokens": 64000,
+    "max_input_tokens": 192000,
+    "max_output_tokens": 128000,
+    "max_tokens": 128000,
     "supports_function_calling": true,
     "supports_tool_choice": true,
     "supports_reasoning": true,
@@ -191,9 +191,9 @@
     "supports_reasoning": true,
     "supports_vision": true
   },
-  "opencode/deepseek-v4-flash-vision-exp": {
+  "opencode/deepseek-v4.1-flash": {
     "provider": "opencode",
-    "base_model": "deepseek-v4-flash-vision-exp",
+    "base_model": "deepseek-v4.1-flash",
     "mode": "chat",
     "max_input_tokens": 1000000,
     "max_output_tokens": 384000,

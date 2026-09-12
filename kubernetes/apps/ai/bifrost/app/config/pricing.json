@@ -133,13 +133,13 @@
     "cache_read_input_token_cost": 0.00000025,
     "cache_creation_input_token_cost": 0.0000025
   },
-  "opencode/deepseek-v4-flash-vision-exp": {
+  "opencode/deepseek-v4.1-flash": {
     "provider": "opencode",
-    "base_model": "deepseek-v4-flash-vision-exp",
+    "base_model": "deepseek-v4.1-flash",
     "mode": "chat",
-    "input_cost_per_token": 0.00000022,
-    "output_cost_per_token": 0.00000066,
-    "cache_read_input_token_cost": 0.000000007
+    "input_cost_per_token": 0.00000015,
+    "output_cost_per_token": 0.0000006,
+    "cache_read_input_token_cost": 0.000000003
   },
   "opencode/glm-5.3": {
     "provider": "opencode",
@@ -153,9 +153,9 @@
     "provider": "opencode",
     "base_model": "glm-5.3-flash",
     "mode": "chat",
-    "input_cost_per_token": 0.000000075,
-    "output_cost_per_token": 0.00000025,
-    "cache_read_input_token_cost": 0.000000015
+    "input_cost_per_token": 0.00000015,
+    "output_cost_per_token": 0.0000005,
+    "cache_read_input_token_cost": 0.00000003
   },
   "opencode/longcat-2.0": {
     "provider": "opencode",
