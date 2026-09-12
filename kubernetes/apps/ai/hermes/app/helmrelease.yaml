@@ -26,7 +26,7 @@ spec:
           seed-tools:
             image:
               repository: ghcr.io/gabrielcosi/hermes-agent
-              tag: v2026.9.11@sha256:cdf752b2c74ec1903ca6990a09bbc10443c2628d33384d85e952879734537f0b
+              tag: v2026.9.11@sha256:347daa70f2613ff2485d0bbe2c2bc7e2a5601b9234b566f0dcbf708ee353a753
             command:
               - sh
               - -c
@@ -102,7 +102,7 @@ spec:
           gateway:
             image:
               repository: ghcr.io/gabrielcosi/hermes-agent
-              tag: v2026.9.11@sha256:cdf752b2c74ec1903ca6990a09bbc10443c2628d33384d85e952879734537f0b
+              tag: v2026.9.11@sha256:347daa70f2613ff2485d0bbe2c2bc7e2a5601b9234b566f0dcbf708ee353a753
             args:
               - gateway
               - run
