@@ -68,16 +68,10 @@ bifrost:
               - qwen3.8-27b
             key_ids:
               - '*'
-          - provider: opencode-anthropic
-            weight: 1
-            allowed_models:
-              - minimax-m3
-            key_ids:
-              - '*'
           - provider: opencode
             weight: 1
             allowed_models:
-              - mimo-v2.5-pro
+              - deepseek-v4.1-flash
             key_ids:
               - '*'
       - id: open-webui

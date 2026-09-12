@@ -2,22 +2,21 @@ custom_providers:
   - name: bifrost
     base_url: http://bifrost.ai.svc.cluster.local:8080/v1
     key_env: OPENAI_API_KEY
+    extra_headers:
+      x-bf-eh-x-opencode-session: 'hermes'
 
 model:
-  default: opencode-anthropic/minimax-m3
+  default: opencode/deepseek-v4.1-flash
   provider: custom:bifrost
 
 model_aliases:
-  mimo-v2.5-pro:
-    model: opencode/mimo-v2.5-pro
-    provider: custom:bifrost
-  minimax:
-    model: opencode-anthropic/minimax-m3
+  deepseek:
+    model: opencode/deepseek-v4.1-flash
     provider: custom:bifrost
 
 fallback_providers:
   - provider: custom:bifrost
-    model: opencode-anthropic/minimax-m3
+    model: llama-swap/qwen3.8-27b
 
 memory:
   provider: memini
@@ -41,42 +40,42 @@ compression:
 auxiliary:
   approval:
     provider: custom:bifrost
-    model: opencode-anthropic/minimax-m3
+    model: opencode/deepseek-v4.1-flash
     timeout: 60
   compression:
     provider: custom:bifrost
-    model: opencode-anthropic/minimax-m3
+    model: opencode/deepseek-v4.1-flash
   vision:
     provider: custom:bifrost
-    model: opencode-anthropic/minimax-m3
+    model: opencode/deepseek-v4.1-flash
   goal_judge:
     provider: custom:bifrost
-    model: opencode/mimo-v2.5-pro
+    model: opencode/deepseek-v4.1-flash
   title_generation:
     provider: custom:bifrost
-    model: opencode/mimo-v2.5-pro
+    model: opencode/deepseek-v4.1-flash
   curator:
     provider: custom:bifrost
-    model: opencode/mimo-v2.5-pro
+    model: opencode/deepseek-v4.1-flash
     timeout: 600
   review:
     provider: custom:bifrost
-    model: opencode-anthropic/minimax-m3
+    model: opencode/deepseek-v4.1-flash
   background_review:
     provider: custom:bifrost
-    model: opencode/mimo-v2.5-pro
+    model: opencode/deepseek-v4.1-flash
   monitor:
     provider: custom:bifrost
-    model: opencode/mimo-v2.5-pro
+    model: opencode/deepseek-v4.1-flash
   mcp:
     provider: custom:bifrost
-    model: opencode/mimo-v2.5-pro
+    model: opencode/deepseek-v4.1-flash
   skills_hub:
     provider: custom:bifrost
-    model: opencode/mimo-v2.5-pro
+    model: opencode/deepseek-v4.1-flash
   memory_query_rewrite:
     provider: custom:bifrost
-    model: opencode/mimo-v2.5-pro
+    model: opencode/deepseek-v4.1-flash
 
 curator:
   consolidate: true
@@ -115,7 +114,7 @@ agent:
 
 delegation:
   provider: custom:bifrost
-  model: opencode/mimo-v2.5-pro
+  model: opencode/deepseek-v4.1-flash
   max_concurrent_children: 8
   max_spawn_depth: 2
 
