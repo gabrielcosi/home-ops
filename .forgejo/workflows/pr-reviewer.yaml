@@ -68,8 +68,9 @@ jobs:
         env:
           ANTHROPIC_BASE_URL: https://ai.xcd.dev/anthropic
           ANTHROPIC_AUTH_TOKEN: ${{ steps.secrets.outputs.AI_AUTH_TOKEN }}
-          ANTHROPIC_MODEL: proxyapi/claude-sonnet-5
-          ANTHROPIC_SMALL_FAST_MODEL: proxyapi/claude-sonnet-5
+          ANTHROPIC_MODEL: opencode/deepseek-v4.1-flash
+          ANTHROPIC_SMALL_FAST_MODEL: opencode/deepseek-v4.1-flash
+          ANTHROPIC_CUSTOM_HEADERS: 'x-bf-eh-x-opencode-session: ${{ forgejo.repository }}-pr-${{ forgejo.event.pull_request.number }}'
           CRAWL4AI_TOKEN: ${{ steps.secrets.outputs.CRAWL4AI_TOKEN }}
           GH_TOKEN: ${{ steps.secrets.outputs.GH_TOKEN }}
         run: |-
