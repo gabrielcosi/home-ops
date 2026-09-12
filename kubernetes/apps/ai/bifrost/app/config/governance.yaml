@@ -57,17 +57,6 @@ bifrost:
               - sentence-transformers/all-MiniLM-L6-v2
             key_ids:
               - '*'
-          - provider: opencode
-            weight: 1
-            allowed_models:
-              - mimo-v2.5-pro
-            key_ids:
-              - '*'
-          - provider: llama-swap
-            allowed_models:
-              - qwen3.8-27b
-            key_ids:
-              - '*'
       - id: hermes
         name: hermes
         value: env.BIFROST_VK_HERMES

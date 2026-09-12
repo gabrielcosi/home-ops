@@ -36,10 +36,6 @@ spec:
               MEMINI_EMBED_QUERY_PREFIX: "Instruct: Given a user message, retrieve relevant past memories\nQuery: "
               MEMINI_RECALL_EMBED_TIMEOUT: '10s'
               MEMINI_EMBED_MAX_CONCURRENCY: '2'
-              MEMINI_LLM_BASE_URL: http://bifrost.ai.svc.cluster.local:8080/v1
-              MEMINI_LLM_API: openai
-              MEMINI_LLM_MODEL: opencode/mimo-v2.5-pro
-              MEMINI_LLM_MAX_TOKENS: '16384'
               MEMINI_DEMOTE_AFTER: 1440h
               MEMINI_TOMBSTONE_TTL: 720h
               TZ: Europe/Berlin
@@ -49,11 +45,6 @@ spec:
                     name: memini-secrets
                     key: MEMINI_API_KEY
               MEMINI_EMBED_API_KEY:
-                valueFrom:
-                  secretKeyRef:
-                    name: memini-secrets
-                    key: BIFROST_VK_MEMINI
-              MEMINI_LLM_API_KEY:
                 valueFrom:
                   secretKeyRef:
                     name: memini-secrets
