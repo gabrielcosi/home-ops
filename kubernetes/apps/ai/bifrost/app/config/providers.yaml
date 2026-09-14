@@ -58,6 +58,7 @@ bifrost:
         base_url: https://opencode.ai/zen/go
         default_request_timeout_in_seconds: 300
         max_retries: 3
+        stream_idle_timeout_in_seconds: 90
       custom_provider_config:
         base_provider_type: openai
         allowed_requests:
@@ -86,6 +87,7 @@ bifrost:
         base_url: https://opencode.ai/zen/go
         default_request_timeout_in_seconds: 300
         max_retries: 3
+        stream_idle_timeout_in_seconds: 90
       custom_provider_config:
         base_provider_type: anthropic
         allowed_requests:
