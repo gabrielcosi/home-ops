@@ -32,6 +32,11 @@ bifrost:
         request_reset_duration: '5m'
         token_max_limit: 40000000
         token_reset_duration: '1d'
+      - id: rl-macbook
+        request_max_limit: 500
+        request_reset_duration: '5m'
+        token_max_limit: 100000000
+        token_reset_duration: '1d'
 
     budgets:
       - id: b-opencode-go-5h
@@ -131,6 +136,30 @@ bifrost:
           - provider: llama-swap
             allowed_models:
               - qwen3.8-27b
+            key_ids:
+              - '*'
+      - id: macbook
+        name: macbook
+        value: env.BIFROST_VK_MACBOOK
+        is_active: true
+        rate_limit_id: rl-macbook
+        provider_configs:
+          - provider: llama-swap
+            weight: 1
+            allowed_models:
+              - '*'
+            key_ids:
+              - '*'
+          - provider: opencode
+            weight: 1
+            allowed_models:
+              - '*'
+            key_ids:
+              - '*'
+          - provider: opencode-anthropic
+            weight: 1
+            allowed_models:
+              - '*'
             key_ids:
               - '*'
     modelConfigs:
