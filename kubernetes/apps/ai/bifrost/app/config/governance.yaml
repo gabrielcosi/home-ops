@@ -76,7 +76,7 @@ bifrost:
           - provider: opencode
             weight: 1
             allowed_models:
-              - deepseek-v4.1-flash
+              - mimo-v2.5
             key_ids:
               - '*'
       - id: open-webui
@@ -121,12 +121,6 @@ bifrost:
         is_active: true
         rate_limit_id: rl-pr-reviewer
         provider_configs:
-          - provider: opencode
-            weight: 1
-            allowed_models:
-              - deepseek-v4.1-flash
-            key_ids:
-              - '*'
           - provider: proxyapi
             weight: 1
             allowed_models:
