@@ -289,9 +289,9 @@ body {
 }
 
 /* unread notifications are state, so the count carries a hue */
-.ui.red.label.notification_count {
-  background-color: var(--color-red) !important;
-  color: #ffffff !important;
+#navbar a.item .notification_count {
+  background: var(--color-blue);
+  color: #ffffff;
 }
 
 /* the heatmap builds its ramp from the primary variables, which carry no hue here */
