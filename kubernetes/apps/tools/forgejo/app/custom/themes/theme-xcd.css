@@ -288,6 +288,22 @@ body {
   outline-offset: 2px;
 }
 
+/* unread notifications are state, so the count carries a hue */
+.ui.red.label.notification_count {
+  background-color: var(--color-red) !important;
+  color: #ffffff !important;
+}
+
+/* the heatmap builds its ramp from the primary variables, which carry no hue here */
+#user-heatmap {
+  --color-secondary-alpha-60: #161616;
+  --color-primary-light-4: #033a16;
+  --color-primary-light-2: #0f6d31;
+  --color-primary: #26a641;
+  --color-primary-dark-2: #39d353;
+  --color-primary-dark-4: #56d364;
+}
+
 /* language bar is data, so it keeps its hues, but it is a rule and not a banner */
 .repository .language-stats {
   height: 3px;
