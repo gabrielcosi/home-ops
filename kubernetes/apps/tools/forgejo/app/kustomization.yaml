@@ -11,3 +11,22 @@ resources:
   - ./dragonfly.yaml
   - ./externalsecret.yaml
   - ./backup.yaml
+configMapGenerator:
+  - name: forgejo-themes
+    files:
+      - custom/themes/theme-xcd.css
+  - name: forgejo-fonts
+    files:
+      - custom/fonts/geist.woff2
+      - custom/fonts/geistmono.woff2
+  - name: forgejo-logo
+    files:
+      - custom/img/logo.svg
+      - custom/img/favicon.svg
+  - name: forgejo-templates
+    files:
+      - custom/templates/home.tmpl
+generatorOptions:
+  disableNameSuffixHash: true
+  annotations:
+    kustomize.toolkit.fluxcd.io/substitute: disabled

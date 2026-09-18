@@ -1,0 +1,15 @@
+{{template "base/head" .}}
+<div role="main" aria-label="{{if .IsSigned}}{{ctx.Locale.Tr "dashboard"}}{{else}}{{ctx.Locale.Tr "home"}}{{end}}" class="page-content home">
+	<div class="home-hero">
+		<img class="home-mark" width="48" height="48" src="{{AssetUrlPrefix}}/img/logo.svg" alt="">
+		<h1 class="home-title">{{AppDisplayName}}</h1>
+		<p class="home-tagline">Gabriel's forge.</p>
+		<div class="home-actions">
+			<a class="ui primary button" href="{{AppSubUrl}}/explore/repos">Explore</a>
+			{{if not .IsSigned}}
+				<a class="ui basic button" href="{{AppSubUrl}}/user/login">Sign in</a>
+			{{end}}
+		</div>
+	</div>
+</div>
+{{template "base/footer" .}}

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" role="img" aria-label="XCD Git">
+  <g fill="none" stroke="#ededed" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M9 11v10" />
+    <path d="M9 15h8a4 4 0 0 0 4-4v-1" />
+  </g>
+  <g fill="#ededed">
+    <circle cx="9" cy="8" r="3" />
+    <circle cx="9" cy="24" r="3" />
+    <circle cx="21" cy="8" r="3" />
+  </g>
+</svg>

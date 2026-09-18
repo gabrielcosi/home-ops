@@ -68,6 +68,18 @@ spec:
         secret:
           secretName: forgejo-signing-key
           defaultMode: 288
+      - name: themes
+        configMap:
+          name: forgejo-themes
+      - name: fonts
+        configMap:
+          name: forgejo-fonts
+      - name: logo
+        configMap:
+          name: forgejo-logo
+      - name: templates
+        configMap:
+          name: forgejo-templates
 
     extraInitVolumeMounts:
       - name: signing-key
@@ -77,6 +89,18 @@ spec:
     extraContainerVolumeMounts:
       - name: signing-key
         mountPath: /data/signing
+        readOnly: true
+      - name: themes
+        mountPath: /data/gitea/public/assets/css
+        readOnly: true
+      - name: fonts
+        mountPath: /data/gitea/public/assets/fonts
+        readOnly: true
+      - name: logo
+        mountPath: /data/gitea/public/assets/img
+        readOnly: true
+      - name: templates
+        mountPath: /data/gitea/templates
         readOnly: true
 
     gitea:
@@ -103,6 +127,10 @@ spec:
 
       config:
         APP_NAME: 'XCD Git'
+
+        ui:
+          THEMES: 'xcd'
+          DEFAULT_THEME: 'xcd'
 
         ui.meta:
           AUTHOR: Gabriel Cosi
