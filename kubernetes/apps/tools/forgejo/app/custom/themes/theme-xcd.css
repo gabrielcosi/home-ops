@@ -288,6 +288,42 @@ body {
   outline-offset: 2px;
 }
 
+/* the page radius is too round for a 15px control, and the tick needs the inverted ink */
+:is(form, .markup) input[type="checkbox"] {
+  border-radius: 4px;
+}
+
+form input[type="checkbox"]:checked::after {
+  background: var(--color-primary-contrast);
+}
+
+/* radios are left native, which reads as a filled blob when unselected */
+:is(form, .markup) input[type="radio"] {
+  appearance: none;
+  position: relative;
+  border: 1px solid var(--color-secondary-dark-4);
+  border-radius: 50%;
+  background: var(--color-input-background);
+  margin-inline-end: 0.5rem;
+}
+
+:is(form, .markup) input[type="radio"]:not([disabled]):hover {
+  border-color: var(--color-primary);
+}
+
+:is(form, .markup) input[type="radio"]:checked {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+:is(form, .markup) input[type="radio"]:checked::after {
+  content: "";
+  position: absolute;
+  inset: 4px;
+  border-radius: 50%;
+  background: var(--color-primary-contrast);
+}
+
 /* unread notifications are state, so the count carries a hue */
 #navbar a.item .notification_count {
   background: var(--color-blue);
