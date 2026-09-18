@@ -233,6 +233,14 @@ spec:
         metrics:
           ENABLED: true
 
+        api:
+          ENABLE_SWAGGER: false
+
+        other:
+          SHOW_FOOTER_VERSION: false
+          SHOW_FOOTER_TEMPLATE_LOAD_TIME: false
+          SHOW_FOOTER_POWERED_BY: false
+
       additionalConfigSources:
         - secret:
             secretName: forgejo-config
