@@ -4,7 +4,7 @@ globalTTL: 300
 models:
   qwen3.8-27b:
     capabilities:
-      in: [text, image, video]
+      in: [text]
       out: [text]
       tools: true
       context: 131072
@@ -14,13 +14,10 @@ models:
       --port ${PORT} \
       --metrics \
       --model /models/Swift-Qwen3.8-27B/Swift-Qwen3.8-27B-NVFP4.gguf \
-      --mmproj /models/Swift-Qwen3.8-27B/Swift-Qwen3.8-27B-mmproj-F16.gguf \
       --ctx-size 131072 \
       --parallel 1 \
       --jinja \
       --chat-template-kwargs '{"reasoning_effort":"medium"}' \
-      --cache-type-k q8_0 \
-      --cache-type-v q8_0 \
       --temp 1.0 \
       --top-p 0.95 \
       --top-k 20 \

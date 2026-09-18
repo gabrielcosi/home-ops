@@ -9,7 +9,7 @@
     "supports_function_calling": true,
     "supports_tool_choice": true,
     "supports_reasoning": true,
-    "supports_vision": true
+    "supports_vision": false
   },
   "llama-swap/muse-glimmer-30b": {
     "provider": "llama-swap",
