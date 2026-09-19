@@ -324,6 +324,17 @@ form input[type="checkbox"]:checked::after {
   background: var(--color-primary-contrast);
 }
 
+/* no accent hue to shift to on hover, so rows answer with a surface and links with a rule */
+#issue-list .flex-item:hover {
+  background: #111111;
+}
+
+#issue-list .flex-item a:not(.label):not(.button):hover {
+  text-decoration-line: underline !important;
+  text-underline-offset: 2px;
+  text-decoration-thickness: 1px;
+}
+
 /* unread notifications are state, so the count carries a hue */
 #navbar a.item .notification_count {
   background: var(--color-blue);
