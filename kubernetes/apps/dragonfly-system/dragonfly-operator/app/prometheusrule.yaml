@@ -79,16 +79,6 @@ spec:
             summary: "Dragonfly memory usage high in {{ $labels.namespace }}"
             description: "Dragonfly {{ $labels.pod }} in namespace {{ $labels.namespace }} is using {{ $value | humanizePercentage }} of max memory."
 
-        - alert: DragonflyEvictedKeys
-          expr: |
-            increase(dragonfly_evicted_keys_total[5m]) > 10000
-          for: 15m
-          labels:
-            severity: warning
-          annotations:
-            summary: "Dragonfly is evicting keys heavily in {{ $labels.namespace }}"
-            description: "Dragonfly {{ $labels.pod }} in namespace {{ $labels.namespace }} evicted {{ $value }} keys in 5m (sustained) — cache may be undersized."
-
         - alert: DragonflyHighConnectionRate
           expr: |
             rate(dragonfly_connections_received_total[5m]) > 100
