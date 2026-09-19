@@ -13,17 +13,17 @@ spec:
           for: 15m
           annotations:
             summary: >-
-              GPU {{ $labels.gpu }} on {{ $labels.Hostname }} is clocked at {{ $value }} MHz with an empty framebuffer
+              GPU {{ $labels.gpu }} on {{ $labels.hostname }} is clocked at {{ $value }} MHz with an empty framebuffer
           labels:
             severity: warning
 
         - alert: NvidiaGpuXidError
           expr: |
-            increase(DCGM_EXP_XID_ERRORS_TOTAL[10m]) > 0
+            DCGM_EXP_XID_ERRORS_COUNT > 0
           for: 0m
           annotations:
             summary: >-
-              GPU {{ $labels.gpu }} on {{ $labels.Hostname }} reported XID error {{ $labels.xid }}
+              GPU {{ $labels.gpu }} on {{ $labels.hostname }} reported an XID error
           labels:
             severity: critical
 
@@ -33,7 +33,7 @@ spec:
           for: 10m
           annotations:
             summary: >-
-              GPU {{ $labels.gpu }} on {{ $labels.Hostname }} reports DCGM health status {{ $value }}
+              GPU {{ $labels.gpu }} on {{ $labels.hostname }} reports DCGM health status {{ $value }}
           labels:
             severity: warning
 
@@ -43,7 +43,7 @@ spec:
           for: 0m
           annotations:
             summary: >-
-              GPU {{ $labels.gpu }} on {{ $labels.Hostname }} failed to remap a bad memory row
+              GPU {{ $labels.gpu }} on {{ $labels.hostname }} failed to remap a bad memory row
           labels:
             severity: critical
 
@@ -53,7 +53,7 @@ spec:
           for: 0m
           annotations:
             summary: >-
-              GPU {{ $labels.gpu }} on {{ $labels.Hostname }} remapped a row after an uncorrectable memory error
+              GPU {{ $labels.gpu }} on {{ $labels.hostname }} remapped a row after an uncorrectable memory error
           labels:
             severity: critical
 
@@ -63,7 +63,7 @@ spec:
           for: 5m
           annotations:
             summary: >-
-              GPU {{ $labels.gpu }} on {{ $labels.Hostname }} is throttling on temperature
+              GPU {{ $labels.gpu }} on {{ $labels.hostname }} is throttling on temperature
           labels:
             severity: warning
 
@@ -73,7 +73,7 @@ spec:
           for: 5m
           annotations:
             summary: >-
-              GPU {{ $labels.gpu }} on {{ $labels.Hostname }} is at {{ $value }}C, near its slowdown threshold
+              GPU {{ $labels.gpu }} on {{ $labels.hostname }} is at {{ $value }}C, near its slowdown threshold
           labels:
             severity: warning
 
@@ -83,6 +83,6 @@ spec:
           for: 5m
           annotations:
             summary: >-
-              GPU {{ $labels.gpu }} on {{ $labels.Hostname }} logged {{ $value }} PCIe replays
+              GPU {{ $labels.gpu }} on {{ $labels.hostname }} logged {{ $value }} PCIe replays
           labels:
             severity: warning
