@@ -87,11 +87,63 @@ spec:
               limits:
                 memory: 24Gi
 
+          exporter:
+            image:
+              repository: ghcr.io/squat/llama-swap-exporter
+              tag: latest@sha256:a9c2e48f397721f0ca263a6700c51869907acc9739e572b2360e6dac40ca8379
+            args:
+              - -upstream
+              - http://127.0.0.1:8080
+              - -web.listen-address
+              - :9293
+            env:
+              LLAMA_SWAP_EXPORTER_API_KEY:
+                valueFrom:
+                  secretKeyRef:
+                    name: llama-swap-secrets
+                    key: LS_API_KEY
+            probes:
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /metrics
+                    port: 9293
+                  initialDelaySeconds: 5
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+                  failureThreshold: 3
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /metrics
+                    port: 9293
+                  initialDelaySeconds: 3
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+                  failureThreshold: 3
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities:
+                drop: ['ALL']
+            resources:
+              requests:
+                cpu: 10m
+                memory: 32Mi
+              limits:
+                memory: 128Mi
+
     service:
       app:
         ports:
           http:
             port: 8080
+          metrics:
+            port: 9293
 
     route:
       app:
