@@ -1,0 +1,518 @@
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: llama-cpp
+spec:
+  allowCrossNamespaceImport: true
+  instanceSelector:
+    matchLabels:
+      dashboards: grafana
+  json: |
+    {
+      "uid": "llama-cpp-inference",
+      "title": "llama.cpp Inference",
+      "tags": [
+        "llama.cpp",
+        "inference",
+        "llm",
+        "ai"
+      ],
+      "schemaVersion": 39,
+      "version": 1,
+      "editable": true,
+      "graphTooltip": 1,
+      "time": {
+        "from": "now-24h",
+        "to": "now"
+      },
+      "timepicker": {},
+      "refresh": "30s",
+      "templating": {
+        "list": [
+          {
+            "name": "model",
+            "label": "Model",
+            "type": "query",
+            "datasource": {
+              "type": "prometheus",
+              "uid": "victoriametrics"
+            },
+            "query": {
+              "qryType": 1,
+              "query": "label_values(llamacpp:tokens_predicted_total, model)",
+              "refId": "PrometheusVariableQueryEditor-VariableQuery"
+            },
+            "includeAll": true,
+            "multi": true,
+            "current": {
+              "selected": true,
+              "text": [
+                "All"
+              ],
+              "value": [
+                "$__all"
+              ]
+            },
+            "refresh": 2,
+            "sort": 1
+          }
+        ]
+      },
+      "panels": [
+        {
+          "type": "stat",
+          "title": "Decode speed",
+          "id": 1,
+          "description": "Pooled across models, measured only while generating.",
+          "gridPos": {
+            "h": 5,
+            "w": 5,
+            "x": 0,
+            "y": 0
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "victoriametrics"
+          },
+          "targets": [
+            {
+              "refId": "A",
+              "expr": "sum(increase(llamacpp:tokens_predicted_total{model=~\"$model\"}[$__range])) / clamp_min(sum(increase(llamacpp:tokens_predicted_seconds_total{model=~\"$model\"}[$__range])), 1)",
+              "instant": true,
+              "legendFormat": "tok/s"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "decimals": 1,
+              "color": {
+                "mode": "thresholds"
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "red",
+                    "value": null
+                  },
+                  {
+                    "color": "orange",
+                    "value": 12
+                  },
+                  {
+                    "color": "green",
+                    "value": 25
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "textMode": "auto",
+            "colorMode": "background",
+            "graphMode": "area",
+            "justifyMode": "auto"
+          }
+        },
+        {
+          "type": "stat",
+          "title": "Prefill speed",
+          "id": 2,
+          "gridPos": {
+            "h": 5,
+            "w": 5,
+            "x": 5,
+            "y": 0
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "victoriametrics"
+          },
+          "targets": [
+            {
+              "refId": "A",
+              "expr": "sum(increase(llamacpp:prompt_tokens_total{model=~\"$model\"}[$__range])) / clamp_min(sum(increase(llamacpp:prompt_seconds_total{model=~\"$model\"}[$__range])), 1)",
+              "instant": true,
+              "legendFormat": "tok/s"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "decimals": 0,
+              "color": {
+                "mode": "thresholds"
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "red",
+                    "value": null
+                  },
+                  {
+                    "color": "orange",
+                    "value": 150
+                  },
+                  {
+                    "color": "green",
+                    "value": 400
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "textMode": "auto",
+            "colorMode": "background",
+            "graphMode": "area",
+            "justifyMode": "auto"
+          }
+        },
+        {
+          "type": "stat",
+          "title": "Draft acceptance",
+          "id": 4,
+          "description": "Rate alone is misleading for block drafters like DFlash.",
+          "gridPos": {
+            "h": 5,
+            "w": 5,
+            "x": 10,
+            "y": 0
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "victoriametrics"
+          },
+          "targets": [
+            {
+              "refId": "A",
+              "expr": "sum(increase(llamacpp:spec_decode_num_accepted_tokens_total{model=~\"$model\"}[$__range])) / clamp_min(sum(increase(llamacpp:spec_decode_num_draft_tokens_total{model=~\"$model\"}[$__range])), 1)",
+              "instant": true,
+              "legendFormat": "accepted"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percentunit",
+              "decimals": 1,
+              "min": 0,
+              "max": 1,
+              "color": {
+                "mode": "fixed",
+                "fixedColor": "purple"
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "textMode": "auto",
+            "colorMode": "background",
+            "graphMode": "area",
+            "justifyMode": "auto"
+          }
+        },
+        {
+          "type": "stat",
+          "title": "Tokens generated",
+          "id": 5,
+          "gridPos": {
+            "h": 5,
+            "w": 4,
+            "x": 15,
+            "y": 0
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "victoriametrics"
+          },
+          "targets": [
+            {
+              "refId": "A",
+              "expr": "sum(increase(llamacpp:tokens_predicted_total{model=~\"$model\"}[$__range]))",
+              "instant": true,
+              "legendFormat": "tokens"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "decimals": 0,
+              "color": {
+                "mode": "fixed",
+                "fixedColor": "blue"
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "textMode": "auto",
+            "colorMode": "background",
+            "graphMode": "area",
+            "justifyMode": "auto"
+          }
+        },
+        {
+          "type": "stat",
+          "title": "Prompt cache reuse",
+          "id": 8,
+          "description": "Share of prompt tokens served from cache instead of prefill.",
+          "gridPos": {
+            "h": 5,
+            "w": 5,
+            "x": 19,
+            "y": 0
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "victoriametrics"
+          },
+          "targets": [
+            {
+              "refId": "A",
+              "expr": "sum(increase(llamacpp:prompt_tokens_cached_total{model=~\"$model\"}[$__range])) / clamp_min(sum(increase(llamacpp:prompt_tokens_cached_total{model=~\"$model\"}[$__range])) + sum(increase(llamacpp:prompt_tokens_total{model=~\"$model\"}[$__range])), 1)",
+              "instant": true,
+              "legendFormat": "cached"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percentunit",
+              "decimals": 1,
+              "min": 0,
+              "max": 1,
+              "color": {
+                "mode": "thresholds"
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "orange",
+                    "value": null
+                  },
+                  {
+                    "color": "green",
+                    "value": 0.5
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "textMode": "auto",
+            "colorMode": "background",
+            "graphMode": "area",
+            "justifyMode": "auto"
+          }
+        },
+        {
+          "type": "timeseries",
+          "title": "Decode speed by model",
+          "id": 11,
+          "gridPos": {
+            "h": 9,
+            "w": 12,
+            "x": 0,
+            "y": 5
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "victoriametrics"
+          },
+          "interval": "30s",
+          "targets": [
+            {
+              "refId": "A",
+              "expr": "increase(llamacpp:tokens_predicted_total{model=~\"$model\"}[$__interval]) / clamp_min(increase(llamacpp:tokens_predicted_seconds_total{model=~\"$model\"}[$__interval]), 0.001)",
+              "legendFormat": "{{model}}"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "decimals": 1,
+              "min": 0,
+              "custom": {
+                "drawStyle": "line",
+                "lineWidth": 2,
+                "fillOpacity": 15,
+                "showPoints": "auto",
+                "pointSize": 6,
+                "spanNulls": false,
+                "gradientMode": "opacity"
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "legend": {
+              "displayMode": "table",
+              "placement": "right",
+              "showLegend": true,
+              "calcs": [
+                "mean",
+                "max"
+              ]
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "desc"
+            }
+          }
+        },
+        {
+          "type": "timeseries",
+          "title": "Prefill speed by model",
+          "id": 12,
+          "gridPos": {
+            "h": 9,
+            "w": 12,
+            "x": 12,
+            "y": 5
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "victoriametrics"
+          },
+          "interval": "30s",
+          "targets": [
+            {
+              "refId": "A",
+              "expr": "increase(llamacpp:prompt_tokens_total{model=~\"$model\"}[$__interval]) / clamp_min(increase(llamacpp:prompt_seconds_total{model=~\"$model\"}[$__interval]), 0.001)",
+              "legendFormat": "{{model}}"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "decimals": 0,
+              "min": 0,
+              "custom": {
+                "drawStyle": "line",
+                "lineWidth": 2,
+                "fillOpacity": 15,
+                "showPoints": "auto",
+                "pointSize": 6,
+                "spanNulls": false,
+                "gradientMode": "opacity"
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "legend": {
+              "displayMode": "table",
+              "placement": "right",
+              "showLegend": true,
+              "calcs": [
+                "mean",
+                "max"
+              ]
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "desc"
+            }
+          }
+        },
+        {
+          "type": "state-timeline",
+          "title": "Requests in flight",
+          "id": 17,
+          "description": "Deferred above zero means requests queue behind the slot.",
+          "gridPos": {
+            "h": 6,
+            "w": 24,
+            "x": 0,
+            "y": 14
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "victoriametrics"
+          },
+          "targets": [
+            {
+              "refId": "A",
+              "expr": "llamacpp:requests_processing{model=~\"$model\"}",
+              "legendFormat": "{{model}} processing"
+            },
+            {
+              "refId": "B",
+              "expr": "llamacpp:requests_deferred{model=~\"$model\"}",
+              "legendFormat": "{{model}} deferred"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "decimals": 0,
+              "min": 0,
+              "color": {
+                "mode": "continuous-BlPu"
+              },
+              "custom": {
+                "fillOpacity": 85,
+                "lineWidth": 0
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "legend": {
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            },
+            "mergeValues": true,
+            "showValue": "never",
+            "rowHeight": 0.9,
+            "alignValue": "center"
+          }
+        }
+      ]
+    }
