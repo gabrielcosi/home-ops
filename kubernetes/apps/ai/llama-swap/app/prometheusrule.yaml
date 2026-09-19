@@ -1,0 +1,54 @@
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: llama-swap
+spec:
+  groups:
+    - name: llama-swap.rules
+      rules:
+        - alert: LlamaSwapModelUnreachable
+          expr: |-
+            llama_swap_model_up == 0
+          for: 10m
+          annotations:
+            summary: >-
+              Model {{ $labels.model }} is ready but does not answer its metrics endpoint
+          labels:
+            severity: critical
+
+        - alert: LlamaSwapDecodeSlow
+          expr: |-
+            increase(llamacpp:tokens_predicted_total[15m])
+              / clamp_min(increase(llamacpp:tokens_predicted_seconds_total[15m]), 1) < 12
+              and increase(llamacpp:tokens_predicted_total[15m]) > 1000
+          for: 15m
+          annotations:
+            summary: >-
+              Model {{ $labels.model }} generates {{ $value | printf "%.1f" }} tokens per second
+          labels:
+            severity: warning
+
+        - alert: LlamaSwapPrefillSlow
+          expr: |-
+            increase(llamacpp:prompt_tokens_total[15m])
+              / clamp_min(increase(llamacpp:prompt_seconds_total[15m]), 1) < 150
+              and increase(llamacpp:prompt_tokens_total[15m]) > 20000
+          for: 15m
+          annotations:
+            summary: >-
+              Model {{ $labels.model }} reads prompts at {{ $value | printf "%.0f" }} tokens per second
+          labels:
+            severity: warning
+
+        - alert: LlamaSwapSpecDecodeDegraded
+          expr: |-
+            increase(llamacpp:spec_decode_num_accepted_tokens_total{model="qwen3.8-27b"}[1h])
+              / clamp_min(increase(llamacpp:spec_decode_num_draft_tokens_total{model="qwen3.8-27b"}[1h]), 1) < 0.45
+              and increase(llamacpp:spec_decode_num_draft_tokens_total{model="qwen3.8-27b"}[1h]) > 2000
+          for: 30m
+          annotations:
+            summary: >-
+              Model {{ $labels.model }} accepts {{ $value | printf "%.2f" }} of its draft tokens
+          labels:
+            severity: warning

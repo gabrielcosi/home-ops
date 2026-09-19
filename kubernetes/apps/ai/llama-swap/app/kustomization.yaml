@@ -6,6 +6,7 @@ resources:
   - ./helmrelease.yaml
   - ./netpol.yaml
   - ./ocirepository.yaml
+  - ./prometheusrule.yaml
   - ./resourceclaim.yaml
   - ./servicemonitor.yaml
 configMapGenerator:
