@@ -88,40 +88,41 @@ graph TD
 
 ---
 
-## <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f5a5_fe0f/512.webp" alt="🖥️" width="20" height="20"> Hardware
+## <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/2699_fe0f/512.webp" alt="⚙️" width="20" height="20"> Hardware
 
 ### Compute
 
-**Lenovo M920Q (Core i5-8500T) × 3 · 64 GB DDR4 · Talos / Kubernetes**
+**Lenovo M920Q (Core i5-8500T, 6C/6T) × 3 · 64 GB DDR4 · Talos / Kubernetes**
 
 - **OS & etcd** — 480 GB Micron 5300/5400 PRO SATA SSD (power-loss protection)
 - **Rook-Ceph** — 1 TB Samsung 990 PRO NVMe (2280)
 - **Miroir** — 256 GB SK hynix BC511 NVMe, replicated with DRBD
-- **Network** — 1 G onboard (disabled) + Mellanox 10/25 G SFP+
+- **Network** — Mellanox ConnectX-4 Lx dual-port SFP+ — 2 × 10 G LACP (1 G onboard unused)
 
-**MS-02 Ultra (Core Ultra 9 285HX) · 96 GB DDR5 · Talos / Kubernetes**
+**Minisforum MS-02 (Core Ultra 9 285HX, 24C/24T) · 96 GB DDR5 · Talos / Kubernetes**
 
 - **GPU** — NVIDIA RTX PRO 4000 Blackwell SFF, 24 GB
 - **OS & Miroir** — 1 TB SK hynix Platinum P41 NVMe
-- **Network** — 10 G Realtek + 2.5 G Intel, active-backup bond
+- **Network** — 10 G Realtek RTL8127 + 2.5 G Intel I226-LM, active-backup bond
 
 ### Storage
 
 **Ugreen DXP4800 Plus · 32 GB DDR5 · TrueNAS SCALE / ZFS**
 
 - **Boot** — 128 GB NVMe
-- **home-pool** — 7.25 TB
-  - 2 × 4 TB Seagate IronWolf CMR — mirror
-  - 2 × 4 TB Seagate IronWolf CMR — mirror
+- **home-pool** — 7.25 TB, two mirror vdevs striped
+  - 2 × 4 TB Seagate IronWolf Pro ST4000NE001 CMR — mirror
+  - 2 × 4 TB Seagate IronWolf Pro ST4000NT001 CMR — mirror
 - **fast-pool** — 236 GB
   - 2 × 256 GB Samsung PM981 NVMe — mirror
-- **Network** — 2.5 G + 10 G
+- **Network** — 10 G Aquantia + 1 G Intel, active-backup bond
 
 ### Networking — UniFi
 
 - **Cloud Gateway Fiber** — router · 2×10 G SFP+, 1×10 G RJ45, 4×2.5 G RJ45
-- **Switch Aggregation** — 8×10 G SFP+
+- **Switch Pro Aggregation** — 28×10 G SFP+, 4×25 G SFP28 · all four cluster nodes and the NAS
 - **Switch Pro Max 16 PoE** — 12×1 G PoE+ (30 W), 4×2.5 G PoE++ (60 W), 2×10 G SFP+
+- **U7 Pro XG** — Wi-Fi 7 access point · 2.5 G PoE+ uplink
 
 ---
 
@@ -147,6 +148,6 @@ A lot of what is here came from the [Home Operations](https://discord.gg/home-op
 
 ---
 
-## <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f4dc/512.webp" alt="📜" width="20" height="20"> License
+## <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/2696_fe0f/512.webp" alt="⚖️" width="20" height="20"> License
 
 See [LICENSE](./LICENSE).
