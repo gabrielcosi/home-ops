@@ -1,0 +1,81 @@
+---
+name: Model Sync
+
+on:
+  schedule:
+    - cron: '0 12 * * 5'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ forgejo.workflow }}
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    name: Sync opencode models
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      FORGEJO_API: http://forgejo-http.tools.svc.cluster.local:3000/api/v1
+      REPO: ${{ forgejo.repository }}
+      BRANCH: model-sync/opencode
+      SUMMARY_FILE: /tmp/model-sync.md
+      DISABLE_AUTOUPDATER: '1'
+      CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC: '1'
+      # renovate: datasource=npm depName=@anthropic-ai/claude-code
+      CLAUDE_CODE_VERSION: '2.1.277'
+    steps:
+      - name: Checkout main
+        uses: https://github.com/actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          ref: main
+          persist-credentials: false
+
+      - name: Load secrets
+        id: secrets
+        uses: https://github.com/1Password/load-secrets-action@70062d7a876d3eb6334754fa26efd2fbd90c32f2 # v5.0.1
+        with:
+          export-env: false
+        env:
+          OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+          AI_AUTH_TOKEN: op://k8s/bifrost/bifrost_vk_home_ops_ci
+          OPENCODE_API_KEY: op://k8s/bifrost/bifrost_opencode_api_key
+          FORGEJO_TOKEN: op://k8s/bot-angel/forgejo_token
+
+      - name: Probe the catalog
+        env:
+          OPENCODE_API_KEY: ${{ steps.secrets.outputs.OPENCODE_API_KEY }}
+        run: ./.forgejo/scripts/probe_opencode.sh
+
+      - name: Sync datasheet
+        env:
+          ANTHROPIC_BASE_URL: https://ai.xcd.dev/anthropic
+          ANTHROPIC_AUTH_TOKEN: ${{ steps.secrets.outputs.AI_AUTH_TOKEN }}
+          ANTHROPIC_MODEL: opencode/deepseek-v4.1-flash
+          ANTHROPIC_SMALL_FAST_MODEL: opencode/deepseek-v4.1-flash
+          ANTHROPIC_CUSTOM_HEADERS: 'x-bf-eh-x-opencode-session: ${{ forgejo.repository }}-model-sync-${{ forgejo.run_id }}'
+        run: |-
+          set -euo pipefail
+
+          curl -fsSL https://claude.ai/install.sh | bash -s "${CLAUDE_CODE_VERSION}"
+          export PATH="${HOME}/.local/bin:${PATH}"
+
+          rm -f CLAUDE.md AGENTS.md
+
+          timeout 900 claude -p "$(cat .agents/instructions/model-sync.instructions.md)" \
+            --model "${ANTHROPIC_MODEL}" \
+            --permission-mode default \
+            --strict-mcp-config \
+            --allowedTools "Read,Glob,Grep,Edit,Write,Bash(curl:*),Bash(jq:*),Bash(python3:*),Bash(git diff:*),Bash(git status:*)" \
+            < /dev/null
+
+      - name: Validate
+        run: ./.forgejo/scripts/validate_datasheet.py
+
+      - name: Open pull request
+        env:
+          FORGEJO_TOKEN: ${{ steps.secrets.outputs.FORGEJO_TOKEN }}
+          COMMIT_MESSAGE: 'feat(bifrost): sync the opencode model datasheet'
+          COMMIT_PATHS: kubernetes/apps/ai/bifrost/app/config
+        run: ./.forgejo/scripts/open_pr.sh

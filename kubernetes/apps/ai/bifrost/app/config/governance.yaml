@@ -27,7 +27,7 @@ bifrost:
         request_reset_duration: '5m'
         token_max_limit: 8000000
         token_reset_duration: '1d'
-      - id: rl-pr-reviewer
+      - id: rl-home-ops-ci
         request_max_limit: 100
         request_reset_duration: '5m'
         token_max_limit: 40000000
@@ -115,16 +115,21 @@ bifrost:
               - '*'
             key_ids:
               - '*'
-      - id: pr-reviewer
-        name: pr-reviewer
-        value: env.BIFROST_VK_PR_REVIEWER
+      - id: home-ops-ci
+        name: home-ops-ci
+        value: env.BIFROST_VK_HOME_OPS_CI
         is_active: true
-        rate_limit_id: rl-pr-reviewer
+        rate_limit_id: rl-home-ops-ci
         provider_configs:
           - provider: proxyapi
             weight: 1
             allowed_models:
               - claude-sonnet-5
+            key_ids:
+              - '*'
+          - provider: opencode
+            allowed_models:
+              - deepseek-v4.1-flash
             key_ids:
               - '*'
           - provider: llama-swap

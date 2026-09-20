@@ -1,5 +1,5 @@
 ---
-name: AI PR Review
+name: Renovate Review
 
 on:
   pull_request:
@@ -17,7 +17,7 @@ concurrency:
 
 jobs:
   review:
-    name: AI PR Review
+    name: Renovate Review
     if: >-
       ${{ startsWith(forgejo.event.pull_request.head.ref, 'renovate/')
       && (!startsWith(forgejo.event.action, 'label') || forgejo.event.label.name == 'ai-review') }}
@@ -48,8 +48,8 @@ jobs:
           export-env: false
         env:
           OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
-          AI_AUTH_TOKEN: op://k8s/bifrost/bifrost_vk_pr_reviewer
-          REVIEW_TOKEN: op://k8s/pr-reviewer/forgejo_token
+          AI_AUTH_TOKEN: op://k8s/bifrost/bifrost_vk_home_ops_ci
+          FORGEJO_TOKEN: op://k8s/bot-angel/forgejo_token
           CRAWL4AI_TOKEN: op://k8s/crawl4ai/crawl4ai_api_token
           GH_TOKEN: op://k8s/renovate/renovate_github_com_token
 
@@ -70,7 +70,6 @@ jobs:
           ANTHROPIC_AUTH_TOKEN: ${{ steps.secrets.outputs.AI_AUTH_TOKEN }}
           ANTHROPIC_MODEL: proxyapi/claude-sonnet-5
           ANTHROPIC_SMALL_FAST_MODEL: proxyapi/claude-sonnet-5
-          ANTHROPIC_CUSTOM_HEADERS: 'x-bf-eh-x-opencode-session: ${{ forgejo.repository }}-pr-${{ forgejo.event.pull_request.number }}'
           CRAWL4AI_TOKEN: ${{ steps.secrets.outputs.CRAWL4AI_TOKEN }}
           GH_TOKEN: ${{ steps.secrets.outputs.GH_TOKEN }}
         run: |-
@@ -90,7 +89,7 @@ jobs:
 
           {
             printf 'You are reviewing pull request #%s in %s, a Flux GitOps Kubernetes homelab on Forgejo. Pass this PR number to konflate'\''s MCP tools.\n\n' "${PR}" "${REPO}"
-            cat .forgejo/pr-review.prompt.md
+            cat .agents/instructions/renovate-review.instructions.md
           } > /tmp/prompt.md
 
           rm -f CLAUDE.md AGENTS.md
@@ -107,7 +106,7 @@ jobs:
         id: publish
         if: ${{ always() }}
         env:
-          REVIEW_TOKEN: ${{ steps.secrets.outputs.REVIEW_TOKEN }}
+          FORGEJO_TOKEN: ${{ steps.secrets.outputs.FORGEJO_TOKEN }}
         run: |-
           set -euo pipefail
 
@@ -126,18 +125,18 @@ jobs:
 
           payload="$(jq -n --arg b "${MARKER}"$'\n'"${body}" '{body: $b}')"
           existing="$(curl -fsS --retry 3 --retry-all-errors \
-            -H "Authorization: token ${REVIEW_TOKEN}" \
+            -H "Authorization: token ${FORGEJO_TOKEN}" \
             "${FORGEJO_API}/repos/${REPO}/issues/${PR}/comments?limit=50" \
             | jq -r --arg m "${MARKER}" '[.[] | select(.body | contains($m))] | last | .id // empty')"
 
           if [ -n "${existing}" ]; then
             curl -fsS --retry 3 --retry-all-errors -X PATCH \
-              -H "Authorization: token ${REVIEW_TOKEN}" -H "Content-Type: application/json" \
+              -H "Authorization: token ${FORGEJO_TOKEN}" -H "Content-Type: application/json" \
               "${FORGEJO_API}/repos/${REPO}/issues/comments/${existing}" -d "${payload}" -o /dev/null
             echo "Updated review comment ${existing}."
           else
             curl -fsS --retry 3 --retry-all-errors -X POST \
-              -H "Authorization: token ${REVIEW_TOKEN}" -H "Content-Type: application/json" \
+              -H "Authorization: token ${FORGEJO_TOKEN}" -H "Content-Type: application/json" \
               "${FORGEJO_API}/repos/${REPO}/issues/${PR}/comments" -d "${payload}" -o /dev/null
             echo "Posted review comment."
           fi
