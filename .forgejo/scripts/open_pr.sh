@@ -5,7 +5,7 @@
 set -euo pipefail
 
 : "${FORGEJO_API:?FORGEJO_API is required}"
-: "${FORGEJO_TOKEN:?FORGEJO_TOKEN is required}"
+: "${BOT_TOKEN:?BOT_TOKEN is required}"
 : "${REPO:?REPO is required}"
 : "${BRANCH:?BRANCH is required}"
 : "${COMMIT_MESSAGE:?COMMIT_MESSAGE is required}"
@@ -28,23 +28,23 @@ git checkout -b "${BRANCH}"
 git add -- ${paths}
 git commit -m "${COMMIT_MESSAGE}"
 
-remote="http://x:${FORGEJO_TOKEN}@forgejo-http.tools.svc.cluster.local:3000/${REPO}.git"
+remote="http://x:${BOT_TOKEN}@forgejo-http.tools.svc.cluster.local:3000/${REPO}.git"
 git push --force "${remote}" "${BRANCH}"
 
 existing="$(curl -fsS --retry 3 --retry-all-errors \
-  -H "Authorization: token ${FORGEJO_TOKEN}" \
+  -H "Authorization: token ${BOT_TOKEN}" \
   "${FORGEJO_API}/repos/${REPO}/pulls?state=open&limit=50" \
   | jq -r --arg b "${BRANCH}" '[.[] | select(.head.ref == $b)] | first | .number // empty')"
 
 if [ -n "${existing}" ]; then
   curl -fsS --retry 3 --retry-all-errors -X PATCH \
-    -H "Authorization: token ${FORGEJO_TOKEN}" -H "Content-Type: application/json" \
+    -H "Authorization: token ${BOT_TOKEN}" -H "Content-Type: application/json" \
     "${FORGEJO_API}/repos/${REPO}/pulls/${existing}" \
     -d "$(jq -n --rawfile body "${summary}" '{body: $body}')" -o /dev/null
   echo "Updated pull request #${existing}."
 else
   number="$(curl -fsS --retry 3 --retry-all-errors -X POST \
-    -H "Authorization: token ${FORGEJO_TOKEN}" -H "Content-Type: application/json" \
+    -H "Authorization: token ${BOT_TOKEN}" -H "Content-Type: application/json" \
     "${FORGEJO_API}/repos/${REPO}/pulls" \
     -d "$(jq -n --rawfile body "${summary}" --arg head "${BRANCH}" --arg title "${title}" \
       '{title: $title, head: $head, base: "main", body: $body}')" \

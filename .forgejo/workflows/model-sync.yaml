@@ -41,7 +41,7 @@ jobs:
           OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
           AI_AUTH_TOKEN: op://k8s/bifrost/bifrost_vk_home_ops_ci
           OPENCODE_API_KEY: op://k8s/bifrost/bifrost_opencode_api_key
-          FORGEJO_TOKEN: op://k8s/bot-angel/forgejo_token
+          BOT_TOKEN: op://k8s/bot-angel/forgejo_token
 
       - name: Probe the catalog
         env:
@@ -79,7 +79,7 @@ jobs:
 
       - name: Open pull request
         env:
-          FORGEJO_TOKEN: ${{ steps.secrets.outputs.FORGEJO_TOKEN }}
+          BOT_TOKEN: ${{ steps.secrets.outputs.BOT_TOKEN }}
           COMMIT_MESSAGE: 'feat(bifrost): sync the opencode model datasheet'
           COMMIT_PATHS: kubernetes/apps/ai/bifrost/app/config
         run: ./.forgejo/scripts/open_pr.sh
