@@ -8,7 +8,6 @@ spec:
     kind: OCIRepository
     name: jellyfin
   interval: 1h
-  timeout: 2h
   values:
     controllers:
       jellyfin:
@@ -44,10 +43,9 @@ spec:
                   httpGet:
                     path: /health
                     port: &port 8096
-                  initialDelaySeconds: 0
-                  periodSeconds: 10
-                  timeoutSeconds: 1
-                  failureThreshold: 3
+                  periodSeconds: 30
+                  timeoutSeconds: 10
+                  failureThreshold: 5
               readiness: *probes
               startup:
                 enabled: true
@@ -57,8 +55,7 @@ spec:
                     path: /health
                     port: *port
                   periodSeconds: 10
-                  timeoutSeconds: 5
-                  failureThreshold: 900
+                  failureThreshold: 30
             resources:
               claims:
                 - name: gpu
