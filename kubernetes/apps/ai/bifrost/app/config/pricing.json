@@ -33,6 +33,14 @@
     "output_cost_per_token": 0.0000012,
     "cache_read_input_token_cost": 0.00000006
   },
+  "opencode/deepseek-v4.1-flash": {
+    "provider": "opencode",
+    "base_model": "deepseek-v4.1-flash",
+    "mode": "chat",
+    "input_cost_per_token": 0.00000015,
+    "output_cost_per_token": 0.0000006,
+    "cache_read_input_token_cost": 0.000000003
+  },
   "opencode/glm-5.1": {
     "provider": "opencode",
     "base_model": "glm-5.1",
@@ -156,14 +164,6 @@
     "input_cost_per_token": 0.0000003,
     "output_cost_per_token": 0.0000012,
     "cache_read_input_token_cost": 0.000000006
-  },
-  "opencode/hy4-preview": {
-    "provider": "opencode",
-    "base_model": "hy4-preview",
-    "mode": "chat",
-    "input_cost_per_token": 0.000000834,
-    "output_cost_per_token": 0.000002501,
-    "cache_read_input_token_cost": 0.000000042
   },
   "opencode-anthropic/qwen3.8-flash": {
     "provider": "opencode-anthropic",

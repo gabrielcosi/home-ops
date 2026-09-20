@@ -40,12 +40,12 @@ bifrost:
         - name: opencode-key
           value: env.OPENCODE_API_KEY
           models:
+            - deepseek-v4.1-flash
             - glm-5.1
             - glm-5.2
             - glm-5.3
             - glm-5.3-flash
             - hy3
-            - hy4-preview
             - kimi-k2.6
             - kimi-k2.7-code
             - kimi-k3
