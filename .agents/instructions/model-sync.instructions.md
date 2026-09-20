@@ -74,7 +74,7 @@ Costs there are per million tokens; these files are per token, so `input = 0.15`
 
 **Reprice every existing entry, not just the ones you came for.** opencode runs temporary promos, and an expired promo rots silently because nothing errors. A few lines of python over `pricing.json` against the rate card catches it. Correct any disagreement and give both values in the summary.
 
-A model belongs under `opencode` if its TOML carries `[interleaved] field = "reasoning_content"`, the OpenAI chat shape. If one looks anthropic-shaped, flag it rather than adding it under the wrong key.
+A model belongs under `opencode` if its TOML carries `[interleaved] field = "reasoning_content"`, the OpenAI chat shape. Some entries carry no shape marker at all — that is missing evidence, not evidence of the Anthropic shape, so never move or drop a model over it. Leave a carried model where it is and flag it; only add a new one under `opencode` when the marker is present.
 
 ## 5. Check yourself
 

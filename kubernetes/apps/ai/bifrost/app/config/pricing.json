@@ -17,6 +17,13 @@
     "cache_creation_input_token_cost": 0.00000010,
     "cache_read_input_token_cost": 0.000000025
   },
+  "text-embeddings/sentence-transformers/all-MiniLM-L6-v2": {
+    "provider": "text-embeddings",
+    "base_model": "sentence-transformers/all-MiniLM-L6-v2",
+    "mode": "embedding",
+    "input_cost_per_token": 0.000000005,
+    "output_cost_per_token": 0
+  },
   "opencode/glm-5.2": {
     "provider": "opencode",
     "base_model": "glm-5.2",

@@ -23,6 +23,17 @@
     "supports_reasoning": true,
     "supports_vision": true
   },
+  "text-embeddings/sentence-transformers/all-MiniLM-L6-v2": {
+    "provider": "text-embeddings",
+    "base_model": "sentence-transformers/all-MiniLM-L6-v2",
+    "mode": "embedding",
+    "max_input_tokens": 256,
+    "max_tokens": 256,
+    "supports_function_calling": false,
+    "supports_tool_choice": false,
+    "supports_reasoning": false,
+    "supports_vision": false
+  },
   "opencode/deepseek-v4.1-flash": {
     "provider": "opencode",
     "base_model": "deepseek-v4.1-flash",

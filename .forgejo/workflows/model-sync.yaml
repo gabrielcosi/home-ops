@@ -55,12 +55,16 @@ jobs:
           ANTHROPIC_MODEL: opencode/deepseek-v4.1-flash
           ANTHROPIC_SMALL_FAST_MODEL: opencode/deepseek-v4.1-flash
           ANTHROPIC_CUSTOM_HEADERS: 'x-bf-eh-x-opencode-session: ${{ forgejo.repository }}-model-sync-${{ forgejo.run_id }}'
+          CLAUDE_CODE_MAX_CONTEXT_TOKENS: '1000000'
         run: |-
           set -euo pipefail
 
           curl -fsSL https://claude.ai/install.sh | bash -s "${CLAUDE_CODE_VERSION}"
           export PATH="${HOME}/.local/bin:${PATH}"
 
+          # Both files are tracked, so restore them however the run ends —
+          # otherwise their deletion reads as an out-of-scope edit.
+          trap 'git checkout -- CLAUDE.md AGENTS.md' EXIT
           rm -f CLAUDE.md AGENTS.md
 
           timeout 900 claude -p "$(cat .agents/instructions/model-sync.instructions.md)" \
@@ -71,7 +75,7 @@ jobs:
             < /dev/null
 
       - name: Validate
-        run: ./.forgejo/scripts/validate_datasheet.py
+        run: ./.forgejo/scripts/validate_datasheet.sh
 
       - name: Open pull request
         env:
