@@ -8,10 +8,12 @@ spec:
     kind: OCIRepository
     name: jellyfin
   interval: 1h
+  timeout: 2h
   values:
     controllers:
       jellyfin:
         pod:
+          terminationGracePeriodSeconds: 120
           resourceClaims:
             - name: gpu
               resourceClaimTemplateName: jellyfin
@@ -41,12 +43,22 @@ spec:
                 spec:
                   httpGet:
                     path: /health
-                    port: 8096
+                    port: &port 8096
                   initialDelaySeconds: 0
                   periodSeconds: 10
                   timeoutSeconds: 1
                   failureThreshold: 3
               readiness: *probes
+              startup:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /health
+                    port: *port
+                  periodSeconds: 10
+                  timeoutSeconds: 5
+                  failureThreshold: 900
             resources:
               claims:
                 - name: gpu
