@@ -1,6 +1,18 @@
 healthCheckTimeout: 300
 globalTTL: 300
 
+macros:
+  llama-server: >-
+    /usr/local/bin/llama-server
+    --host 0.0.0.0
+    --port ${PORT}
+    --metrics
+    --jinja
+    --flash-attn on
+    --n-gpu-layers 99
+    --fit off
+    --reasoning-preserve
+
 models:
   qwen3.8-27b:
     capabilities:
@@ -9,14 +21,10 @@ models:
       tools: true
       context: 131072
     cmd: |
-      /app/llama-server \
-      --host 0.0.0.0 \
-      --port ${PORT} \
-      --metrics \
+      ${llama-server} \
       --model /models/Swift-Qwen3.8-27B/Swift-Qwen3.8-27B-NVFP4.gguf \
       --ctx-size 131072 \
       --parallel 1 \
-      --jinja \
       --chat-template-kwargs '{"reasoning_effort":"medium"}' \
       --temp 1.0 \
       --top-p 0.95 \
@@ -24,10 +32,6 @@ models:
       --min-p 0 \
       --presence-penalty 0.0 \
       --repeat-penalty 1.0 \
-      --flash-attn on \
-      --n-gpu-layers 99 \
-      --fit off \
-      --reasoning-preserve \
       --spec-type draft-mtp \
       --spec-draft-n-max 2 \
       --spec-draft-p-min 0.0
@@ -41,15 +45,11 @@ models:
       tools: true
       context: 131072
     cmd: |
-      /app/llama-server \
-      --host 0.0.0.0 \
-      --port ${PORT} \
-      --metrics \
+      ${llama-server} \
       --model /models/Muse-Glimmer-30B/Muse-Glimmer-30B-UD-Q4_K_XL.gguf \
       --mmproj /models/Muse-Glimmer-30B/Muse-Glimmer-30B-mmproj-kquant.gguf \
       --ctx-size 262144 \
       --parallel 2 \
-      --jinja \
       --chat-template-kwargs '{"reasoning_strength":"high"}' \
       --temp 1.0 \
       --top-p 0.95 \
@@ -57,10 +57,6 @@ models:
       --min-p 0 \
       --presence-penalty 0.0 \
       --repeat-penalty 1.0 \
-      --flash-attn on \
-      --n-gpu-layers 99 \
-      --fit off \
-      --reasoning-preserve \
       --spec-type draft-dflash \
       --spec-draft-model /models/Muse-Glimmer-30B/Muse-Glimmer-30B-dflash2-Q4_K_M.gguf \
       --spec-draft-n-max 5
