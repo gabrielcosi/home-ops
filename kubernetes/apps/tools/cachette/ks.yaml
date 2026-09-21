@@ -4,6 +4,12 @@ kind: Kustomization
 metadata:
   name: cachette
 spec:
+  dependsOn:
+    - name: rook-ceph-cluster
+      namespace: rook-ceph
+  components:
+    - ../../../../components/kopiur/restore
+    - ../../../../components/kopiur/backup
   interval: 1h
   path: ./kubernetes/apps/tools/cachette/app
   prune: true
@@ -13,3 +19,9 @@ spec:
     namespace: flux-system
   targetNamespace: tools
   wait: false
+  postBuild:
+    substitute:
+      APP: cachette
+      KOPIUR_PUID: "1000"
+      KOPIUR_PGID: "1000"
+      KOPIUR_CAPACITY: "20Gi"

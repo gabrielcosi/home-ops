@@ -9,18 +9,34 @@ spec:
     name: cachette
   interval: 1h
   values:
+    defaultPodOptions:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+
     controllers:
       main:
+        annotations:
+          reloader.stakater.com/auto: 'true'
         containers:
           main:
             env:
               CACHETTE_EXTERNAL_URL: https://registry.xcd.dev
-              CACHETTE_UPSTREAM_ANONYMOUS_PULL: "true"
+              CACHETTE_UPSTREAM_ANONYMOUS_PULL: 'true'
+              CACHETTE_PASSWORD_AUTH: admins
+              CACHETTE_OIDC_ENABLED: 'true'
+              CACHETTE_OIDC_NAME: Authentik
+              CACHETTE_OIDC_ISSUER: https://auth.xcd.dev/application/o/cachette/
+              CACHETTE_OIDC_PROVISION: 'true'
+              CACHETTE_ADMIN_GROUPS: Cachette Admins
+            envFrom:
+              - secretRef:
+                  name: cachette-secret
 
     persistence:
       data:
-        storageClass: ceph-block
-        size: 20Gi
+        existingClaim: cachette
 
     route:
       main:
