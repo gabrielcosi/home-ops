@@ -26,6 +26,8 @@ models:
       --ctx-size 131072 \
       --parallel 1 \
       --chat-template-kwargs '{"reasoning_effort":"medium"}' \
+      --cache-type-k q8_0 \
+      --cache-type-v q8_0 \
       --temp 1.0 \
       --top-p 0.95 \
       --top-k 20 \
