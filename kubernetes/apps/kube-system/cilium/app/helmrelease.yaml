@@ -155,15 +155,15 @@ spec:
                 contextOptions:
                   - name: query
                   - name: sourceContext
-                    values: ["workload", "pod"]
+                    values: ["app", "workload", "pod", "reserved-identity"]
                   - name: destinationContext
-                    values: ["workload", "pod", "dns", "ip"]
+                    values: ["app", "workload", "pod", "dns", "reserved-identity"]
                   - name: labelsContext
                     values:
                       - source_namespace
                       - destination_namespace
-                      - source_workload
-                      - destination_workload
+                      - source_app
+                      - destination_app
                 excludeFilters: &hubbleChurn
                   - source_label: ["app.kubernetes.io/managed-by=kopiur"]
                   - destination_label: ["app.kubernetes.io/managed-by=kopiur"]
@@ -172,15 +172,15 @@ spec:
               - name: drop
                 contextOptions: &hubbleContext
                   - name: sourceContext
-                    values: ["workload", "pod"]
+                    values: ["app", "workload", "pod", "reserved-identity"]
                   - name: destinationContext
-                    values: ["workload", "pod", "dns", "ip"]
+                    values: ["app", "workload", "pod", "dns", "reserved-identity"]
                   - name: labelsContext
                     values:
                       - source_namespace
                       - destination_namespace
-                      - source_workload
-                      - destination_workload
+                      - source_app
+                      - destination_app
               - name: icmp
                 contextOptions: *hubbleContext
               - name: flow
@@ -191,6 +191,7 @@ spec:
                 excludeFilters: *hubbleChurn
         serviceMonitor:
           enabled: true
+          interval: "30s"
         dashboards:
           enabled: false
       export:
@@ -215,6 +216,29 @@ spec:
                   - IP
                   - verdict
                 fileMaxSizeMb: 40
+                fileMaxBackups: 3
+                fileCompress: false
+              - name: dns
+                filePath: /var/run/cilium/hubble/dns.log
+                includeFilters:
+                  - protocol: ["dns"]
+                    reply: [true]
+                excludeFilters:
+                  - dns_query: ['\.cluster\.local\.$']
+                fieldMask:
+                  - time
+                  - node_name
+                  - verdict
+                  - source.namespace
+                  - source.pod_name
+                  - destination.namespace
+                  - destination.pod_name
+                  - l7.dns.query
+                  - l7.dns.qtypes
+                  - l7.dns.rcode
+                  - l7.dns.ips
+                  - l7.dns.cnames
+                fileMaxSizeMb: 10
                 fileMaxBackups: 3
                 fileCompress: false
               - name: denied

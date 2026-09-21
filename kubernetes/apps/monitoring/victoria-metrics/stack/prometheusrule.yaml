@@ -44,3 +44,19 @@ spec:
             summary: Container {{ $labels.container }} in pod {{ $labels.namespace }}/{{ $labels.pod }} has been OOMKilled {{ $value }} times in the last 10 minutes.
           labels:
             severity: critical
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: hubble
+spec:
+  groups:
+    - name: hubble
+      rules:
+        - alert: HubbleMetricsCardinality
+          expr: scrape_response_size_bytes{job="hubble-metrics"} > 20 * 1024 * 1024
+          for: 30m
+          annotations:
+            summary: Hubble metrics on {{ $labels.node }} are {{ $value | humanize1024 }}B per scrape. This may lead to vmagent dropping the target.
+          labels:
+            severity: warning

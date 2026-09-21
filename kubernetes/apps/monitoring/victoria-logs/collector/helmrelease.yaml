@@ -22,9 +22,11 @@ spec:
         extraFields: '{"app":"hubble","kind":"traffic"}'
       - glob: /var/run/cilium/hubble/denied.log
         extraFields: '{"app":"hubble","kind":"denied"}'
+      - glob: /var/run/cilium/hubble/dns.log
+        extraFields: '{"app":"hubble","kind":"dns"}'
 
     extraArgs:
-      fileCollector.msgField: "flow.drop_reason_desc,flow.verdict,agent_event.type"
+      fileCollector.msgField: "flow.l7.dns.query,flow.drop_reason_desc,flow.verdict,agent_event.type"
 
     extraVolumes:
       - name: hubble-export
