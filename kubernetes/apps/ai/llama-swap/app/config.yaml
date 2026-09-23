@@ -65,13 +65,32 @@ models:
     useModelName: muse-glimmer-30b
     concurrencyLimit: 4
 
+  qwen-image-2.1:
+    capabilities:
+      in: [text, image]
+      out: [image]
+    checkEndpoint: /v1/models
+    cmd: |
+      /usr/local/bin/sd-server \
+      --listen-port ${PORT} \
+      --diffusion-model /models/Qwen-Image-2.1/Qwen-Image-2.1-Q8_0.gguf \
+      --llm /models/Qwen-Image-2.1/Qwen-Image-2.1-encoder-Q8_0.gguf \
+      --llm_vision /models/Qwen-Image-2.1/Qwen-Image-2.1-mmproj-F16.gguf \
+      --vae /models/Qwen-Image-2.1/Qwen-Image-2.1-vae-BF16.safetensors \
+      --cfg-scale 6.0 \
+      --sampling-method euler \
+      --diffusion-fa \
+      --offload-to-cpu \
+      --max-vram -1
+
 matrix:
   vars:
     q3827b: qwen3.8-27b
     muse30b: muse-glimmer-30b
+    qwenimg: qwen-image-2.1
 
   sets:
-    default: 'q3827b | muse30b'
+    default: 'q3827b | muse30b | qwenimg'
 
 apiKeys:
   - ${env.LS_API_KEY}
