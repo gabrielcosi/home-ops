@@ -44,7 +44,7 @@ spec:
       APP: forgejo
       APP_NAMESPACE: tools
       ANUBIS_TARGET: http://forgejo-http.tools.svc.cluster.local:3000
-      KOPIUR_CAPACITY: "1Gi"
+      KOPIUR_CAPACITY: "10Gi"
       KOPIUR_STORAGECLASS: ceph-filesystem
       KOPIUR_ACCESSMODES: ReadWriteMany
       KOPIUR_PUID: "1000"

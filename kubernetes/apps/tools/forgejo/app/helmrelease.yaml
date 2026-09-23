@@ -38,10 +38,6 @@ spec:
       enabled: true
       create: false
       claimName: forgejo
-      size: 1Gi
-      accessModes:
-        - ReadWriteMany
-      storageClass: ceph-filesystem
 
     httpRoute:
       enabled: false
