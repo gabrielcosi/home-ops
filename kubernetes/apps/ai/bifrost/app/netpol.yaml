@@ -7,7 +7,7 @@ metadata:
     app.kubernetes.io/instance: bifrost
     app.kubernetes.io/name: bifrost
 spec:
-  description: Restrict bifrost egress to the in-cluster providers, shared-pg, kube-apiserver, and opencode.ai, and ingress to gossip, the inference paths, health, metrics, and replies from the egress peers.
+  description: Restrict bifrost egress to the in-cluster providers, shared-pg, kube-apiserver, and opencode.ai, and ingress to gossip, the inference and quota paths, health, metrics, and replies from the egress peers.
   endpointSelector:
     matchLabels:
       app.kubernetes.io/instance: bifrost
@@ -66,6 +66,7 @@ spec:
             http:
               - path: "^/(v1|openai|anthropic)(/.*)?$"
               - path: "^/(health|metrics)/?$"
+              - path: "^/api/governance/virtual-keys/quota$"
   egress:
     - toEndpoints:
         - matchLabels:
