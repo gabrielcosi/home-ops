@@ -23,6 +23,12 @@
     "supports_reasoning": true,
     "supports_vision": true
   },
+  "llama-swap/qwen-image-2.1": {
+    "provider": "llama-swap",
+    "base_model": "qwen-image-2.1",
+    "mode": "image_generation",
+    "supports_vision": true
+  },
   "text-embeddings/sentence-transformers/all-MiniLM-L6-v2": {
     "provider": "text-embeddings",
     "base_model": "sentence-transformers/all-MiniLM-L6-v2",

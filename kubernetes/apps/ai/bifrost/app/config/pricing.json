@@ -17,6 +17,12 @@
     "cache_creation_input_token_cost": 0.00000010,
     "cache_read_input_token_cost": 0.000000025
   },
+  "llama-swap/qwen-image-2.1": {
+    "provider": "llama-swap",
+    "base_model": "qwen-image-2.1",
+    "mode": "image_generation",
+    "output_cost_per_image": 0.005
+  },
   "text-embeddings/sentence-transformers/all-MiniLM-L6-v2": {
     "provider": "text-embeddings",
     "base_model": "sentence-transformers/all-MiniLM-L6-v2",

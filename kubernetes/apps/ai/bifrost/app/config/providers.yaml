@@ -31,6 +31,8 @@ bifrost:
           transcription_stream: true
           speech: true
           speech_stream: true
+          image_generation: true
+          image_edit: true
       concurrency_and_buffer_size:
         concurrency: 100
         buffer_size: 500
