@@ -20,6 +20,7 @@ spec:
         - path: { type: PathPrefix, value: /openai }
         - path: { type: PathPrefix, value: /anthropic }
         - path: { type: Exact, value: /health }
+        - path: { type: Exact, value: /api/governance/virtual-keys/quota }
       backendRefs:
         - name: bifrost
           port: 8080
