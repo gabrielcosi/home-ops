@@ -73,8 +73,8 @@ models:
     cmd: |
       /usr/local/bin/sd-server \
       --listen-port ${PORT} \
-      --diffusion-model /models/Qwen-Image-2.1/Qwen-Image-2.1-Q8_0.gguf \
-      --llm /models/Qwen-Image-2.1/Qwen-Image-2.1-encoder-Q8_0.gguf \
+      --diffusion-model /models/Qwen-Image-2.1/Qwen-Image-2.1-NVFP4.gguf \
+      --llm /models/Qwen-Image-2.1/Qwen-Image-2.1-encoder-NVFP4.gguf \
       --llm_vision /models/Qwen-Image-2.1/Qwen-Image-2.1-mmproj-F16.gguf \
       --vae /models/Qwen-Image-2.1/Qwen-Image-2.1-vae-BF16.safetensors \
       --cfg-scale 6.0 \
