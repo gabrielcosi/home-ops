@@ -34,7 +34,7 @@ spec:
     plugin:
       image:
         repository: registry.xcd.dev/x/registry.erwanleboucher.dev/eleboucher/runner-k8s-plugin
-        tag: "13.2.0"
+        tag: "13.2.1"
 
     podLabels:
       app.kubernetes.io/component: forgejo-runner
