@@ -204,10 +204,10 @@
   --color-expand-button: #1a1a1a;
   --color-input-background: #0a0a0a;
   --color-input-toggle-background: #1a1a1a;
-  --color-input-border: #2e2e2e;
-  --color-input-border-hover: #454545;
+  --color-input-border: #3a3a3a;
+  --color-input-border-hover: #545454;
   --color-light: #00000028;
-  --color-light-border: #ffffff1e;
+  --color-light-border: #ffffff26;
   --color-hover: #1a1a1a;
   --color-active: #232323;
   --color-shadow: #00000080;
@@ -236,8 +236,16 @@
   --color-label-hover-bg: #232323;
   --color-label-active-bg: #2e2e2e;
   --color-label-bg-alt: #232323;
-  --color-timeline: #232323;
+  --color-timeline: #2b2b2b;
   --color-project-board-bg: #0a0a0a;
+
+  /* every box border resolves through these, and a hairline has to survive true black */
+  --color-secondary: #2b2b2b;
+  --color-secondary-light-1: #333333;
+  --color-secondary-light-2: #2b2b2b;
+  --color-secondary-light-3: #232323;
+  --color-secondary-light-4: #1a1a1a;
+  --fancy-card-border: #2b2b2b;
 }
 
 body {
@@ -246,16 +254,13 @@ body {
 }
 
 /* structure, not decoration: one hairline between regions */
-#navbar {
-  border-bottom: 1px solid #1f1f1f;
-}
-
+#navbar,
 .secondary-nav {
-  border-bottom: 1px solid #1f1f1f;
+  border-bottom: 1px solid #2b2b2b;
 }
 
 .page-footer {
-  border-top: 1px solid #1f1f1f;
+  border-top: 1px solid #2b2b2b;
 }
 
 .ui.segment,
@@ -263,8 +268,17 @@ body {
 .ui.attached.header,
 .ui.card,
 .ui.menu,
+.ui.table,
+.ui.table td,
+.ui.table th,
 .repository .ui.attached.table {
-  border-color: #1f1f1f !important;
+  border-color: #2b2b2b !important;
+}
+
+.divider,
+.ui.divider,
+.divider.divider-text {
+  border-color: #2b2b2b !important;
 }
 
 /* identifiers stay in mono and keep their full value available */
