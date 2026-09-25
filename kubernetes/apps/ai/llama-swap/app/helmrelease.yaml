@@ -8,6 +8,7 @@ spec:
     kind: OCIRepository
     name: llama-swap
   interval: 1h
+  timeout: 15m
   values:
     controllers:
       llama-swap:
