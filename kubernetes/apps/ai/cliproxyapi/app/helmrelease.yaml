@@ -28,7 +28,7 @@ spec:
             nameOverride: cliproxyapi
             image:
               repository: docker.io/eceasy/cli-proxy-api
-              tag: v7.3.8
+              tag: v7.3.17
             env:
               TZ: Europe/Berlin
             probes:
