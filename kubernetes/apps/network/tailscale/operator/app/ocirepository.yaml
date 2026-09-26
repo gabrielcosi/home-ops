@@ -10,4 +10,4 @@ spec:
     operation: copy
   ref:
     tag: 1.102.4
-  url: oci://ocharted.xcd.dev/pkgs.tailscale.com/helmcharts/tailscale-operator
+  url: oci://registry.xcd.dev/x/pkgs.tailscale.com/helmcharts/tailscale-operator
