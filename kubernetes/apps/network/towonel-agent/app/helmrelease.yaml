@@ -20,8 +20,10 @@ spec:
       services:
         - hostname: "*.xcd.dev"
           origin: envoy-external.network.svc.cluster.local:443
+          proxy_protocol: v2
         - hostname: "gabrielcosi.dev"
           origin: envoy-external.network.svc.cluster.local:443
+          proxy_protocol: v2
       tcpServices:
         - name: forgejo-ssh
           origin: envoy-external.network.svc.cluster.local:22
