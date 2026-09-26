@@ -12,7 +12,7 @@ Write the review to `/tmp/review.md` with the Write tool, starting with EXACTLY 
 
 ## Skip private-registry bumps
 
-Images under `reg.xcd.dev/private/` build from private sources you cannot reach. When every image in the PR is under that path, the whole file is EXACTLY this — write it and stop, no header, no sections, no research, no `gh`, no crawl4ai, no speculating about the digest, no reasoning from the Renovate config or prior bumps, and the unverifiable rule below does not apply:
+Images under `registry.xcd.dev/gabrielcosi/` build from private sources you cannot reach. When every image in the PR is under that path, the whole file is EXACTLY this — write it and stop, no header, no sections, no research, no `gh`, no crawl4ai, no speculating about the digest, no reasoning from the Renovate config or prior bumps, and the unverifiable rule below does not apply:
 
     <!-- verdict: approve -->
     **Verdict**: Safe to merge

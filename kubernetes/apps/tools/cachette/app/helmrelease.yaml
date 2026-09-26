@@ -23,7 +23,7 @@ spec:
           main:
             env:
               CACHETTE_EXTERNAL_URL: https://registry.xcd.dev
-              CACHETTE_UPSTREAM_ANONYMOUS_PULL: 'true'
+              CACHETTE_UPSTREAM_TRUSTED_NETWORKS: 10.42.0.0/16,192.168.0.0/16
               CACHETTE_PASSWORD_AUTH: admins
               CACHETTE_OIDC_ENABLED: 'true'
               CACHETTE_OIDC_NAME: Authentik
@@ -49,7 +49,7 @@ spec:
         hostnames:
           - 'registry.xcd.dev'
         parentRefs:
-          - name: envoy-internal
+          - name: envoy-external
             namespace: network
         rules:
           - backendRefs:

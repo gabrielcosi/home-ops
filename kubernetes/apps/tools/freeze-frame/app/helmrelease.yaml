@@ -26,7 +26,7 @@ spec:
         containers:
           app:
             image:
-              repository: reg.xcd.dev/private/freeze-frame
+              repository: registry.xcd.dev/gabrielcosi/freeze-frame
               tag: latest@sha256:09214a652bc8185c7d0e5a163d16e55d96ae20b606f9e50f05a1e1e234d8192c
             resources:
               requests:

@@ -29,7 +29,7 @@ spec:
         containers:
           app:
             image:
-              repository: reg.xcd.dev/private/warden
+              repository: registry.xcd.dev/gabrielcosi/warden
               tag: 0.1.11
             args:
               - --config

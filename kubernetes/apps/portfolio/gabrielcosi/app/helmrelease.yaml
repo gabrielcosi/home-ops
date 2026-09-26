@@ -35,7 +35,7 @@ spec:
         containers:
           app:
             image:
-              repository: reg.xcd.dev/private/gabrielcosi.dev
+              repository: registry.xcd.dev/gabrielcosi/gabrielcosi.dev
               tag: latest@sha256:53ae73fb9966c673ec3e6cf2bb711601b60f743614cdddde2b5be5f6c0e0d93b
             envFrom:
               - secretRef:

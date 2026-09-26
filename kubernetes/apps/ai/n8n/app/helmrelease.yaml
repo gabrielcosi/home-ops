@@ -14,8 +14,6 @@ spec:
         annotations:
           reloader.stakater.com/auto: 'true'
         pod:
-          imagePullSecrets:
-            - name: registry-credentials
           securityContext:
             runAsUser: 1000
             runAsGroup: 1000
