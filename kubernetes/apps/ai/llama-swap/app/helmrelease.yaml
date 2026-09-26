@@ -87,7 +87,56 @@ spec:
                 memory: 4Gi
               limits:
                 memory: 24Gi
-
+          exporter:
+            image:
+              repository: ghcr.io/gabrielcosi/llama-swap-exporter
+              tag: v0.1.0@sha256:bc108babd2342ac625a455f479436a22d61415eec100a5c367ae3aba66abb14c
+            args:
+              - -upstream
+              - http://127.0.0.1:8080
+              - -web.listen-address
+              - :9293
+              - -scrape.direct
+            env:
+              LLAMA_SWAP_EXPORTER_API_KEY:
+                valueFrom:
+                  secretKeyRef:
+                    name: llama-swap-secrets
+                    key: LS_API_KEY
+            probes:
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /
+                    port: 9293
+                  initialDelaySeconds: 5
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+                  failureThreshold: 3
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /
+                    port: 9293
+                  initialDelaySeconds: 3
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+                  failureThreshold: 3
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities:
+                drop: ['ALL']
+            resources:
+              requests:
+                cpu: 10m
+                memory: 32Mi
+              limits:
+                memory: 128Mi
 
     service:
       app:
