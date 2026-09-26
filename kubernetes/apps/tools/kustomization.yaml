@@ -12,7 +12,6 @@ resources:
   - ./cyberchef/ks.yaml
   - ./forgejo/ks.yaml
   - ./freeze-frame/ks.yaml
-  - ./harbor/ks.yaml
   - ./it-tools/ks.yaml
   - ./konflate/ks.yaml
   - ./miniflux/ks.yaml
