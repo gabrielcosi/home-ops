@@ -19,9 +19,9 @@ spec:
 
         - alert: LlamaSwapDecodeSlow
           expr: |-
-            increase(llamacpp:tokens_predicted_total[15m])
-              / clamp_min(increase(llamacpp:tokens_predicted_seconds_total[15m]), 1) < 12
-              and increase(llamacpp:tokens_predicted_total[15m]) > 1000
+            increase_pure(llamacpp:tokens_predicted_total[15m])
+              / clamp_min(increase_pure(llamacpp:tokens_predicted_seconds_total[15m]), 1) < 12
+              and increase_pure(llamacpp:tokens_predicted_total[15m]) > 1000
           for: 15m
           annotations:
             summary: >-
@@ -31,9 +31,9 @@ spec:
 
         - alert: LlamaSwapPrefillSlow
           expr: |-
-            increase(llamacpp:prompt_tokens_total[15m])
-              / clamp_min(increase(llamacpp:prompt_seconds_total[15m]), 1) < 150
-              and increase(llamacpp:prompt_tokens_total[15m]) > 20000
+            increase_pure(llamacpp:prompt_tokens_total[15m])
+              / clamp_min(increase_pure(llamacpp:prompt_seconds_total[15m]), 1) < 150
+              and increase_pure(llamacpp:prompt_tokens_total[15m]) > 20000
           for: 15m
           annotations:
             summary: >-
@@ -43,9 +43,9 @@ spec:
 
         - alert: LlamaSwapSpecDecodeDegraded
           expr: |-
-            increase(llamacpp:spec_decode_num_accepted_tokens_total{model="qwen3.8-27b"}[1h])
-              / clamp_min(increase(llamacpp:spec_decode_num_draft_tokens_total{model="qwen3.8-27b"}[1h]), 1) < 0.45
-              and increase(llamacpp:spec_decode_num_draft_tokens_total{model="qwen3.8-27b"}[1h]) > 2000
+            increase_pure(llamacpp:spec_decode_num_accepted_tokens_total{model="qwen3.8-27b"}[1h])
+              / clamp_min(increase_pure(llamacpp:spec_decode_num_draft_tokens_total{model="qwen3.8-27b"}[1h]), 1) < 0.45
+              and increase_pure(llamacpp:spec_decode_num_draft_tokens_total{model="qwen3.8-27b"}[1h]) > 2000
           for: 30m
           annotations:
             summary: >-

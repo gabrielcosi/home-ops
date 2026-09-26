@@ -78,7 +78,7 @@ spec:
           "targets": [
             {
               "refId": "A",
-              "expr": "sum(increase(llamacpp:tokens_predicted_total{model=~\"$model\"}[$__range])) / clamp_min(sum(increase(llamacpp:tokens_predicted_seconds_total{model=~\"$model\"}[$__range])), 1)",
+              "expr": "sum(increase_pure(llamacpp:tokens_predicted_total{model=~\"$model\"}[$__range])) / clamp_min(sum(increase_pure(llamacpp:tokens_predicted_seconds_total{model=~\"$model\"}[$__range])), 1)",
               "instant": true,
               "legendFormat": "tok/s"
             }
@@ -141,7 +141,7 @@ spec:
           "targets": [
             {
               "refId": "A",
-              "expr": "sum(increase(llamacpp:prompt_tokens_total{model=~\"$model\"}[$__range])) / clamp_min(sum(increase(llamacpp:prompt_seconds_total{model=~\"$model\"}[$__range])), 1)",
+              "expr": "sum(increase_pure(llamacpp:prompt_tokens_total{model=~\"$model\"}[$__range])) / clamp_min(sum(increase_pure(llamacpp:prompt_seconds_total{model=~\"$model\"}[$__range])), 1)",
               "instant": true,
               "legendFormat": "tok/s"
             }
@@ -205,7 +205,7 @@ spec:
           "targets": [
             {
               "refId": "A",
-              "expr": "sum(increase(llamacpp:spec_decode_num_accepted_tokens_total{model=~\"$model\"}[$__range])) / clamp_min(sum(increase(llamacpp:spec_decode_num_draft_tokens_total{model=~\"$model\"}[$__range])), 1)",
+              "expr": "sum(increase_pure(llamacpp:spec_decode_num_accepted_tokens_total{model=~\"$model\"}[$__range])) / clamp_min(sum(increase_pure(llamacpp:spec_decode_num_draft_tokens_total{model=~\"$model\"}[$__range])), 1)",
               "instant": true,
               "legendFormat": "accepted"
             }
@@ -254,7 +254,7 @@ spec:
           "targets": [
             {
               "refId": "A",
-              "expr": "sum(increase(llamacpp:tokens_predicted_total{model=~\"$model\"}[$__range]))",
+              "expr": "sum(increase_pure(llamacpp:tokens_predicted_total{model=~\"$model\"}[$__range]))",
               "instant": true,
               "legendFormat": "tokens"
             }
@@ -302,7 +302,7 @@ spec:
           "targets": [
             {
               "refId": "A",
-              "expr": "sum(increase(llamacpp:prompt_tokens_cached_total{model=~\"$model\"}[$__range])) / clamp_min(sum(increase(llamacpp:prompt_tokens_cached_total{model=~\"$model\"}[$__range])) + sum(increase(llamacpp:prompt_tokens_total{model=~\"$model\"}[$__range])), 1)",
+              "expr": "sum(increase_pure(llamacpp:prompt_tokens_cached_total{model=~\"$model\"}[$__range])) / clamp_min(sum(increase_pure(llamacpp:prompt_tokens_cached_total{model=~\"$model\"}[$__range])) + sum(increase_pure(llamacpp:prompt_tokens_total{model=~\"$model\"}[$__range])), 1)",
               "instant": true,
               "legendFormat": "cached"
             }
@@ -364,7 +364,7 @@ spec:
           "targets": [
             {
               "refId": "A",
-              "expr": "increase(llamacpp:tokens_predicted_total{model=~\"$model\"}[$__interval]) / clamp_min(increase(llamacpp:tokens_predicted_seconds_total{model=~\"$model\"}[$__interval]), 0.001)",
+              "expr": "increase_pure(llamacpp:tokens_predicted_total{model=~\"$model\"}[$__interval]) / clamp_min(increase_pure(llamacpp:tokens_predicted_seconds_total{model=~\"$model\"}[$__interval]), 0.001)",
               "legendFormat": "{{model}}"
             }
           ],
@@ -419,7 +419,7 @@ spec:
           "targets": [
             {
               "refId": "A",
-              "expr": "increase(llamacpp:prompt_tokens_total{model=~\"$model\"}[$__interval]) / clamp_min(increase(llamacpp:prompt_seconds_total{model=~\"$model\"}[$__interval]), 0.001)",
+              "expr": "increase_pure(llamacpp:prompt_tokens_total{model=~\"$model\"}[$__interval]) / clamp_min(increase_pure(llamacpp:prompt_seconds_total{model=~\"$model\"}[$__interval]), 0.001)",
               "legendFormat": "{{model}}"
             }
           ],
