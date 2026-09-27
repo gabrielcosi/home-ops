@@ -49,7 +49,9 @@ models:
       --repeat-penalty 1.0 \
       --spec-type draft-mtp \
       --spec-draft-n-max 5 \
-      --spec-draft-p-min 0.0
+      --spec-draft-p-min 0.0 \
+      --cache-dir /models/.prompt-cache/qwen3.8-27b \
+      --cache-disk 16384
     useModelName: qwen3.8-27b
     concurrencyLimit: 2
 
@@ -59,9 +61,11 @@ models:
       out: [text]
       tools: true
       context: 131072
+    env:
+      - GGML_CUDA_MMVQ_MAX_NVFP4=1
     cmd: |
-      ${llama-server} \
-      --model /models/Muse-Glimmer-30B/Muse-Glimmer-30B-UD-Q4_K_XL.gguf \
+      ${llama-server-custom} \
+      --model /models/Muse-Glimmer-30B/Muse-Glimmer-30B-NVFP4-Q8_0.gguf \
       --mmproj /models/Muse-Glimmer-30B/Muse-Glimmer-30B-mmproj-kquant.gguf \
       --ctx-size 262144 \
       --parallel 2 \
@@ -74,7 +78,9 @@ models:
       --repeat-penalty 1.0 \
       --spec-type draft-dflash \
       --spec-draft-model /models/Muse-Glimmer-30B/Muse-Glimmer-30B-dflash2-Q4_K_M.gguf \
-      --spec-draft-n-max 5
+      --spec-draft-n-max 8 \
+      --cache-dir /models/.prompt-cache/muse-glimmer-30b \
+      --cache-disk 8192
     useModelName: muse-glimmer-30b
     concurrencyLimit: 4
 
