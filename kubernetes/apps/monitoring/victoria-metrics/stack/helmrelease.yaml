@@ -127,6 +127,8 @@ spec:
               - alertname !~ "AlertStorm|Watchdog"
       spec:
         replicaCount: 2
+        extraArgs:
+          cluster.reconnect-timeout: 5m
         secrets:
           - alertmanager-secret
         image:
