@@ -13,6 +13,7 @@ resources:
   - ./generic-device-plugin/ks.yaml
   - ./intel-gpu-resource-driver/ks.yaml
   - ./kata-containers/ks.yaml
+  - ./lact/ks.yaml
   - ./metrics-server/ks.yaml
   - ./multus/ks.yaml
   - ./nvidia-dra-driver/ks.yaml

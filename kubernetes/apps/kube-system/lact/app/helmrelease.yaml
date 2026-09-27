@@ -1,0 +1,82 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: lact
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: lact
+  interval: 1h
+  values:
+    controllers:
+      lact:
+        type: daemonset
+        annotations:
+          reloader.stakater.com/auto: 'true'
+        pod:
+          runtimeClassName: nvidia
+          terminationGracePeriodSeconds: 30
+          affinity:
+            nodeAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+                nodeSelectorTerms:
+                  - matchExpressions:
+                      - key: extensions.talos.dev/nvidia-open-gpu-kernel-modules-production
+                        operator: Exists
+        initContainers:
+          config:
+            image: &image
+              repository: ghcr.io/ilya-zlobintsev/lact
+              tag: v0.10.1@sha256:17914ebfff537b9600ffcc5a4a0059b334d6a1629ec3ac750508f6e22a6cef87
+            command:
+              - cp
+              - /config/config.yaml
+              - /etc/lact/config.yaml
+        containers:
+          app:
+            image: *image
+            command:
+              - lact
+              - daemon
+            env:
+              NVIDIA_VISIBLE_DEVICES: all
+              NVIDIA_DRIVER_CAPABILITIES: utility
+            probes:
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  exec:
+                    command:
+                      - lact
+                      - cli
+                      - list-gpus
+                  initialDelaySeconds: 30
+                  periodSeconds: 60
+                  timeoutSeconds: 10
+                  failureThreshold: 3
+            securityContext:
+              privileged: true
+              runAsUser: 0
+            resources:
+              requests:
+                cpu: 10m
+                memory: 32Mi
+              limits:
+                memory: 128Mi
+
+    persistence:
+      config:
+        type: configMap
+        name: lact-configmap
+        advancedMounts:
+          lact:
+            config:
+              - path: /config
+                readOnly: true
+
+      state:
+        type: emptyDir
+        globalMounts:
+          - path: /etc/lact

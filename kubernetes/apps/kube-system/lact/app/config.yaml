@@ -1,0 +1,23 @@
+version: 7
+daemon:
+  log_level: info
+  admin_group: sudo
+  disable_clocks_cleanup: false
+apply_settings_timer: 5
+gpus:
+  10DE:2C33-10DE:2053-0000:01:00.0:
+    fan_control_enabled: true
+    fan_control_settings:
+      mode: curve
+      static_speed: 1.0
+      temperature_key: edge
+      interval_ms: 1000
+      curve:
+        55: 0.3
+        60: 0.6
+        65: 0.8
+        70: 1.0
+      spindown_delay_ms: 5000
+      change_threshold: 2
+current_profile: null
+auto_switch_profiles: false
