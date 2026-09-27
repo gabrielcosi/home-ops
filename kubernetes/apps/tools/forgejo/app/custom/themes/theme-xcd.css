@@ -338,6 +338,28 @@ form input[type="checkbox"]:checked::after {
   background: var(--color-primary-contrast);
 }
 
+/* a shadow cannot separate black from black, so the dialog carries its own edge */
+.ui.modal {
+  background: #0a0a0a;
+  border: 1px solid #2b2b2b;
+  border-radius: 12px;
+}
+
+.ui.modal > .header,
+.ui.modal > .content,
+.ui.modal form > .content,
+.ui.modal > .actions,
+.ui.modal .content + .actions,
+.ui.modal .content + form > .actions {
+  background: transparent;
+}
+
+.ui.modal > .actions,
+.ui.modal .content + .actions,
+.ui.modal .content + form > .actions {
+  border-top: 1px solid #2b2b2b;
+}
+
 /* no accent hue to shift to on hover, so rows answer with a surface and links with a rule */
 #issue-list .flex-item:hover {
   background: #111111;
