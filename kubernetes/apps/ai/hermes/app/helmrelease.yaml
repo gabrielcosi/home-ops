@@ -24,9 +24,9 @@ spec:
               type: RuntimeDefault
         initContainers:
           seed-tools:
-            image:
-              repository: ghcr.io/gabrielcosi/hermes-agent
-              tag: v2026.9.24@sha256:dcbd6e4ca56e8434f2f505c0c21e66d4cfd696534c3343147e2430532087fd4f
+            image: &image
+              repository: ghcr.io/gabrielcosi/containers/hermes-agent
+              tag: v2026.9.24@sha256:7150a2333197d27a61ea7f95383f52c909e81ddfadbb315b723e2933370e3141
             command:
               - sh
               - -c
@@ -100,9 +100,7 @@ spec:
                   - ALL
         containers:
           gateway:
-            image:
-              repository: ghcr.io/gabrielcosi/hermes-agent
-              tag: v2026.9.24@sha256:dcbd6e4ca56e8434f2f505c0c21e66d4cfd696534c3343147e2430532087fd4f
+            image: *image
             args:
               - gateway
               - run
