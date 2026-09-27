@@ -12,6 +12,16 @@ macros:
     --n-gpu-layers 99
     --fit off
     --reasoning-preserve
+  llama-server-custom: >-
+    /opt/llama/llama-server
+    --host 0.0.0.0
+    --port ${PORT}
+    --metrics
+    --jinja
+    --flash-attn on
+    --n-gpu-layers 99
+    --fit off
+    --reasoning-preserve
 
 models:
   qwen3.8-27b:
@@ -19,12 +29,15 @@ models:
       in: [text]
       out: [text]
       tools: true
-      context: 131072
+      context: 172032
+    env:
+      - GGML_CUDA_MMVQ_MAX_NVFP4=1
     cmd: |
-      ${llama-server} \
+      ${llama-server-custom} \
       --model /models/Swift-Qwen3.8-27B/Swift-Qwen3.8-27B-NVFP4.gguf \
-      --ctx-size 131072 \
-      --parallel 1 \
+      --ctx-size 172032 \
+      --parallel 2 \
+      --kv-unified \
       --chat-template-kwargs '{"reasoning_effort":"medium"}' \
       --cache-type-k q8_0 \
       --cache-type-v q8_0 \
@@ -35,7 +48,7 @@ models:
       --presence-penalty 0.0 \
       --repeat-penalty 1.0 \
       --spec-type draft-mtp \
-      --spec-draft-n-max 2 \
+      --spec-draft-n-max 5 \
       --spec-draft-p-min 0.0
     useModelName: qwen3.8-27b
     concurrencyLimit: 2

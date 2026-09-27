@@ -29,6 +29,21 @@ spec:
             seccompProfile:
               type: RuntimeDefault
 
+        initContainers:
+          llama-server:
+            image:
+              repository: ghcr.io/gabrielcosi/containers/llama-server
+              tag: b11206@sha256:bd1dcb2d63bb44a6287a12f079bc59903a757a4e697adcd40efdbe5162dac029
+            command:
+              - cp
+              - /llama-server
+              - /opt/llama/llama-server
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities:
+                drop: ['ALL']
+
         containers:
           app:
             nameOverride: llama-swap
@@ -181,3 +196,12 @@ spec:
         type: emptyDir
         globalMounts:
           - path: /tmp
+      llama:
+        type: emptyDir
+        advancedMounts:
+          llama-swap:
+            llama-server:
+              - path: /opt/llama
+            app:
+              - path: /opt/llama
+                readOnly: true
