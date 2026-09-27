@@ -42,10 +42,14 @@ if ! diff -q <(jq -r 'keys[]' "${MODELS}") <(jq -r 'keys[]' "${PRICING}") >/dev/
   fail "key sets differ: $(diff <(jq -r 'keys[]' "${MODELS}") <(jq -r 'keys[]' "${PRICING}") | tr '\n' ' ')"
 fi
 
-# Embedding models bill no output tokens, so only their input cost must be set.
+# Embedding models bill no output tokens, so only their input cost must be set;
+# image models bill per image instead of per token.
 bad_price="$(jq -r 'to_entries[]
-  | select((.value.input_cost_per_token // 0) <= 0
-        or (.value.mode != "embedding" and (.value.output_cost_per_token // 0) <= 0))
+  | select(if .value.mode == "image_generation"
+           then (.value.output_cost_per_image // 0) <= 0
+           else (.value.input_cost_per_token // 0) <= 0
+             or (.value.mode != "embedding" and (.value.output_cost_per_token // 0) <= 0)
+           end)
   | .key' "${PRICING}")"
 [ -z "${bad_price}" ] || fail "not a positive price: $(echo "${bad_price}" | tr '\n' ' ')"
 
