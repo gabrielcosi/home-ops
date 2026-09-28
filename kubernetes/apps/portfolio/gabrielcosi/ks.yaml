@@ -6,6 +6,7 @@ metadata:
 spec:
   components:
     - ../../../../components/anubis
+    - ../../../../components/dragonfly
   dependsOn:
     - name: dragonfly-operator
       namespace: dragonfly-system

@@ -8,7 +8,6 @@ resources:
   - ./cnpg.yaml
   - ./objectstore.yaml
   - ./pooler.yaml
-  - ./dragonfly.yaml
   - ./externalsecret.yaml
   - ./backup.yaml
 configMapGenerator:

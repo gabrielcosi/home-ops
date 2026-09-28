@@ -8,6 +8,7 @@ spec:
     - ../../../../components/kopiur/restore
     - ../../../../components/kopiur/backup
     - ../../../../components/anubis
+    - ../../../../components/dragonfly
   dependsOn:
     - name: cloudnative-pg
       namespace: cnpg-system
@@ -44,6 +45,7 @@ spec:
       APP: forgejo
       APP_NAMESPACE: tools
       ANUBIS_TARGET: http://forgejo-http.tools.svc.cluster.local:3000
+      DRAGONFLY_PASSWORD_KEY: dragonfly_auth
       KOPIUR_CAPACITY: "10Gi"
       KOPIUR_STORAGECLASS: ceph-filesystem
       KOPIUR_ACCESSMODES: ReadWriteMany

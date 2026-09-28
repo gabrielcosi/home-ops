@@ -2,9 +2,20 @@
 apiVersion: dragonflydb.io/v1alpha1
 kind: Dragonfly
 metadata:
-  name: gabrielcosi-dragonfly
+  name: ${APP}-dragonfly
 spec:
+  image: ghcr.io/dragonflydb/dragonfly:v1.39.0@sha256:0fa01a2b929e704c7a9300d23e7f52002ebd39e90996fb8bb63826aed92fa06f
   replicas: 2
+
+  authentication:
+    passwordFromSecret:
+      name: ${APP}-secrets
+      key: ${DRAGONFLY_PASSWORD_KEY:=DRAGONFLY_PASSWORD}
+
+  args:
+    - --maxmemory=$(MAX_MEMORY)Mi
+    - --proactor_threads=1
+    - --cluster_mode=emulated
 
   env:
     - name: MAX_MEMORY
@@ -12,16 +23,6 @@ spec:
         resourceFieldRef:
           resource: limits.memory
           divisor: 1Mi
-
-  authentication:
-    passwordFromSecret:
-      name: gabrielcosi-secrets
-      key: DRAGONFLY_PASSWORD
-
-  args:
-    - --maxmemory=$(MAX_MEMORY)Mi
-    - --proactor_threads=1
-    - --cluster_mode=emulated
 
   resources:
     requests:
@@ -36,4 +37,4 @@ spec:
       whenUnsatisfiable: DoNotSchedule
       labelSelector:
         matchLabels:
-          app: gabrielcosi-dragonfly
+          app: ${APP}-dragonfly
