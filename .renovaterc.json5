@@ -117,7 +117,7 @@
       description: "Auto-merge private registry digests",
       addLabels: ["automerge"],
       matchDatasources: ["docker"],
-      matchPackageNames: ["/^reg\\.xcd\\.dev\\//"],
+      matchPackageNames: ["/^registry\\.xcd\\.dev\\//"],
       matchUpdateTypes: ["digest"],
       automerge: true,
       automergeType: "pr",
