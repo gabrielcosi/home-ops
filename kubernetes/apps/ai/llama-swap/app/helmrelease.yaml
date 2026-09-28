@@ -16,7 +16,7 @@ spec:
           reloader.stakater.com/auto: 'true'
         strategy: Recreate
         pod:
-          terminationGracePeriodSeconds: 120
+          terminationGracePeriodSeconds: 150
           resourceClaims:
             - name: gpu
               resourceClaimTemplateName: llama-swap
@@ -33,7 +33,7 @@ spec:
           llama-server:
             image:
               repository: ghcr.io/gabrielcosi/containers/llama-server
-              tag: b11206@sha256:9c1ecf771e6d5fe129f84f4cd9e6d07321ffa32ce26f651e32e9ce8eaa305f23
+              tag: b11206@sha256:26e941522c4290713aa99e24494089160bbabe6434f8e4fc2a0b77c5d86ef0e8
             command:
               - cp
               - /llama-server
@@ -55,6 +55,8 @@ spec:
               - /app/config.yaml
               - --listen
               - 0.0.0.0:8080
+            env:
+              GLIBC_TUNABLES: glibc.malloc.hugetlb=1
             envFrom:
               - secretRef:
                   name: llama-swap-secrets
@@ -65,7 +67,7 @@ spec:
                     - sh
                     - -c
                     - >-
-                      curl -sf -m 60 -H "Authorization: Bearer ${LS_API_KEY}"
+                      curl -sf -m 100 -H "Authorization: Bearer ${LS_API_KEY}"
                       http://127.0.0.1:8080/unload || true; sleep 15
             probes:
               liveness:
@@ -101,7 +103,7 @@ spec:
                 cpu: 100m
                 memory: 4Gi
               limits:
-                memory: 24Gi
+                memory: 64Gi
           exporter:
             image:
               repository: ghcr.io/gabrielcosi/llama-swap-exporter

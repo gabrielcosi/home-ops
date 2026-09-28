@@ -1,4 +1,5 @@
 healthCheckTimeout: 300
+unloadTimeout: 90
 globalTTL: 300
 
 macros:
@@ -69,6 +70,7 @@ models:
       --mmproj /models/Muse-Glimmer-30B/Muse-Glimmer-30B-mmproj-kquant.gguf \
       --ctx-size 262144 \
       --parallel 2 \
+      --no-cache-idle-slots \
       --chat-template-kwargs '{"reasoning_strength":"high"}' \
       --temp 1.0 \
       --top-p 0.95 \
