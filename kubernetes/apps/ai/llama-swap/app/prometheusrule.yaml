@@ -40,15 +40,3 @@ spec:
               Model {{ $labels.model }} reads prompts at {{ $value | printf "%.0f" }} tokens per second
           labels:
             severity: warning
-
-        - alert: LlamaSwapSpecDecodeDegraded
-          expr: |-
-            increase_pure(llamacpp:spec_decode_num_accepted_tokens_total{model="qwen3.8-27b"}[1h])
-              / clamp_min(increase_pure(llamacpp:spec_decode_num_draft_tokens_total{model="qwen3.8-27b"}[1h]), 1) < 0.45
-              and increase_pure(llamacpp:spec_decode_num_draft_tokens_total{model="qwen3.8-27b"}[1h]) > 2000
-          for: 30m
-          annotations:
-            summary: >-
-              Model {{ $labels.model }} accepts {{ $value | printf "%.2f" }} of its draft tokens
-          labels:
-            severity: warning
