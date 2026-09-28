@@ -12,10 +12,9 @@ resources:
   - ./prometheusrule.yaml
   - ./servicemonitor.yaml
 configMapGenerator:
-  - name: bifrost-pricing
+  - name: bifrost-datasheet
     files:
-      - pricing.json=config/pricing.json
-      - models.json=config/models.json
+      - datasheet.json=config/datasheet.json
     literals:
       - "mcp-library.json={}"
   - name: bifrost-values

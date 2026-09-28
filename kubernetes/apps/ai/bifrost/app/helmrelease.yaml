@@ -65,9 +65,9 @@ spec:
       sourceOfTruth: 'config.json'
       framework:
         pricing:
-          pricingUrl: file:///pricing/pricing.json
-          modelParametersUrl: file:///pricing/models.json
-          mcpLibraryUrl: file:///pricing/mcp-library.json
+          pricingUrl: file:///datasheet/datasheet.json
+          modelParametersUrl: file:///datasheet/datasheet.json
+          mcpLibraryUrl: file:///datasheet/mcp-library.json
       encryptionKeySecret:
         name: bifrost-secrets
         key: encryption-key
@@ -122,13 +122,13 @@ spec:
         passwordKey: password
 
     volumes:
-      - name: pricing
+      - name: datasheet
         configMap:
-          name: bifrost-pricing
+          name: bifrost-datasheet
 
     volumeMounts:
-      - name: pricing
-        mountPath: /pricing
+      - name: datasheet
+        mountPath: /datasheet
         readOnly: true
 
     envFrom:

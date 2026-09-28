@@ -14,7 +14,7 @@ jobs:
   sync:
     name: Sync opencode models
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     env:
       FORGEJO_API: http://forgejo-http.tools.svc.cluster.local:3000/api/v1
       REPO: ${{ forgejo.repository }}
@@ -43,36 +43,38 @@ jobs:
           OPENCODE_API_KEY: op://k8s/bifrost/bifrost_opencode_api_key
           BOT_TOKEN: op://k8s/bot-angel/forgejo_token
 
-      - name: Probe the catalog
+      - name: Plan
+        id: plan
         env:
           OPENCODE_API_KEY: ${{ steps.secrets.outputs.OPENCODE_API_KEY }}
-        run: ./.forgejo/scripts/probe_opencode.sh
+        run: ./.forgejo/scripts/model_sync.sh plan
 
-      - name: Sync datasheet
+      - name: Judge candidates
+        if: ${{ steps.plan.outputs.candidates != '0' }}
         env:
           ANTHROPIC_BASE_URL: https://ai.xcd.dev/anthropic
           ANTHROPIC_AUTH_TOKEN: ${{ steps.secrets.outputs.AI_AUTH_TOKEN }}
           ANTHROPIC_MODEL: opencode/deepseek-v4.1-flash
           ANTHROPIC_SMALL_FAST_MODEL: opencode/deepseek-v4.1-flash
           ANTHROPIC_CUSTOM_HEADERS: 'x-bf-eh-x-opencode-session: ${{ forgejo.repository }}-model-sync-${{ forgejo.run_id }}'
-          CLAUDE_CODE_MAX_CONTEXT_TOKENS: '1000000'
         run: |-
           set -euo pipefail
 
           curl -fsSL https://claude.ai/install.sh | bash -s "${CLAUDE_CODE_VERSION}"
           export PATH="${HOME}/.local/bin:${PATH}"
 
-          # Both files are tracked, so restore them however the run ends —
-          # otherwise their deletion reads as an out-of-scope edit.
           trap 'git checkout -- CLAUDE.md AGENTS.md' EXIT
           rm -f CLAUDE.md AGENTS.md
 
-          timeout 900 claude -p "$(cat .agents/instructions/model-sync.instructions.md)" \
+          timeout 600 claude -p "$(cat .agents/instructions/model-sync.instructions.md)" \
             --model "${ANTHROPIC_MODEL}" \
             --permission-mode default \
             --strict-mcp-config \
-            --allowedTools "Read,Glob,Grep,Edit,Write,Bash(curl:*),Bash(jq:*),Bash(python3:*),Bash(git diff:*),Bash(git status:*)" \
+            --allowedTools "Read(//tmp/model-sync-plan.json),Write(//tmp/model-sync-decisions.json)" \
             < /dev/null
+
+      - name: Apply
+        run: ./.forgejo/scripts/model_sync.sh apply
 
       - name: Validate
         run: ./.forgejo/scripts/validate_datasheet.sh
