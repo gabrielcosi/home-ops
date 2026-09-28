@@ -54,21 +54,13 @@
     "output_cost_per_token": 0.0000006,
     "cache_read_input_token_cost": 0.000000003
   },
-  "opencode/glm-5.1": {
+  "opencode/deepseek-v4-pro": {
     "provider": "opencode",
-    "base_model": "glm-5.1",
+    "base_model": "deepseek-v4-pro",
     "mode": "chat",
-    "input_cost_per_token": 0.0000014,
-    "output_cost_per_token": 0.0000044,
-    "cache_read_input_token_cost": 0.00000026
-  },
-  "opencode/kimi-k2.6": {
-    "provider": "opencode",
-    "base_model": "kimi-k2.6",
-    "mode": "chat",
-    "input_cost_per_token": 0.00000095,
-    "output_cost_per_token": 0.000004,
-    "cache_read_input_token_cost": 0.00000016
+    "input_cost_per_token": 0.00000066,
+    "output_cost_per_token": 0.00000198,
+    "cache_read_input_token_cost": 0.000000022
   },
   "opencode/kimi-k2.7-code": {
     "provider": "opencode",
@@ -89,6 +81,22 @@
   "opencode/mimo-v2.5-pro": {
     "provider": "opencode",
     "base_model": "mimo-v2.5-pro",
+    "mode": "chat",
+    "input_cost_per_token": 0.000000435,
+    "output_cost_per_token": 0.00000087,
+    "cache_read_input_token_cost": 0.000000003625
+  },
+  "opencode/mimo-v2.6-flash": {
+    "provider": "opencode",
+    "base_model": "mimo-v2.6-flash",
+    "mode": "chat",
+    "input_cost_per_token": 0.00000014,
+    "output_cost_per_token": 0.00000028,
+    "cache_read_input_token_cost": 0.0000000028
+  },
+  "opencode/mimo-v2.6-pro": {
+    "provider": "opencode",
+    "base_model": "mimo-v2.6-pro",
     "mode": "chat",
     "input_cost_per_token": 0.000000435,
     "output_cost_per_token": 0.00000087,
