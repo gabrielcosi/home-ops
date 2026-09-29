@@ -35,7 +35,7 @@ models:
       - GGML_CUDA_MMVQ_MAX_NVFP4=1
     cmd: |
       ${llama-server-custom} \
-      --model /models/Swift-Qwen3.8-27B/Swift-Qwen3.8-27B-NVFP4.gguf \
+      --model /models/Swift-1.5-Qwen3.8-27B/Swift-1.5-Qwen3.8-27B-NVFP4.gguf \
       --ctx-size 172032 \
       --parallel 2 \
       --kv-unified \
@@ -51,7 +51,7 @@ models:
       --spec-type draft-mtp \
       --spec-draft-n-max 5 \
       --spec-draft-p-min 0.0 \
-      --cache-dir /models/.prompt-cache/qwen3.8-27b \
+      --cache-dir /models/.prompt-cache/swift-1.5-qwen3.8-27b \
       --cache-disk 16384
     useModelName: qwen3.8-27b
     concurrencyLimit: 2
