@@ -33,7 +33,7 @@ spec:
           llama-server:
             image:
               repository: ghcr.io/gabrielcosi/containers/llama-server
-              tag: b11206@sha256:26e941522c4290713aa99e24494089160bbabe6434f8e4fc2a0b77c5d86ef0e8
+              tag: b11206@sha256:b76a3492aa892faa186c6f99b9fd6ed920090d52d872b4b30a23a521de7c257b
             command:
               - cp
               - /llama-server
