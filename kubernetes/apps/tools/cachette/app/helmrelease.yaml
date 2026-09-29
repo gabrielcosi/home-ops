@@ -30,7 +30,7 @@ spec:
               CACHETTE_OIDC_NAME: Authentik
               CACHETTE_OIDC_ISSUER: https://auth.xcd.dev/application/o/cachette/
               CACHETTE_OIDC_PROVISION: 'true'
-              CACHETTE_ADMIN_GROUPS: Cachette Admins
+              CACHETTE_OIDC_ADMIN_GROUPS: Cachette Admins
             envFrom:
               - secretRef:
                   name: cachette-secret
