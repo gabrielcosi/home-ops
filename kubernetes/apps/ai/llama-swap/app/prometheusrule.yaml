@@ -17,6 +17,15 @@ spec:
           labels:
             severity: critical
 
+        - alert: LlamaSwapRequestsFailing
+          expr: |-
+            sum by (model) (increase(bifrost_error_requests_total{provider="llama-swap", status_code=~"5..|unknown"}[15m])) > 0
+          annotations:
+            summary: >-
+              Model {{ $labels.model }} is failing requests with server errors
+          labels:
+            severity: warning
+
         - alert: LlamaSwapDecodeSlow
           expr: |-
             increase_pure(llamacpp:tokens_predicted_total[15m])

@@ -19,7 +19,7 @@ spec:
 
         - alert: BifrostUpstreamProviderErrors
           expr: |-
-            sum by (provider, model) (increase(bifrost_error_requests_total{status_code=~"5.."}[15m])) >= 3
+            sum by (provider, model) (increase(bifrost_error_requests_total{provider!="llama-swap", status_code=~"5.."}[15m])) >= 3
           for: 5m
           annotations:
             summary: >-
