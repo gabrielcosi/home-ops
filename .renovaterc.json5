@@ -15,7 +15,7 @@
       description: "Process trailing-comment annotated dependencies",
       managerFilePatterns: ["/\\.ya?ml$/", "/\\.ya?ml\\.j2$/"],
       matchStrings: [
-        "(?<currentValue>[\\w+\\.\\-]*)['\",;]*\\s*#\\s?renovate: (?<datasource>docker|helm|npm|github-releases|github-tags)=(?<depName>\\S+)\\s?(registry=(?<registryUrl>\\S+))?\\s?(versioning=(?<versioning>\\S+))?",
+        "(?<currentValue>[\\w+\\.\\-]*)(@(?<currentDigest>sha256:[a-f0-9]+))?['\",;]*\\s*#\\s?renovate: (?<datasource>docker|helm|npm|github-releases|github-tags)=(?<depName>\\S+)\\s?(registry=(?<registryUrl>\\S+))?\\s?(versioning=(?<versioning>\\S+))?",
       ],
     },
   ],
@@ -84,9 +84,9 @@
       ignoreTests: false,
     },
     {
-      description: "Auto-merge llama-swap patch updates",
+      description: "Auto-merge llama-swap and llama-server patch updates",
       addLabels: ["automerge"],
-      matchPackageNames: ["ghcr.io/mostlygeek/llama-swap"],
+      matchPackageNames: ["ghcr.io/mostlygeek/llama-swap", "ghcr.io/gabrielcosi/containers/llama-server"],
       matchUpdateTypes: ["patch"],
       automerge: true,
       automergeType: "pr",
