@@ -46,6 +46,12 @@ spec:
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: ai
             k8s:app.kubernetes.io/instance: cliproxyapi
+    - fromCIDR:
+        - 10.43.0.0/16
+      icmps:
+        - fields:
+            - type: DestinationUnreachable
+              family: IPv4
     - fromEndpoints:
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: network
