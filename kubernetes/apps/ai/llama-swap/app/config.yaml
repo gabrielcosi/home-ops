@@ -91,6 +91,7 @@ models:
     cmd: |
       ${llama-server-custom} \
       --model /models/Clef-Flash/Clef-Flash-NVFP4-FFN.gguf \
+      --alias clef-flash \
       --ctx-size 8192 \
       --batch-size 8192 \
       --ubatch-size 8192 \
