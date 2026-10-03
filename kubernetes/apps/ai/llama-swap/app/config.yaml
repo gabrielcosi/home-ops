@@ -49,6 +49,7 @@ models:
       --presence-penalty 0.0 \
       --repeat-penalty 1.0 \
       --spec-type draft-mtp \
+      --spec-draft-sampling probabilistic \
       --spec-draft-n-max 5 \
       --spec-draft-p-min 0.0 \
       --cache-dir /models/.prompt-cache/swift-1.5-qwen3.8-27b \
@@ -86,6 +87,16 @@ models:
     useModelName: muse-glimmer-30b
     concurrencyLimit: 4
 
+  clef-flash:
+    cmd: |
+      ${llama-server-custom} \
+      --model /models/Clef-Flash/Clef-Flash-NVFP4-FFN.gguf \
+      --ctx-size 8192 \
+      --batch-size 8192 \
+      --ubatch-size 8192 \
+      --parallel 1
+    useModelName: clef-flash
+
   qwen-image-2.1:
     capabilities:
       in: [text, image]
@@ -104,14 +115,19 @@ models:
       --offload-to-cpu \
       --max-vram -1
 
-matrix:
-  vars:
-    q3827b: qwen3.8-27b
-    muse30b: muse-glimmer-30b
-    qwenimg: qwen-image-2.1
+routing:
+  router:
+    use: matrix
+    settings:
+      matrix:
+        vars:
+          q3827b: qwen3.8-27b
+          muse30b: muse-glimmer-30b
+          qwenimg: qwen-image-2.1
+          clef: clef-flash
 
-  sets:
-    default: 'q3827b | muse30b | qwenimg'
+        sets:
+          default: 'q3827b | muse30b | qwenimg | clef'
 
 apiKeys:
   - ${env.LS_API_KEY}
