@@ -70,7 +70,7 @@ spec:
               protocol: TCP
           rules:
             http:
-              - path: "^/(v1|openai|anthropic)(/.*)?$"
+              - path: "^/(v1|openai|anthropic|typesafe)(/.*)?$"
               - path: "^/(health|metrics)/?$"
               - path: "^/api/governance/virtual-keys/quota$"
   egress:

@@ -19,6 +19,7 @@ spec:
         - path: { type: PathPrefix, value: /v1 }
         - path: { type: PathPrefix, value: /openai }
         - path: { type: PathPrefix, value: /anthropic }
+        - path: { type: PathPrefix, value: /typesafe }
         - path: { type: Exact, value: /health }
         - path: { type: Exact, value: /api/governance/virtual-keys/quota }
       backendRefs:
