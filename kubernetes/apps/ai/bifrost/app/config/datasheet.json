@@ -654,5 +654,23 @@
     "output_cost_per_token": 0.000050,
     "cache_creation_input_token_cost": 0.0000125,
     "cache_read_input_token_cost": 0.000001
+  },
+  "typesafe/clef-flash": {
+    "provider": "typesafe",
+    "base_model": "clef-flash",
+    "mode": "decisions",
+    "max_input_tokens": 8192,
+    "architecture": {
+      "input_modalities": [
+        "text"
+      ],
+      "output_modalities": [
+        "text"
+      ]
+    },
+    "supports_function_calling": false,
+    "supports_tool_choice": false,
+    "input_cost_per_token": 3.0E-8,
+    "output_cost_per_token": 0
   }
 }

@@ -161,6 +161,12 @@ bifrost:
               - '*'
             key_ids:
               - '*'
+          - provider: typesafe
+            weight: 1
+            allowed_models:
+              - clef-flash
+            key_ids:
+              - '*'
     modelConfigs:
       - id: mc-opencode-go
         model_name: '*'

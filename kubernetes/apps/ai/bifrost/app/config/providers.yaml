@@ -137,3 +137,18 @@ bifrost:
           responses: true
           responses_stream: true
           websocket_responses: true
+
+    typesafe:
+      keys:
+        - name: llama-swap-key
+          value: env.LLAMA_SWAP_API_KEY
+          models:
+            - clef-flash
+          weight: 1
+      network_config:
+        base_url: http://llama-swap.ai.svc.cluster.local:8080
+        allow_private_network: true
+        default_request_timeout_in_seconds: 600
+        max_retries: 3
+        retry_backoff_initial_ms: 250
+        retry_backoff_max_ms: 5000
