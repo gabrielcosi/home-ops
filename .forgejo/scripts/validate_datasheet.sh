@@ -19,6 +19,14 @@ FIELDS="
 
 fail() { echo "Refusing: $*" >&2; exit 1; }
 
+# The writer re-serialises every number through jq, so pin that canonical form
+# to keep a no-op sync from opening a formatting-only pull request.
+canonical="$(mktemp)"
+trap 'rm -f "${canonical}"' EXIT
+jq 'walk(if type == "number" then . * 1 else . end)' "${DATASHEET}" > "${canonical}"
+cmp -s "${canonical}" "${DATASHEET}" || fail \
+  "datasheet.json number formatting is not canonical; normalise it with: jq 'walk(if type == \"number\" then . * 1 else . end)' ${DATASHEET}"
+
 changed="$(git status --porcelain --untracked-files=all \
   | awk '{ if ($0 ~ / -> /) sub(/.* -> /, ""); else sub(/^.../, ""); print }')"
 

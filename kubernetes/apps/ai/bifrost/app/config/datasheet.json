@@ -16,10 +16,10 @@
     "supports_function_calling": true,
     "supports_tool_choice": true,
     "supports_reasoning": true,
-    "input_cost_per_token": 2.5E-7,
-    "output_cost_per_token": 0.00000150,
-    "cache_creation_input_token_cost": 2.5E-7,
-    "cache_read_input_token_cost": 6.25E-8
+    "input_cost_per_token": 2.5e-07,
+    "output_cost_per_token": 1.5e-06,
+    "cache_creation_input_token_cost": 2.5e-07,
+    "cache_read_input_token_cost": 6.25e-08
   },
   "llama-swap/muse-glimmer-30b": {
     "provider": "llama-swap",
@@ -39,10 +39,10 @@
     "supports_function_calling": true,
     "supports_tool_choice": true,
     "supports_reasoning": true,
-    "input_cost_per_token": 1.0E-7,
-    "output_cost_per_token": 6.0E-7,
-    "cache_creation_input_token_cost": 1.0E-7,
-    "cache_read_input_token_cost": 2.5E-8
+    "input_cost_per_token": 1e-07,
+    "output_cost_per_token": 6e-07,
+    "cache_creation_input_token_cost": 1e-07,
+    "cache_read_input_token_cost": 2.5e-08
   },
   "llama-swap/qwen-image-2.1": {
     "provider": "llama-swap",
@@ -75,7 +75,7 @@
     "supports_function_calling": false,
     "supports_tool_choice": false,
     "supports_reasoning": false,
-    "input_cost_per_token": 5E-9,
+    "input_cost_per_token": 5e-09,
     "output_cost_per_token": 0
   },
   "opencode/deepseek-v4.1-flash": {
@@ -96,9 +96,9 @@
     "supports_function_calling": true,
     "supports_tool_choice": true,
     "supports_reasoning": true,
-    "input_cost_per_token": 1.5E-7,
-    "output_cost_per_token": 6E-7,
-    "cache_read_input_token_cost": 3E-9
+    "input_cost_per_token": 1.5e-07,
+    "output_cost_per_token": 6e-07,
+    "cache_read_input_token_cost": 3e-09
   },
   "opencode/deepseek-v4-pro": {
     "provider": "opencode",
@@ -117,9 +117,9 @@
     "supports_function_calling": true,
     "supports_tool_choice": true,
     "supports_reasoning": true,
-    "input_cost_per_token": 6.6E-7,
-    "output_cost_per_token": 0.00000198,
-    "cache_read_input_token_cost": 2.2E-8
+    "input_cost_per_token": 6.6e-07,
+    "output_cost_per_token": 1.98e-06,
+    "cache_read_input_token_cost": 2.2e-08
   },
   "opencode/glm-5.2": {
     "provider": "opencode",
@@ -138,9 +138,9 @@
     "supports_function_calling": true,
     "supports_tool_choice": true,
     "supports_reasoning": true,
-    "input_cost_per_token": 0.0000014,
-    "output_cost_per_token": 0.0000044,
-    "cache_read_input_token_cost": 2.6E-7
+    "input_cost_per_token": 1.4e-06,
+    "output_cost_per_token": 4.4e-06,
+    "cache_read_input_token_cost": 2.6e-07
   },
   "opencode/kimi-k2.7-code": {
     "provider": "opencode",
@@ -160,9 +160,9 @@
     "supports_function_calling": true,
     "supports_tool_choice": true,
     "supports_reasoning": true,
-    "input_cost_per_token": 9.5E-7,
-    "output_cost_per_token": 0.000004,
-    "cache_read_input_token_cost": 1.9E-7
+    "input_cost_per_token": 9.5e-07,
+    "output_cost_per_token": 4e-06,
+    "cache_read_input_token_cost": 1.9e-07
   },
   "opencode/mimo-v2.5": {
     "provider": "opencode",
@@ -182,9 +182,9 @@
     "supports_function_calling": true,
     "supports_tool_choice": true,
     "supports_reasoning": true,
-    "input_cost_per_token": 1.4E-7,
-    "output_cost_per_token": 2.8E-7,
-    "cache_read_input_token_cost": 2.8E-9
+    "input_cost_per_token": 1.4e-07,
+    "output_cost_per_token": 2.8e-07,
+    "cache_read_input_token_cost": 2.8e-09
   },
   "opencode/mimo-v2.5-pro": {
     "provider": "opencode",
@@ -203,9 +203,9 @@
     "supports_function_calling": true,
     "supports_tool_choice": true,
     "supports_reasoning": true,
-    "input_cost_per_token": 4.35E-7,
-    "output_cost_per_token": 8.7E-7,
-    "cache_read_input_token_cost": 3.625E-9
+    "input_cost_per_token": 4.35e-07,
+    "output_cost_per_token": 8.7e-07,
+    "cache_read_input_token_cost": 3.625e-09
   },
   "opencode/mimo-v2.6-flash": {
     "provider": "opencode",
@@ -225,9 +225,9 @@
     "supports_function_calling": true,
     "supports_tool_choice": true,
     "supports_reasoning": true,
-    "input_cost_per_token": 1.4E-7,
-    "output_cost_per_token": 2.8E-7,
-    "cache_read_input_token_cost": 2.8E-9
+    "input_cost_per_token": 1.4e-07,
+    "output_cost_per_token": 2.8e-07,
+    "cache_read_input_token_cost": 2.8e-09
   },
   "opencode/mimo-v2.6-pro": {
     "provider": "opencode",
@@ -247,9 +247,9 @@
     "supports_function_calling": true,
     "supports_tool_choice": true,
     "supports_reasoning": true,
-    "input_cost_per_token": 4.35E-7,
-    "output_cost_per_token": 8.7E-7,
-    "cache_read_input_token_cost": 3.625E-9
+    "input_cost_per_token": 4.35e-07,
+    "output_cost_per_token": 8.7e-07,
+    "cache_read_input_token_cost": 3.625e-09
   },
   "opencode-anthropic/minimax-m2.7": {
     "provider": "opencode-anthropic",
@@ -268,10 +268,10 @@
     "supports_function_calling": true,
     "supports_tool_choice": true,
     "supports_reasoning": true,
-    "input_cost_per_token": 3E-7,
-    "output_cost_per_token": 0.0000012,
-    "cache_read_input_token_cost": 6E-8,
-    "cache_creation_input_token_cost": 3.75E-7
+    "input_cost_per_token": 3e-07,
+    "output_cost_per_token": 1.2e-06,
+    "cache_read_input_token_cost": 6e-08,
+    "cache_creation_input_token_cost": 3.75e-07
   },
   "opencode-anthropic/minimax-m3": {
     "provider": "opencode-anthropic",
@@ -291,9 +291,9 @@
     "supports_function_calling": true,
     "supports_tool_choice": true,
     "supports_reasoning": true,
-    "input_cost_per_token": 3E-7,
-    "output_cost_per_token": 0.0000012,
-    "cache_read_input_token_cost": 6E-8
+    "input_cost_per_token": 3e-07,
+    "output_cost_per_token": 1.2e-06,
+    "cache_read_input_token_cost": 6e-08
   },
   "opencode/qwen3.7-plus": {
     "provider": "opencode",
@@ -313,10 +313,10 @@
     "supports_function_calling": true,
     "supports_tool_choice": true,
     "supports_reasoning": true,
-    "input_cost_per_token": 4E-7,
-    "output_cost_per_token": 0.0000016,
-    "cache_read_input_token_cost": 4E-8,
-    "cache_creation_input_token_cost": 5E-7
+    "input_cost_per_token": 4e-07,
+    "output_cost_per_token": 1.6e-06,
+    "cache_read_input_token_cost": 4e-08,
+    "cache_creation_input_token_cost": 5e-07
   },
   "opencode/kimi-k3": {
     "provider": "opencode",
@@ -336,9 +336,9 @@
     "supports_function_calling": true,
     "supports_tool_choice": true,
     "supports_reasoning": true,
-    "input_cost_per_token": 0.000003,
-    "output_cost_per_token": 0.000015,
-    "cache_read_input_token_cost": 3E-7
+    "input_cost_per_token": 3e-06,
+    "output_cost_per_token": 1.5e-05,
+    "cache_read_input_token_cost": 3e-07
   },
   "opencode/hy3": {
     "provider": "opencode",
@@ -357,9 +357,9 @@
     "supports_function_calling": true,
     "supports_tool_choice": true,
     "supports_reasoning": true,
-    "input_cost_per_token": 1.4E-7,
-    "output_cost_per_token": 5.8E-7,
-    "cache_read_input_token_cost": 3.5E-8
+    "input_cost_per_token": 1.4e-07,
+    "output_cost_per_token": 5.8e-07,
+    "cache_read_input_token_cost": 3.5e-08
   },
   "opencode/qwen3.8-max": {
     "provider": "opencode",
@@ -379,10 +379,10 @@
     "supports_function_calling": true,
     "supports_tool_choice": true,
     "supports_reasoning": true,
-    "input_cost_per_token": 0.000002,
-    "output_cost_per_token": 0.000006,
-    "cache_read_input_token_cost": 2.5E-7,
-    "cache_creation_input_token_cost": 0.0000025
+    "input_cost_per_token": 2e-06,
+    "output_cost_per_token": 6e-06,
+    "cache_read_input_token_cost": 2.5e-07,
+    "cache_creation_input_token_cost": 2.5e-06
   },
   "opencode/glm-5.3": {
     "provider": "opencode",
@@ -401,9 +401,9 @@
     "supports_function_calling": true,
     "supports_tool_choice": true,
     "supports_reasoning": true,
-    "input_cost_per_token": 0.0000014,
-    "output_cost_per_token": 0.0000044,
-    "cache_read_input_token_cost": 2.6E-7
+    "input_cost_per_token": 1.4e-06,
+    "output_cost_per_token": 4.4e-06,
+    "cache_read_input_token_cost": 2.6e-07
   },
   "opencode/glm-5.3-flash": {
     "provider": "opencode",
@@ -423,9 +423,9 @@
     "supports_function_calling": true,
     "supports_tool_choice": true,
     "supports_reasoning": true,
-    "input_cost_per_token": 1.5E-7,
-    "output_cost_per_token": 5E-7,
-    "cache_read_input_token_cost": 3E-8
+    "input_cost_per_token": 1.5e-07,
+    "output_cost_per_token": 5e-07,
+    "cache_read_input_token_cost": 3e-08
   },
   "opencode/longcat-2.0": {
     "provider": "opencode",
@@ -444,9 +444,9 @@
     "supports_function_calling": true,
     "supports_tool_choice": true,
     "supports_reasoning": true,
-    "input_cost_per_token": 3E-7,
-    "output_cost_per_token": 0.0000012,
-    "cache_read_input_token_cost": 6E-9
+    "input_cost_per_token": 3e-07,
+    "output_cost_per_token": 1.2e-06,
+    "cache_read_input_token_cost": 6e-09
   },
   "opencode-anthropic/qwen3.8-flash": {
     "provider": "opencode-anthropic",
@@ -466,10 +466,10 @@
     "supports_function_calling": true,
     "supports_tool_choice": true,
     "supports_reasoning": true,
-    "input_cost_per_token": 1.5E-7,
-    "output_cost_per_token": 4.7E-7,
-    "cache_read_input_token_cost": 1.6E-8,
-    "cache_creation_input_token_cost": 2E-7
+    "input_cost_per_token": 1.5e-07,
+    "output_cost_per_token": 4.7e-07,
+    "cache_read_input_token_cost": 1.6e-08,
+    "cache_creation_input_token_cost": 2e-07
   },
   "proxyapi/claude-fable-5": {
     "provider": "proxyapi",
@@ -489,10 +489,10 @@
     "supports_function_calling": true,
     "supports_tool_choice": true,
     "supports_reasoning": true,
-    "input_cost_per_token": 0.000010,
-    "output_cost_per_token": 0.000050,
-    "cache_creation_input_token_cost": 0.0000125,
-    "cache_read_input_token_cost": 0.000001
+    "input_cost_per_token": 1e-05,
+    "output_cost_per_token": 5e-05,
+    "cache_creation_input_token_cost": 1.25e-05,
+    "cache_read_input_token_cost": 1e-06
   },
   "proxyapi/claude-fable-5-1": {
     "provider": "proxyapi",
@@ -512,10 +512,10 @@
     "supports_function_calling": true,
     "supports_tool_choice": true,
     "supports_reasoning": true,
-    "input_cost_per_token": 0.000010,
-    "output_cost_per_token": 0.000050,
-    "cache_creation_input_token_cost": 0.0000125,
-    "cache_read_input_token_cost": 2.5E-7
+    "input_cost_per_token": 1e-05,
+    "output_cost_per_token": 5e-05,
+    "cache_creation_input_token_cost": 1.25e-05,
+    "cache_read_input_token_cost": 2.5e-07
   },
   "proxyapi/claude-opus-5": {
     "provider": "proxyapi",
@@ -535,10 +535,10 @@
     "supports_function_calling": true,
     "supports_tool_choice": true,
     "supports_reasoning": true,
-    "input_cost_per_token": 0.000005,
-    "output_cost_per_token": 0.000025,
-    "cache_creation_input_token_cost": 0.00000625,
-    "cache_read_input_token_cost": 5E-7
+    "input_cost_per_token": 5e-06,
+    "output_cost_per_token": 2.5e-05,
+    "cache_creation_input_token_cost": 6.25e-06,
+    "cache_read_input_token_cost": 5e-07
   },
   "proxyapi/claude-sonnet-5": {
     "provider": "proxyapi",
@@ -558,10 +558,10 @@
     "supports_function_calling": true,
     "supports_tool_choice": true,
     "supports_reasoning": true,
-    "input_cost_per_token": 0.000002,
-    "output_cost_per_token": 0.000010,
-    "cache_creation_input_token_cost": 0.0000025,
-    "cache_read_input_token_cost": 2E-7
+    "input_cost_per_token": 2e-06,
+    "output_cost_per_token": 1e-05,
+    "cache_creation_input_token_cost": 2.5e-06,
+    "cache_read_input_token_cost": 2e-07
   },
   "proxyapi/gpt-5.6-terra": {
     "provider": "proxyapi",
@@ -581,10 +581,10 @@
     "supports_function_calling": true,
     "supports_tool_choice": true,
     "supports_reasoning": true,
-    "input_cost_per_token": 0.000002,
-    "output_cost_per_token": 0.000012,
-    "cache_creation_input_token_cost": 0.0000025,
-    "cache_read_input_token_cost": 2E-7
+    "input_cost_per_token": 2e-06,
+    "output_cost_per_token": 1.2e-05,
+    "cache_creation_input_token_cost": 2.5e-06,
+    "cache_read_input_token_cost": 2e-07
   },
   "proxyapi/gpt-5.6-luna": {
     "provider": "proxyapi",
@@ -604,10 +604,10 @@
     "supports_function_calling": true,
     "supports_tool_choice": true,
     "supports_reasoning": true,
-    "input_cost_per_token": 2E-7,
-    "output_cost_per_token": 0.0000012,
-    "cache_creation_input_token_cost": 2.5E-7,
-    "cache_read_input_token_cost": 2E-8
+    "input_cost_per_token": 2e-07,
+    "output_cost_per_token": 1.2e-06,
+    "cache_creation_input_token_cost": 2.5e-07,
+    "cache_read_input_token_cost": 2e-08
   },
   "proxyapi/gpt-5.6-sol": {
     "provider": "proxyapi",
@@ -627,10 +627,10 @@
     "supports_function_calling": true,
     "supports_tool_choice": true,
     "supports_reasoning": true,
-    "input_cost_per_token": 0.000004,
-    "output_cost_per_token": 0.000020,
-    "cache_creation_input_token_cost": 0.000005,
-    "cache_read_input_token_cost": 4E-7
+    "input_cost_per_token": 4e-06,
+    "output_cost_per_token": 2e-05,
+    "cache_creation_input_token_cost": 5e-06,
+    "cache_read_input_token_cost": 4e-07
   },
   "proxyapi/gpt-6-astra": {
     "provider": "proxyapi",
@@ -650,10 +650,10 @@
     "supports_function_calling": true,
     "supports_tool_choice": true,
     "supports_reasoning": true,
-    "input_cost_per_token": 0.000010,
-    "output_cost_per_token": 0.000050,
-    "cache_creation_input_token_cost": 0.0000125,
-    "cache_read_input_token_cost": 0.000001
+    "input_cost_per_token": 1e-05,
+    "output_cost_per_token": 5e-05,
+    "cache_creation_input_token_cost": 1.25e-05,
+    "cache_read_input_token_cost": 1e-06
   },
   "typesafe/clef-flash": {
     "provider": "typesafe",
@@ -670,7 +670,7 @@
     },
     "supports_function_calling": false,
     "supports_tool_choice": false,
-    "input_cost_per_token": 3.0E-8,
+    "input_cost_per_token": 3e-08,
     "output_cost_per_token": 0
   }
 }

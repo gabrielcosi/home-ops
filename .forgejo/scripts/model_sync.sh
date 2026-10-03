@@ -149,13 +149,14 @@ def rest: with_entries(select(.key != "provider" and (.key | test("cost") | not)
               if ($a | rest) != ($b | rest) then "updated" else empty end] | join(", ")),
             cell($a | name($id); $b | name($id)), cell($a | limits; $b | limits), cell($a | price; $b | price)]
       end] as $rows
-| ([$plan.skipped[] | "`\(.id)` \(.reason)"]
-   + [$plan.candidates[] | select($decisions[.id] != "add") | "`\(.id)` \($decisions[.id] // "no verdict")"]) as $skipped
+| ([$plan.skipped[] | [.id, .reason]]
+   + [$plan.candidates[] | select($decisions[.id] != "add") | [.id, $decisions[.id] // "no verdict"]]) as $skipped
 | [$plan.carried[] | .needs_you // empty] as $needs
 | [if $rows == [] then empty else
      "| | Model | Context / output | $/M in / out / cache read / cache write |", "|---|---|---|---|",
      ($rows[] | "| \(join(" | ")) |"), "" end,
-   if $skipped == [] then empty else "Skipped: \($skipped | join(" · "))" end,
+   if $skipped == [] then empty else
+     "| Skipped | Reason |", "|---|---|", ($skipped[] | "| `\(.[0])` | \(.[1]) |"), "" end,
    ($needs[] | "**Needs you:** \(.)")]
 | join("\n")
 JQ
