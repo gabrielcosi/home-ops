@@ -124,7 +124,7 @@ bifrost:
           - provider: proxyapi
             weight: 1
             allowed_models:
-              - claude-sonnet-5
+              - claude-sonnet-5-5
             key_ids:
               - '*'
           - provider: opencode
