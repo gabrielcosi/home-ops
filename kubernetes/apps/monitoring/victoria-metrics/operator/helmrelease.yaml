@@ -35,4 +35,4 @@ spec:
         memory: 256Mi
 
     serviceMonitor:
-      enabled: false
+      enabled: true
