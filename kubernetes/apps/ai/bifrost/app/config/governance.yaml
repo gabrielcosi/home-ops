@@ -167,6 +167,12 @@ bifrost:
               - clef-flash
             key_ids:
               - '*'
+          - provider: proxyapi
+            weight: 1
+            allowed_models:
+              - '*'
+            key_ids:
+              - '*'
     modelConfigs:
       - id: mc-opencode-go
         model_name: '*'
