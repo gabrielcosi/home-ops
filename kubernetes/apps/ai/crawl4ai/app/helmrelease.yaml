@@ -71,6 +71,14 @@ spec:
           http:
             port: 11235
 
+    route:
+      app:
+        hostnames:
+          - crawl.xcd.dev
+        parentRefs:
+          - name: envoy-internal
+            namespace: network
+
     persistence:
       dshm:
         type: emptyDir
