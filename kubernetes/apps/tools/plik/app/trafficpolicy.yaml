@@ -9,10 +9,10 @@ spec:
       kind: HTTPRoute
       name: plik
   # Route-level policy replaces (does not merge with) the global one, so the
-  # retry, keepalive and timeouts are restated. compression: [] disables global
+  # retry, keepalive and timeouts are restated. compressor: [] disables global
   # compression, which breaks Range — i.e. no resumable large downloads. A
   # mergeType cannot replace it: the empty list is dropped before merging.
-  compression: []
+  compressor: []
   retry:
     numRetries: 2
     retryOn:

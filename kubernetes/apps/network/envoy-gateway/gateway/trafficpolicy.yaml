@@ -5,10 +5,13 @@ metadata:
   name: envoy
   namespace: network
 spec:
-  compression:
+  compressor:
     - type: Brotli
+      brotli: {}
     - type: Gzip
+      gzip: {}
     - type: Zstd
+      zstd: {}
   retry:
     numRetries: 2
     retryOn:
