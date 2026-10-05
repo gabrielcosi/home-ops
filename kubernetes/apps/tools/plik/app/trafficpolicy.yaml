@@ -9,12 +9,20 @@ spec:
       kind: HTTPRoute
       name: plik
   # Route-level policy replaces (does not merge with) the global one, so the
-  # timeout/buffer are restated. compression: [] disables global compression,
-  # which breaks Range — i.e. no resumable large downloads.
+  # retry, keepalive and timeouts are restated. compression: [] disables global
+  # compression, which breaks Range — i.e. no resumable large downloads. A
+  # mergeType cannot replace it: the empty list is dropped before merging.
   compression: []
-  connection:
-    bufferLimit: 8Mi
-  tcpKeepalive: {}
+  retry:
+    numRetries: 2
+    retryOn:
+      triggers:
+        - reset-before-request
+  tcpKeepalive:
+    idleTime: 60s
+    interval: 10s
+    probes: 3
   timeout:
     http:
+      connectionIdleTimeout: 4s
       requestTimeout: 0s
