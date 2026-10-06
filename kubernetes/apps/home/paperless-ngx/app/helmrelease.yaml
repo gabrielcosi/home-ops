@@ -50,7 +50,7 @@ spec:
 
             image:
               repository: ghcr.io/paperless-ngx/paperless-ngx
-              tag: 3.2.1
+              tag: 3.3.0
               pullPolicy: IfNotPresent
             securityContext:
               allowPrivilegeEscalation: false
