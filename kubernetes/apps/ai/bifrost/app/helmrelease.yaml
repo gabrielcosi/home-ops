@@ -82,6 +82,8 @@ spec:
           - X-Tenant-ID
         whitelistedRoutes:
           - /api/*
+          - /metrics
+          - /ws
         compat:
           shouldDropParams: true
           shouldConvertParams: true
