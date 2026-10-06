@@ -20,7 +20,7 @@ spec:
 
     image:
       repository: ghcr.io/maximhq/bifrost
-      tag: v2.2.5
+      tag: v2.2.6
 
     deploymentAnnotations:
       reloader.stakater.com/auto: 'true'
@@ -80,6 +80,8 @@ spec:
           - X-Request-ID
           - X-Correlation-ID
           - X-Tenant-ID
+        whitelistedRoutes:
+          - /api/*
         compat:
           shouldDropParams: true
           shouldConvertParams: true
