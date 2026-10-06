@@ -1,0 +1,23 @@
+---
+apiVersion: operator.victoriametrics.com/v1beta1
+kind: VMRule
+metadata:
+  name: lact-config
+spec:
+  groups:
+    - name: lact-config
+      type: vlogs
+      interval: 1m
+      rules:
+        - alert: LactGpuNotFound
+          expr: |
+            _time:1h {kubernetes.pod_namespace="kube-system", kubernetes.pod_name=~"lact-.*"}
+            "defined in configuration"
+            | extract_regexp `GPU with id (?P<gpu_id>\S+) defined`
+            | stats by (gpu_id) count() as hits
+            | filter hits:>0
+          annotations:
+            summary: >-
+              LACT has no GPU matching {{ $labels.gpu_id }}, so that card runs without its fan curve
+          labels:
+            severity: warning

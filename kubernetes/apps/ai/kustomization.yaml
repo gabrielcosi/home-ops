@@ -10,6 +10,7 @@ resources:
   - ./bifrost/ks.yaml
   - ./cliproxyapi/ks.yaml
   - ./crawl4ai/ks.yaml
+  - ./gpu/ks.yaml
   - ./hermes/ks.yaml
   - ./llama-swap/ks.yaml
   - ./mcp

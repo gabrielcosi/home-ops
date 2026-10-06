@@ -5,7 +5,7 @@ daemon:
   disable_clocks_cleanup: false
 apply_settings_timer: 5
 gpus:
-  10DE:2C33-10DE:2053-0000:01:00.0:
+  10DE:2C33-10DE:2053-0000:02:00.0:
     fan_control_enabled: true
     fan_control_settings:
       mode: curve

@@ -1,0 +1,30 @@
+---
+apiVersion: resource.k8s.io/v1
+kind: ResourceClaim
+metadata:
+  name: pro2000
+  namespace: ai
+spec:
+  devices:
+    requests:
+      - name: gpu
+        exactly:
+          deviceClassName: gpu.nvidia.com
+          selectors:
+            - cel:
+                expression: device.attributes['gpu.nvidia.com'].productName == 'NVIDIA RTX PRO 2000 Blackwell'
+---
+apiVersion: resource.k8s.io/v1
+kind: ResourceClaim
+metadata:
+  name: pro4000
+  namespace: ai
+spec:
+  devices:
+    requests:
+      - name: gpu
+        exactly:
+          deviceClassName: gpu.nvidia.com
+          selectors:
+            - cel:
+                expression: device.attributes['gpu.nvidia.com'].productName == 'NVIDIA RTX PRO 4000 Blackwell SFF Edition'

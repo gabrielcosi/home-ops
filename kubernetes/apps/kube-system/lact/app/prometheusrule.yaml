@@ -8,35 +8,24 @@ spec:
   groups:
     - name: lact.rules
       rules:
-        - alert: LactDown
-          expr: |-
-            kube_daemonset_status_number_ready{namespace="kube-system", daemonset="lact"}
-              < kube_daemonset_status_desired_number_scheduled{namespace="kube-system", daemonset="lact"}
-          for: 15m
-          annotations:
-            summary: >-
-              LACT is not running on every GPU node, so the GPU fan curve is unmanaged
-          labels:
-            severity: warning
-
         - alert: GpuCoolingNotResponding
           expr: |-
-            max by (instance) (DCGM_FI_DEV_GPU_TEMP) > 78
-              and max by (instance) (DCGM_FI_DEV_FAN_SPEED) < 95
+            max by (instance, UUID, modelName) (DCGM_FI_DEV_GPU_TEMP) > 78
+              and max by (instance, UUID, modelName) (DCGM_FI_DEV_FAN_SPEED) < 95
           for: 10m
           annotations:
             summary: >-
-              GPU on {{ $labels.instance }} is above 78°C while its fan is below 95%
+              {{ $labels.modelName }} on {{ $labels.instance }} is above 78°C while its fan is below 95%
           labels:
             severity: warning
 
         - alert: GpuFanStuckHigh
           expr: |-
-            max by (instance) (DCGM_FI_DEV_FAN_SPEED) > 80
-              and max by (instance) (DCGM_FI_DEV_GPU_TEMP) < 55
+            max by (instance, UUID, modelName) (DCGM_FI_DEV_FAN_SPEED) > 80
+              and max by (instance, UUID, modelName) (DCGM_FI_DEV_GPU_TEMP) < 55
           for: 30m
           annotations:
             summary: >-
-              GPU fan on {{ $labels.instance }} is above 80% while the GPU is idle
+              {{ $labels.modelName }} fan on {{ $labels.instance }} is above 80% while the GPU is idle
           labels:
             severity: warning

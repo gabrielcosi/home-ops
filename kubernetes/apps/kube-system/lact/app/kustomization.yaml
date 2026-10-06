@@ -5,6 +5,7 @@ resources:
   - ./ocirepository.yaml
   - ./helmrelease.yaml
   - ./prometheusrule.yaml
+  - ./vmrule.yaml
 configMapGenerator:
   - name: lact-configmap
     files:
