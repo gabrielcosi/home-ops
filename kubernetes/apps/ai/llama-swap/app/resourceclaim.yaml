@@ -4,6 +4,8 @@ kind: ResourceClaimTemplate
 metadata:
   name: llama-swap
   namespace: ai
+  annotations:
+    kustomize.toolkit.fluxcd.io/force: enabled
 spec:
   spec:
     devices:
@@ -11,3 +13,6 @@ spec:
         - name: gpu
           exactly:
             deviceClassName: gpu.nvidia.com
+            selectors:
+              - cel:
+                  expression: device.capacity['gpu.nvidia.com'].memory.compareTo(quantity('20Gi')) >= 0
