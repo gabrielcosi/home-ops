@@ -17,5 +17,4 @@ resources:
   - ./memini/ks.yaml
   - ./n8n/ks.yaml
   - ./open-webui/ks.yaml
-  - ./text-embeddings/ks.yaml
   - ./toolhive/ks.yaml

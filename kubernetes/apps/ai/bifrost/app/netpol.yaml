@@ -42,9 +42,6 @@ spec:
             k8s:app.kubernetes.io/instance: llama-swap
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: ai
-            k8s:app.kubernetes.io/instance: text-embeddings
-        - matchLabels:
-            k8s:io.kubernetes.pod.namespace: ai
             k8s:app.kubernetes.io/instance: cliproxyapi
     - fromCIDR:
         - 10.43.0.0/16
@@ -78,9 +75,6 @@ spec:
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: ai
             k8s:app.kubernetes.io/instance: llama-swap
-        - matchLabels:
-            k8s:io.kubernetes.pod.namespace: ai
-            k8s:app.kubernetes.io/instance: text-embeddings
       toPorts:
         - ports:
             - port: "8080"

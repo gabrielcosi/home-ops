@@ -97,23 +97,6 @@ bifrost:
           responses: true
           responses_stream: true
 
-    text-embeddings:
-      keys:
-        - name: text-embeddings-key
-          value: env.TEXT_EMBEDDINGS_API_KEY
-          models:
-            - '*'
-          weight: 1
-      network_config:
-        base_url: http://text-embeddings.ai.svc.cluster.local:8080
-        allow_private_network: true
-        default_request_timeout_in_seconds: 60
-        max_retries: 3
-      custom_provider_config:
-        base_provider_type: openai
-        allowed_requests:
-          embedding: true
-
     proxyapi:
       keys:
         - name: cliproxyapi-key

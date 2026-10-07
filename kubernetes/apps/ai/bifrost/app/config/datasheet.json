@@ -74,25 +74,6 @@
     },
     "input_cost_per_token": 1e-08
   },
-  "text-embeddings/sentence-transformers/all-MiniLM-L6-v2": {
-    "provider": "text-embeddings",
-    "base_model": "sentence-transformers/all-MiniLM-L6-v2",
-    "mode": "embedding",
-    "max_input_tokens": 256,
-    "architecture": {
-      "input_modalities": [
-        "text"
-      ],
-      "output_modalities": [
-        "embeddings"
-      ]
-    },
-    "supports_function_calling": false,
-    "supports_tool_choice": false,
-    "supports_reasoning": false,
-    "input_cost_per_token": 5e-09,
-    "output_cost_per_token": 0
-  },
   "opencode/deepseek-v4.1-flash": {
     "provider": "opencode",
     "base_model": "deepseek-v4.1-flash",
