@@ -578,7 +578,8 @@
     "max_input_tokens": 8192,
     "architecture": {
       "input_modalities": [
-        "text"
+        "text",
+        "image"
       ],
       "output_modalities": [
         "text"

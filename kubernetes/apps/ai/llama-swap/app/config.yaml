@@ -91,11 +91,15 @@ models:
     concurrencyLimit: 4
 
   clef-flash:
+    capabilities:
+      in: [text, image]
+      context: 8192
     env:
       - CUDA_VISIBLE_DEVICES=GPU-0b0e499d-1417-17ee-c551-f6a5c8b0e461
     cmd: |
       ${llama-server-custom} \
       --model /models/Clef-Flash/Clef-Flash-NVFP4-FFN.gguf \
+      --mmproj /models/Clef-Flash/Clef-Flash-mmproj-Q8_0.gguf \
       --alias clef-flash \
       --ctx-size 8192 \
       --batch-size 8192 \
