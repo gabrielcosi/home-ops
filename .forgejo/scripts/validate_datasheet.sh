@@ -65,7 +65,7 @@ bad_field="$(jq -r --arg fields "${FIELDS}" '
 bad_row="$(jq -r 'to_entries[]
   | select(.value.provider != (.key | split("/")[0])
       or .value.base_model != (.key | sub("^[^/]+/"; ""))
-      or (.value.mode | IN("chat", "decisions", "embedding", "image_generation") | not)
+      or (.value.mode | IN("chat", "decisions", "embedding", "image_generation", "rerank") | not)
       or (.value.mode != "image_generation" and (.value.max_input_tokens // 0) <= 0)
       or (.value.mode == "chat" and (.value.max_output_tokens // 0) <= 0))
   | .key' "${DATASHEET}")"
@@ -77,7 +77,7 @@ bad_arch="$(jq -r 'to_entries[]
       | ($in | type) != "array"
         or ($in | index("text")) == null
         or ($in - ["text", "image"]) != []
-        or $m.architecture.output_modalities != {chat: ["text"], decisions: ["text"], embedding: ["embeddings"], image_generation: ["image"]}[$m.mode])
+        or $m.architecture.output_modalities != {chat: ["text"], decisions: ["text"], embedding: ["embeddings"], image_generation: ["image"], rerank: null}[$m.mode])
   | .key' "${DATASHEET}")"
 [ -z "${bad_arch}" ] || fail "architecture modalities wrong for the mode: $(echo "${bad_arch}" | tr '\n' ' ')"
 
@@ -85,7 +85,7 @@ bad_price="$(jq -r 'to_entries[]
   | select(if .value.mode == "image_generation"
            then (.value.output_cost_per_image // 0) <= 0
            else (.value.input_cost_per_token // 0) <= 0
-             or ((.value.mode | IN("embedding", "decisions") | not) and (.value.output_cost_per_token // 0) <= 0)
+             or ((.value.mode | IN("embedding", "decisions", "rerank") | not) and (.value.output_cost_per_token // 0) <= 0)
            end
            or ([.value | to_entries[] | select(.key | startswith("cache_")) | .value <= 0] | any))
   | .key' "${DATASHEET}")"
