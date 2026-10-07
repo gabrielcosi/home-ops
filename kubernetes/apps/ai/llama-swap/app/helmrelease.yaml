@@ -18,8 +18,10 @@ spec:
         pod:
           terminationGracePeriodSeconds: 150
           resourceClaims:
-            - name: gpu
+            - name: pro4000
               resourceClaimName: pro4000
+            - name: pro2000
+              resourceClaimName: pro2000
           securityContext:
             runAsNonRoot: true
             runAsUser: 1000
@@ -98,7 +100,8 @@ spec:
                 drop: ['ALL']
             resources:
               claims:
-                - name: gpu
+                - name: pro4000
+                - name: pro2000
               requests:
                 cpu: 100m
                 memory: 4Gi

@@ -32,6 +32,7 @@ models:
       tools: true
       context: 172032
     env:
+      - CUDA_VISIBLE_DEVICES=GPU-d06ce8cc-4d13-f746-b123-75e2dccdb389
       - GGML_CUDA_MMVQ_MAX_NVFP4=1
     cmd: |
       ${llama-server-custom} \
@@ -64,6 +65,7 @@ models:
       tools: true
       context: 131072
     env:
+      - CUDA_VISIBLE_DEVICES=GPU-d06ce8cc-4d13-f746-b123-75e2dccdb389
       - GGML_CUDA_MMVQ_MAX_NVFP4=1
     cmd: |
       ${llama-server-custom} \
@@ -88,6 +90,8 @@ models:
     concurrencyLimit: 4
 
   clef-flash:
+    env:
+      - CUDA_VISIBLE_DEVICES=GPU-0b0e499d-1417-17ee-c551-f6a5c8b0e461
     cmd: |
       ${llama-server-custom} \
       --model /models/Clef-Flash/Clef-Flash-NVFP4-FFN.gguf \
@@ -102,6 +106,8 @@ models:
     capabilities:
       in: [text, image]
       out: [image]
+    env:
+      - CUDA_VISIBLE_DEVICES=GPU-d06ce8cc-4d13-f746-b123-75e2dccdb389
     checkEndpoint: /v1/models
     cmd: |
       /usr/local/bin/sd-server \
@@ -116,6 +122,44 @@ models:
       --offload-to-cpu \
       --max-vram -1
 
+  qwen3-embedding-0.6b:
+    capabilities:
+      in: [text]
+      context: 2048
+    env:
+      - CUDA_VISIBLE_DEVICES=GPU-0b0e499d-1417-17ee-c551-f6a5c8b0e461
+    cmd: |
+      ${llama-server-custom} \
+      --model /models/Qwen3-Embedding-0.6B/Qwen3-Embedding-0.6B-Q8_0.gguf \
+      --embedding \
+      --ctx-size 8192 \
+      --batch-size 2048 \
+      --ubatch-size 2048 \
+      --parallel 4
+    useModelName: qwen3-embedding-0.6b
+    ttl: 0
+    concurrencyLimit: 4
+
+  qwen3-reranker-0.6b:
+    capabilities:
+      in: [text]
+      reranker: true
+      context: 2048
+    env:
+      - CUDA_VISIBLE_DEVICES=GPU-0b0e499d-1417-17ee-c551-f6a5c8b0e461
+    cmd: |
+      ${llama-server-custom} \
+      --model /models/Qwen3-Reranker-0.6B/Qwen3-Reranker-0.6B-Q8_0.gguf \
+      --reranking \
+      --pooling rank \
+      --ctx-size 8192 \
+      --batch-size 2048 \
+      --ubatch-size 2048 \
+      --parallel 4
+    useModelName: qwen3-reranker-0.6b
+    ttl: 0
+    concurrencyLimit: 4
+
 routing:
   router:
     use: matrix
@@ -126,9 +170,17 @@ routing:
           muse30b: muse-glimmer-30b
           qwenimg: qwen-image-2.1
           clef: clef-flash
+          emb: qwen3-embedding-0.6b
+          rerank: qwen3-reranker-0.6b
 
         sets:
-          default: 'q3827b | muse30b | qwenimg | clef'
+          default: '(q3827b | muse30b | qwenimg) & clef & emb & rerank'
+
+hooks:
+  on_startup:
+    preload:
+      - qwen3-embedding-0.6b
+      - qwen3-reranker-0.6b
 
 apiKeys:
   - ${env.LS_API_KEY}
