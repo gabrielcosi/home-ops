@@ -19,7 +19,7 @@ spec:
           terminationGracePeriodSeconds: 150
           resourceClaims:
             - name: gpu
-              resourceClaimTemplateName: llama-swap
+              resourceClaimName: pro4000
           securityContext:
             runAsNonRoot: true
             runAsUser: 1000
