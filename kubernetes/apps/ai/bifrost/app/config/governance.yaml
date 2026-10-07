@@ -115,6 +115,12 @@ bifrost:
               - '*'
             key_ids:
               - '*'
+          - provider: typesafe
+            weight: 1
+            allowed_models:
+              - clef-flash
+            key_ids:
+              - '*'
       - id: home-ops-ci
         name: home-ops-ci
         value: env.BIFROST_VK_HOME_OPS_CI
