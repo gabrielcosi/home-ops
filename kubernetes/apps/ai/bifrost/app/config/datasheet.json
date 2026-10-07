@@ -74,18 +74,6 @@
     },
     "input_cost_per_token": 1e-08
   },
-  "llama-swap/qwen3-reranker-0.6b": {
-    "provider": "llama-swap",
-    "base_model": "qwen3-reranker-0.6b",
-    "mode": "rerank",
-    "max_input_tokens": 2048,
-    "architecture": {
-      "input_modalities": [
-        "text"
-      ]
-    },
-    "input_cost_per_token": 1e-08
-  },
   "text-embeddings/sentence-transformers/all-MiniLM-L6-v2": {
     "provider": "text-embeddings",
     "base_model": "sentence-transformers/all-MiniLM-L6-v2",

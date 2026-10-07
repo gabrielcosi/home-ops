@@ -12,7 +12,7 @@ spec:
         - alert: LlamaServerError
           expr: |
             _time:5m {kubernetes.pod_namespace="ai", kubernetes.container_name="llama-swap"}
-            ("CUDA error" OR "out of memory" OR "failed to allocate" OR "error loading model" OR "GGML_ASSERT")
+            ("out of memory" OR "failed to allocate" OR "error loading model")
             | stats count() as hits
             | filter hits:>0
           annotations:
