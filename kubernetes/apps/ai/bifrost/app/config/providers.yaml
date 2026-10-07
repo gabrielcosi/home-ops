@@ -27,6 +27,7 @@ bifrost:
           responses: true
           responses_stream: true
           embedding: true
+          rerank: true
           transcription: true
           transcription_stream: true
           speech: true

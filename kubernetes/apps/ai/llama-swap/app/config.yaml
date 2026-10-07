@@ -1,6 +1,7 @@
 healthCheckTimeout: 300
 unloadTimeout: 90
-globalTTL: 300
+logToStdout: proxy,upstream
+globalTTL: 0
 
 macros:
   llama-server: >-
@@ -137,7 +138,6 @@ models:
       --ubatch-size 2048 \
       --parallel 4
     useModelName: qwen3-embedding-0.6b
-    ttl: 0
     concurrencyLimit: 4
 
   qwen3-reranker-0.6b:
@@ -157,7 +157,6 @@ models:
       --ubatch-size 2048 \
       --parallel 4
     useModelName: qwen3-reranker-0.6b
-    ttl: 0
     concurrencyLimit: 4
 
 routing:

@@ -9,6 +9,7 @@ resources:
   - ./ocirepository.yaml
   - ./prometheusrule.yaml
   - ./servicemonitor.yaml
+  - ./vmrule.yaml
 configMapGenerator:
   - name: llama-swap-config
     files:

@@ -1,0 +1,22 @@
+---
+apiVersion: operator.victoriametrics.com/v1beta1
+kind: VMRule
+metadata:
+  name: llama-swap-upstream
+spec:
+  groups:
+    - name: llama-swap-upstream
+      type: vlogs
+      interval: 1m
+      rules:
+        - alert: LlamaServerError
+          expr: |
+            _time:5m {kubernetes.pod_namespace="ai", kubernetes.container_name="llama-swap"}
+            ("CUDA error" OR "out of memory" OR "failed to allocate" OR "error loading model" OR "GGML_ASSERT")
+            | stats count() as hits
+            | filter hits:>0
+          annotations:
+            summary: >-
+              llama-server logged a CUDA, memory or model-load error, see its llama-swap logs
+          labels:
+            severity: warning
