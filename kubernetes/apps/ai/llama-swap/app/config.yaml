@@ -180,6 +180,7 @@ hooks:
     preload:
       - qwen3-embedding-0.6b
       - qwen3-reranker-0.6b
+      - clef-flash
 
 apiKeys:
   - ${env.LS_API_KEY}
