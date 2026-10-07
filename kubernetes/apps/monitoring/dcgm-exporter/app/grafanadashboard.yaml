@@ -35,13 +35,13 @@ spec:
             "sort": 1
           },
           {
-            "name": "gpu",
+            "name": "model",
             "label": "GPU",
             "type": "query",
             "datasource": {"type": "prometheus", "uid": "victoriametrics"},
             "query": {
               "qryType": 1,
-              "query": "label_values(DCGM_FI_DEV_GPU_TEMP{instance=~\"$instance\"}, gpu)",
+              "query": "label_values(DCGM_FI_DEV_GPU_TEMP{instance=~\"$instance\"}, modelName)",
               "refId": "PrometheusVariableQueryEditor-VariableQuery"
             },
             "includeAll": true,
@@ -60,7 +60,7 @@ spec:
           "id": 1,
           "gridPos": {"h": 4, "w": 3, "x": 0, "y": 1},
           "datasource": {"type": "prometheus", "uid": "victoriametrics"},
-          "targets": [{"refId": "A", "expr": "max by (instance, gpu) (DCGM_FI_DEV_GPU_TEMP{instance=~\"$instance\",gpu=~\"$gpu\"})", "legendFormat": "core"}],
+          "targets": [{"refId": "A", "expr": "label_replace(max by (instance, gpu, modelName) (DCGM_FI_DEV_GPU_TEMP{instance=~\"$instance\",modelName=~\"$model\"}), \"card\", \"$1\", \"modelName\", \"NVIDIA RTX (PRO [0-9]+).*\")", "legendFormat": "{{card}}"}],
           "fieldConfig": {
             "defaults": {
               "unit": "celsius",
@@ -73,7 +73,7 @@ spec:
             },
             "overrides": []
           },
-          "options": {"reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false}, "textMode": "auto", "colorMode": "background", "graphMode": "area"}
+          "options": {"reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false}, "textMode": "value_and_name", "colorMode": "background", "graphMode": "area"}
         },
         {
           "type": "stat",
@@ -84,9 +84,9 @@ spec:
           "targets": [
             {
               "refId": "A",
-              "expr": "max by (instance, gpu) (max_over_time(DCGM_FI_DEV_GPU_TEMP{instance=~\"$instance\",gpu=~\"$gpu\"}[$__range]))",
+              "expr": "label_replace(max by (instance, gpu, modelName) (max_over_time(DCGM_FI_DEV_GPU_TEMP{instance=~\"$instance\",modelName=~\"$model\"}[$__range])), \"card\", \"$1\", \"modelName\", \"NVIDIA RTX (PRO [0-9]+).*\")",
               "instant": true,
-              "legendFormat": "peak"
+              "legendFormat": "{{card}}"
             }
           ],
           "fieldConfig": {
@@ -101,7 +101,7 @@ spec:
             },
             "overrides": []
           },
-          "options": {"reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false}, "textMode": "auto", "colorMode": "background", "graphMode": "none"}
+          "options": {"reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false}, "textMode": "value_and_name", "colorMode": "background", "graphMode": "none"}
         },
         {
           "type": "stat",
@@ -109,7 +109,7 @@ spec:
           "id": 3,
           "gridPos": {"h": 4, "w": 3, "x": 6, "y": 1},
           "datasource": {"type": "prometheus", "uid": "victoriametrics"},
-          "targets": [{"refId": "A", "expr": "max by (instance, gpu) (DCGM_FI_DEV_POWER_USAGE{instance=~\"$instance\",gpu=~\"$gpu\"})", "legendFormat": "draw"}],
+          "targets": [{"refId": "A", "expr": "label_replace(max by (instance, gpu, modelName) (DCGM_FI_DEV_POWER_USAGE{instance=~\"$instance\",modelName=~\"$model\"}), \"card\", \"$1\", \"modelName\", \"NVIDIA RTX (PRO [0-9]+).*\")", "legendFormat": "{{card}}"}],
           "fieldConfig": {
             "defaults": {
               "unit": "watt",
@@ -119,7 +119,7 @@ spec:
             },
             "overrides": []
           },
-          "options": {"reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false}, "textMode": "auto", "colorMode": "background", "graphMode": "area"}
+          "options": {"reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false}, "textMode": "value_and_name", "colorMode": "background", "graphMode": "area"}
         },
         {
           "type": "stat",
@@ -127,7 +127,7 @@ spec:
           "id": 4,
           "gridPos": {"h": 4, "w": 3, "x": 9, "y": 1},
           "datasource": {"type": "prometheus", "uid": "victoriametrics"},
-          "targets": [{"refId": "A", "expr": "max by (instance, gpu) (DCGM_FI_DEV_SM_CLOCK{instance=~\"$instance\",gpu=~\"$gpu\"}) * 1000000", "legendFormat": "sm"}],
+          "targets": [{"refId": "A", "expr": "label_replace(max by (instance, gpu, modelName) (DCGM_FI_DEV_SM_CLOCK{instance=~\"$instance\",modelName=~\"$model\"}) * 1000000, \"card\", \"$1\", \"modelName\", \"NVIDIA RTX (PRO [0-9]+).*\")", "legendFormat": "{{card}}"}],
           "fieldConfig": {
             "defaults": {
               "unit": "hertz",
@@ -137,7 +137,7 @@ spec:
             },
             "overrides": []
           },
-          "options": {"reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false}, "textMode": "auto", "colorMode": "background", "graphMode": "area"}
+          "options": {"reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false}, "textMode": "value_and_name", "colorMode": "background", "graphMode": "area"}
         },
         {
           "type": "stat",
@@ -145,7 +145,7 @@ spec:
           "id": 5,
           "gridPos": {"h": 4, "w": 4, "x": 12, "y": 1},
           "datasource": {"type": "prometheus", "uid": "victoriametrics"},
-          "targets": [{"refId": "A", "expr": "max by (instance, gpu) (DCGM_FI_DEV_GPU_UTIL{instance=~\"$instance\",gpu=~\"$gpu\"})", "legendFormat": "util"}],
+          "targets": [{"refId": "A", "expr": "label_replace(max by (instance, gpu, modelName) (DCGM_FI_DEV_GPU_UTIL{instance=~\"$instance\",modelName=~\"$model\"}), \"card\", \"$1\", \"modelName\", \"NVIDIA RTX (PRO [0-9]+).*\")", "legendFormat": "{{card}}"}],
           "fieldConfig": {
             "defaults": {
               "unit": "percent",
@@ -157,7 +157,7 @@ spec:
             },
             "overrides": []
           },
-          "options": {"reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false}, "textMode": "auto", "colorMode": "background", "graphMode": "area"}
+          "options": {"reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false}, "textMode": "value_and_name", "colorMode": "background", "graphMode": "area"}
         },
         {
           "type": "stat",
@@ -168,8 +168,8 @@ spec:
           "targets": [
             {
               "refId": "A",
-              "expr": "100 * max by (instance, gpu) (DCGM_FI_DEV_FB_USED{instance=~\"$instance\",gpu=~\"$gpu\"}) / clamp_min(max by (instance, gpu) (DCGM_FI_DEV_FB_USED{instance=~\"$instance\",gpu=~\"$gpu\"}) + max by (instance, gpu) (DCGM_FI_DEV_FB_FREE{instance=~\"$instance\",gpu=~\"$gpu\"}), 1)",
-              "legendFormat": "used"
+              "expr": "label_replace(100 * max by (instance, gpu, modelName) (DCGM_FI_DEV_FB_USED{instance=~\"$instance\",modelName=~\"$model\"}) / clamp_min(max by (instance, gpu, modelName) (DCGM_FI_DEV_FB_USED{instance=~\"$instance\",modelName=~\"$model\"}) + max by (instance, gpu, modelName) (DCGM_FI_DEV_FB_FREE{instance=~\"$instance\",modelName=~\"$model\"}), 1), \"card\", \"$1\", \"modelName\", \"NVIDIA RTX (PRO [0-9]+).*\")",
+              "legendFormat": "{{card}}"
             }
           ],
           "fieldConfig": {
@@ -183,7 +183,7 @@ spec:
             },
             "overrides": []
           },
-          "options": {"reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false}, "textMode": "auto", "colorMode": "background", "graphMode": "area"}
+          "options": {"reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false}, "textMode": "value_and_name", "colorMode": "background", "graphMode": "area"}
         },
         {
           "type": "stat",
@@ -191,7 +191,7 @@ spec:
           "id": 7,
           "gridPos": {"h": 4, "w": 4, "x": 20, "y": 1},
           "datasource": {"type": "prometheus", "uid": "victoriametrics"},
-          "targets": [{"refId": "A", "expr": "max by (instance, gpu) (DCGM_FI_DEV_FAN_SPEED{instance=~\"$instance\",gpu=~\"$gpu\"})", "legendFormat": "fan"}],
+          "targets": [{"refId": "A", "expr": "label_replace(max by (instance, gpu, modelName) (DCGM_FI_DEV_FAN_SPEED{instance=~\"$instance\",modelName=~\"$model\"}), \"card\", \"$1\", \"modelName\", \"NVIDIA RTX (PRO [0-9]+).*\")", "legendFormat": "{{card}}"}],
           "fieldConfig": {
             "defaults": {
               "unit": "percent",
@@ -221,11 +221,11 @@ spec:
           "gridPos": {"h": 8, "w": 8, "x": 0, "y": 6},
           "datasource": {"type": "prometheus", "uid": "victoriametrics"},
           "targets": [
-            {"refId": "A", "expr": "max by (instance, gpu) (DCGM_FI_DEV_SM_CLOCK{instance=~\"$instance\",gpu=~\"$gpu\"}) * 1000000", "legendFormat": "sm"},
+            {"refId": "A", "expr": "label_replace(max by (instance, gpu, modelName) (DCGM_FI_DEV_SM_CLOCK{instance=~\"$instance\",modelName=~\"$model\"}) * 1000000, \"card\", \"$1\", \"modelName\", \"NVIDIA RTX (PRO [0-9]+).*\")", "legendFormat": "{{card}} sm"},
             {
               "refId": "B",
-              "expr": "max by (instance, gpu) (DCGM_FI_DEV_MEM_CLOCK{instance=~\"$instance\",gpu=~\"$gpu\"}) * 1000000",
-              "legendFormat": "memory"
+              "expr": "label_replace(max by (instance, gpu, modelName) (DCGM_FI_DEV_MEM_CLOCK{instance=~\"$instance\",modelName=~\"$model\"}) * 1000000, \"card\", \"$1\", \"modelName\", \"NVIDIA RTX (PRO [0-9]+).*\")",
+              "legendFormat": "{{card}} memory"
             }
           ],
           "fieldConfig": {
@@ -248,19 +248,19 @@ spec:
           "targets": [
             {
               "refId": "A",
-              "expr": "max by (instance, gpu) (DCGM_FI_DEV_GPU_UTIL{instance=~\"$instance\",gpu=~\"$gpu\"}) / 100",
-              "legendFormat": "gpu util"
+              "expr": "label_replace(max by (instance, gpu, modelName) (DCGM_FI_DEV_GPU_UTIL{instance=~\"$instance\",modelName=~\"$model\"}) / 100, \"card\", \"$1\", \"modelName\", \"NVIDIA RTX (PRO [0-9]+).*\")",
+              "legendFormat": "{{card}} gpu util"
             },
             {
               "refId": "B",
-              "expr": "max by (instance, gpu) (DCGM_FI_PROF_GR_ENGINE_ACTIVE{instance=~\"$instance\",gpu=~\"$gpu\"})",
-              "legendFormat": "graphics engine"
+              "expr": "label_replace(max by (instance, gpu, modelName) (DCGM_FI_PROF_GR_ENGINE_ACTIVE{instance=~\"$instance\",modelName=~\"$model\"}), \"card\", \"$1\", \"modelName\", \"NVIDIA RTX (PRO [0-9]+).*\")",
+              "legendFormat": "{{card}} graphics engine"
             },
-            {"refId": "C", "expr": "max by (instance, gpu) (DCGM_FI_PROF_SM_ACTIVE{instance=~\"$instance\",gpu=~\"$gpu\"})", "legendFormat": "sm active"},
+            {"refId": "C", "expr": "label_replace(max by (instance, gpu, modelName) (DCGM_FI_PROF_SM_ACTIVE{instance=~\"$instance\",modelName=~\"$model\"}), \"card\", \"$1\", \"modelName\", \"NVIDIA RTX (PRO [0-9]+).*\")", "legendFormat": "{{card}} sm active"},
             {
               "refId": "D",
-              "expr": "max by (instance, gpu) (DCGM_FI_PROF_SM_OCCUPANCY{instance=~\"$instance\",gpu=~\"$gpu\"})",
-              "legendFormat": "sm occupancy"
+              "expr": "label_replace(max by (instance, gpu, modelName) (DCGM_FI_PROF_SM_OCCUPANCY{instance=~\"$instance\",modelName=~\"$model\"}), \"card\", \"$1\", \"modelName\", \"NVIDIA RTX (PRO [0-9]+).*\")",
+              "legendFormat": "{{card}} sm occupancy"
             }
           ],
           "fieldConfig": {
@@ -284,23 +284,23 @@ spec:
           "targets": [
             {
               "refId": "A",
-              "expr": "max by (instance, gpu) (DCGM_FI_PROF_PIPE_TENSOR_ACTIVE{instance=~\"$instance\",gpu=~\"$gpu\"})",
-              "legendFormat": "tensor"
+              "expr": "label_replace(max by (instance, gpu, modelName) (DCGM_FI_PROF_PIPE_TENSOR_ACTIVE{instance=~\"$instance\",modelName=~\"$model\"}), \"card\", \"$1\", \"modelName\", \"NVIDIA RTX (PRO [0-9]+).*\")",
+              "legendFormat": "{{card}} tensor"
             },
             {
               "refId": "B",
-              "expr": "max by (instance, gpu) (DCGM_FI_PROF_PIPE_FP32_ACTIVE{instance=~\"$instance\",gpu=~\"$gpu\"})",
-              "legendFormat": "fp32"
+              "expr": "label_replace(max by (instance, gpu, modelName) (DCGM_FI_PROF_PIPE_FP32_ACTIVE{instance=~\"$instance\",modelName=~\"$model\"}), \"card\", \"$1\", \"modelName\", \"NVIDIA RTX (PRO [0-9]+).*\")",
+              "legendFormat": "{{card}} fp32"
             },
             {
               "refId": "C",
-              "expr": "max by (instance, gpu) (DCGM_FI_PROF_PIPE_FP16_ACTIVE{instance=~\"$instance\",gpu=~\"$gpu\"})",
-              "legendFormat": "fp16"
+              "expr": "label_replace(max by (instance, gpu, modelName) (DCGM_FI_PROF_PIPE_FP16_ACTIVE{instance=~\"$instance\",modelName=~\"$model\"}), \"card\", \"$1\", \"modelName\", \"NVIDIA RTX (PRO [0-9]+).*\")",
+              "legendFormat": "{{card}} fp16"
             },
             {
               "refId": "D",
-              "expr": "max by (instance, gpu) (DCGM_FI_PROF_DRAM_ACTIVE{instance=~\"$instance\",gpu=~\"$gpu\"})",
-              "legendFormat": "memory interface"
+              "expr": "label_replace(max by (instance, gpu, modelName) (DCGM_FI_PROF_DRAM_ACTIVE{instance=~\"$instance\",modelName=~\"$model\"}), \"card\", \"$1\", \"modelName\", \"NVIDIA RTX (PRO [0-9]+).*\")",
+              "legendFormat": "{{card}} memory interface"
             }
           ],
           "fieldConfig": {
@@ -322,8 +322,8 @@ spec:
           "gridPos": {"h": 8, "w": 12, "x": 12, "y": 14},
           "datasource": {"type": "prometheus", "uid": "victoriametrics"},
           "targets": [
-            {"refId": "A", "expr": "max by (instance, gpu) (DCGM_FI_DEV_ENC_UTIL{instance=~\"$instance\",gpu=~\"$gpu\"})", "legendFormat": "encoder"},
-            {"refId": "B", "expr": "max by (instance, gpu) (DCGM_FI_DEV_DEC_UTIL{instance=~\"$instance\",gpu=~\"$gpu\"})", "legendFormat": "decoder"}
+            {"refId": "A", "expr": "label_replace(max by (instance, gpu, modelName) (DCGM_FI_DEV_ENC_UTIL{instance=~\"$instance\",modelName=~\"$model\"}), \"card\", \"$1\", \"modelName\", \"NVIDIA RTX (PRO [0-9]+).*\")", "legendFormat": "{{card}} encoder"},
+            {"refId": "B", "expr": "label_replace(max by (instance, gpu, modelName) (DCGM_FI_DEV_DEC_UTIL{instance=~\"$instance\",modelName=~\"$model\"}), \"card\", \"$1\", \"modelName\", \"NVIDIA RTX (PRO [0-9]+).*\")", "legendFormat": "{{card}} decoder"}
           ],
           "fieldConfig": {
             "defaults": {
@@ -344,10 +344,10 @@ spec:
           "gridPos": {"h": 8, "w": 12, "x": 0, "y": 14},
           "datasource": {"type": "prometheus", "uid": "victoriametrics"},
           "targets": [
-            {"refId": "A", "expr": "max by (instance, gpu) (DCGM_FI_DEV_FB_USED{instance=~\"$instance\",gpu=~\"$gpu\"})", "legendFormat": "used"},
-            {"refId": "B", "expr": "max by (instance, gpu) (DCGM_FI_DEV_FB_FREE{instance=~\"$instance\",gpu=~\"$gpu\"})", "legendFormat": "free"},
-            {"refId": "C", "expr": "max by (instance, gpu) (DCGM_FI_DEV_FB_RESERVED{instance=~\"$instance\",gpu=~\"$gpu\"})", "legendFormat": "reserved"},
-            {"refId": "D", "expr": "max by (instance, gpu) (DCGM_FI_DEV_FB_TOTAL{instance=~\"$instance\",gpu=~\"$gpu\"})", "legendFormat": "total"}
+            {"refId": "A", "expr": "label_replace(max by (instance, gpu, modelName) (DCGM_FI_DEV_FB_USED{instance=~\"$instance\",modelName=~\"$model\"}), \"card\", \"$1\", \"modelName\", \"NVIDIA RTX (PRO [0-9]+).*\")", "legendFormat": "{{card}} used"},
+            {"refId": "B", "expr": "label_replace(max by (instance, gpu, modelName) (DCGM_FI_DEV_FB_FREE{instance=~\"$instance\",modelName=~\"$model\"}), \"card\", \"$1\", \"modelName\", \"NVIDIA RTX (PRO [0-9]+).*\")", "legendFormat": "{{card}} free"},
+            {"refId": "C", "expr": "label_replace(max by (instance, gpu, modelName) (DCGM_FI_DEV_FB_RESERVED{instance=~\"$instance\",modelName=~\"$model\"}), \"card\", \"$1\", \"modelName\", \"NVIDIA RTX (PRO [0-9]+).*\")", "legendFormat": "{{card}} reserved"},
+            {"refId": "D", "expr": "label_replace(max by (instance, gpu, modelName) (DCGM_FI_DEV_FB_TOTAL{instance=~\"$instance\",modelName=~\"$model\"}), \"card\", \"$1\", \"modelName\", \"NVIDIA RTX (PRO [0-9]+).*\")", "legendFormat": "{{card}} total"}
           ],
           "fieldConfig": {
             "defaults": {
@@ -377,21 +377,21 @@ spec:
           "gridPos": {"h": 8, "w": 8, "x": 0, "y": 23},
           "datasource": {"type": "prometheus", "uid": "victoriametrics"},
           "targets": [
-            {"refId": "A", "expr": "max by (instance, gpu) (DCGM_FI_DEV_GPU_TEMP{instance=~\"$instance\",gpu=~\"$gpu\"})", "legendFormat": "core"},
+            {"refId": "A", "expr": "label_replace(max by (instance, gpu, modelName) (DCGM_FI_DEV_GPU_TEMP{instance=~\"$instance\",modelName=~\"$model\"}), \"card\", \"$1\", \"modelName\", \"NVIDIA RTX (PRO [0-9]+).*\")", "legendFormat": "{{card}} core"},
             {
               "refId": "B",
-              "expr": "max by (instance, gpu) (DCGM_FI_DEV_MEMORY_TEMP{instance=~\"$instance\",gpu=~\"$gpu\"}) > 0",
-              "legendFormat": "memory"
+              "expr": "label_replace(max by (instance, gpu, modelName) (DCGM_FI_DEV_MEMORY_TEMP{instance=~\"$instance\",modelName=~\"$model\"}) > 0, \"card\", \"$1\", \"modelName\", \"NVIDIA RTX (PRO [0-9]+).*\")",
+              "legendFormat": "{{card}} memory"
             },
             {
               "refId": "C",
-              "expr": "max by (instance, gpu) (DCGM_FI_DEV_SLOWDOWN_TEMP{instance=~\"$instance\",gpu=~\"$gpu\"})",
-              "legendFormat": "slowdown limit"
+              "expr": "label_replace(max by (instance, gpu, modelName) (DCGM_FI_DEV_SLOWDOWN_TEMP{instance=~\"$instance\",modelName=~\"$model\"}), \"card\", \"$1\", \"modelName\", \"NVIDIA RTX (PRO [0-9]+).*\")",
+              "legendFormat": "{{card}} slowdown limit"
             },
             {
               "refId": "D",
-              "expr": "max by (instance, gpu) (DCGM_FI_DEV_SHUTDOWN_TEMP{instance=~\"$instance\",gpu=~\"$gpu\"})",
-              "legendFormat": "shutdown limit"
+              "expr": "label_replace(max by (instance, gpu, modelName) (DCGM_FI_DEV_SHUTDOWN_TEMP{instance=~\"$instance\",modelName=~\"$model\"}), \"card\", \"$1\", \"modelName\", \"NVIDIA RTX (PRO [0-9]+).*\")",
+              "legendFormat": "{{card}} shutdown limit"
             }
           ],
           "fieldConfig": {
@@ -421,11 +421,11 @@ spec:
           "gridPos": {"h": 8, "w": 8, "x": 8, "y": 23},
           "datasource": {"type": "prometheus", "uid": "victoriametrics"},
           "targets": [
-            {"refId": "A", "expr": "max by (instance, gpu) (DCGM_FI_DEV_POWER_USAGE{instance=~\"$instance\",gpu=~\"$gpu\"})", "legendFormat": "draw"},
+            {"refId": "A", "expr": "label_replace(max by (instance, gpu, modelName) (DCGM_FI_DEV_POWER_USAGE{instance=~\"$instance\",modelName=~\"$model\"}), \"card\", \"$1\", \"modelName\", \"NVIDIA RTX (PRO [0-9]+).*\")", "legendFormat": "{{card}} draw"},
             {
               "refId": "B",
-              "expr": "max by (instance, gpu) (DCGM_FI_DEV_ENFORCED_POWER_LIMIT{instance=~\"$instance\",gpu=~\"$gpu\"})",
-              "legendFormat": "enforced limit"
+              "expr": "label_replace(max by (instance, gpu, modelName) (DCGM_FI_DEV_ENFORCED_POWER_LIMIT{instance=~\"$instance\",modelName=~\"$model\"}), \"card\", \"$1\", \"modelName\", \"NVIDIA RTX (PRO [0-9]+).*\")",
+              "legendFormat": "{{card}} enforced limit"
             }
           ],
           "fieldConfig": {
@@ -454,7 +454,7 @@ spec:
           "id": 22,
           "gridPos": {"h": 8, "w": 8, "x": 16, "y": 23},
           "datasource": {"type": "prometheus", "uid": "victoriametrics"},
-          "targets": [{"refId": "A", "expr": "max by (instance, gpu) (DCGM_FI_DEV_FAN_SPEED{instance=~\"$instance\",gpu=~\"$gpu\"})", "legendFormat": "fan"}],
+          "targets": [{"refId": "A", "expr": "label_replace(max by (instance, gpu, modelName) (DCGM_FI_DEV_FAN_SPEED{instance=~\"$instance\",modelName=~\"$model\"}), \"card\", \"$1\", \"modelName\", \"NVIDIA RTX (PRO [0-9]+).*\")", "legendFormat": "{{card}} fan"}],
           "fieldConfig": {
             "defaults": {
               "unit": "percent",
@@ -477,18 +477,18 @@ spec:
           "targets": [
             {
               "refId": "A",
-              "expr": "max by (instance, gpu) (rate(DCGM_FI_DEV_POWER_VIOLATION{instance=~\"$instance\",gpu=~\"$gpu\"}[$__rate_interval])) / 1e7",
-              "legendFormat": "power"
+              "expr": "label_replace(max by (instance, gpu, modelName) (rate(DCGM_FI_DEV_POWER_VIOLATION{instance=~\"$instance\",modelName=~\"$model\"}[$__rate_interval])) / 1e7, \"card\", \"$1\", \"modelName\", \"NVIDIA RTX (PRO [0-9]+).*\")",
+              "legendFormat": "{{card}} power"
             },
             {
               "refId": "B",
-              "expr": "max by (instance, gpu) (rate(DCGM_FI_DEV_THERMAL_VIOLATION{instance=~\"$instance\",gpu=~\"$gpu\"}[$__rate_interval])) / 1e7",
-              "legendFormat": "thermal"
+              "expr": "label_replace(max by (instance, gpu, modelName) (rate(DCGM_FI_DEV_THERMAL_VIOLATION{instance=~\"$instance\",modelName=~\"$model\"}[$__rate_interval])) / 1e7, \"card\", \"$1\", \"modelName\", \"NVIDIA RTX (PRO [0-9]+).*\")",
+              "legendFormat": "{{card}} thermal"
             },
             {
               "refId": "C",
-              "expr": "max by (instance, gpu) (rate(DCGM_FI_DEV_BOARD_LIMIT_VIOLATION{instance=~\"$instance\",gpu=~\"$gpu\"}[$__rate_interval])) / 1e7",
-              "legendFormat": "board limit"
+              "expr": "label_replace(max by (instance, gpu, modelName) (rate(DCGM_FI_DEV_BOARD_LIMIT_VIOLATION{instance=~\"$instance\",modelName=~\"$model\"}[$__rate_interval])) / 1e7, \"card\", \"$1\", \"modelName\", \"NVIDIA RTX (PRO [0-9]+).*\")",
+              "legendFormat": "{{card}} board limit"
             }
           ],
           "fieldConfig": {
@@ -519,19 +519,19 @@ spec:
           "targets": [
             {
               "refId": "A",
-              "expr": "sum by (instance, gpu, namespace, pod, container, dra_claim_name) (DCGM_FI_DEV_FB_USED{instance=~\"$instance\",gpu=~\"$gpu\"})",
+              "expr": "label_replace(sum by (instance, gpu, modelName, namespace, pod, container, dra_claim_name) (DCGM_FI_DEV_FB_USED{instance=~\"$instance\",modelName=~\"$model\"}), \"card\", \"$1\", \"modelName\", \"NVIDIA RTX (PRO [0-9]+).*\")",
               "instant": true,
               "format": "table"
             },
             {
               "refId": "B",
-              "expr": "sum by (instance, gpu, namespace, pod, container, dra_claim_name) (avg_over_time(DCGM_FI_DEV_GPU_UTIL{instance=~\"$instance\",gpu=~\"$gpu\"}[5m])) and on (pod) (DCGM_FI_DEV_FB_USED{instance=~\"$instance\",gpu=~\"$gpu\"})",
+              "expr": "label_replace(sum by (instance, gpu, modelName, namespace, pod, container, dra_claim_name) (avg_over_time(DCGM_FI_DEV_GPU_UTIL{instance=~\"$instance\",modelName=~\"$model\"}[5m])) and on (pod) (DCGM_FI_DEV_FB_USED{instance=~\"$instance\",modelName=~\"$model\"}), \"card\", \"$1\", \"modelName\", \"NVIDIA RTX (PRO [0-9]+).*\")",
               "instant": true,
               "format": "table"
             },
             {
               "refId": "C",
-              "expr": "sum by (instance, gpu, namespace, pod, container, dra_claim_name) (avg_over_time(DCGM_FI_DEV_POWER_USAGE{instance=~\"$instance\",gpu=~\"$gpu\"}[5m])) and on (pod) (DCGM_FI_DEV_FB_USED{instance=~\"$instance\",gpu=~\"$gpu\"})",
+              "expr": "label_replace(sum by (instance, gpu, modelName, namespace, pod, container, dra_claim_name) (avg_over_time(DCGM_FI_DEV_POWER_USAGE{instance=~\"$instance\",modelName=~\"$model\"}[5m])) and on (pod) (DCGM_FI_DEV_FB_USED{instance=~\"$instance\",modelName=~\"$model\"}), \"card\", \"$1\", \"modelName\", \"NVIDIA RTX (PRO [0-9]+).*\")",
               "instant": true,
               "format": "table"
             }
@@ -541,12 +541,12 @@ spec:
             {
               "id": "organize",
               "options": {
-                "excludeByName": {"Time": true, "__name__": true, "instance": true, "dra_claim_name": true},
+                "excludeByName": {"Time": true, "__name__": true, "instance": true, "dra_claim_name": true, "gpu": true, "modelName": true},
                 "renameByName": {
                   "Value #A": "VRAM (MiB)",
                   "Value #B": "GPU Util (5m avg %)",
                   "Value #C": "Power (5m avg W)",
-                  "gpu": "GPU",
+                  "card": "GPU",
                   "namespace": "Namespace",
                   "pod": "Pod",
                   "container": "Container"
@@ -579,8 +579,8 @@ spec:
           "targets": [
             {
               "refId": "A",
-              "expr": "sum by (namespace, pod) (DCGM_FI_DEV_FB_USED{instance=~\"$instance\",gpu=~\"$gpu\",pod!=\"\"})",
-              "legendFormat": "{{namespace}}/{{pod}}"
+              "expr": "label_replace(sum by (modelName, namespace, pod) (DCGM_FI_DEV_FB_USED{instance=~\"$instance\",modelName=~\"$model\",pod!=\"\"}), \"card\", \"$1\", \"modelName\", \"NVIDIA RTX (PRO [0-9]+).*\")",
+              "legendFormat": "{{card}} {{namespace}}/{{pod}}"
             }
           ],
           "fieldConfig": {
@@ -618,8 +618,8 @@ spec:
               "gridPos": {"h": 8, "w": 12, "x": 0, "y": 46},
               "datasource": {"type": "prometheus", "uid": "victoriametrics"},
               "targets": [
-                {"refId": "A", "expr": "max by (instance, gpu) (DCGM_FI_PROF_PCIE_RX_BYTES{instance=~\"$instance\",gpu=~\"$gpu\"})", "legendFormat": "rx"},
-                {"refId": "B", "expr": "max by (instance, gpu) (DCGM_FI_PROF_PCIE_TX_BYTES{instance=~\"$instance\",gpu=~\"$gpu\"})", "legendFormat": "tx"}
+                {"refId": "A", "expr": "label_replace(max by (instance, gpu, modelName) (DCGM_FI_PROF_PCIE_RX_BYTES{instance=~\"$instance\",modelName=~\"$model\"}), \"card\", \"$1\", \"modelName\", \"NVIDIA RTX (PRO [0-9]+).*\")", "legendFormat": "{{card}} rx"},
+                {"refId": "B", "expr": "label_replace(max by (instance, gpu, modelName) (DCGM_FI_PROF_PCIE_TX_BYTES{instance=~\"$instance\",modelName=~\"$model\"}), \"card\", \"$1\", \"modelName\", \"NVIDIA RTX (PRO [0-9]+).*\")", "legendFormat": "{{card}} tx"}
               ],
               "fieldConfig": {
                 "defaults": {
@@ -644,8 +644,8 @@ spec:
               "targets": [
                 {
                   "refId": "A",
-                  "expr": "max by (instance, gpu) (rate(DCGM_FI_DEV_PCIE_REPLAY_COUNTER{instance=~\"$instance\",gpu=~\"$gpu\"}[$__rate_interval]))",
-                  "legendFormat": "replays"
+                  "expr": "label_replace(max by (instance, gpu, modelName) (rate(DCGM_FI_DEV_PCIE_REPLAY_COUNTER{instance=~\"$instance\",modelName=~\"$model\"}[$__rate_interval])), \"card\", \"$1\", \"modelName\", \"NVIDIA RTX (PRO [0-9]+).*\")",
+                  "legendFormat": "{{card}} replays"
                 }
               ],
               "fieldConfig": {
@@ -666,11 +666,11 @@ spec:
               "gridPos": {"h": 8, "w": 6, "x": 18, "y": 46},
               "datasource": {"type": "prometheus", "uid": "victoriametrics"},
               "targets": [
-                {"refId": "A", "expr": "max by (instance, gpu) (DCGM_FI_DEV_PCIE_LINK_GEN{instance=~\"$instance\",gpu=~\"$gpu\"})", "legendFormat": "gen"},
+                {"refId": "A", "expr": "label_replace(max by (instance, gpu, modelName) (DCGM_FI_DEV_PCIE_LINK_GEN{instance=~\"$instance\",modelName=~\"$model\"}), \"card\", \"$1\", \"modelName\", \"NVIDIA RTX (PRO [0-9]+).*\")", "legendFormat": "{{card}} gen"},
                 {
                   "refId": "B",
-                  "expr": "max by (instance, gpu) (DCGM_FI_DEV_PCIE_LINK_WIDTH{instance=~\"$instance\",gpu=~\"$gpu\"})",
-                  "legendFormat": "width"
+                  "expr": "label_replace(max by (instance, gpu, modelName) (DCGM_FI_DEV_PCIE_LINK_WIDTH{instance=~\"$instance\",modelName=~\"$model\"}), \"card\", \"$1\", \"modelName\", \"NVIDIA RTX (PRO [0-9]+).*\")",
+                  "legendFormat": "{{card}} width"
                 }
               ],
               "fieldConfig": {"defaults": {"unit": "none", "decimals": 0, "noValue": "n/a", "color": {"mode": "fixed", "fixedColor": "text"}}, "overrides": []},
@@ -702,8 +702,8 @@ spec:
               "targets": [
                 {
                   "refId": "A",
-                  "expr": "max by (instance, gpu, xid) (clamp_max(DCGM_EXP_XID_ERRORS_COUNT{instance=~\"$instance\",gpu=~\"$gpu\"}, 1))",
-                  "legendFormat": "xid {{xid}}"
+                  "expr": "label_replace(max by (instance, gpu, modelName, xid) (clamp_max(DCGM_EXP_XID_ERRORS_COUNT{instance=~\"$instance\",modelName=~\"$model\"}, 1)), \"card\", \"$1\", \"modelName\", \"NVIDIA RTX (PRO [0-9]+).*\")",
+                  "legendFormat": "{{card}} xid {{xid}}"
                 }
               ],
               "fieldConfig": {
@@ -739,18 +739,18 @@ spec:
               "targets": [
                 {
                   "refId": "A",
-                  "expr": "max by (instance, gpu) (DCGM_FI_DEV_CORRECTABLE_REMAPPED_ROWS{instance=~\"$instance\",gpu=~\"$gpu\"})",
-                  "legendFormat": "correctable"
+                  "expr": "label_replace(max by (instance, gpu, modelName) (DCGM_FI_DEV_CORRECTABLE_REMAPPED_ROWS{instance=~\"$instance\",modelName=~\"$model\"}), \"card\", \"$1\", \"modelName\", \"NVIDIA RTX (PRO [0-9]+).*\")",
+                  "legendFormat": "{{card}} correctable"
                 },
                 {
                   "refId": "B",
-                  "expr": "max by (instance, gpu) (DCGM_FI_DEV_UNCORRECTABLE_REMAPPED_ROWS{instance=~\"$instance\",gpu=~\"$gpu\"})",
-                  "legendFormat": "uncorrectable"
+                  "expr": "label_replace(max by (instance, gpu, modelName) (DCGM_FI_DEV_UNCORRECTABLE_REMAPPED_ROWS{instance=~\"$instance\",modelName=~\"$model\"}), \"card\", \"$1\", \"modelName\", \"NVIDIA RTX (PRO [0-9]+).*\")",
+                  "legendFormat": "{{card}} uncorrectable"
                 },
                 {
                   "refId": "C",
-                  "expr": "max by (instance, gpu) (DCGM_FI_DEV_ROW_REMAP_FAILURE{instance=~\"$instance\",gpu=~\"$gpu\"})",
-                  "legendFormat": "remap failure"
+                  "expr": "label_replace(max by (instance, gpu, modelName) (DCGM_FI_DEV_ROW_REMAP_FAILURE{instance=~\"$instance\",modelName=~\"$model\"}), \"card\", \"$1\", \"modelName\", \"NVIDIA RTX (PRO [0-9]+).*\")",
+                  "legendFormat": "{{card}} remap failure"
                 }
               ],
               "fieldConfig": {
@@ -780,8 +780,8 @@ spec:
               "targets": [
                 {
                   "refId": "A",
-                  "expr": "max by (instance, gpu, health_watch) (DCGM_EXP_GPU_HEALTH_STATUS{instance=~\"$instance\",gpu=~\"$gpu\",health_error_code!=\"DCGM_FR_CLOCK_THROTTLE_POWER\"})",
-                  "legendFormat": "{{health_watch}}"
+                  "expr": "label_replace(max by (instance, gpu, modelName, health_watch) (DCGM_EXP_GPU_HEALTH_STATUS{instance=~\"$instance\",modelName=~\"$model\",health_error_code!=\"DCGM_FR_CLOCK_THROTTLE_POWER\"}), \"card\", \"$1\", \"modelName\", \"NVIDIA RTX (PRO [0-9]+).*\")",
+                  "legendFormat": "{{card}} {{health_watch}}"
                 }
               ],
               "fieldConfig": {
