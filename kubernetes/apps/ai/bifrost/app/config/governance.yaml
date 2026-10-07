@@ -56,10 +56,10 @@ bifrost:
         is_active: true
         rate_limit_id: rl-memini
         provider_configs:
-          - provider: text-embeddings
+          - provider: llama-swap
             weight: 1
             allowed_models:
-              - sentence-transformers/all-MiniLM-L6-v2
+              - qwen3-embedding-0.6b
             key_ids:
               - '*'
       - id: hermes
@@ -97,10 +97,10 @@ bifrost:
         is_active: true
         rate_limit_id: rl-toolhive
         provider_configs:
-          - provider: text-embeddings
+          - provider: llama-swap
             weight: 1
             allowed_models:
-              - sentence-transformers/all-MiniLM-L6-v2
+              - qwen3-embedding-0.6b
             key_ids:
               - '*'
       - id: n8n

@@ -28,11 +28,11 @@ spec:
           main:
             env:
               MEMINI_BACKEND: sqlite
-              MEMINI_SQLITE_PATH: /data/memini.db
+              MEMINI_SQLITE_PATH: /data/memini-qwen3.db
               MEMINI_LOG_FORMAT: json
               MEMINI_EMBED_BASE_URL: http://bifrost.ai.svc.cluster.local:8080/v1
-              MEMINI_EMBED_MODEL: sentence-transformers/all-MiniLM-L6-v2
-              MEMINI_EMBED_DIMS: '384'
+              MEMINI_EMBED_MODEL: llama-swap/qwen3-embedding-0.6b
+              MEMINI_EMBED_DIMS: '1024'
               MEMINI_EMBED_QUERY_PREFIX: "Instruct: Given a user message, retrieve relevant past memories\nQuery: "
               MEMINI_RECALL_EMBED_TIMEOUT: '10s'
               MEMINI_EMBED_MAX_CONCURRENCY: '2'
