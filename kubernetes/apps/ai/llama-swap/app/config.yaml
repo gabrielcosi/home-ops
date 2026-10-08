@@ -28,7 +28,7 @@ macros:
 models:
   qwen3.8-27b:
     capabilities:
-      in: [text]
+      in: [text, image]
       out: [text]
       tools: true
       context: 172032
@@ -38,6 +38,8 @@ models:
     cmd: |
       ${llama-server-custom} \
       --model /models/Swift-1.5-Qwen3.8-27B/Swift-1.5-Qwen3.8-27B-NVFP4.gguf \
+      --mmproj /models/Swift-1.5-Qwen3.8-27B/Swift-1.5-Qwen3.8-27B-mmproj-F16.gguf \
+      --no-mmproj-offload \
       --ctx-size 172032 \
       --parallel 2 \
       --kv-unified \
