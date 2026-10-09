@@ -57,7 +57,7 @@ models:
       --spec-draft-n-max 5 \
       --spec-draft-p-min 0.0 \
       --cache-dir /models/.prompt-cache/swift-1.5-qwen3.8-27b \
-      --cache-disk 16384
+      --cache-disk 65536
     useModelName: qwen3.8-27b
     concurrencyLimit: 2
 

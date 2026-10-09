@@ -20,3 +20,36 @@ spec:
               llama-server logged a CUDA, memory or model-load error, see its llama-swap logs
           labels:
             severity: warning
+        - alert: LlamaServerCrashed
+          expr: |
+            _time:5m {kubernetes.pod_namespace="ai", kubernetes.container_name="llama-swap"}
+            ("upstream process exited unexpectedly" OR "GGML_ASSERT")
+            | stats count() as hits
+            | filter hits:>0
+          annotations:
+            summary: >-
+              llama-server exited unexpectedly or failed an assertion
+          labels:
+            severity: warning
+        - alert: LlamaServerPromptCacheDropped
+          expr: |
+            _time:5m {kubernetes.pod_namespace="ai", kubernetes.container_name="llama-swap"}
+            ("does not fit the prompt cache disk limit" OR "exceeds cache size limit, skipping" OR "not enough free space in")
+            | stats count() as hits
+            | filter hits:>0
+          annotations:
+            summary: >-
+              llama-server dropped a prompt state too large for its cache
+          labels:
+            severity: warning
+        - alert: LlamaServerPromptCacheFailed
+          expr: |
+            _time:5m {kubernetes.pod_namespace="ai", kubernetes.container_name="llama-swap"}
+            ("failed to write prompt cache file" OR "cannot open prompt cache file" OR "cannot rename prompt cache file" OR "cannot read the prompt cache directory" OR "cannot serialize tokens for the prompt cache file" OR "is truncated" OR "failed to restore state")
+            | stats count() as hits
+            | filter hits:>0
+          annotations:
+            summary: >-
+              llama-server failed to read or write its disk prompt cache
+          labels:
+            severity: warning
