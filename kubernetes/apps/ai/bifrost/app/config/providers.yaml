@@ -60,8 +60,6 @@ bifrost:
             - mimo-v2.5-pro
             - mimo-v2.6-flash
             - mimo-v2.6-pro
-            - qwen3.7-plus
-            - qwen3.8-max
           weight: 1
       network_config:
         base_url: https://opencode.ai/zen/go
@@ -86,7 +84,9 @@ bifrost:
           models:
             - minimax-m2.7
             - minimax-m3
+            - qwen3.7-plus
             - qwen3.8-flash
+            - qwen3.8-max
           weight: 1
       network_config:
         base_url: https://opencode.ai/zen/go
