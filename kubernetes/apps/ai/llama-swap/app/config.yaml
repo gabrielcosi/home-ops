@@ -128,7 +128,8 @@ models:
       --mamba-ssm-dtype bfloat16 \
       --context-length 16640 \
       --max-prefill-tokens 16384 \
-      --enable-metrics
+      --enable-metrics \
+      --sleep-on-idle
     cmdStop: ${kubeswap} delete --model clef-flash --namespace ai --wait 60s
     useModelName: clef-flash
 
