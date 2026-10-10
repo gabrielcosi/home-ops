@@ -98,6 +98,7 @@ models:
     capabilities:
       in: [text, image]
       context: 16384
+    concurrencyLimit: 64
     proxy: http://127.0.0.1:${PORT}
     cmd: |
       ${kubeswap} serve \
@@ -108,8 +109,8 @@ models:
       --command python3 --command -m --command sglang.launch_server \
       --resource-claim pro2000=pro2000 \
       --request cpu=2 \
-      --request memory=8Gi \
-      --limit memory=32Gi \
+      --request memory=10Gi \
+      --limit memory=16Gi \
       --env SGLANG_CLEF_HOST_TABLES=1 \
       --env HF_HUB_OFFLINE=1 \
       --env HF_HUB_DISABLE_TELEMETRY=1 \
