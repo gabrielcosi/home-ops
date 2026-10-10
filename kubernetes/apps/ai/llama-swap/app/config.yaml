@@ -5,7 +5,7 @@ globalTTL: 0
 
 macros:
   kubeswap: /opt/llama/kubeswap
-  sglang-image: ghcr.io/gabrielcosi/containers/sglang:nightly-dev-cu13-20261010-961bcf48@sha256:8804d389b0c1ba7a2add60fde43dcfbed9e37940c72f2002dfae3e13f9da939a # renovate: docker=ghcr.io/gabrielcosi/containers/sglang versioning=regex:^nightly-dev-cu13-(?<patch>\d{8})-[0-9a-f]+$
+  sglang-image: ghcr.io/gabrielcosi/containers/sglang:nightly-dev-cu13-20261010-961bcf48@sha256:8bb15e9f84df118818c59300e35cdb5f34c4c74aefcf503a798139d12f9ad496 # renovate: docker=ghcr.io/gabrielcosi/containers/sglang versioning=regex:^nightly-dev-cu13-(?<patch>\d{8})-[0-9a-f]+$
   llama-server: >-
     /usr/local/bin/llama-server
     --host 0.0.0.0
@@ -127,7 +127,8 @@ models:
       --max-mamba-cache-size 4 \
       --mamba-ssm-dtype bfloat16 \
       --context-length 16640 \
-      --max-prefill-tokens 16384
+      --max-prefill-tokens 16384 \
+      --enable-metrics
     cmdStop: ${kubeswap} delete --model clef-flash --namespace ai --wait 60s
     useModelName: clef-flash
 
