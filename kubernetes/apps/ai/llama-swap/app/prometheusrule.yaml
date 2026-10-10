@@ -40,9 +40,17 @@ spec:
 
         - alert: LlamaSwapPrefillSlow
           expr: |-
-            increase_pure(llamacpp:prompt_tokens_total[15m])
-              / clamp_min(increase_pure(llamacpp:prompt_seconds_total[15m]), 1) < 150
-              and increase_pure(llamacpp:prompt_tokens_total[15m]) > 20000
+            (
+              increase_pure(llamacpp:prompt_tokens_total[15m])
+                / clamp_min(increase_pure(llamacpp:prompt_seconds_total[15m]), 1) < 150
+                and increase_pure(llamacpp:prompt_tokens_total[15m]) > 20000
+            )
+            or
+            (
+              sum by (model) (increase_pure(sglang:prompt_tokens_total[15m]))
+                / clamp_min(sum by (model) (increase_pure(sglang:scheduler_stage_seconds_total{category="run_batch"}[15m])), 1) < 150
+                and sum by (model) (increase_pure(sglang:prompt_tokens_total[15m])) > 20000
+            )
           for: 15m
           annotations:
             summary: >-

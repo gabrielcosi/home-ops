@@ -40,7 +40,7 @@ spec:
             },
             "query": {
               "qryType": 1,
-              "query": "label_values(llamacpp:tokens_predicted_total, model)",
+              "query": "label_values(llama_swap_model_up, model)",
               "refId": "PrometheusVariableQueryEditor-VariableQuery"
             },
             "includeAll": true,
@@ -141,7 +141,7 @@ spec:
           "targets": [
             {
               "refId": "A",
-              "expr": "sum(increase_pure(llamacpp:prompt_tokens_total{model=~\"$model\"}[$__range])) / clamp_min(sum(increase_pure(llamacpp:prompt_seconds_total{model=~\"$model\"}[$__range])), 1)",
+              "expr": "((sum(increase_pure(llamacpp:prompt_tokens_total{model=~\"$model\"}[$__range])) or vector(0)) + (sum(increase_pure(sglang:prompt_tokens_total{model=~\"$model\"}[$__range])) or vector(0))) / clamp_min((sum(increase_pure(llamacpp:prompt_seconds_total{model=~\"$model\"}[$__range])) or vector(0)) + (sum(increase_pure(sglang:scheduler_stage_seconds_total{category=\"run_batch\",model=~\"$model\"}[$__range])) or vector(0)), 1)",
               "instant": true,
               "legendFormat": "tok/s"
             }
@@ -419,7 +419,7 @@ spec:
           "targets": [
             {
               "refId": "A",
-              "expr": "increase_pure(llamacpp:prompt_tokens_total{model=~\"$model\"}[$__interval]) / clamp_min(increase_pure(llamacpp:prompt_seconds_total{model=~\"$model\"}[$__interval]), 0.001)",
+              "expr": "increase_pure(llamacpp:prompt_tokens_total{model=~\"$model\"}[$__interval]) / clamp_min(increase_pure(llamacpp:prompt_seconds_total{model=~\"$model\"}[$__interval]), 0.001) or sum by (model) (increase_pure(sglang:prompt_tokens_total{model=~\"$model\"}[$__interval])) / clamp_min(sum by (model) (increase_pure(sglang:scheduler_stage_seconds_total{category=\"run_batch\",model=~\"$model\"}[$__interval])), 0.001)",
               "legendFormat": "{{model}}"
             }
           ],
@@ -474,12 +474,12 @@ spec:
           "targets": [
             {
               "refId": "A",
-              "expr": "llamacpp:requests_processing{model=~\"$model\"}",
+              "expr": "llamacpp:requests_processing{model=~\"$model\"} or sum by (model) (sglang:num_running_reqs{model=~\"$model\"})",
               "legendFormat": "{{model}} processing"
             },
             {
               "refId": "B",
-              "expr": "llamacpp:requests_deferred{model=~\"$model\"}",
+              "expr": "llamacpp:requests_deferred{model=~\"$model\"} or sum by (model) (sglang:num_queue_reqs{model=~\"$model\"})",
               "legendFormat": "{{model}} deferred"
             }
           ],
