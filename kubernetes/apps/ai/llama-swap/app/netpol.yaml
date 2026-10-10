@@ -7,14 +7,27 @@ metadata:
     app.kubernetes.io/instance: llama-swap
     app.kubernetes.io/name: llama-swap
 spec:
-  description: Restrict llama-swap to Bifrost, Envoy Gateway and vmagent ingress, with all egress denied.
+  description: Restrict llama-swap to Bifrost, Envoy Gateway and vmagent ingress, and egress to the API server and its backends.
   endpointSelector:
     matchLabels:
       app.kubernetes.io/instance: llama-swap
       app.kubernetes.io/name: llama-swap
-  egressDeny:
+  egress:
     - toEntities:
-        - all
+        - kube-apiserver
+      toPorts:
+        - ports:
+            - port: "6443"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: ai
+            k8s:app.kubernetes.io/name: llama-swap-backend
+            k8s:llama-swap.io/managed-by: llama-swap
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
   ingress:
     - fromEndpoints:
         - matchLabels:
@@ -36,4 +49,32 @@ spec:
       toPorts:
         - ports:
             - port: "9293"
+              protocol: TCP
+
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: llama-swap-backend-policy
+  labels:
+    app.kubernetes.io/instance: llama-swap
+    app.kubernetes.io/name: llama-swap-backend
+spec:
+  description: Restrict llama-swap backends to llama-swap ingress, with all egress denied.
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: llama-swap-backend
+      llama-swap.io/managed-by: llama-swap
+  egressDeny:
+    - toEntities:
+        - all
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: ai
+            k8s:app.kubernetes.io/instance: llama-swap
+            k8s:app.kubernetes.io/name: llama-swap
+      toPorts:
+        - ports:
+            - port: "8080"
               protocol: TCP

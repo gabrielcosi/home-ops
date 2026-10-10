@@ -16,6 +16,7 @@ spec:
           reloader.stakater.com/auto: 'true'
         strategy: Recreate
         pod:
+          automountServiceAccountToken: true
           terminationGracePeriodSeconds: 150
           resourceClaims:
             - name: pro4000
@@ -40,6 +41,20 @@ spec:
               - cp
               - /llama-server
               - /opt/llama/llama-server
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities:
+                drop: ['ALL']
+
+          kubeswap:
+            image:
+              repository: ghcr.io/gabrielcosi/containers/kubeswap
+              tag: v263@sha256:fdb6d5558382efddf52c544d9b0a715ae09b787634e5f8cbd92c7495470024dc # renovate: docker=ghcr.io/gabrielcosi/containers/kubeswap versioning=regex:^v(?<patch>\d+)$
+            command:
+              - cp
+              - /kubeswap
+              - /opt/llama/kubeswap
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
@@ -158,6 +173,33 @@ spec:
               limits:
                 memory: 128Mi
 
+    rbac:
+      roles:
+        kubeswap:
+          type: Role
+          rules:
+            - apiGroups: ['apps']
+              resources: ['deployments']
+              verbs: ['create', 'get', 'list', 'watch', 'delete']
+            - apiGroups: ['']
+              resources: ['services']
+              verbs: ['create', 'get', 'list', 'watch', 'delete']
+            - apiGroups: ['']
+              resources: ['pods']
+              verbs: ['get', 'list']
+            - apiGroups: ['']
+              resources: ['pods/log']
+              verbs: ['get']
+      bindings:
+        kubeswap:
+          type: RoleBinding
+          roleRef:
+            identifier: kubeswap
+          subjects:
+            - kind: ServiceAccount
+              name: llama-swap
+              namespace: ai
+
     service:
       app:
         ports:
@@ -206,6 +248,8 @@ spec:
         advancedMounts:
           llama-swap:
             llama-server:
+              - path: /opt/llama
+            kubeswap:
               - path: /opt/llama
             app:
               - path: /opt/llama
