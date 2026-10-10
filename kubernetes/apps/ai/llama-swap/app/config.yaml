@@ -112,6 +112,7 @@ models:
       --request memory=10Gi \
       --limit memory=16Gi \
       --env SGLANG_CLEF_HOST_TABLES=1 \
+      --env SGLANG_ENABLE_HEALTH_ENDPOINT_GENERATION=false \
       --env HF_HUB_OFFLINE=1 \
       --env HF_HUB_DISABLE_TELEMETRY=1 \
       --env DO_NOT_TRACK=1 \
