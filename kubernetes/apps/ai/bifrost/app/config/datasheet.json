@@ -75,18 +75,6 @@
     },
     "input_cost_per_token": 1e-08
   },
-  "llama-swap/qwen3-reranker-0.6b": {
-    "provider": "llama-swap",
-    "base_model": "qwen3-reranker-0.6b",
-    "mode": "rerank",
-    "max_input_tokens": 2048,
-    "architecture": {
-      "input_modalities": [
-        "text"
-      ]
-    },
-    "input_cost_per_token": 1e-08
-  },
   "opencode/deepseek-v4.1-flash": {
     "provider": "opencode",
     "base_model": "deepseek-v4.1-flash",

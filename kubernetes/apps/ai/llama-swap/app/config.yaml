@@ -146,25 +146,6 @@ models:
     useModelName: qwen3-embedding-0.6b
     concurrencyLimit: 4
 
-  qwen3-reranker-0.6b:
-    capabilities:
-      in: [text]
-      reranker: true
-      context: 2048
-    env:
-      - CUDA_VISIBLE_DEVICES=GPU-0b0e499d-1417-17ee-c551-f6a5c8b0e461
-    cmd: |
-      ${llama-server-custom} \
-      --model /models/Qwen3-Reranker-0.6B/Qwen3-Reranker-0.6B-Q8_0.gguf \
-      --reranking \
-      --pooling rank \
-      --ctx-size 8192 \
-      --batch-size 2048 \
-      --ubatch-size 2048 \
-      --parallel 4
-    useModelName: qwen3-reranker-0.6b
-    concurrencyLimit: 4
-
 routing:
   router:
     use: matrix
@@ -176,16 +157,14 @@ routing:
           qwenimg: qwen-image-2.1
           clef: clef-flash
           emb: qwen3-embedding-0.6b
-          rerank: qwen3-reranker-0.6b
 
         sets:
-          default: '(q3827b | muse30b | qwenimg) & clef & emb & rerank'
+          default: '(q3827b | muse30b | qwenimg) & clef & emb'
 
 hooks:
   on_startup:
     preload:
       - qwen3-embedding-0.6b
-      - qwen3-reranker-0.6b
       - clef-flash
 
 apiKeys:
