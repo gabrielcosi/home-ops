@@ -12,6 +12,7 @@ FIELDS="
   provider base_model mode
   max_input_tokens max_output_tokens architecture
   supports_function_calling supports_tool_choice supports_reasoning
+  supports_sampling_params
   input_cost_per_token output_cost_per_token
   cache_read_input_token_cost cache_creation_input_token_cost
   output_cost_per_image
