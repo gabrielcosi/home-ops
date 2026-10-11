@@ -101,12 +101,27 @@ bifrost:
           responses: true
           responses_stream: true
 
+    anthropic:
+      keys:
+        - name: anthropic-key
+          value: env.ANTHROPIC_API_KEY
+          models:
+            - claude-fable-5-1
+            - claude-haiku-5-5
+            - claude-opus-5-5
+            - claude-sonnet-5-5
+          weight: 1
+      network_config:
+        default_request_timeout_in_seconds: 300
+        max_retries: 2
+
     proxyapi:
       keys:
         - name: cliproxyapi-key
           value: cliproxyapi-local
           models:
             - claude-fable-5-1
+            - claude-haiku-5-5
             - claude-opus-5-5
             - claude-sonnet-5-5
             - gpt-6-luna
