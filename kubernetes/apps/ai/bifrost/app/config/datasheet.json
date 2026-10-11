@@ -86,6 +86,7 @@
     "supports_function_calling": true,
     "supports_tool_choice": true,
     "supports_reasoning": true,
+    "supports_adaptive_thinking": true,
     "supports_sampling_params": false,
     "input_cost_per_token": 1e-07,
     "output_cost_per_token": 5e-07,

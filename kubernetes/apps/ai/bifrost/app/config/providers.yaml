@@ -114,6 +114,12 @@ bifrost:
       network_config:
         default_request_timeout_in_seconds: 300
         max_retries: 2
+      prompt_cache:
+        cache_control_injection_points:
+          - location: message
+            role: system
+          - location: message
+            index: -1
 
     proxyapi:
       keys:
