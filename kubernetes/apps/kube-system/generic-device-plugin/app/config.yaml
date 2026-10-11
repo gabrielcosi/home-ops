@@ -4,3 +4,8 @@ devices:
       - count: 1000
         paths:
           - path: /dev/net/tun
+  - name: kvm
+    groups:
+      - count: 1000
+        paths:
+          - path: /dev/kvm
