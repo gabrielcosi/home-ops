@@ -1,0 +1,12 @@
+---
+working_dir: ./docker/truenas
+webhook_filter: '^refs/heads/main$'
+reconciliation:
+  enabled: true
+auto_discovery:
+  enabled: true
+  depth: 1
+  delete: true
+force_recreate: false
+external_secrets:
+  TRUENAS_MONITORING_PASSWORD: 'op://truenas/monitoring/ingest_password'

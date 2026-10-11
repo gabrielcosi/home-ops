@@ -1,0 +1,115 @@
+---
+name: monitoring
+
+services:
+  vmagent:
+    image: quay.io/victoriametrics/vmagent:v1.153.0
+    container_name: vmagent
+    restart: unless-stopped
+    network_mode: host
+    group_add:
+      - "999" # host docker group, for /var/run/docker.sock
+    command:
+      - --httpListenAddr=127.0.0.1:8429
+      - --promscrape.config=/etc/vmagent/scrape.yaml
+      - --remoteWrite.url=https://metrics.xcd.dev/api/v1/write
+      - --remoteWrite.basicAuth.username=truenas
+      - --remoteWrite.basicAuth.password=${TRUENAS_MONITORING_PASSWORD}
+      - --remoteWrite.label=cluster=truenas
+      - --remoteWrite.label=machine=truenas
+      - --remoteWrite.label=location=home
+      - --remoteWrite.tmpDataPath=/vmagentdata
+      - --remoteWrite.maxDiskUsagePerURL=1GB
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=16m
+    volumes:
+      - ./config/vmagent.yaml:/etc/vmagent/scrape.yaml:ro
+      - vmagent-data:/vmagentdata
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+          cpus: "0.5"
+    logging: &default-logging
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  node-exporter:
+    image: quay.io/prometheus/node-exporter:v1.12.1
+    container_name: node-exporter
+    restart: unless-stopped
+    network_mode: host
+    command:
+      - --web.listen-address=127.0.0.1:9100
+      - --path.rootfs=/host
+      - --path.procfs=/host/proc
+      - --path.sysfs=/host/sys
+      - --path.udev.data=/host/run/udev/data
+      - --collector.filesystem.mount-points-exclude=^/(dev|proc|sys|run|var/lib/docker/.+|mnt/\.ix-apps/docker/.+)($$|/)
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=16m
+    volumes:
+      - /:/host:ro,rslave
+    deploy:
+      resources:
+        limits:
+          memory: 64M
+          cpus: "0.25"
+    logging: *default-logging
+
+  smartctl-exporter:
+    image: quay.io/prometheuscommunity/smartctl-exporter:v0.15.0
+    container_name: smartctl-exporter
+    restart: unless-stopped
+    privileged: true
+    user: root
+    ports:
+      - 127.0.0.1:9633:9633
+    deploy:
+      resources:
+        limits:
+          memory: 64M
+          cpus: "0.25"
+    logging: *default-logging
+
+  fluent-bit:
+    image: cr.fluentbit.io/fluent/fluent-bit:5.1.3
+    container_name: fluent-bit
+    restart: unless-stopped
+    environment:
+      TRUENAS_MONITORING_PASSWORD: ${TRUENAS_MONITORING_PASSWORD}
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=16m
+    volumes:
+      - /mnt/.ix-apps/docker/containers:/var/lib/docker/containers:ro
+      - ./config/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf:ro
+      - ./config/enrich.lua:/fluent-bit/etc/enrich.lua:ro
+      - fluent-bit-data:/fluent-bit/data
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+          cpus: "0.5"
+    logging: *default-logging
+
+volumes:
+  vmagent-data:
+  fluent-bit-data:

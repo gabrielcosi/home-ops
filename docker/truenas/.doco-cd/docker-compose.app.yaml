@@ -1,0 +1,49 @@
+---
+secrets:
+  1pw_token:
+    file: /home/truenas_admin/.config/doco-cd/1pw_token
+  api_secret:
+    file: /home/truenas_admin/.config/doco-cd/api_secret
+  webhook_secret:
+    file: /home/truenas_admin/.config/doco-cd/webhook_secret
+services:
+  app:
+    container_name: doco-cd
+    environment:
+      API_SECRET_FILE: /run/secrets/api_secret
+      WEBHOOK_SECRET_FILE: /run/secrets/webhook_secret
+      DEPLOY_CONFIG_BASE_DIR: ./docker/truenas/
+      LOG_LEVEL: info
+      POLL_CONFIG: |-
+        - url: https://github.com/gabrielcosi/home-ops.git
+          reference: main
+          interval: 3600
+      SECRET_PROVIDER: 1password
+      SECRET_PROVIDER_ACCESS_TOKEN_FILE: /run/secrets/1pw_token
+      TZ: Europe/Berlin
+    ports:
+      - '8080:80'
+    healthcheck:
+      test:
+        - CMD
+        - /doco-cd
+        - healthcheck
+      start_period: 60s
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    image: ghcr.io/kimdre/doco-cd:0.125.1@sha256:38198abbda1b55da7a7f37a7924b2ccdcc0583bd24466b7c2103ef6cd2ffc828
+    labels:
+      - prometheus.scrape=true
+      - prometheus.port=9120
+      - prometheus.job=doco-cd
+    restart: unless-stopped
+    secrets:
+      - 1pw_token
+      - api_secret
+      - webhook_secret
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - data:/data
+volumes:
+  data: {}

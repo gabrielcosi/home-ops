@@ -36,3 +36,24 @@ spec:
         - /insert/jsonline.*
       static:
         url: http://victoria-logs.monitoring.svc.cluster.local:9428
+---
+apiVersion: operator.victoriametrics.com/v1beta1
+kind: VMUser
+metadata:
+  name: truenas
+  labels:
+    app.kubernetes.io/part-of: external-ingest
+spec:
+  username: truenas
+  passwordRef:
+    name: ingest-credentials
+    key: truenas-password
+  targetRefs:
+    - paths:
+        - /api/v1/write.*
+      static:
+        url: http://vmagent-victoria-metrics-cluster.monitoring.svc.cluster.local:8429
+    - paths:
+        - /insert/jsonline.*
+      static:
+        url: http://victoria-logs.monitoring.svc.cluster.local:9428
