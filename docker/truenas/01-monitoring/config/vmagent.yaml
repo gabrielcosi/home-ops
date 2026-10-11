@@ -31,6 +31,10 @@ scrape_configs:
         regex: host
         action: drop
       - source_labels:
+          - __meta_docker_port_private
+          - __meta_docker_container_label_prometheus_port
+        action: keep_if_equal
+      - source_labels:
           - __meta_docker_network_ip
           - __meta_docker_container_label_prometheus_port
         separator: ":"

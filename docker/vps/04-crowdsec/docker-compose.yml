@@ -20,6 +20,8 @@ services:
       - ./config/config.yaml.local:/etc/crowdsec/config.yaml.local:ro
     ports:
       - "127.0.0.1:8088:8080"
+    expose:
+      - "6060"
     labels:
       - prometheus.scrape=true
       - prometheus.port=6060
