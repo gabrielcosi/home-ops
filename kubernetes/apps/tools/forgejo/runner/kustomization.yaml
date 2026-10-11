@@ -7,6 +7,7 @@ resources:
   - ./externalsecret.yaml
   - ./netpol.yaml
   - ./priorityclass.yaml
+  - ./serviceaccount.yaml
 
 configMapGenerator:
   - name: forgejo-runner-values
@@ -14,6 +15,7 @@ configMapGenerator:
       - config.yaml
       - podspec-default.yaml=podspecs/default.yaml
       - podspec-dind.yaml=podspecs/dind.yaml
+      - podspec-talos.yaml=podspecs/talos.yaml
 
 generatorOptions:
   disableNameSuffixHash: true

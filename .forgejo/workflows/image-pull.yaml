@@ -1,0 +1,74 @@
+---
+name: Image Pull
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - kubernetes/**
+
+concurrency:
+  group: ${{ forgejo.workflow }}-${{ forgejo.event.pull_request.number || forgejo.ref }}
+  cancel-in-progress: true
+
+jobs:
+  extract:
+    name: Extract images
+    if: ${{ forgejo.event.pull_request.head.repo.full_name == forgejo.repository }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    outputs:
+      images: ${{ steps.extract.outputs.images }}
+    steps:
+      - name: Checkout PR
+        uses: https://github.com/actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          ref: ${{ forgejo.event.pull_request.head.sha }}
+          persist-credentials: false
+
+      - name: Extract images
+        id: extract
+        env:
+          BASE_SHA: ${{ forgejo.event.pull_request.base.sha }}
+        run: |-
+          set -euo pipefail
+          base=$(git merge-base "${BASE_SHA}" HEAD)
+          rendered=$(flate diff images --path ./kubernetes/flux/cluster --base "${base}" \
+            --allow-missing-secrets --no-progress --output json)
+          referenced=$(git diff --unified=0 "${base}" HEAD -- kubernetes \
+            | { grep -E '^\+[^+]' || true; } \
+            | { grep -oE '[a-z0-9.-]+\.[a-z]{2,}(:[0-9]+)?/[a-z0-9._/-]+:[A-Za-z0-9._-]+@sha256:[0-9a-f]{64}' || true; } \
+            | jq -R . | jq -s .)
+          images=$(jq -cn --argjson a "${rendered}" --argjson b "${referenced}" '$a + $b | unique')
+          echo "${images}" | jq .
+          echo "images=${images}" >> "${GITHUB_OUTPUT}"
+
+  pull:
+    name: Pull ${{ matrix.image }}
+    needs: extract
+    if: ${{ needs.extract.outputs.images != '[]' }}
+    runs-on: talos
+    timeout-minutes: 60
+    strategy:
+      matrix:
+        image: ${{ fromJSON(needs.extract.outputs.images) }}
+      max-parallel: 4
+      fail-fast: false
+    env:
+      TALOSCTL_VERSION: 'v1.14.2' # renovate: github-releases=siderolabs/talos
+    steps:
+      - name: Install talosctl
+        run: |-
+          set -euo pipefail
+          base="https://github.com/siderolabs/talos/releases/download/${TALOSCTL_VERSION}"
+          curl -fsSLO "${base}/talosctl-linux-amd64"
+          curl -fsSL "${base}/sha256sum.txt" | grep ' talosctl-linux-amd64$' | sha256sum -c -
+          install -D -m 0755 talosctl-linux-amd64 "${HOME}/.local/bin/talosctl"
+          echo "${HOME}/.local/bin" >> "${GITHUB_PATH}"
+
+      - name: Pull image
+        env:
+          IMAGE: ${{ matrix.image }}
+        run: talosctl --nodes "${NODE}" image pull "${IMAGE}" || echo "::warning::could not pull ${IMAGE}"

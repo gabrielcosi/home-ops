@@ -43,6 +43,11 @@ spec:
   endpointSelector:
     matchLabels:
       app.kubernetes.io/name: forgejo-runner-instance
+    matchExpressions:
+      - key: io.cilium.k8s.policy.serviceaccount
+        operator: NotIn
+        values:
+          - forgejo-runner-talos
   enableDefaultDeny:
     ingress: true
   egress:
@@ -104,3 +109,49 @@ spec:
     - toEntities:
         - host
         - remote-node
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: forgejo-runner-talos
+  namespace: tools
+spec:
+  description: Restrict Talos CI job pods to forgejo, the runner cache, the Talos API, and internet 443.
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: forgejo-runner-instance
+      io.cilium.k8s.policy.serviceaccount: forgejo-runner-talos
+  enableDefaultDeny:
+    ingress: true
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: tools
+            k8s:app.kubernetes.io/name: forgejo
+      toPorts:
+        - ports:
+            - port: "3000"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: tools
+            k8s:app.kubernetes.io/name: forgejo-runner
+      toPorts:
+        - ports:
+            - port: "8088"
+              protocol: TCP
+            - port: "8089"
+              protocol: TCP
+    - toEntities:
+        - host
+        - remote-node
+      toPorts:
+        - ports:
+            - port: "50000"
+              protocol: TCP
+    - toCIDRSet:
+        - cidrGroupRef: internet
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP

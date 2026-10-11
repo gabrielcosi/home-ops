@@ -30,5 +30,6 @@ runner:
     - ubuntu-latest:k8s:/config/podspec-default.yaml
     - default:k8s:/config/podspec-default.yaml
     - docker:k8s:/config/podspec-dind.yaml
+    - talos:k8s:/config/podspec-talos.yaml
   timeout: 3h
   shutdown_timeout: 4m

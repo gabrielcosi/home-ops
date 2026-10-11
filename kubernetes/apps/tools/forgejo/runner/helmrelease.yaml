@@ -21,6 +21,10 @@ spec:
       name: forgejo-runner-values
       valuesKey: podspec-dind.yaml
       targetPath: podSpecs.podspec-dind\.yaml
+    - kind: ConfigMap
+      name: forgejo-runner-values
+      valuesKey: podspec-talos.yaml
+      targetPath: podSpecs.podspec-talos\.yaml
   values:
     replicaCount: 2
 
