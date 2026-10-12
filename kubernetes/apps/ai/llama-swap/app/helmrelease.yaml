@@ -50,7 +50,7 @@ spec:
           kubeswap:
             image:
               repository: ghcr.io/gabrielcosi/containers/kubeswap
-              tag: v263@sha256:fdb6d5558382efddf52c544d9b0a715ae09b787634e5f8cbd92c7495470024dc
+              tag: v264@sha256:9f327f516da2951d1cc8f465e57cc50dfa0ccde6c753be90a140e8028af1d3cf
             command:
               - cp
               - /kubeswap
