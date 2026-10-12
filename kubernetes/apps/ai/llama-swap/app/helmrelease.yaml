@@ -50,7 +50,7 @@ spec:
           kubeswap:
             image:
               repository: ghcr.io/gabrielcosi/containers/kubeswap
-              tag: v263@sha256:fdb6d5558382efddf52c544d9b0a715ae09b787634e5f8cbd92c7495470024dc # renovate: docker=ghcr.io/gabrielcosi/containers/kubeswap versioning=regex:^v(?<patch>\d+)$
+              tag: v263@sha256:fdb6d5558382efddf52c544d9b0a715ae09b787634e5f8cbd92c7495470024dc
             command:
               - cp
               - /kubeswap
