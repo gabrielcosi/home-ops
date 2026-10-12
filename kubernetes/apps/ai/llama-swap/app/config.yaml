@@ -68,7 +68,7 @@ models:
       in: [text, image]
       out: [text]
       tools: true
-      context: 131072
+      context: 122880
     env:
       - CUDA_VISIBLE_DEVICES=GPU-d06ce8cc-4d13-f746-b123-75e2dccdb389
       - GGML_CUDA_MMVQ_MAX_NVFP4=1
@@ -76,7 +76,7 @@ models:
       ${llama-server-custom} \
       --model /models/Muse-Glimmer-30B/Muse-Glimmer-30B-NVFP4-Q8_0.gguf \
       --mmproj /models/Muse-Glimmer-30B/Muse-Glimmer-30B-mmproj-kquant.gguf \
-      --ctx-size 262144 \
+      --ctx-size 245760 \
       --parallel 2 \
       --no-cache-idle-slots \
       --chat-template-kwargs '{"reasoning_strength":"high"}' \
