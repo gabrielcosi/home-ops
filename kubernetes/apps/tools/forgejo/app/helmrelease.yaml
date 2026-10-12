@@ -18,7 +18,7 @@ spec:
       rootless: true
       registry: code.forgejo.org
       repository: forgejo/forgejo
-      tag: 16.0.5
+      tag: 16.0.6
 
     service:
       http:
