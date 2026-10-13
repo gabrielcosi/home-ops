@@ -154,11 +154,11 @@
     },
     "output_cost_per_image": 0.005
   },
-  "llama-swap/qwen3-embedding-0.6b": {
+  "llama-swap/embeddinggemma-2": {
     "provider": "llama-swap",
-    "base_model": "qwen3-embedding-0.6b",
+    "base_model": "embeddinggemma-2",
     "mode": "embedding",
-    "max_input_tokens": 2048,
+    "max_input_tokens": 8192,
     "architecture": {
       "input_modalities": [
         "text"

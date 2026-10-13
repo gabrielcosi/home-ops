@@ -59,7 +59,7 @@ bifrost:
           - provider: llama-swap
             weight: 1
             allowed_models:
-              - qwen3-embedding-0.6b
+              - embeddinggemma-2
             key_ids:
               - '*'
       - id: hermes
@@ -100,7 +100,7 @@ bifrost:
           - provider: llama-swap
             weight: 1
             allowed_models:
-              - qwen3-embedding-0.6b
+              - embeddinggemma-2
             key_ids:
               - '*'
       - id: n8n

@@ -6,9 +6,9 @@ bifrost:
         - name: llama-swap-key
           value: env.LLAMA_SWAP_API_KEY
           models:
+            - embeddinggemma-2
             - muse-glimmer-30b
             - qwen-image-2.1
-            - qwen3-embedding-0.6b
             - qwen3.8-27b
           weight: 1
       network_config:

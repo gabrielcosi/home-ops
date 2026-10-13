@@ -154,21 +154,21 @@ models:
       --offload-to-cpu \
       --max-vram -1
 
-  qwen3-embedding-0.6b:
+  embeddinggemma-2:
     capabilities:
       in: [text]
-      context: 2048
+      context: 8192
     env:
       - CUDA_VISIBLE_DEVICES=GPU-0b0e499d-1417-17ee-c551-f6a5c8b0e461
     cmd: |
       ${llama-server-custom} \
-      --model /models/Qwen3-Embedding-0.6B/Qwen3-Embedding-0.6B-Q8_0.gguf \
+      --model /library/EmbeddingGemma-2/EmbeddingGemma-2-Q8_0.gguf \
       --embedding \
-      --ctx-size 8192 \
-      --batch-size 2048 \
-      --ubatch-size 2048 \
+      --ctx-size 32768 \
+      --batch-size 8192 \
+      --ubatch-size 8192 \
       --parallel 4
-    useModelName: qwen3-embedding-0.6b
+    useModelName: embeddinggemma-2
     concurrencyLimit: 4
 
 routing:
@@ -181,7 +181,7 @@ routing:
           muse30b: muse-glimmer-30b
           qwenimg: qwen-image-2.1
           clef: clef-flash
-          emb: qwen3-embedding-0.6b
+          emb: embeddinggemma-2
 
         sets:
           default: '(q3827b | muse30b | qwenimg) & clef & emb'
@@ -189,7 +189,7 @@ routing:
 hooks:
   on_startup:
     preload:
-      - qwen3-embedding-0.6b
+      - embeddinggemma-2
       - clef-flash
 
 apiKeys:
