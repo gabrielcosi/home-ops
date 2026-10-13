@@ -71,4 +71,16 @@ jobs:
       - name: Pull image
         env:
           IMAGE: ${{ matrix.image }}
-        run: talosctl --nodes "${NODE}" image pull "${IMAGE}" || echo "::warning::could not pull ${IMAGE}"
+        run: |-
+          for attempt in 1 2 3; do
+            if out=$(talosctl --nodes "${NODE}" image pull "${IMAGE}" 2>&1); then
+              exit 0
+            fi
+            echo "${out}"
+            if grep -qiE 'unauthorized|401|403|denied' <<< "${out}"; then
+              echo "::warning::${IMAGE} needs registry credentials; skipping"
+              exit 0
+            fi
+            sleep 10
+          done
+          exit 1
