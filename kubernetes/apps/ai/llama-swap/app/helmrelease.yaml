@@ -36,7 +36,7 @@ spec:
           llama-server:
             image:
               repository: ghcr.io/gabrielcosi/containers/llama-server
-              tag: b11577@sha256:64f76bfe6dae750a174f454418ab6186a665cb9bb50ba77e47ff26cfb1e0ffb0 # renovate: docker=ghcr.io/gabrielcosi/containers/llama-server versioning=regex:^b(?<patch>\d+)$
+              tag: b11580@sha256:f745590ad9d932744de2fc775ecaf366add378db006df4bc351e5cae4252adb1 # renovate: docker=ghcr.io/gabrielcosi/containers/llama-server versioning=regex:^b(?<patch>\d+)$
             command:
               - cp
               - /llama-server
