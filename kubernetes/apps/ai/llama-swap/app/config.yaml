@@ -150,7 +150,7 @@ models:
       --vae /models/Qwen-Image-2.1/Qwen-Image-2.1-vae-BF16.safetensors \
       --cfg-scale 6.0 \
       --sampling-method euler \
-      --diffusion-fa \
+      --flash-attn off,diffusion=on \
       --offload-to-cpu \
       --max-vram -1
 
