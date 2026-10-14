@@ -162,7 +162,7 @@ models:
       - CUDA_VISIBLE_DEVICES=GPU-0b0e499d-1417-17ee-c551-f6a5c8b0e461
     cmd: |
       ${llama-server-custom} \
-      --model /library/EmbeddingGemma-2/EmbeddingGemma-2-Q8_0.gguf \
+      --model /models/EmbeddingGemma-2/EmbeddingGemma-2-Q8_0.gguf \
       --embedding \
       --ctx-size 32768 \
       --batch-size 8192 \
