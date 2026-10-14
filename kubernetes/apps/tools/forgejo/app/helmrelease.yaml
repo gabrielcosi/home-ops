@@ -168,7 +168,7 @@ spec:
           REVERSE_PROXY_TRUSTED_PROXIES: 10.42.0.0/16
 
         repository.pull-request:
-          DEFAULT_MERGE_STYLE: squash
+          DEFAULT_MERGE_STYLE: rebase
 
         indexer:
           ISSUE_INDEXER_TYPE: bleve
