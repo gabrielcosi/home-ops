@@ -47,20 +47,6 @@ spec:
               capabilities:
                 drop: ['ALL']
 
-          kubeswap:
-            image:
-              repository: ghcr.io/gabrielcosi/containers/kubeswap
-              tag: v264@sha256:c5ab6e1300016baa80333fbc1c4c0b3c88674ab37722d4e79ee7d3dc89b5168c
-            command:
-              - cp
-              - /kubeswap
-              - /opt/llama/kubeswap
-            securityContext:
-              allowPrivilegeEscalation: false
-              readOnlyRootFilesystem: true
-              capabilities:
-                drop: ['ALL']
-
         containers:
           app:
             nameOverride: llama-swap
@@ -190,6 +176,10 @@ spec:
             - apiGroups: ['']
               resources: ['pods/log']
               verbs: ['get']
+            - apiGroups: ['']
+              resources: ['persistentvolumeclaims']
+              resourceNames: ['llama-swap']
+              verbs: ['get']
       bindings:
         kubeswap:
           type: RoleBinding
@@ -248,8 +238,6 @@ spec:
         advancedMounts:
           llama-swap:
             llama-server:
-              - path: /opt/llama
-            kubeswap:
               - path: /opt/llama
             app:
               - path: /opt/llama

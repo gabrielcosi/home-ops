@@ -4,7 +4,7 @@ logToStdout: proxy,upstream
 globalTTL: 0
 
 macros:
-  kubeswap: /opt/llama/kubeswap
+  kubeswap: /usr/local/bin/kubeswap
   sglang-image: ghcr.io/gabrielcosi/containers/sglang:nightly-dev-cu13-20261014-684fea8a@sha256:01b0a3cd96eadeb8c5e4ff874f50a64c349449aaca98ab7c16888a31fe87a1b0 # renovate: docker=ghcr.io/gabrielcosi/containers/sglang versioning=regex:^nightly-dev-cu13-(?<patch>\d{8})-[0-9a-f]+$
   llama-server: >-
     /usr/local/bin/llama-server
@@ -116,10 +116,10 @@ models:
       --env HF_HUB_OFFLINE=1 \
       --env HF_HUB_DISABLE_TELEMETRY=1 \
       --env DO_NOT_TRACK=1 \
-      --volume nfs:tank.internal/mnt/home-pool/models:/library:ro \
+      --volume pvc:llama-swap:/models:ro \
       --startup-timeout 5m \
       -- \
-      --model-path /library/Clef-Flash/Clef-Flash-NVFP4-SGL \
+      --model-path /models/Clef-Flash/Clef-Flash-NVFP4-SGL \
       --served-model-name clef-flash \
       --host 0.0.0.0 \
       --port 8080 \
