@@ -59,7 +59,7 @@ spec:
         memory: 512Mi
       limits:
         cpu: null
-        memory: 2Gi
+        memory: 4Gi
 
     bifrost:
       sourceOfTruth: 'config.json'

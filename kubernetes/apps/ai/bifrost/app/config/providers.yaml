@@ -163,3 +163,6 @@ bifrost:
         max_retries: 3
         retry_backoff_initial_ms: 250
         retry_backoff_max_ms: 5000
+      concurrency_and_buffer_size:
+        concurrency: 8
+        buffer_size: 100
