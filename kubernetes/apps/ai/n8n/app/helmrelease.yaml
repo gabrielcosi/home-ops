@@ -49,6 +49,8 @@ spec:
               N8N_DYNAMIC_BANNERS_ENABLED: false
               N8N_VERIFIED_PACKAGES_ENABLED: false
               N8N_DISABLED_MODULES: mcp-registry
+              EXECUTIONS_DATA_PRUNE: 'true'
+              EXECUTIONS_DATA_MAX_AGE: '24'
               N8N_DIAGNOSTICS_CONFIG_FRONTEND: ''
               N8N_DIAGNOSTICS_CONFIG_BACKEND: ''
               EXTERNAL_FRONTEND_HOOKS_URLS: ''
