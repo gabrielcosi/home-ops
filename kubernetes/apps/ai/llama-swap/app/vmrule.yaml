@@ -53,3 +53,14 @@ spec:
               llama-server failed to read or write its disk prompt cache
           labels:
             severity: warning
+        - alert: LlamaServerPromptCacheMispredicted
+          expr: |
+            _time:5m {kubernetes.pod_namespace="ai", kubernetes.container_name="llama-swap"}
+            "restored state has pos_min"
+            | stats count() as hits
+            | filter hits:>0
+          annotations:
+            summary: >-
+              llama-server restored a prompt state it scored wrongly
+          labels:
+            severity: warning
