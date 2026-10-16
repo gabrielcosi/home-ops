@@ -81,7 +81,6 @@ bifrost:
         - name: opencode-anthropic-key
           value: env.OPENCODE_API_KEY
           models:
-            - minimax-m2.7
             - minimax-m3
             - qwen3.7-plus
             - qwen3.8-flash
