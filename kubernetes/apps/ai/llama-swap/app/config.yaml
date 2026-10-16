@@ -5,7 +5,7 @@ globalTTL: 0
 
 macros:
   kubeswap: /usr/local/bin/kubeswap
-  sglang-image: ghcr.io/gabrielcosi/containers/sglang:nightly-dev-cu13-20261015-a6a8c560@sha256:30f68b424828e52ef7ae7b85e26711cd3ee6e5abf893413e9322681c18c68e17 # renovate: docker=ghcr.io/gabrielcosi/containers/sglang versioning=regex:^nightly-dev-cu13-(?<patch>\d{8})-[0-9a-f]+$
+  sglang-image: ghcr.io/gabrielcosi/containers/sglang:nightly-dev-cu13-20261016-a93f16f0@sha256:2b7b706d5d42ed4b77d20e62eecf1d32cec16208601c3d93e749d7ac53f4abd2 # renovate: docker=ghcr.io/gabrielcosi/containers/sglang versioning=regex:^nightly-dev-cu13-(?<patch>\d{8})-[0-9a-f]+$
   llama-server: >-
     /usr/local/bin/llama-server
     --host 0.0.0.0
