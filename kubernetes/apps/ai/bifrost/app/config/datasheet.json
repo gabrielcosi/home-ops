@@ -659,7 +659,7 @@
     "provider": "typesafe",
     "base_model": "d3-flash",
     "mode": "decisions",
-    "max_input_tokens": 16384,
+    "max_input_tokens": 32768,
     "architecture": {
       "input_modalities": [
         "text",

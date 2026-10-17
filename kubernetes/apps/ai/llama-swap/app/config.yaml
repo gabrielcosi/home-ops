@@ -97,7 +97,7 @@ models:
   d3-flash:
     capabilities:
       in: [text, image]
-      context: 16384
+      context: 32768
     concurrencyLimit: 16
     proxy: http://127.0.0.1:${PORT}
     cmd: |
@@ -124,9 +124,9 @@ models:
       --served-model-name d3-flash \
       --host 0.0.0.0 \
       --port 8080 \
-      --max-model-len 16640 \
+      --max-model-len 33024 \
       --max-num-seqs 4 \
-      --max-num-batched-tokens 16640 \
+      --max-num-batched-tokens 33024 \
       --gpu-memory-utilization 0.8 \
       --kv-cache-memory-bytes 512M \
       --limit-mm-per-prompt.video 0 \
