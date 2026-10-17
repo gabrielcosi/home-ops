@@ -47,9 +47,9 @@ spec:
             )
             or
             (
-              sum by (model) (increase_pure(sglang:prompt_tokens_total[15m]))
-                / clamp_min(sum by (model) (increase_pure(sglang:scheduler_stage_seconds_total{category="run_batch"}[15m])), 1) < 150
-                and sum by (model) (increase_pure(sglang:prompt_tokens_total[15m])) > 20000
+              sum by (model) (increase_pure(vllm:prompt_tokens_total[15m]))
+                / clamp_min(sum by (model) (increase_pure(vllm:request_prefill_time_seconds_sum[15m])), 1) < 150
+                and sum by (model) (increase_pure(vllm:prompt_tokens_total[15m])) > 20000
             )
           for: 15m
           annotations:

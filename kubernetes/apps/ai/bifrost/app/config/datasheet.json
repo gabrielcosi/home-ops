@@ -655,9 +655,9 @@
     "cache_creation_input_token_cost": 1.25e-07,
     "cache_read_input_token_cost": 1e-08
   },
-  "typesafe/clef-flash": {
+  "typesafe/d3-flash": {
     "provider": "typesafe",
-    "base_model": "clef-flash",
+    "base_model": "d3-flash",
     "mode": "decisions",
     "max_input_tokens": 16384,
     "architecture": {

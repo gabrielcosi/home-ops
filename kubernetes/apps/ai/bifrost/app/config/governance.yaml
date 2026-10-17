@@ -118,7 +118,7 @@ bifrost:
           - provider: typesafe
             weight: 1
             allowed_models:
-              - clef-flash
+              - d3-flash
             key_ids:
               - '*'
       - id: home-ops-ci
@@ -170,7 +170,7 @@ bifrost:
           - provider: typesafe
             weight: 1
             allowed_models:
-              - clef-flash
+              - d3-flash
             key_ids:
               - '*'
           - provider: anthropic

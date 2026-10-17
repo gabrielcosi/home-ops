@@ -153,7 +153,7 @@ bifrost:
         - name: llama-swap-key
           value: env.LLAMA_SWAP_API_KEY
           models:
-            - clef-flash
+            - d3-flash
           weight: 1
       network_config:
         base_url: http://llama-swap.ai.svc.cluster.local:8080

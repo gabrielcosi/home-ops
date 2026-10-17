@@ -5,7 +5,7 @@ globalTTL: 0
 
 macros:
   kubeswap: /usr/local/bin/kubeswap
-  sglang-image: ghcr.io/gabrielcosi/containers/sglang:nightly-dev-cu13-20261016-a93f16f0@sha256:2b7b706d5d42ed4b77d20e62eecf1d32cec16208601c3d93e749d7ac53f4abd2 # renovate: docker=ghcr.io/gabrielcosi/containers/sglang versioning=regex:^nightly-dev-cu13-(?<patch>\d{8})-[0-9a-f]+$
+  vllm-image: docker.io/vllm/vllm-openai:nightly@sha256:a3bc7f09c1e2e72e068021feb75118c92e98c538706caa0c5d1acc0bb9252623 # renovate: docker=docker.io/vllm/vllm-openai
   llama-server: >-
     /usr/local/bin/llama-server
     --host 0.0.0.0
@@ -94,7 +94,7 @@ models:
     useModelName: muse-glimmer-30b
     concurrencyLimit: 4
 
-  clef-flash:
+  d3-flash:
     capabilities:
       in: [text, image]
       context: 16384
@@ -103,36 +103,36 @@ models:
     cmd: |
       ${kubeswap} serve \
       --listen 127.0.0.1:${PORT} \
-      --model clef-flash \
+      --model d3-flash \
       --namespace ai \
-      --image ${sglang-image} \
-      --command python3 --command -m --command sglang.launch_server \
+      --image ${vllm-image} \
+      --command vllm --command serve \
       --resource-claim pro2000=pro2000 \
       --request cpu=2 \
-      --request memory=10Gi \
-      --limit memory=20Gi \
-      --env SGLANG_CLEF_HOST_TABLES=1 \
-      --env SGLANG_ENABLE_HEALTH_ENDPOINT_GENERATION=false \
+      --request memory=8Gi \
+      --limit memory=16Gi \
+      --env HOME=/models/.cache/d3-flash \
+      --env PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True \
+      --env VLLM_NO_USAGE_STATS=1 \
       --env HF_HUB_OFFLINE=1 \
       --env HF_HUB_DISABLE_TELEMETRY=1 \
       --env DO_NOT_TRACK=1 \
-      --volume pvc:llama-swap:/models:ro \
+      --volume pvc:llama-swap:/models \
       --startup-timeout 5m \
       -- \
-      --model-path /models/Clef-Flash/Clef-Flash-NVFP4-SGL \
-      --served-model-name clef-flash \
+      /models/D3-Flash/D3-Flash-NVFP4 \
+      --served-model-name d3-flash \
       --host 0.0.0.0 \
       --port 8080 \
-      --mem-fraction-static 0.55 \
-      --max-running-requests 4 \
-      --max-mamba-cache-size 4 \
-      --mamba-ssm-dtype bfloat16 \
-      --context-length 16640 \
-      --max-prefill-tokens 16384 \
-      --enable-metrics \
-      --sleep-on-idle
-    cmdStop: ${kubeswap} delete --model clef-flash --namespace ai --wait 60s
-    useModelName: clef-flash
+      --max-model-len 16640 \
+      --max-num-seqs 4 \
+      --max-num-batched-tokens 16640 \
+      --gpu-memory-utilization 0.8 \
+      --kv-cache-memory-bytes 512M \
+      --limit-mm-per-prompt.video 0 \
+      --limit-mm-per-prompt.image 4
+    cmdStop: ${kubeswap} delete --model d3-flash --namespace ai --wait 60s
+    useModelName: d3-flash
 
   qwen-image-2.1:
     capabilities:
@@ -180,17 +180,17 @@ routing:
           q3827b: qwen3.8-27b
           muse30b: muse-glimmer-30b
           qwenimg: qwen-image-2.1
-          clef: clef-flash
+          d3: d3-flash
           emb: embeddinggemma-2
 
         sets:
-          default: '(q3827b | muse30b | qwenimg) & clef & emb'
+          default: '(q3827b | muse30b | qwenimg) & d3 & emb'
 
 hooks:
   on_startup:
     preload:
       - embeddinggemma-2
-      - clef-flash
+      - d3-flash
 
 apiKeys:
   - ${env.LS_API_KEY}
