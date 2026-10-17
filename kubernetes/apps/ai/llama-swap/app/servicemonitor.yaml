@@ -15,3 +15,7 @@ spec:
       interval: 15s
       scrapeTimeout: 10s
       honorLabels: true
+      metricRelabelings:
+        - action: drop
+          sourceLabels: ["__name__"]
+          regex: vllm:cache_config_info
