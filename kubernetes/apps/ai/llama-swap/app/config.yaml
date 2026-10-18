@@ -189,8 +189,8 @@ routing:
 hooks:
   on_startup:
     preload:
-      - embeddinggemma-2
       - d3-flash
+      - embeddinggemma-2
 
 apiKeys:
   - ${env.LS_API_KEY}
