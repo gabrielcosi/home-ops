@@ -5,8 +5,6 @@ on:
   pull_request:
     branches:
       - main
-    paths:
-      - kubernetes/**
 
 concurrency:
   group: ${{ forgejo.workflow }}-${{ forgejo.event.pull_request.number || forgejo.ref }}
@@ -84,3 +82,18 @@ jobs:
             sleep 10
           done
           exit 1
+
+  pulled:
+    name: Images pulled
+    needs:
+      - extract
+      - pull
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check pull results
+        env:
+          RESULTS: ${{ needs.extract.result }} ${{ needs.pull.result }}
+        run: |-
+          echo "${RESULTS}"
+          ! grep -qE 'failure|cancelled' <<< "${RESULTS}"

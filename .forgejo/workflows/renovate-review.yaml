@@ -9,18 +9,15 @@ on:
       - opened
       - reopened
       - synchronize
-      - labeled
 
 concurrency:
-  group: ${{ forgejo.workflow }}-${{ forgejo.event.pull_request.number || forgejo.ref }}${{ startsWith(forgejo.event.action, 'label') && format('-label-{0}', forgejo.run_id) || '' }}
+  group: ${{ forgejo.workflow }}-${{ forgejo.event.pull_request.number || forgejo.ref }}
   cancel-in-progress: true
 
 jobs:
   review:
     name: Renovate Review
-    if: >-
-      ${{ startsWith(forgejo.event.pull_request.head.ref, 'renovate/')
-      && (!startsWith(forgejo.event.action, 'label') || forgejo.event.label.name == 'ai-review') }}
+    if: ${{ startsWith(forgejo.event.pull_request.head.ref, 'renovate/') }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     env:
