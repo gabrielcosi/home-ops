@@ -12,12 +12,5 @@ spec:
     serviceMonitor:
       enabled: true
 
-    service:
-      registry:
-        hostPort: 29999
-
     spegel:
       containerdRegistryConfigPath: /etc/cri/conf.d/hosts
-    grafanaDashboard:
-      enabled: true
-      mode: Sidecar
