@@ -27,7 +27,7 @@ spec:
           app:
             image:
               repository: registry.xcd.dev/gabrielcosi/freeze-frame
-              tag: latest@sha256:e0d4246b0365674355da312a4d737fb9d381f65f6a5ca400ad6718f5bfcb38c0
+              tag: latest@sha256:2a450309bb65482bb62f1c674c1908b7c31f242976abdab77851d6cfaf143a27
             resources:
               requests:
                 cpu: 1m
