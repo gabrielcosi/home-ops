@@ -51,7 +51,7 @@ jobs:
     timeout-minutes: 60
     strategy:
       matrix:
-        image: ${{ fromJSON(needs.extract.outputs.images) }}
+        image: ${{ fromJSON(needs.extract.outputs.images != '[]' && needs.extract.outputs.images || '[""]') }}
       max-parallel: 4
       fail-fast: false
     env:
