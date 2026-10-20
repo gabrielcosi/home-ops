@@ -15,6 +15,10 @@ spec:
         global:
           bdev_enable_discard: "true"
           bdev_async_discard_threads: "1"
+        mon:
+          mon_cluster_log_level: info
+          mon_compact_on_trim: "false"
+          mon_memory_target: "1610612736"
       cleanupPolicy:
         wipeDevicesFromOtherClusters: true
       crashCollector:
@@ -90,13 +94,13 @@ spec:
         mon:
           requests:
             cpu: 50m
-            memory: 1280Mi
+            memory: 1Gi
           limits:
             memory: 2Gi
         osd:
           requests:
             cpu: 150m
-            memory: 3584Mi
+            memory: 2Gi
           limits:
             memory: 8Gi # Required for bootstrap
         prepareosd:
@@ -204,7 +208,7 @@ spec:
             resources:
               requests:
                 cpu: 50m
-                memory: 768Mi
+                memory: 512Mi
               limits:
                 memory: 4Gi
         storageClass:

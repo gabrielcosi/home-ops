@@ -26,31 +26,31 @@ spec:
             attacher:
               requests:
                 cpu: 10m
-                memory: 128Mi
+                memory: 64Mi
               limits:
                 memory: 256Mi
             plugin:
               requests:
                 cpu: 10m
-                memory: 192Mi
+                memory: 128Mi
               limits:
                 memory: 512Mi
             provisioner:
               requests:
                 cpu: 10m
-                memory: 128Mi
+                memory: 64Mi
               limits:
                 memory: 256Mi
             resizer:
               requests:
                 cpu: 10m
-                memory: 128Mi
+                memory: 64Mi
               limits:
                 memory: 256Mi
             snapshotter:
               requests:
                 cpu: 10m
-                memory: 128Mi
+                memory: 64Mi
               limits:
                 memory: 256Mi
         nodePlugin:
@@ -59,13 +59,13 @@ spec:
             plugin:
               requests:
                 cpu: 10m
-                memory: 192Mi
+                memory: 128Mi
               limits:
                 memory: 512Mi
             registrar:
               requests:
                 cpu: 10m
-                memory: 64Mi
+                memory: 32Mi
               limits:
                 memory: 128Mi
     drivers:
@@ -83,31 +83,31 @@ spec:
             attacher:
               requests:
                 cpu: 10m
-                memory: 128Mi
+                memory: 64Mi
               limits:
                 memory: 256Mi
             plugin:
               requests:
                 cpu: 10m
-                memory: 192Mi
+                memory: 128Mi
               limits:
                 memory: 512Mi
             provisioner:
               requests:
                 cpu: 10m
-                memory: 128Mi
+                memory: 64Mi
               limits:
                 memory: 256Mi
             resizer:
               requests:
                 cpu: 10m
-                memory: 128Mi
+                memory: 64Mi
               limits:
                 memory: 256Mi
             snapshotter:
               requests:
                 cpu: 10m
-                memory: 128Mi
+                memory: 64Mi
               limits:
                 memory: 256Mi
         nodePlugin:
@@ -115,13 +115,13 @@ spec:
             plugin:
               requests:
                 cpu: 10m
-                memory: 192Mi
+                memory: 128Mi
               limits:
                 memory: 512Mi
             registrar:
               requests:
                 cpu: 10m
-                memory: 64Mi
+                memory: 32Mi
               limits:
                 memory: 128Mi
       cephfs:
@@ -138,31 +138,31 @@ spec:
             attacher:
               requests:
                 cpu: 10m
-                memory: 128Mi
+                memory: 64Mi
               limits:
                 memory: 256Mi
             plugin:
               requests:
                 cpu: 10m
-                memory: 192Mi
+                memory: 128Mi
               limits:
                 memory: 512Mi
             provisioner:
               requests:
                 cpu: 10m
-                memory: 128Mi
+                memory: 64Mi
               limits:
                 memory: 256Mi
             resizer:
               requests:
                 cpu: 10m
-                memory: 128Mi
+                memory: 64Mi
               limits:
                 memory: 256Mi
             snapshotter:
               requests:
                 cpu: 10m
-                memory: 128Mi
+                memory: 64Mi
               limits:
                 memory: 256Mi
         nodePlugin:
@@ -170,13 +170,13 @@ spec:
             plugin:
               requests:
                 cpu: 10m
-                memory: 192Mi
+                memory: 128Mi
               limits:
                 memory: 512Mi
             registrar:
               requests:
                 cpu: 10m
-                memory: 64Mi
+                memory: 32Mi
               limits:
                 memory: 128Mi
       nfs:
