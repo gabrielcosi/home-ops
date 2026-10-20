@@ -6,5 +6,6 @@ resources:
   - ./externalsecret.yaml
   - ./httproute.yaml
   - ./vmauth.yaml
+  - ./grafanadashboard.yaml
   - ./prometheusrule.yaml
   - ./helmrelease.yaml
