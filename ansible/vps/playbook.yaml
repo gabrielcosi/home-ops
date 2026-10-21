@@ -60,6 +60,63 @@
             state: stopped
           failed_when: false
 
+    - name: unattended-upgrades
+      block:
+        - name: unattended-upgrades | Install
+          ansible.builtin.apt:
+            name: unattended-upgrades
+            state: present
+
+        - name: unattended-upgrades | Enable the daily run
+          ansible.builtin.copy:
+            dest: /etc/apt/apt.conf.d/20auto-upgrades
+            content: |
+              APT::Periodic::Update-Package-Lists "1";
+              APT::Periodic::Unattended-Upgrade "1";
+            owner: root
+            group: root
+            mode: '0644'
+
+        - name: unattended-upgrades | Add third-party origins and reboot when required
+          ansible.builtin.copy:
+            dest: /etc/apt/apt.conf.d/52unattended-upgrades-local
+            content: |
+              Unattended-Upgrade::Origins-Pattern {
+                "origin=Docker,label=Docker CE";
+                "origin=packagecloud.io/crowdsec/crowdsec,label=crowdsec";
+              };
+              Unattended-Upgrade::Remove-Unused-Kernel-Packages "true";
+              Unattended-Upgrade::Automatic-Reboot "true";
+              Unattended-Upgrade::Automatic-Reboot-Time "06:00";
+            owner: root
+            group: root
+            mode: '0644'
+
+        - name: unattended-upgrades | Create apt timer drop-in directories
+          ansible.builtin.file:
+            path: '/etc/systemd/system/{{ item }}.d'
+            state: directory
+            mode: '0755'
+          loop:
+            - apt-daily.timer
+            - apt-daily-upgrade.timer
+
+        - name: unattended-upgrades | Run apt timers before the reboot time
+          ansible.builtin.copy:
+            dest: '/etc/systemd/system/{{ item.timer }}.d/override.conf'
+            content: |
+              [Timer]
+              OnCalendar=
+              OnCalendar=*-*-* {{ item.time }}
+              RandomizedDelaySec=0
+            owner: root
+            group: root
+            mode: '0644'
+          loop:
+            - { timer: apt-daily.timer, time: '05:00' }
+            - { timer: apt-daily-upgrade.timer, time: '05:30' }
+          notify: Reload systemd
+
     - name: firewall | Check if UFW is already active
       ansible.builtin.command: ufw status
       register: ufw_status
@@ -234,6 +291,10 @@
           - 'VPS IP     : {{ vps_ip }}'
 
   handlers:
+    - name: Reload systemd
+      ansible.builtin.systemd:
+        daemon_reload: true
+
     - name: Restart ssh
       ansible.builtin.systemd:
         name: ssh.service
