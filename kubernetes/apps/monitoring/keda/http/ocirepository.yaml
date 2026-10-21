@@ -10,4 +10,5 @@ spec:
     operation: copy
   ref:
     tag: 0.16.0
+    digest: sha256:ccc1ed713413369c58b871da4fdc98e9bc42a8b11f0e91221796f84fb79e9a86
   url: oci://registry.xcd.dev/x/kedacore.github.io/charts/keda-add-ons-http

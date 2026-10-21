@@ -30,7 +30,7 @@ spec:
           app:
             image:
               repository: registry.xcd.dev/gabrielcosi/warden
-              tag: 0.1.17
+              tag: 0.1.17@sha256:e34a80856da613119286b30f3bbf177aaf76aeccf9d9e884c5b1a9ba317aeab9
             args:
               - --config
               - /etc/gate/config.yml
@@ -75,7 +75,7 @@ spec:
           limbo:
             image:
               repository: ghcr.io/quozul/picolimbo
-              tag: v1.13.2-mc26.2
+              tag: v1.13.2-mc26.2@sha256:b94bc10f70e7bc62f906efcb2eaadade91f2cc25137190c0e03a225096728d85
             command:
               - pico_limbo
             args:

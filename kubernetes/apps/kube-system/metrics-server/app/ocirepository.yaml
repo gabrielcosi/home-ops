@@ -10,4 +10,5 @@ spec:
     operation: copy
   ref:
     tag: 3.14.0
+    digest: sha256:06580d2ba33daf5e8d0374c6764d286deb26fb593605f1730dc88bad0cb550a4
   url: oci://registry.xcd.dev/x/kubernetes-sigs.github.io/metrics-server/metrics-server

@@ -3,7 +3,7 @@ name: monitoring
 
 services:
   vmagent:
-    image: quay.io/victoriametrics/vmagent:v1.154.1
+    image: quay.io/victoriametrics/vmagent:v1.154.1@sha256:970ba603235839655e03501311c683d2269b882f7bcf0ac98892ae422603cb61
     container_name: vmagent
     restart: unless-stopped
     network_mode: host
@@ -43,7 +43,7 @@ services:
         max-file: "3"
 
   node-exporter:
-    image: quay.io/prometheus/node-exporter:v1.12.1
+    image: quay.io/prometheus/node-exporter:v1.12.1@sha256:1b4e4438faca4dd7e001dd445d161a4a2091b0fededa84093b3a8dfeae1f1be0
     container_name: node-exporter
     restart: unless-stopped
     network_mode: host
@@ -71,7 +71,7 @@ services:
     logging: *default-logging
 
   smartctl-exporter:
-    image: quay.io/prometheuscommunity/smartctl-exporter:v0.15.0
+    image: quay.io/prometheuscommunity/smartctl-exporter:v0.15.0@sha256:a76e08dbf5db4781fefd1ed81c65ad46ae8d2849dae6b6d3acebcde2fc4e59d6
     container_name: smartctl-exporter
     restart: unless-stopped
     privileged: true
@@ -86,7 +86,7 @@ services:
     logging: *default-logging
 
   fluent-bit:
-    image: cr.fluentbit.io/fluent/fluent-bit:5.1.5
+    image: cr.fluentbit.io/fluent/fluent-bit:5.1.5@sha256:2740f387f6e68fab66d28e4fa6a853387b9cab6ffb4cb78958f69bba4eb0e7b4
     container_name: fluent-bit
     restart: unless-stopped
     environment:

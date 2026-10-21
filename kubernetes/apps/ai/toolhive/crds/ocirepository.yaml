@@ -10,4 +10,5 @@ spec:
     operation: copy
   ref:
     tag: 0.55.2
+    digest: sha256:6309cc7aa649f765a328dd8cd91ba0dd2c179393a96747fe11d353eb130a9763
   url: oci://ghcr.io/stacklok/toolhive/toolhive-operator-crds

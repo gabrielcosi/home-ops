@@ -10,4 +10,5 @@ spec:
     operation: copy
   ref:
     tag: 1.104.2
+    digest: sha256:0eab3d84f608521b3c3383776f346718a3305395f53783e696bd3f279d7c31cd
   url: oci://registry.xcd.dev/x/pkgs.tailscale.com/helmcharts/tailscale-operator

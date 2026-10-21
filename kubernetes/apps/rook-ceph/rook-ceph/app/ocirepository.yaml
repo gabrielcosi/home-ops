@@ -10,4 +10,5 @@ spec:
     operation: copy
   ref:
     tag: 1.21.0
+    digest: sha256:0b5b8ec32bec6816fc27cdc4c6649dd224cd7012e195511b1432ed0962b26d7f
   url: oci://ghcr.io/rook/rook-ceph

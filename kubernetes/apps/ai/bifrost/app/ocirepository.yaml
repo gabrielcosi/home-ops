@@ -10,4 +10,5 @@ spec:
     operation: copy
   ref:
     tag: 2.1.45
+    digest: sha256:2816ca7549f21fac699c35be9d1bafe182a78f765fe7f4aa8bee47f19865bc9e
   url: oci://ghcr.io/maximhq/helm-charts/bifrost

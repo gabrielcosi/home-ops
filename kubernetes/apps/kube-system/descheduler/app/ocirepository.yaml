@@ -10,4 +10,5 @@ spec:
     operation: copy
   ref:
     tag: 0.37.0
+    digest: sha256:e13f1f644b93d0124db6bdf10dcd2a5120e0f5a5a1074fa2e83fc00b7f2b9eb7
   url: oci://registry.xcd.dev/x/kubernetes-sigs.github.io/descheduler/descheduler

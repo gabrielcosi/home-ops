@@ -10,4 +10,5 @@ spec:
     operation: copy
   ref:
     tag: 0.12.6
+    digest: sha256:e5e5607abccb6126096e13803199ef4e34184f765e3f851b457501eef7afc3f7
   url: oci://ghcr.io/home-operations/charts/miroir

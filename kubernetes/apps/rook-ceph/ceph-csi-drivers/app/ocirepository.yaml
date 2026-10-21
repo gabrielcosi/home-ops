@@ -10,4 +10,5 @@ spec:
     operation: copy
   ref:
     tag: 1.1.0
+    digest: sha256:0aaeaf9d6907e72c294d8e9bf0e6f0957d05633c75c50bebbe0dc37c25666a8c
   url: oci://registry.xcd.dev/x/ceph.github.io/ceph-csi-operator/ceph-csi-drivers

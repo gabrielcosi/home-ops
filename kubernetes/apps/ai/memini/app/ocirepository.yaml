@@ -10,4 +10,5 @@ spec:
     operation: copy
   ref:
     tag: v0.7.36
+    digest: sha256:498ef46a0c7014c1c97a836a8ee12d1fbd7c0e760e269583cf8bfd55dc5c4100
   url: oci://registry.xcd.dev/x/registry.erwanleboucher.dev/eleboucher/charts/memini

@@ -10,4 +10,5 @@ spec:
     operation: copy
   ref:
     tag: 2.21.0
+    digest: sha256:5d4ffadc27e606b2a8702a6fa801476733e36cd488c13adb3a89760bb2790b43
   url: oci://registry.xcd.dev/x/kedacore.github.io/charts/keda

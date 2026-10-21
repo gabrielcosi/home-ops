@@ -10,4 +10,5 @@ spec:
     operation: copy
   ref:
     tag: 0.4.1
+    digest: sha256:f774c0eaeed6f63b8149810172764956ad552e221e554eb7af9bf05d2f9c64ad
   url: oci://git.xcd.dev/gabrielcosi/charts/cachette

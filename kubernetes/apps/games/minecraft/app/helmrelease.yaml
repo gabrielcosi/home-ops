@@ -29,7 +29,7 @@ spec:
           app:
             image:
               repository: ghcr.io/itzg/minecraft-server
-              tag: 2026.10.0-java25
+              tag: 2026.10.0-java25@sha256:5a2ab74ae179c11e2dbbce67f307cdcf2c1257b3abb0f654d3a310b3d8ea57da
             env:
               EULA: 'TRUE'
               TYPE: FABRIC

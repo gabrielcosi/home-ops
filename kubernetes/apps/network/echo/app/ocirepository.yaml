@@ -10,4 +10,5 @@ spec:
     operation: copy
   ref:
     tag: 0.2.6
+    digest: sha256:0ad2250fcdeb66420f3fd46b2fe28cffb0c1d003f3042c595b2414d2954f2364
   url: oci://ghcr.io/home-operations/charts/echo

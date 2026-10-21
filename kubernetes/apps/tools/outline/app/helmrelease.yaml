@@ -26,7 +26,7 @@ spec:
           app:
             image:
               repository: docker.io/outlinewiki/outline
-              tag: 1.11.0
+              tag: 1.11.0@sha256:08ee9ffdb847e1bd35ded30ee832090dd06a7f93f67422687db59e70bc7f5393
             env:
               DATABASE_URL:
                 valueFrom:

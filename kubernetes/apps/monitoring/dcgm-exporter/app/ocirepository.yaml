@@ -10,4 +10,5 @@ spec:
     operation: copy
   ref:
     tag: 4.8.4
+    digest: sha256:176dc5d1108207e477bfb482666e9e1ab2d5e52c3f9f421dba8626fbfc9ad4cb
   url: oci://registry.xcd.dev/x/nvidia.github.io/dcgm-exporter/helm-charts/dcgm-exporter

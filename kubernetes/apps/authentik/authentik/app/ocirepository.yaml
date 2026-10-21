@@ -10,4 +10,5 @@ spec:
     operation: copy
   ref:
     tag: 2026.8.5
+    digest: sha256:9683518d02b5e41f69d045b59a779c40260608b5631d18273407ea2cfe708712
   url: oci://ghcr.io/goauthentik/helm-charts/authentik
