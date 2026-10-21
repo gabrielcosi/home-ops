@@ -30,6 +30,7 @@ jobs:
       CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC: '1'
       # renovate: datasource=npm depName=@anthropic-ai/claude-code
       CLAUDE_CODE_VERSION: '2.1.302'
+      CRANE_VERSION: 'v0.22.1' # renovate: github-releases=google/go-containerregistry
     steps:
       - name: Checkout PR
         uses: https://github.com/actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -49,6 +50,16 @@ jobs:
           BOT_TOKEN: op://k8s/bot-angel/forgejo_token
           CRAWL4AI_TOKEN: op://k8s/crawl4ai/crawl4ai_api_token
           GH_TOKEN: op://k8s/renovate/renovate_github_com_token
+
+      - name: Install crane
+        run: |-
+          set -euo pipefail
+          cd "$(mktemp -d)"
+          base="https://github.com/google/go-containerregistry/releases/download/${CRANE_VERSION}"
+          curl -fsSLO "${base}/go-containerregistry_Linux_x86_64.tar.gz"
+          curl -fsSL "${base}/checksums.txt" | grep ' go-containerregistry_Linux_x86_64.tar.gz$' | sha256sum -c -
+          tar -xzf go-containerregistry_Linux_x86_64.tar.gz crane
+          install -D -m 0755 crane "${HOME}/.local/bin/crane"
 
       - name: Wait for konflate render
         run: |-
@@ -97,7 +108,7 @@ jobs:
             --permission-mode default \
             --mcp-config /tmp/mcp.json \
             --strict-mcp-config \
-            --allowedTools "Read,Glob,Grep,Bash(git log:*),Bash(git diff:*),Bash(gh:*),mcp__konflate,mcp__crawl4ai__md,Write" \
+            --allowedTools "Read,Glob,Grep,Bash(git log:*),Bash(git diff:*),Bash(gh:*),Bash(crane config:*),Bash(crane manifest:*),Bash(crane digest:*),mcp__konflate,mcp__crawl4ai__md,Write" \
             < /dev/null
 
       - name: Publish review

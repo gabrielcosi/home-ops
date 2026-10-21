@@ -33,10 +33,11 @@ Establish why it matters. Trace each dependency to its origin — the changelog 
 
 - **GitHub — `gh`, never web-scraping** (token-authed, clean JSON): `gh release view <tag> -R <o>/<r>` and `gh api repos/<o>/<r>/releases` for every version in range; `gh api "repos/<o>/<r>/compare/<old>...<new>"` for commits; `gh api repos/<o>/<r>/contents/CHANGELOG.md --jq .content | base64 -d` for CHANGELOG / UPGRADING.
 - **Elsewhere — crawl4ai `md`** (`mcp__crawl4ai__md`, absolute URL): GitLab, Artifact Hub, vendor docs, migration pages.
+- **The image itself — `crane`**: for every public image the PR moves, read the NEW pinned digest's config, `crane config <image>:<tag>@sha256:<digest>`. Its `org.opencontainers.image.version`, `revision`, and `source` labels show what the image was built from: check them against the release and commit you reviewed, and use `created` and `revision` to attribute a rebuild. A label that names a different version or source than the PR claims is a finding. An image without these labels is not.
 - **Wrapper vs component**: check the chart AND the app it bundles — independent version streams, independent breaks.
 - Grep the commit range for: breaking, deprecat, remov, renam, migrat, drop.
 
-A rebuilt tag still has a cause and you name it: a scheduled base-image rebuild (OS/CVE patches), a CI re-run of the same commit, a floating tag (`latest`, `rolling`, bare major) now resolving to newer source, or a re-tag of different code. Ask the registry and build history: `gh api /users/<o>/packages/container/<pkg>/versions` for GHCR, `gh run list -R <o>/<r>` and `gh api repos/<o>/<r>/commits` around the two build dates, the tag's release notes in case it was re-cut, crawl4ai on the registry page otherwise. If the source moved, it is not a rebuild — treat it as a version bump.
+A rebuilt tag still has a cause and you name it: a scheduled base-image rebuild (OS/CVE patches), a CI re-run of the same commit, a floating tag (`latest`, `rolling`, bare major) now resolving to newer source, or a re-tag of different code. Ask the registry and build history: `crane config` on both digests (the `revision` label tells a re-run of the same commit from new source), `gh api /users/<o>/packages/container/<pkg>/versions` for GHCR, `gh run list -R <o>/<r>` and `gh api repos/<o>/<r>/commits` around the two build dates, the tag's release notes in case it was re-cut, crawl4ai on the registry page otherwise. If the source moved, it is not a rebuild — treat it as a version bump.
 
 Cross-reference; never guess at what you could not read.
 
