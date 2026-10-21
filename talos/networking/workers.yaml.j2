@@ -3,26 +3,42 @@ apiVersion: v1alpha1
 kind: LinkAliasConfig
 name: net0
 selector:
-  match: link.driver == "r8169"
+  match: mac(link.permanent_addr) == "40:a6:b7:44:05:84"
 ---
 apiVersion: v1alpha1
 kind: LinkAliasConfig
 name: net1
 selector:
-  match: link.driver == "igc"
+  match: mac(link.permanent_addr) == "40:a6:b7:44:05:85"
 ---
 apiVersion: v1alpha1
 kind: BondConfig
 name: bond0
-hardwareAddr: 38:05:25:35:3e:83
 links:
   - net0
   - net1
-bondMode: active-backup
+bondMode: 802.3ad
+lacpRate: fast
+xmitHashPolicy: layer3+4
 miimon: 100
 updelay: 200
 downdelay: 200
 mtu: 9000
+---
+# EthernetConfig takes no link alias or selector until Talos 1.15: https://github.com/siderolabs/talos/issues/13468
+apiVersion: v1alpha1
+kind: EthernetConfig
+name: eno4np0
+rings:
+  rx: 8160
+  tx: 8160
+---
+apiVersion: v1alpha1
+kind: EthernetConfig
+name: eno5np1
+rings:
+  rx: 8160
+  tx: 8160
 ---
 apiVersion: v1alpha1
 kind: DHCPv4Config
