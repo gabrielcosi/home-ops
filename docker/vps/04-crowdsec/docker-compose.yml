@@ -3,7 +3,7 @@ name: crowdsec
 
 services:
   crowdsec:
-    image: docker.io/crowdsecurity/crowdsec:v1.8.1
+    image: docker.io/crowdsecurity/crowdsec:v1.8.1-debian
     container_name: crowdsec
     restart: unless-stopped
     environment:
@@ -12,7 +12,6 @@ services:
       GID: "1000"
     volumes:
       - /var/log:/var/log:ro
-      - /run/systemd/journal:/run/systemd/journal:ro
       - crowdsec-db:/var/lib/crowdsec/data
       - crowdsec-config:/etc/crowdsec
       - ./whitelists:/etc/crowdsec/parsers/s02-enrich/custom:ro

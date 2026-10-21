@@ -1,6 +1,7 @@
 ---
 source: journalctl
 journalctl_filter:
+  - "--directory=/var/log/journal"
   - "_SYSTEMD_UNIT=ssh.service"
 labels:
   type: syslog
