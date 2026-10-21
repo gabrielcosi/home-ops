@@ -127,8 +127,7 @@ bifrost:
         is_active: true
         rate_limit_id: rl-home-ops-ci
         provider_configs:
-          - provider: proxyapi
-            weight: 1
+          - provider: anthropic
             allowed_models:
               - claude-sonnet-5-5
             key_ids:
