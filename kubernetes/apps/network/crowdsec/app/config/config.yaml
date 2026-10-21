@@ -1,0 +1,22 @@
+api:
+  server:
+    disable_usage_metrics_export: true
+    auto_registration:
+      enabled: true
+      token: "${REGISTRATION_TOKEN}"
+      allowed_ranges:
+        - 10.42.0.0/16
+db_config:
+  type: postgresql
+  host: ${DB_HOST}
+  port: 5432
+  user: ${DB_USER}
+  password: ${DB_PASSWORD}
+  db_name: ${DB_NAME}
+  sslmode: require
+  max_open_conns: 10
+  flush:
+    agents_autodelete:
+      login_password: 168h
+    bouncers_autodelete:
+      api_key: 168h

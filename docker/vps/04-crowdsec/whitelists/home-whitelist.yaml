@@ -1,7 +1,7 @@
 ---
 name: custom/home-whitelist
-description: "Whitelist home ISP (Telefonica Germany / O2 - AS6805) and VPS provider (Hetzner - AS24940)"
+description: "Whitelist home ISP (Telefonica Germany / O2 - AS6805)"
 whitelist:
-  reason: "home ISP (Telefonica Germany / O2) or Hetzner (VPS provider)"
+  reason: "home ISP (Telefonica Germany / O2)"
   expression:
-    - evt.Meta.ASNumber == "6805" || evt.Meta.ASNumber == "24940"
+    - evt.Meta.ASNumber == "6805"

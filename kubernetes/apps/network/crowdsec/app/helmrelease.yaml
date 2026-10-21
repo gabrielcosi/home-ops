@@ -1,0 +1,146 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: crowdsec
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: crowdsec
+  install:
+    disableSchemaValidation: true # the chart schema has no entry for the kubernetes pod-log acquisition source
+  interval: 1h
+  postRenderers:
+    - kustomize:
+        patches:
+          - target:
+              kind: Job
+            patch: |
+              - op: add
+                path: /spec/template/spec/initContainers/0/resources
+                value:
+                  requests:
+                    cpu: 10m
+                    memory: 64Mi
+                  limits:
+                    memory: 256Mi
+              - op: add
+                path: /spec/template/spec/containers/0/resources
+                value:
+                  requests:
+                    cpu: 10m
+                    memory: 128Mi
+                  limits:
+                    memory: 512Mi
+  upgrade:
+    disableSchemaValidation: true
+  valuesFrom:
+    - kind: ConfigMap
+      name: crowdsec-values
+      valuesKey: config.yaml
+      targetPath: config.config\.yaml\.local
+    - kind: ConfigMap
+      name: crowdsec-values
+      valuesKey: console.yaml
+      targetPath: config.console\.yaml
+    - kind: ConfigMap
+      name: crowdsec-values
+      valuesKey: banwhitelist.yaml
+      targetPath: config.parsers.s02-enrich.bouncer-ban-whitelist\.yaml
+  values:
+    container_runtime: containerd
+    image:
+      repository: docker.io/crowdsecurity/crowdsec
+      tag: v1.8.1@sha256:0f2523fa61ef507f15d953045cface490cc880670c62f2755ced17524107f71a
+      kubectl:
+        repository: docker.io/alpine/kubectl
+        tag: 1.37.1@sha256:8c72f6f732ce7ef11cdb1bea25faa4f4a521872a12c89e3f40ba9edb52a4d4f2
+    secrets:
+      externalSecret:
+        name: crowdsec-secrets
+        csLapiSecretKey: CS_LAPI_SECRET
+        registrationTokenKey: REGISTRATION_TOKEN
+    lapi:
+      replicas: 2
+      strategy:
+        type: RollingUpdate
+      deployAnnotations:
+        reloader.stakater.com/auto: 'true'
+      storeCAPICredentialsInSecret: true
+      storeLAPICscliCredentialsInSecret: true
+      persistentVolume:
+        data:
+          enabled: false
+        config:
+          enabled: false
+      env:
+        - name: DB_HOST
+          valueFrom:
+            secretKeyRef:
+              name: crowdsec-postgres
+              key: host
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: crowdsec-postgres
+              key: username
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: crowdsec-postgres
+              key: password
+        - name: DB_NAME
+          valueFrom:
+            secretKeyRef:
+              name: crowdsec-postgres
+              key: database
+      envFrom:
+        - secretRef:
+            name: crowdsec-secrets
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: DoNotSchedule
+          labelSelector:
+            matchLabels:
+              k8s-app: crowdsec
+              type: lapi
+      resources:
+        requests:
+          cpu: 50m
+          memory: 256Mi
+        limits:
+          cpu: null
+          memory: 1Gi
+      metrics:
+        enabled: true
+        serviceMonitor:
+          enabled: true
+    agent:
+      isDeployment: true
+      hostVarLog: false
+      serviceAccountName: crowdsec-agent
+      deploymentAnnotations:
+        reloader.stakater.com/auto: 'true'
+      additionalAcquisition:
+        - source: kubernetes
+          namespace: network
+          selector: gateway.envoyproxy.io/owning-gateway-name=envoy-external
+          labels:
+            type: envoy
+      env:
+        - name: COLLECTIONS
+          value: yanis-kouidri/envoy crowdsecurity/http-cve
+        - name: PARSERS
+          value: crowdsecurity/geoip-enrich crowdsecurity/whitelists
+      resources:
+        requests:
+          cpu: 50m
+          memory: 256Mi
+        limits:
+          cpu: null
+          memory: 1Gi
+      metrics:
+        enabled: true
+        serviceMonitor:
+          enabled: true

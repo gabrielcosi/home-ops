@@ -1,0 +1,7 @@
+name: custom/bouncer-ban-whitelist
+description: "Whitelist requests the envoy bouncer already denied"
+filter: "evt.Meta.service == 'http' && evt.Meta.log_type == 'http_access-log'"
+whitelist:
+  reason: "envoy bouncer response to an already banned ip"
+  expression:
+    - evt.Meta.http_status == '418'
