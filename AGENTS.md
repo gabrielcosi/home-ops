@@ -41,7 +41,7 @@ flate renders what Flux applies (Kustomizations + HelmReleases + `postBuild` sub
 - Change vs a baseline branch (git-to-git, not the live cluster): `flate diff all --path ./kubernetes --base main`
 - Render one app: `flate build hr --path ./kubernetes <app> --allow-missing-secrets` (or `build ks --namespace <ns> <app>`)
 
-In CI, the in-cluster `konflate` renders each PR through the same pipeline; `.forgejo/workflows/pr-reviewer.yaml` runs Claude Code (`claude -p`) against the in-cluster Bifrost gateway (`/anthropic`), consuming konflate's diff and crawl4ai over MCP for breaking-change analysis. The review prompt lives in `.forgejo/pr-review.prompt.md`.
+In CI, the in-cluster `konflate` renders each PR through the same pipeline. On Renovate PRs, `.forgejo/workflows/renovate-review.yaml` runs Claude Code (`claude -p`) against the Bifrost gateway (`/anthropic`), consuming konflate's diff and crawl4ai over MCP for breaking-change analysis, and gates automerge on its verdict. The review instructions live in `.agents/instructions/renovate-review.instructions.md`.
 
 ## Conventions
 
@@ -64,7 +64,9 @@ In CI, the in-cluster `konflate` renders each PR through the same pipeline; `.fo
 ### Renovate & git hygiene
 
 - Pin every version explicitly — source tags (`OCIRepository`/`HelmRepository` `ref`), container image tags, tool/provider versions; no floating tags or ranges. Renovate proposes the bumps.
-- Commit straight to `main`; no branches or PRs unless the user says otherwise.
+- Small, low-risk changes go straight to `main`. Big or infra changes go through a Forgejo PR, merged in Forgejo, never by pushing to `main`.
+- Never push a branch or open a PR without the user's explicit approval for that PR.
+- Apply a `talos/` change to the nodes from its PR branch before the PR merges, so `main` only carries config that is live.
 - Committing is fine unprompted; **pushing is not**. Never `git push` (or force-push) without the user's explicit say-so in the same conversation — approval for one push does not carry to the next.
 - Preserve `# renovate:` annotations; don't bump chart/provider/image versions unless asked.
 - Keep edits scoped to the request; don't reformat unrelated files.
