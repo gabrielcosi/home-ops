@@ -19,14 +19,15 @@ spec:
           cnpg.io/cluster: kritika-pg
 
   bootstrap:
-    initdb:
+    recovery:
+      source: &src source
       database: kritika
       owner: kritika
       secret:
         name: kritika-pg-credentials
 
   externalClusters:
-    - name: source
+    - name: *src
       plugin:
         name: barman-cloud.cloudnative-pg.io
         parameters:
