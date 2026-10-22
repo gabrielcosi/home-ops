@@ -9,6 +9,6 @@ spec:
     mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
     operation: copy
   ref:
-    tag: 0.0.94
-    digest: sha256:4e0d4cdaab51815b0786a593f17d6e9c7ec6438d815252969e023b9de4f0587d
+    tag: 0.0.95
+    digest: sha256:d2ccc739a4fbdd587282d98e731fa0c149bae1ccac3477ca98a8b8be161c9d04
   url: oci://ghcr.io/home-operations/charts/kritika
