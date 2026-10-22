@@ -219,6 +219,9 @@ spec:
         webhook:
           ALLOWED_HOST_LIST: '*'
 
+        authorized_integration:
+          ALLOWED_DOMAINS: kritika.xcd.dev
+
         mailer:
           ENABLED: true
           PROTOCOL: smtp
