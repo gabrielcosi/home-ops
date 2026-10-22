@@ -61,11 +61,7 @@ spec:
       egress:
         allow:
           - '*'
-        deny:
-          - 10.0.0.0/8
-          - 172.16.0.0/12
-          - 192.168.0.0/16
-          - '*.internal'
+          - 192.168.69.182
       trigger:
         exclude:
           - name: forks
