@@ -33,6 +33,10 @@ spec:
           host: git.xcd.dev
           accounts:
             - gabrielcosi
+          audience:
+            env: KRITIKA_FORGEJO_AUDIENCE
+          runnerAudience:
+            env: KRITIKA_FORGEJO_RUNNER_AUDIENCE
           privateKey:
             env: KRITIKA_FORGEJO_PRIVATE_KEY
           webhookSecret:
