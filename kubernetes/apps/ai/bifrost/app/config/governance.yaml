@@ -27,6 +27,11 @@ bifrost:
         request_reset_duration: '5m'
         token_max_limit: 8000000
         token_reset_duration: '1d'
+      - id: rl-kritika
+        request_max_limit: 500
+        request_reset_duration: '5m'
+        token_max_limit: 40000000
+        token_reset_duration: '1d'
       - id: rl-home-ops-ci
         request_max_limit: 100
         request_reset_duration: '5m'
@@ -119,6 +124,23 @@ bifrost:
             weight: 1
             allowed_models:
               - d3-flash
+            key_ids:
+              - '*'
+      - id: kritika
+        name: kritika
+        value: env.BIFROST_VK_KRITIKA
+        is_active: true
+        rate_limit_id: rl-kritika
+        provider_configs:
+          - provider: opencode
+            allowed_models:
+              - deepseek-v4.1-flash
+            key_ids:
+              - '*'
+          - provider: llama-swap
+            allowed_models:
+              - embeddinggemma-2
+              - qwen3.8-27b
             key_ids:
               - '*'
       - id: home-ops-ci

@@ -1,0 +1,122 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: kritika
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: kritika
+  interval: 1h
+  values:
+    replicas: 2
+    deploymentAnnotations:
+      reloader.stakater.com/auto: 'true'
+    config:
+      webUrl: https://kritika.xcd.dev
+      auth:
+        oidc:
+          name: Authentik
+          issuer: https://auth.xcd.dev/application/o/kritika/
+          clientId:
+            env: KRITIKA_OIDC_CLIENT_ID
+          clientSecret:
+            env: KRITIKA_OIDC_CLIENT_SECRET
+          scopes:
+            - openid
+            - email
+            - profile
+          rolesClaim: groups
+          roleMappingExpr: '"Kritika Admins" in roles ? "admin" : ""'
+      forgejo:
+        forgejo:
+          host: git.xcd.dev
+          accounts:
+            - gabrielcosi
+          privateKey:
+            env: KRITIKA_FORGEJO_PRIVATE_KEY
+          webhookSecret:
+            env: KRITIKA_FORGEJO_WEBHOOK_SECRET
+      providers:
+        bifrost:
+          type: openai
+          baseUrl: http://bifrost.ai.svc.cluster.local:8080/v1
+          apiKey:
+            env: KRITIKA_BIFROST_VK
+          headers:
+            x-bf-eh-x-opencode-session: '{session}'
+      review:
+        model: bifrost/opencode/deepseek-v4.1-flash
+      embedding:
+        model: bifrost/llama-swap/embeddinggemma-2
+        dims: 768
+        queryPrompt: 'task: sentence similarity | query: '
+        documentPrompt: 'task: sentence similarity | query: '
+        similarFloor: 0.5
+        maxBatchChars: 50000
+      egress:
+        allow:
+          - '*'
+        deny:
+          - 10.0.0.0/8
+          - 172.16.0.0/12
+          - 192.168.0.0/16
+          - '*.internal'
+      trigger:
+        exclude:
+          - name: forks
+            expr: pr.fork
+    envFrom:
+      - secretRef:
+          name: kritika-secrets
+    database:
+      owner:
+        existingSecret: kritika-pg-credentials
+      app:
+        existingSecret: kritika-pg-app
+      runner:
+        existingSecret: kritika-pg-runner
+    runner:
+      podTemplate:
+        spec:
+          runtimeClassName: kata
+          resources:
+            requests:
+              cpu: 10m
+              memory: 512Mi
+            limits:
+              memory: 2Gi
+    httpRoute:
+      enabled: true
+      parentRefs:
+        - name: envoy-internal
+          namespace: network
+      hostnames:
+        - kritika.xcd.dev
+    networkPolicy:
+      enabled: true
+      type: cilium
+      egressPorts:
+        - 443
+        - 8080
+        - 10443
+      postgres:
+        podSelector:
+          cnpg.io/cluster: kritika-pg
+    monitoring:
+      serviceMonitor:
+        enabled: true
+      prometheusRule:
+        enabled: true
+      dashboards:
+        enabled: true
+        grafanaOperator:
+          enabled: true
+          matchLabels:
+            dashboards: grafana
+    resources:
+      requests:
+        cpu: 10m
+        memory: 64Mi
+      limits:
+        memory: 512Mi
