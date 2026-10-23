@@ -33,6 +33,8 @@ spec:
           host: git.xcd.dev
           accounts:
             - gabrielcosi
+          bots:
+            - bot-owl
           audience:
             env: KRITIKA_FORGEJO_AUDIENCE
           runnerAudience:
