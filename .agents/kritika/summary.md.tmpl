@@ -1,0 +1,116 @@
+## {{ if .PullURL }}<a href="{{ .PullURL }}"><picture><source media="(prefers-color-scheme: dark)" srcset="{{ .WebURL }}/badges/rerun-dark.svg"><img alt="Re-run" src="{{ .WebURL }}/badges/rerun.svg" align="right"></picture></a><a href="{{ .PullURL }}"><picture><source media="(prefers-color-scheme: dark)" srcset="{{ .WebURL }}/badges/view-dark.svg"><img alt="View" src="{{ .WebURL }}/badges/view.svg" align="right"></picture></a>{{ end }}{{ if and .AuthorIsBot .Result.Summary.Headline }}{{ .Result.Summary.Headline }}{{ else if .Confidence }}Confidence Score: {{ .Confidence.Score }}/5{{ else }}Kritika Review{{ end }}
+
+{{ if .Incomplete -}}
+**Review incomplete for {{ if .HeadURL }}[`{{ trunc 7 .HeadSHA }}`]({{ .HeadURL }}){{ else }}`{{ trunc 7 .HeadSHA }}`{{ end }}:** {{ .Incomplete }}. Findings posted for earlier heads may no longer apply.
+{{ else -}}
+{{ if .AuthorIsBot -}}
+{{ with .Confidence -}}
+{{ if .Passed }}✅ **Safe to merge**{{ else }}❌ **Changes required**{{ end }} · {{ .Score }}/5{{ if .Risk }} · {{ .Risk | toString }} risk{{ end }}{{ if not .Passed }}{{ with .Explanation }}: {{ . }}{{ end }}{{ end }}
+{{ else -}}
+{{ if or $.Counts.P0 $.Counts.P1 }}❌ **Changes required**{{ else }}✅ **Safe to merge**{{ end }} · not scored
+{{ end }}
+{{ else -}}
+{{ with .Confidence -}}
+{{ if or .Risk .Explanation -}}
+{{ if .Risk }}**[{{ .Risk | toString | capitalize }} risk]**{{ if .Explanation }} {{ end }}{{ end }}{{ .Explanation }}
+
+{{ end -}}
+{{ end -}}
+{{ end -}}
+{{ if .Approval -}}
+**{{ if .Approval.Approved }}Approved{{ else }}Not approved{{ end }}**{{ if .Approval.Reason }}: {{ .Approval.Reason }}{{ end }}
+
+{{ end -}}
+{{ if or .Result.Findings .Unanchored .HeldBack .Prior -}}
+## Findings
+
+{{ if .Result.Findings -}}
+{{ range .Result.Findings -}}
+- {{ .Severity.Badge $.WebURL }} {{ if .URL }}[`{{ .Path }}:{{ .Line }}`]({{ .URL }}){{ else }}`{{ .Path }}:{{ .Line }}`{{ end }} {{ if .ThreadURL }}[{{ .Title }}]({{ .ThreadURL }}){{ else }}{{ .Title }}{{ end }}{{ if .Category }} · {{ .Category }}{{ end }}{{ if .CarriedFrom }} · not rechecked since `{{ trunc 7 .CarriedFrom }}`{{ end }}
+{{ end }}
+{{ end -}}
+{{ if .Unanchored -}}
+**Outside the diff**
+
+{{ range .Unanchored -}}
+- {{ .Severity.Badge $.WebURL }} `{{ .Path }}:{{ .Line }}` {{ if .ThreadURL }}[{{ .Title }}]({{ .ThreadURL }}){{ else }}{{ .Title }}{{ end }}{{ if .Category }} · {{ .Category }}{{ end }}
+
+{{ .Explanation | indent 2 }}
+{{ end }}
+{{ end -}}
+{{ if .HeldBack -}}
+<details>
+<summary>Held back ({{ len .HeldBack }}): not on lines changed since the last review</summary>
+
+{{ range .HeldBack -}}
+- {{ .Severity.Badge $.WebURL }} {{ if .URL }}[`{{ .Path }}:{{ .Line }}`]({{ .URL }}){{ else }}`{{ .Path }}:{{ .Line }}`{{ end }} {{ .Title }}{{ if .Category }} · {{ .Category }}{{ end }}
+{{ end }}
+</details>
+
+{{ end -}}
+{{ if .Prior -}}
+{{ $resolved := 0 }}{{ $dismissed := 0 -}}
+{{ range .Prior }}{{ if .Dismissed }}{{ $dismissed = add $dismissed 1 }}{{ else }}{{ $resolved = add $resolved 1 }}{{ end }}{{ end -}}
+<details>
+<summary>Earlier findings ({{ if $resolved }}{{ $resolved }} resolved{{ end }}{{ if and $resolved $dismissed }}, {{ end }}{{ if $dismissed }}{{ $dismissed }} dismissed{{ end }})</summary>
+
+{{ range .Prior -}}
+- {{ .Severity.Badge $.WebURL }} {{ if .URL }}[`{{ .Path }}:{{ .Line }}`]({{ .URL }}){{ else }}`{{ .Path }}:{{ .Line }}`{{ end }} {{ if .ThreadURL }}[{{ .Title }}]({{ .ThreadURL }}){{ else }}{{ .Title }}{{ end }}{{ if .Category }} · {{ .Category }}{{ end }} · {{ if .Dismissed }}dismissed{{ if .DismissReason }}: {{ .DismissReason }}{{ end }}{{ else }}resolved{{ end }}
+{{ end }}
+</details>
+
+{{ end -}}
+{{ end -}}
+{{ if .AuthorIsBot -}}
+{{ .Result.Summary.Take }}
+{{ if .Sources }}
+#### Sources
+
+{{ range .Sources -}}
+- <{{ . }}>
+{{ end -}}
+{{ end -}}
+{{ else -}}
+### Summary
+
+{{ with .Result.Summary.Headline -}}
+{{ . }}
+
+{{ end -}}
+{{ .Result.Summary.Take }}
+{{ end -}}
+{{ if .Result.Summary.Diagram }}
+<details open>
+<summary>Flow</summary>
+
+```mermaid
+%%{init: {'theme': 'neutral'}}%%
+{{ .Result.Summary.Diagram }}
+```
+
+</details>
+{{ end -}}
+{{ end -}}
+{{ if or (and .Sources (not .AuthorIsBot)) .Skills.Names .Commands.Names }}
+<details>
+<summary>Review context{{ if .Sources }} · {{ len .Sources }} {{ plural "source" "sources" (len .Sources) }}{{ end }}{{ if .Skills.Names }} · {{ len .Skills.Used }}/{{ len .Skills.Names }} skills{{ end }}{{ if .Commands.Names }} · {{ len .Commands.Used }}/{{ len .Commands.Names }} commands{{ end }}</summary>
+
+{{ if and .Sources (not .AuthorIsBot) -}}
+- **Sources:**
+{{ range .Sources }}  - <{{ . }}>
+{{ end -}}
+{{ end -}}
+{{ if .Skills.Names -}}
+- **Skills read:** {{ if .Skills.Used }}`{{ join "` `" .Skills.Named }}`{{ if .Skills.More }} and {{ .Skills.More }} more{{ end }}{{ else }}none{{ end }}
+{{ end -}}
+{{ if .Commands.Names -}}
+- **Commands run:** {{ if .Commands.Used }}`{{ join "` `" .Commands.Named }}`{{ if .Commands.More }} and {{ .Commands.More }} more{{ end }}{{ else }}none{{ end }}
+{{ end }}
+</details>
+{{ end -}}
+{{ if .Notes }}
+{{ range .Notes -}}
+_{{ . }}._
+{{ end -}}
+{{ end }}
+<sub>Reviews ({{ .Reviews }}) · Last reviewed commit: {{ if .HeadURL }}[{{ if .HeadSubject }}"{{ .HeadSubject }}"{{ else }}`{{ trunc 7 .HeadSHA }}`{{ end }}]({{ .HeadURL }}){{ else if .HeadSubject }}"{{ .HeadSubject }}"{{ else }}`{{ trunc 7 .HeadSHA }}`{{ end }} · {{ .Model }}{{ if .Effort }}/{{ .Effort }}{{ end }}{{ if .Cost }} · {{ .Cost }}{{ end }}</sub>

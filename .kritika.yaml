@@ -1,0 +1,21 @@
+---
+# yaml-language-server: $schema=https://kritika.home-operations.com/kritika.schema.json
+confidence:
+  model: bifrost/opencode/glm-5.3-flash
+  threshold: 4
+  when:
+    - name: renovate
+      expr: pr.bot
+  gate: true
+skills:
+  scope:
+    renovate:
+      when:
+        - expr: pr.bot
+context:
+  - path: AGENTS.md
+    description: Repository layout, file naming, Flux app shape, secrets and pinning conventions.
+comments:
+  summary: .agents/kritika/summary.md.tmpl
+tools:
+  "github:home-operations/flate": "0.6.5" # renovate: github-releases=home-operations/flate
