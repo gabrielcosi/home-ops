@@ -53,6 +53,8 @@ spec:
             x-bf-eh-x-opencode-session: '{session}'
       review:
         model: bifrost/opencode/deepseek-v4.1-flash
+      agent:
+        timeout: 1h
       embedding:
         model: bifrost/llama-swap/embeddinggemma-2
         dims: 768
