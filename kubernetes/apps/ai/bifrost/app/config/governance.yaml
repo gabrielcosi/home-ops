@@ -132,6 +132,12 @@ bifrost:
         is_active: true
         rate_limit_id: rl-kritika
         provider_configs:
+          - provider: anthropic
+            allowed_models:
+              - claude-sonnet-5-5
+              - claude-opus-5-5
+            key_ids:
+              - '*'
           - provider: opencode
             allowed_models:
               - deepseek-v4.1-flash
@@ -150,11 +156,6 @@ bifrost:
         is_active: true
         rate_limit_id: rl-home-ops-ci
         provider_configs:
-          - provider: anthropic
-            allowed_models:
-              - claude-sonnet-5-5
-            key_ids:
-              - '*'
           - provider: opencode
             allowed_models:
               - deepseek-v4.1-flash
