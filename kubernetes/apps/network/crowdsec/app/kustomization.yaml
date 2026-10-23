@@ -4,8 +4,10 @@ kind: Kustomization
 resources:
   - ./ocirepository.yaml
   - ./externalsecret.yaml
+  - ./grafanadashboard.yaml
   - ./rbac.yaml
   - ./helmrelease.yaml
+  - ./prometheusrule.yaml
 configMapGenerator:
   - name: crowdsec-values
     files:

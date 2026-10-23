@@ -1,0 +1,1048 @@
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: crowdsec
+spec:
+  allowCrossNamespaceImport: true
+  instanceSelector:
+    matchLabels:
+      dashboards: grafana
+  json: |
+    {
+      "uid": "crowdsec",
+      "title": "CrowdSec",
+      "tags": [
+        "crowdsec",
+        "security",
+        "envoy"
+      ],
+      "schemaVersion": 39,
+      "version": 1,
+      "editable": true,
+      "graphTooltip": 1,
+      "time": {
+        "from": "now-24h",
+        "to": "now"
+      },
+      "timepicker": {},
+      "refresh": "1m",
+      "templating": {
+        "list": []
+      },
+      "panels": [
+        {
+          "type": "stat",
+          "title": "Blocked requests",
+          "description": "envoy-external requests answered 418",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "victoriametrics"
+          },
+          "gridPos": {
+            "x": 0,
+            "y": 0,
+            "w": 4,
+            "h": 4
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "victoriametrics"
+              },
+              "expr": "sum(increase(bouncer_requests_total{namespace=\"network\",action=\"ban\"}[$__range])) or vector(0)",
+              "legendFormat": "",
+              "refId": "A",
+              "instant": true,
+              "range": false
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "decimals": 0,
+              "color": {
+                "mode": "thresholds"
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "text",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "colorMode": "value",
+            "graphMode": "none",
+            "textMode": "value",
+            "justifyMode": "center",
+            "orientation": "vertical",
+            "wideLayout": true
+          },
+          "id": 1
+        },
+        {
+          "type": "stat",
+          "title": "Block rate",
+          "description": "Share of checked requests that were blocked",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "victoriametrics"
+          },
+          "gridPos": {
+            "x": 4,
+            "y": 0,
+            "w": 4,
+            "h": 4
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "victoriametrics"
+              },
+              "expr": "sum(increase(bouncer_requests_total{namespace=\"network\",action=\"ban\"}[$__range])) / clamp_min(sum(increase(bouncer_requests_total{namespace=\"network\"}[$__range])), 1)",
+              "legendFormat": "",
+              "refId": "A",
+              "instant": true,
+              "range": false
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percentunit",
+              "decimals": 2,
+              "color": {
+                "mode": "thresholds"
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "text",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "colorMode": "value",
+            "graphMode": "none",
+            "textMode": "value",
+            "justifyMode": "center",
+            "orientation": "vertical",
+            "wideLayout": true
+          },
+          "id": 2
+        },
+        {
+          "type": "stat",
+          "title": "Attackers banned",
+          "description": "Distinct IPs banned by our own detections",
+          "datasource": {
+            "type": "victoriametrics-logs-datasource",
+            "uid": "victorialogs"
+          },
+          "gridPos": {
+            "x": 8,
+            "y": 0,
+            "w": 4,
+            "h": 4
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "victoriametrics-logs-datasource",
+                "uid": "victorialogs"
+              },
+              "expr": "((kubernetes.pod_namespace:network kubernetes.container_name:crowdsec-agent) OR (host:vps container_name:crowdsec)) \"performed\" | extract \"Ip <ip> performed '<_>/<scenario>'\" | format if (host:=vps) \"vps\" as engine | format if (-host:=vps) \"cluster\" as engine | copy scenario as attack | format if (scenario:~\"^http-\") \"Scanning\" as attack | format if (scenario:~\"^ssh-\") \"SSH attack\" as attack | format if (scenario:~\"refused-conn\") \"Port scanning\" as attack | format if (scenario:~\"bf|user-enum\") \"Brute force\" as attack | format if (scenario:~\"crawl\") \"Crawling\" as attack | format if (scenario:~\"bad-user-agent|w00tw00t\") \"Scanner tool\" as attack | format if (scenario:~\"sqli|xss|traversal\") \"Injection\" as attack | format if (scenario:~\"(?i)cve|_rce|vmsa|log4j|spring4shell\") \"Exploit attempt\" as attack | format if (scenario:~\"generic-test\") \"Test\" as attack | filter engine:=cluster | stats count_uniq(ip) ips",
+              "queryType": "stats",
+              "refId": "A",
+              "editorMode": "code",
+              "legendFormat": "cluster"
+            },
+            {
+              "datasource": {
+                "type": "victoriametrics-logs-datasource",
+                "uid": "victorialogs"
+              },
+              "expr": "((kubernetes.pod_namespace:network kubernetes.container_name:crowdsec-agent) OR (host:vps container_name:crowdsec)) \"performed\" | extract \"Ip <ip> performed '<_>/<scenario>'\" | format if (host:=vps) \"vps\" as engine | format if (-host:=vps) \"cluster\" as engine | copy scenario as attack | format if (scenario:~\"^http-\") \"Scanning\" as attack | format if (scenario:~\"^ssh-\") \"SSH attack\" as attack | format if (scenario:~\"refused-conn\") \"Port scanning\" as attack | format if (scenario:~\"bf|user-enum\") \"Brute force\" as attack | format if (scenario:~\"crawl\") \"Crawling\" as attack | format if (scenario:~\"bad-user-agent|w00tw00t\") \"Scanner tool\" as attack | format if (scenario:~\"sqli|xss|traversal\") \"Injection\" as attack | format if (scenario:~\"(?i)cve|_rce|vmsa|log4j|spring4shell\") \"Exploit attempt\" as attack | format if (scenario:~\"generic-test\") \"Test\" as attack | filter engine:=vps | stats count_uniq(ip) ips",
+              "queryType": "stats",
+              "refId": "B",
+              "editorMode": "code",
+              "legendFormat": "vps"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "decimals": 0,
+              "color": {
+                "mode": "thresholds"
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "text",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "colorMode": "value",
+            "graphMode": "none",
+            "textMode": "value_and_name",
+            "justifyMode": "center",
+            "orientation": "vertical",
+            "wideLayout": true
+          },
+          "id": 3
+        },
+        {
+          "type": "stat",
+          "title": "Active local bans",
+          "description": "Our own bans still in force",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "victoriametrics"
+          },
+          "gridPos": {
+            "x": 12,
+            "y": 0,
+            "w": 4,
+            "h": 4
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "victoriametrics"
+              },
+              "expr": "max(cs_active_decisions{namespace=\"network\",job=\"crowdsec-service\",origin=\"crowdsec\"}) or vector(0)",
+              "legendFormat": "cluster",
+              "refId": "A",
+              "instant": true,
+              "range": false
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "victoriametrics"
+              },
+              "expr": "max(cs_active_decisions{cluster=\"edge-vps\",origin=\"crowdsec\"}) or vector(0)",
+              "legendFormat": "vps",
+              "refId": "B",
+              "instant": true,
+              "range": false
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "decimals": 0,
+              "color": {
+                "mode": "thresholds"
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "text",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "colorMode": "value",
+            "graphMode": "none",
+            "textMode": "value_and_name",
+            "justifyMode": "center",
+            "orientation": "vertical",
+            "wideLayout": true
+          },
+          "id": 4
+        },
+        {
+          "type": "stat",
+          "title": "Community blocklist",
+          "description": "Known-bad IPs shared by CrowdSec users",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "victoriametrics"
+          },
+          "gridPos": {
+            "x": 16,
+            "y": 0,
+            "w": 4,
+            "h": 4
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "victoriametrics"
+              },
+              "expr": "max(cs_active_decisions{namespace=\"network\",job=\"crowdsec-service\",origin=\"CAPI\"})",
+              "legendFormat": "cluster",
+              "refId": "A",
+              "instant": true,
+              "range": false
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "victoriametrics"
+              },
+              "expr": "max(cs_active_decisions{cluster=\"edge-vps\",origin=\"CAPI\"})",
+              "legendFormat": "vps",
+              "refId": "B",
+              "instant": true,
+              "range": false
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "decimals": 0,
+              "color": {
+                "mode": "thresholds"
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "orange",
+                    "value": null
+                  },
+                  {
+                    "color": "text",
+                    "value": 5000
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "colorMode": "value",
+            "graphMode": "none",
+            "textMode": "value_and_name",
+            "justifyMode": "center",
+            "orientation": "vertical",
+            "wideLayout": true
+          },
+          "id": 5
+        },
+        {
+          "type": "stat",
+          "title": "Fail-open passes",
+          "description": "Requests let through with LAPI unreachable",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "victoriametrics"
+          },
+          "gridPos": {
+            "x": 20,
+            "y": 0,
+            "w": 4,
+            "h": 4
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "victoriametrics"
+              },
+              "expr": "sum(increase(envoy_http_ext_authz_failure_mode_allowed{pod=~\"envoy-external-.*\"}[$__range])) or vector(0)",
+              "legendFormat": "",
+              "refId": "A",
+              "instant": true,
+              "range": false
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "decimals": 0,
+              "color": {
+                "mode": "thresholds"
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "text",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 1
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "colorMode": "value",
+            "graphMode": "none",
+            "textMode": "value",
+            "justifyMode": "center",
+            "orientation": "vertical",
+            "wideLayout": true
+          },
+          "id": 6
+        },
+        {
+          "type": "timeseries",
+          "title": "Attacker requests by service",
+          "description": "Requests from blocked or banned IPs, per app",
+          "datasource": {
+            "type": "victoriametrics-logs-datasource",
+            "uid": "victorialogs"
+          },
+          "gridPos": {
+            "x": 0,
+            "y": 4,
+            "w": 12,
+            "h": 8
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "victoriametrics-logs-datasource",
+                "uid": "victorialogs"
+              },
+              "expr": "kubernetes.pod_namespace:network kubernetes.container_name:envoy kubernetes.pod_name:envoy-external* (response_code:418 OR \"x-forwarded-for\":in(_time:$__range ((kubernetes.pod_namespace:network kubernetes.container_name:crowdsec-agent) OR (host:vps container_name:crowdsec)) \"performed\" | extract \"Ip <ip> performed '<_>/<scenario>'\" | format if (host:=vps) \"vps\" as engine | format if (-host:=vps) \"cluster\" as engine | copy scenario as attack | format if (scenario:~\"^http-\") \"Scanning\" as attack | format if (scenario:~\"^ssh-\") \"SSH attack\" as attack | format if (scenario:~\"refused-conn\") \"Port scanning\" as attack | format if (scenario:~\"bf|user-enum\") \"Brute force\" as attack | format if (scenario:~\"crawl\") \"Crawling\" as attack | format if (scenario:~\"bad-user-agent|w00tw00t\") \"Scanner tool\" as attack | format if (scenario:~\"sqli|xss|traversal\") \"Injection\" as attack | format if (scenario:~\"(?i)cve|_rce|vmsa|log4j|spring4shell\") \"Exploit attempt\" as attack | format if (scenario:~\"generic-test\") \"Test\" as attack | fields ip)) | rename \":authority\" as service, \"x-forwarded-for\" as ip, \"x-envoy-origin-path\" as path | stats by (service) count() requests",
+              "queryType": "statsRange",
+              "refId": "A",
+              "editorMode": "code",
+              "legendFormat": "{{service}}"
+            }
+          ],
+          "interval": "1h",
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "decimals": 0,
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "drawStyle": "bars",
+                "fillOpacity": 80,
+                "lineWidth": 0,
+                "stacking": {
+                  "mode": "normal",
+                  "group": "A"
+                },
+                "showPoints": "never",
+                "axisSoftMin": 0
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "legend": {
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "desc"
+            }
+          },
+          "id": 7
+        },
+        {
+          "type": "timeseries",
+          "title": "Attacks detected",
+          "description": "Our own bans per hour, by attack type",
+          "datasource": {
+            "type": "victoriametrics-logs-datasource",
+            "uid": "victorialogs"
+          },
+          "gridPos": {
+            "x": 12,
+            "y": 4,
+            "w": 12,
+            "h": 8
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "victoriametrics-logs-datasource",
+                "uid": "victorialogs"
+              },
+              "expr": "((kubernetes.pod_namespace:network kubernetes.container_name:crowdsec-agent) OR (host:vps container_name:crowdsec)) \"performed\" | extract \"Ip <ip> performed '<_>/<scenario>'\" | format if (host:=vps) \"vps\" as engine | format if (-host:=vps) \"cluster\" as engine | copy scenario as attack | format if (scenario:~\"^http-\") \"Scanning\" as attack | format if (scenario:~\"^ssh-\") \"SSH attack\" as attack | format if (scenario:~\"refused-conn\") \"Port scanning\" as attack | format if (scenario:~\"bf|user-enum\") \"Brute force\" as attack | format if (scenario:~\"crawl\") \"Crawling\" as attack | format if (scenario:~\"bad-user-agent|w00tw00t\") \"Scanner tool\" as attack | format if (scenario:~\"sqli|xss|traversal\") \"Injection\" as attack | format if (scenario:~\"(?i)cve|_rce|vmsa|log4j|spring4shell\") \"Exploit attempt\" as attack | format if (scenario:~\"generic-test\") \"Test\" as attack | stats by (attack) count() bans",
+              "queryType": "statsRange",
+              "refId": "A",
+              "editorMode": "code",
+              "legendFormat": "{{attack}}"
+            }
+          ],
+          "interval": "1h",
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "decimals": 0,
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "drawStyle": "bars",
+                "fillOpacity": 80,
+                "lineWidth": 0,
+                "stacking": {
+                  "mode": "normal",
+                  "group": "A"
+                },
+                "showPoints": "never",
+                "axisSoftMin": 0
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "legend": {
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "desc"
+            }
+          },
+          "id": 8
+        },
+        {
+          "type": "table",
+          "title": "Attackers",
+          "description": "Blocked/banned IPs and the apps they hit",
+          "datasource": {
+            "type": "victoriametrics-logs-datasource",
+            "uid": "victorialogs"
+          },
+          "gridPos": {
+            "x": 0,
+            "y": 12,
+            "w": 12,
+            "h": 9
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "victoriametrics-logs-datasource",
+                "uid": "victorialogs"
+              },
+              "expr": "kubernetes.pod_namespace:network kubernetes.container_name:envoy kubernetes.pod_name:envoy-external* (response_code:418 OR \"x-forwarded-for\":in(_time:$__range ((kubernetes.pod_namespace:network kubernetes.container_name:crowdsec-agent) OR (host:vps container_name:crowdsec)) \"performed\" | extract \"Ip <ip> performed '<_>/<scenario>'\" | format if (host:=vps) \"vps\" as engine | format if (-host:=vps) \"cluster\" as engine | copy scenario as attack | format if (scenario:~\"^http-\") \"Scanning\" as attack | format if (scenario:~\"^ssh-\") \"SSH attack\" as attack | format if (scenario:~\"refused-conn\") \"Port scanning\" as attack | format if (scenario:~\"bf|user-enum\") \"Brute force\" as attack | format if (scenario:~\"crawl\") \"Crawling\" as attack | format if (scenario:~\"bad-user-agent|w00tw00t\") \"Scanner tool\" as attack | format if (scenario:~\"sqli|xss|traversal\") \"Injection\" as attack | format if (scenario:~\"(?i)cve|_rce|vmsa|log4j|spring4shell\") \"Exploit attempt\" as attack | format if (scenario:~\"generic-test\") \"Test\" as attack | fields ip)) | rename \":authority\" as service, \"x-forwarded-for\" as ip, \"x-envoy-origin-path\" as path | stats by (ip, service) count() requests, count() if (response_code:418) blocked | math requests - blocked as reached | sort by (requests desc) | limit 50",
+              "queryType": "instant",
+              "refId": "A",
+              "editorMode": "code",
+              "maxLines": 100
+            }
+          ],
+          "transformations": [
+            {
+              "id": "extractFields",
+              "options": {
+                "source": "labels",
+                "format": "auto",
+                "replace": false
+              }
+            },
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "ip",
+                    "service",
+                    "requests",
+                    "blocked",
+                    "reached"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "convertFieldType",
+              "options": {
+                "conversions": [
+                  {
+                    "targetField": "requests",
+                    "destinationType": "number"
+                  },
+                  {
+                    "targetField": "blocked",
+                    "destinationType": "number"
+                  },
+                  {
+                    "targetField": "reached",
+                    "destinationType": "number"
+                  }
+                ],
+                "fields": {}
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "indexByName": {
+                  "ip": 0,
+                  "service": 1,
+                  "requests": 2,
+                  "blocked": 3,
+                  "reached": 4
+                },
+                "renameByName": {
+                  "ip": "IP",
+                  "service": "Service",
+                  "requests": "Requests",
+                  "blocked": "Blocked",
+                  "reached": "Reached app"
+                }
+              }
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "align": "auto",
+                "cellOptions": {
+                  "type": "auto"
+                }
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Requests"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 90
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Blocked"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 80
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Reached app"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 100
+                  }
+                ]
+              }
+            ]
+          },
+          "options": {
+            "showHeader": true,
+            "cellHeight": "sm",
+            "footer": {
+              "show": false,
+              "reducer": [
+                "sum"
+              ]
+            },
+            "sortBy": [
+              {
+                "displayName": "Requests",
+                "desc": true
+              }
+            ]
+          },
+          "id": 9
+        },
+        {
+          "type": "table",
+          "title": "Probed paths",
+          "description": "URLs attackers asked for, per app",
+          "datasource": {
+            "type": "victoriametrics-logs-datasource",
+            "uid": "victorialogs"
+          },
+          "gridPos": {
+            "x": 12,
+            "y": 12,
+            "w": 12,
+            "h": 9
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "victoriametrics-logs-datasource",
+                "uid": "victorialogs"
+              },
+              "expr": "kubernetes.pod_namespace:network kubernetes.container_name:envoy kubernetes.pod_name:envoy-external* (response_code:418 OR \"x-forwarded-for\":in(_time:$__range ((kubernetes.pod_namespace:network kubernetes.container_name:crowdsec-agent) OR (host:vps container_name:crowdsec)) \"performed\" | extract \"Ip <ip> performed '<_>/<scenario>'\" | format if (host:=vps) \"vps\" as engine | format if (-host:=vps) \"cluster\" as engine | copy scenario as attack | format if (scenario:~\"^http-\") \"Scanning\" as attack | format if (scenario:~\"^ssh-\") \"SSH attack\" as attack | format if (scenario:~\"refused-conn\") \"Port scanning\" as attack | format if (scenario:~\"bf|user-enum\") \"Brute force\" as attack | format if (scenario:~\"crawl\") \"Crawling\" as attack | format if (scenario:~\"bad-user-agent|w00tw00t\") \"Scanner tool\" as attack | format if (scenario:~\"sqli|xss|traversal\") \"Injection\" as attack | format if (scenario:~\"(?i)cve|_rce|vmsa|log4j|spring4shell\") \"Exploit attempt\" as attack | format if (scenario:~\"generic-test\") \"Test\" as attack | fields ip)) | rename \":authority\" as service, \"x-forwarded-for\" as ip, \"x-envoy-origin-path\" as path | stats by (service, path) count() requests, count() if (response_code:418) blocked | sort by (requests desc) | limit 50",
+              "queryType": "instant",
+              "refId": "A",
+              "editorMode": "code",
+              "maxLines": 100
+            }
+          ],
+          "transformations": [
+            {
+              "id": "extractFields",
+              "options": {
+                "source": "labels",
+                "format": "auto",
+                "replace": false
+              }
+            },
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "service",
+                    "path",
+                    "requests",
+                    "blocked"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "convertFieldType",
+              "options": {
+                "conversions": [
+                  {
+                    "targetField": "requests",
+                    "destinationType": "number"
+                  },
+                  {
+                    "targetField": "blocked",
+                    "destinationType": "number"
+                  }
+                ],
+                "fields": {}
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "indexByName": {
+                  "service": 0,
+                  "path": 1,
+                  "requests": 2,
+                  "blocked": 3
+                },
+                "renameByName": {
+                  "service": "Service",
+                  "path": "Path",
+                  "requests": "Requests",
+                  "blocked": "Blocked"
+                }
+              }
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "align": "auto",
+                "cellOptions": {
+                  "type": "auto"
+                }
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Requests"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 90
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Blocked"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 80
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Reached app"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 100
+                  }
+                ]
+              }
+            ]
+          },
+          "options": {
+            "showHeader": true,
+            "cellHeight": "sm",
+            "footer": {
+              "show": false,
+              "reducer": [
+                "sum"
+              ]
+            },
+            "sortBy": [
+              {
+                "displayName": "Requests",
+                "desc": true
+              }
+            ]
+          },
+          "id": 10
+        },
+        {
+          "type": "table",
+          "title": "Recent bans",
+          "description": "Latest bans, the app hit and its top paths",
+          "datasource": {
+            "type": "victoriametrics-logs-datasource",
+            "uid": "victorialogs"
+          },
+          "gridPos": {
+            "x": 0,
+            "y": 21,
+            "w": 24,
+            "h": 10
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "victoriametrics-logs-datasource",
+                "uid": "victorialogs"
+              },
+              "expr": "((kubernetes.pod_namespace:network kubernetes.container_name:crowdsec-agent) OR (host:vps container_name:crowdsec)) \"performed\" | extract \"Ip <ip> performed '<_>/<scenario>'\" | format if (host:=vps) \"vps\" as engine | format if (-host:=vps) \"cluster\" as engine | copy scenario as attack | format if (scenario:~\"^http-\") \"Scanning\" as attack | format if (scenario:~\"^ssh-\") \"SSH attack\" as attack | format if (scenario:~\"refused-conn\") \"Port scanning\" as attack | format if (scenario:~\"bf|user-enum\") \"Brute force\" as attack | format if (scenario:~\"crawl\") \"Crawling\" as attack | format if (scenario:~\"bad-user-agent|w00tw00t\") \"Scanner tool\" as attack | format if (scenario:~\"sqli|xss|traversal\") \"Injection\" as attack | format if (scenario:~\"(?i)cve|_rce|vmsa|log4j|spring4shell\") \"Exploit attempt\" as attack | format if (scenario:~\"generic-test\") \"Test\" as attack | fields _time, host, ip, attack, scenario | join by (ip) (_time:$__range kubernetes.pod_namespace:network kubernetes.container_name:envoy kubernetes.pod_name:envoy-external* | rename \"x-forwarded-for\" as ip, \":authority\" as service, \"x-envoy-origin-path\" as path | stats by (ip, service, path) count() n | sort by (n desc) partition by (ip) limit 3 | stats by (ip) uniq_values(service) service, uniq_values(path) paths) | format if (host:=vps) \"ssh (vps)\" as service | replace_regexp (\"[\\\\[\\\\]\\\"]\", \"\") at service | replace_regexp (\"[\\\\[\\\\]\\\"]\", \"\") at paths | replace (\",\", \", \") at paths | sort by (_time desc)",
+              "queryType": "instant",
+              "refId": "A",
+              "editorMode": "code",
+              "maxLines": 100
+            }
+          ],
+          "transformations": [
+            {
+              "id": "extractFields",
+              "options": {
+                "source": "labels",
+                "format": "auto",
+                "replace": false
+              }
+            },
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "Time",
+                    "service",
+                    "ip",
+                    "attack",
+                    "scenario",
+                    "paths"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "convertFieldType",
+              "options": {
+                "conversions": [],
+                "fields": {}
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "indexByName": {
+                  "Time": 0,
+                  "service": 1,
+                  "ip": 2,
+                  "attack": 3,
+                  "scenario": 4,
+                  "paths": 5
+                },
+                "renameByName": {
+                  "Time": "Time",
+                  "service": "Service",
+                  "ip": "IP",
+                  "attack": "Attack",
+                  "scenario": "Scenario",
+                  "paths": "Top paths"
+                }
+              }
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "align": "auto",
+                "cellOptions": {
+                  "type": "auto"
+                }
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Time"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 190
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Service"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 160
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "IP"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 150
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Attack"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 140
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Scenario"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 260
+                  }
+                ]
+              }
+            ]
+          },
+          "options": {
+            "showHeader": true,
+            "cellHeight": "sm",
+            "footer": {
+              "show": false,
+              "reducer": [
+                "sum"
+              ]
+            },
+            "sortBy": []
+          },
+          "id": 11
+        }
+      ]
+    }

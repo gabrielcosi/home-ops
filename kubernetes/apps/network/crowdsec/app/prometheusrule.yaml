@@ -1,0 +1,41 @@
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: crowdsec
+spec:
+  groups:
+    - name: crowdsec.rules
+      rules:
+        - alert: CrowdSecLogIntakeStalled
+          expr: |-
+            sum by (job) (increase(cs_parser_hits_ok_total[6h])) == 0
+          for: 30m
+          annotations:
+            summary: >-
+              CrowdSec {{ $labels.job }} has parsed no log lines for 6 hours
+          labels:
+            severity: warning
+
+        - alert: CrowdSecCommunityBlocklistLow
+          expr: |-
+            (
+              max by (job) (cs_active_decisions{origin="CAPI"})
+              or max by (job) (cs_lapi_request_duration_seconds_count) * 0
+            ) < 5000
+          for: 6h
+          annotations:
+            summary: >-
+              CrowdSec {{ $labels.job }} community blocklist is below 5000 IPs
+          labels:
+            severity: warning
+
+        - alert: CrowdSecExtAuthzFailOpen
+          expr: |-
+            sum(increase(envoy_http_ext_authz_failure_mode_allowed{pod=~"envoy-external-.*"}[10m])) > 0
+          for: 15m
+          annotations:
+            summary: >-
+              envoy-external is passing requests without a CrowdSec check
+          labels:
+            severity: warning
