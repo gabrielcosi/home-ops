@@ -2,6 +2,7 @@
 customization:
   extraKernelArgs:
     - i915.enable_guc=3
+    - module_blacklist=igc,r8169
     - talos.config.early={{ config_early }}
   systemExtensions:
     officialExtensions:
@@ -13,4 +14,3 @@ customization:
       - siderolabs/nfsrahead
       - siderolabs/nvidia-container-toolkit-production
       - siderolabs/nvidia-open-gpu-kernel-modules-production
-      - siderolabs/realtek-firmware
