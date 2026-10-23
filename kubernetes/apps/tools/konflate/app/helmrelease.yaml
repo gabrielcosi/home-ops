@@ -11,10 +11,10 @@ spec:
   values:
     config:
       repo: forgejo://git.xcd.dev/gabrielcosi/home-ops
-      statusChecks: true
-      prComments: true
+      statusChecks: false
+      prComments: false
       publicUrl: https://konflate.xcd.dev
-      mcp: true
+      mcp: false
       verifyImages: true
     secret:
       existingSecret: konflate-secrets

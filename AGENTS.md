@@ -41,7 +41,7 @@ flate renders what Flux applies (Kustomizations + HelmReleases + `postBuild` sub
 - Change vs a baseline branch (git-to-git, not the live cluster): `flate diff all --path ./kubernetes --base main`
 - Render one app: `flate build hr --path ./kubernetes <app> --allow-missing-secrets` (or `build ks --namespace <ns> <app>`)
 
-In CI, the in-cluster `konflate` renders each PR through the same pipeline. kritika reviews every PR; on Renovate's it follows `.agents/skills/renovate/SKILL.md` and its confidence score gates automerge through the `Kritika / Review` check. Its repository settings live in `.kritika.yaml`.
+The in-cluster `konflate` renders a preview of each PR at konflate.xcd.dev, outside CI. kritika reviews every PR; on Renovate's it follows `.agents/skills/renovate/SKILL.md` and its confidence score gates automerge through the `Kritika / Review` check. Its repository settings live in `.kritika.yaml`.
 
 ## Conventions
 
