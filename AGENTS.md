@@ -16,7 +16,7 @@ Homelab infrastructure-as-code. Work from the repo root.
 - `just` is the entrypoint: the root justfile imports the `bootstrap`, `kube`, `talos`, and `ansible` modules (`*/mod.just`). Prefer `just` recipes over their underlying commands. After the user approves a mutating op, answer recipe confirmation prompts with `yes | just <recipe> ...` rather than bypassing the recipe.
 - `flate` validates Kubernetes manifests — it renders the full Flux pipeline with bundled helm/kustomize/source SDKs (no `helm`/`kustomize`/`flux` binaries).
 - `talosctl` (1.13.x) for Talos machine config, via `just talos` (render/validate/apply); `op` (1Password CLI) for secret material.
-- Cluster reads default to `kubernetes-mcp-server` MCP tools; if RBAC blocks them, fall back to read-only `kubectl` (`get`/`describe`/`logs`).
+- Cluster reads use read-only `kubectl` (`get`/`describe`/`logs`).
 - Outline wiki via `outline-mcp` tools — for a `https://docs.xcd.dev/` link use `outline-mcp_fetch` (`resource: "document"`); search with `outline-mcp_list_documents`.
 - Self-hosted Forgejo (`git.xcd.dev`) via the `tea` CLI, not WebFetch (auth-gated): for any `git.xcd.dev/<owner>/<repo>` link use e.g. `tea pr <n> --repo <owner>/<repo>`. Read-only subcommands by default.
 
@@ -26,12 +26,11 @@ Never run commands that change live infrastructure or cluster state. If recovery
 
 Forbidden:
 
-- Mutating MCP tools: `kubernetes-mcp-server_kubectl_apply`, `_kubectl_rollout`, `_node_management`, `_run_pod`
 - `just bootstrap cluster|base|apps`
 - Live-mutating `kube` recipes: `apply-ks`, `delete-ks`, `sync`, `prune-pods`, `browse-pvc`, `debug-node`, `maintenance`
 - Mutating `talos` recipes: `apply-node`, `reboot-node`, `reset-node`, `shutdown-node`, `upgrade-node`, `upgrade-k8s`
 
-Allowed (non-mutating): `flate test|build|diff`, `just kube view-secret`, `just kube render-local-ks`, read-only `kubectl`/MCP diagnostics.
+Allowed (non-mutating): `flate test|build|diff`, `just kube view-secret`, `just kube render-local-ks`, read-only `kubectl` diagnostics.
 
 ## Validate changes — `flate`, from repo root
 

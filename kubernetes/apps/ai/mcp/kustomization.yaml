@@ -4,5 +4,4 @@ kind: Kustomization
 resources:
   - ./github-mcp/ks.yaml
   - ./ha-mcp/ks.yaml
-  - ./k8s-mcp/ks.yaml
   - ./outline-mcp/ks.yaml
