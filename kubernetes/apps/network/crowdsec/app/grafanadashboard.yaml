@@ -483,7 +483,8 @@ spec:
               "unit": "short",
               "decimals": 0,
               "color": {
-                "mode": "palette-classic"
+                "mode": "shades",
+                "fixedColor": "blue"
               },
               "custom": {
                 "drawStyle": "bars",
@@ -545,7 +546,8 @@ spec:
               "unit": "short",
               "decimals": 0,
               "color": {
-                "mode": "palette-classic"
+                "mode": "fixed",
+                "fixedColor": "#9FA7B3"
               },
               "custom": {
                 "drawStyle": "bars",
@@ -559,7 +561,143 @@ spec:
                 "axisSoftMin": 0
               }
             },
-            "overrides": []
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Scanning"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#5794F2"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Brute force"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#B877D9"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Crawling"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#8AB8FF"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Scanner tool"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#CA95E5"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Injection"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#1F60C4"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Exploit attempt"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#8F3BB8"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Port scanning"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#C0D8FF"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "SSH attack"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#DEB6F2"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Test"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#9FA7B3"
+                    }
+                  }
+                ]
+              }
+            ]
           },
           "options": {
             "legend": {
