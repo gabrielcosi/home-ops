@@ -197,7 +197,7 @@
   --fancy-card-border: #232323;
   --color-button: #111111;
   --color-code-bg: #0a0a0a;
-  --color-markup-code-block: #0a0a0a;
+  --color-markup-code-block: #111111;
   --color-markup-code-inline: #111111;
   --color-markup-table-row: #ffffff06;
   --color-editor-line-highlight: #111111;
@@ -295,6 +295,10 @@ body {
   text-decoration: underline;
   text-underline-offset: 2px;
   text-decoration-thickness: 1px;
+}
+
+.markup pre {
+  border: 1px solid #2b2b2b;
 }
 
 :focus-visible {
