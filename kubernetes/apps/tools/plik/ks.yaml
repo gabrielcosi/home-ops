@@ -25,6 +25,4 @@ spec:
   postBuild:
     substitute:
       APP: plik
-      KOPIUR_PUID: "5010"
-      KOPIUR_PGID: "3008"
       KOPIUR_CAPACITY: "100Mi"
