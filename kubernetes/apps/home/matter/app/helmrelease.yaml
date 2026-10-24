@@ -51,7 +51,6 @@ spec:
               readOnlyRootFilesystem: true
               capabilities:
                 drop: ['ALL']
-                add: ['NET_RAW']
 
     service:
       app:

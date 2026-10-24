@@ -281,6 +281,18 @@ spec:
         scrapeInterval: 30s
         nodeSelector:
           node-role.kubernetes.io/control-plane: ''
+        securityContext: &securityContext
+          runAsNonRoot: true
+          runAsUser: 1000
+          runAsGroup: 1000
+          fsGroup: 1000
+          fsGroupChangePolicy: OnRootMismatch
+          seccompProfile:
+            type: RuntimeDefault
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop: ['ALL']
         resources:
           requests:
             cpu: 100m
@@ -298,6 +310,7 @@ spec:
         evaluationInterval: 30s
         nodeSelector:
           node-role.kubernetes.io/control-plane: ''
+        securityContext: *securityContext
         resources:
           requests:
             cpu: 50m
@@ -312,6 +325,7 @@ spec:
       spec:
         nodeSelector:
           node-role.kubernetes.io/control-plane: ''
+        securityContext: *securityContext
         resources:
           requests:
             cpu: 50m

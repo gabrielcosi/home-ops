@@ -9,6 +9,18 @@ spec:
       app.kubernetes.io/part-of: external-ingest
   nodeSelector:
     node-role.kubernetes.io/control-plane: ''
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 1000
+    runAsGroup: 1000
+    fsGroup: 1000
+    fsGroupChangePolicy: OnRootMismatch
+    seccompProfile:
+      type: RuntimeDefault
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: true
+    capabilities:
+      drop: ['ALL']
   resources:
     requests:
       cpu: 10m

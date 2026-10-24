@@ -62,6 +62,12 @@ spec:
         registrationTokenKey: REGISTRATION_TOKEN
     lapi:
       replicas: 2
+      podSecurityContext:
+        seccompProfile:
+          type: RuntimeDefault
+      securityContext:
+        capabilities:
+          drop: ['ALL']
       strategy:
         type: RollingUpdate
       deployAnnotations:
@@ -118,6 +124,16 @@ spec:
           enabled: true
     agent:
       isDeployment: true
+      podSecurityContext:
+        seccompProfile:
+          type: RuntimeDefault
+      securityContext:
+        capabilities:
+          drop: ['ALL']
+      wait_for_lapi:
+        securityContext:
+          capabilities:
+            drop: ['ALL']
       hostVarLog: false
       serviceAccountName: crowdsec-agent
       deploymentAnnotations:

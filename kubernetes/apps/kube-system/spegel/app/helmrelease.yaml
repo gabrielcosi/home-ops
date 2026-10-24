@@ -9,6 +9,13 @@ spec:
     name: spegel
   interval: 1h
   values:
+    podSecurityContext:
+      seccompProfile:
+        type: RuntimeDefault
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop: ['ALL']
     serviceMonitor:
       enabled: true
 
