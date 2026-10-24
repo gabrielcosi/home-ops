@@ -51,8 +51,6 @@ spec:
             env: KRITIKA_BIFROST_VK
           headers:
             x-bf-eh-x-opencode-session: '{session}'
-      review:
-        model: bifrost/opencode/deepseek-v4.1-flash
       agent:
         timeout: 1h
       embedding:

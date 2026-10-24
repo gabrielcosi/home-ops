@@ -1,7 +1,10 @@
 ---
 # yaml-language-server: $schema=https://kritika.home-operations.com/kritika.schema.json
+review:
+  model: bifrost/anthropic/claude-sonnet-5-5
+  effort: high
 confidence:
-  model: bifrost/opencode/glm-5.3-flash
+  model: bifrost/anthropic/claude-sonnet-5-5
   threshold: 4
   when:
     - name: renovate
