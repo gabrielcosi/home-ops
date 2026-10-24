@@ -23,10 +23,10 @@ spec:
                 "mac": "be:24:11:10:00:02"
               }]
           securityContext:
-            fsGroup: 65533
+            fsGroup: 1000
             fsGroupChangePolicy: OnRootMismatch
-            runAsGroup: 65533
-            runAsUser: 65534
+            runAsGroup: 1000
+            runAsUser: 1000
             runAsNonRoot: true
             seccompProfile:
               type: RuntimeDefault

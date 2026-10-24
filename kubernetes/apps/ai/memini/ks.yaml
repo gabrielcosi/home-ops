@@ -22,6 +22,4 @@ spec:
   postBuild:
     substitute:
       APP: memini
-      KOPIUR_PUID: "65532"
-      KOPIUR_PGID: "65532"
       KOPIUR_CAPACITY: "1Gi"

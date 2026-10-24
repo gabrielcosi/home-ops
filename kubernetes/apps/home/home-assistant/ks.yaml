@@ -23,5 +23,3 @@ spec:
     substitute:
       APP: home-assistant
       KOPIUR_CAPACITY: "2Gi"
-      KOPIUR_PUID: "65534"
-      KOPIUR_PGID: "65533"

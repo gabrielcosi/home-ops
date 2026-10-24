@@ -15,10 +15,10 @@ spec:
           reloader.stakater.com/auto: 'true'
         pod:
           securityContext:
-            fsGroup: 65534
+            fsGroup: 1000
             fsGroupChangePolicy: OnRootMismatch
-            runAsGroup: 65534
-            runAsUser: 65534
+            runAsGroup: 1000
+            runAsUser: 1000
             runAsNonRoot: true
             seccompProfile:
               type: RuntimeDefault

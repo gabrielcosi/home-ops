@@ -25,6 +25,4 @@ spec:
       APP: seerr
       APP_NAMESPACE: media
       ANUBIS_TARGET: http://seerr.media.svc.cluster.local:5055
-      KOPIUR_PUID: '65534'
-      KOPIUR_PGID: '65534'
       KOPIUR_CAPACITY: '100Mi'

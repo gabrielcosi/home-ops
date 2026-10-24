@@ -24,6 +24,4 @@ spec:
   postBuild:
     substitute:
       APP: paperless-ngx
-      KOPIUR_PUID: "5001"
-      KOPIUR_PGID: "5001"
       KOPIUR_CAPACITY: "1Gi"
