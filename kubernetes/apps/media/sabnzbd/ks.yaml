@@ -25,6 +25,4 @@ spec:
   postBuild:
     substitute:
       APP: sabnzbd
-      KOPIUR_PUID: "5009"
-      KOPIUR_PGID: "3007"
       KOPIUR_CAPACITY: "100Mi"

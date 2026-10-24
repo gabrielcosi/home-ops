@@ -25,6 +25,4 @@ spec:
   postBuild:
     substitute:
       APP: radarr
-      KOPIUR_PUID: "5006"
-      KOPIUR_PGID: "3007"
       KOPIUR_CAPACITY: "500Mi"

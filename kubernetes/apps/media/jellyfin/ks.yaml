@@ -25,6 +25,4 @@ spec:
   postBuild:
     substitute:
       APP: jellyfin
-      KOPIUR_PUID: "5003"
-      KOPIUR_PGID: "3007"
       KOPIUR_CAPACITY: "10Gi"

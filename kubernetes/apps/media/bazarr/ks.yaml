@@ -25,6 +25,4 @@ spec:
   postBuild:
     substitute:
       APP: bazarr
-      KOPIUR_PUID: "5008"
-      KOPIUR_PGID: "3007"
       KOPIUR_CAPACITY: "250Mi"
