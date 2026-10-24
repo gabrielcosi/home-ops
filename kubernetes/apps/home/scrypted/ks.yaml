@@ -22,6 +22,4 @@ spec:
   postBuild:
     substitute:
       APP: scrypted
-      KOPIUR_PUID: "65534"
-      KOPIUR_PGID: "65534"
       KOPIUR_CAPACITY: "1Gi"

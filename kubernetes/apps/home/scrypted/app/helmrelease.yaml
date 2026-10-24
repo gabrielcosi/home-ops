@@ -23,15 +23,18 @@ spec:
                 "mac": "be:24:11:10:00:04"
               }]
           securityContext:
-            fsGroup: 65534
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            fsGroup: 1000
             fsGroupChangePolicy: OnRootMismatch
             seccompProfile:
               type: RuntimeDefault
         containers:
           app:
             image:
-              repository: ghcr.io/koush/scrypted
-              tag: v0.147.0-noble-full@sha256:e78b4fcecdd6c61acaaf22b50ccef303c738da58cc0be57afdb116521df52296
+              repository: ghcr.io/gabrielcosi/containers/scrypted
+              tag: v0.147.0-noble-full@sha256:dd7c2ec14da5775780399a14686cad4da12c93392db056ea5e73cb9c909473df
             resources:
               requests:
                 cpu: 75m
@@ -50,10 +53,9 @@ spec:
                   periodSeconds: 5
             securityContext:
               allowPrivilegeEscalation: false
-              readOnlyRootFilesystem: false
+              readOnlyRootFilesystem: true
               capabilities:
                 drop: ['ALL']
-                add: ['CHOWN', 'FOWNER', 'SETUID', 'SETGID', 'DAC_OVERRIDE'] # required by s6-overlay init
 
     service:
       app:
@@ -79,5 +81,5 @@ spec:
       tmp:
         type: emptyDir
         globalMounts:
-          - path: /.cache
-          - path: /.npm
+          - path: /home/ubuntu
+          - path: /tmp
