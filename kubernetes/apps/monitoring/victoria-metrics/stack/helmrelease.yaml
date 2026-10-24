@@ -355,6 +355,7 @@ spec:
         retentionPeriod: 90d
         nodeSelector:
           node-role.kubernetes.io/control-plane: ''
+        securityContext: *securityContext
         resources:
           requests:
             cpu: 150m

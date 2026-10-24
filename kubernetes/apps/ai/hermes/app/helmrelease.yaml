@@ -16,9 +16,9 @@ spec:
         pod:
           securityContext:
             runAsNonRoot: true
-            runAsUser: 10000
-            runAsGroup: 10000
-            fsGroup: 10000
+            runAsUser: 1000
+            runAsGroup: 1000
+            fsGroup: 1000
             fsGroupChangePolicy: OnRootMismatch
             seccompProfile:
               type: RuntimeDefault
@@ -26,16 +26,16 @@ spec:
           seed-tools:
             image: &image
               repository: ghcr.io/gabrielcosi/containers/hermes-agent
-              tag: v2026.9.24@sha256:91000a7947973b2b41271f5da1475ca274d30b38e6321ca6e84d886ac273430c
+              tag: v2026.9.24@sha256:a6e681979e15d862ec53f2ef3e2771658c606070f173acac6f5dcd79045d37cd
             command:
               - sh
               - -c
               - |
                 set -e
-                if [ -e /homebrew-runtime/.seeded ]; then
+                if [ -O /homebrew-runtime/.seeded ]; then
                   echo "Homebrew already seeded; skipping."
                 else
-                  echo "Resetting incomplete Homebrew seed."
+                  echo "Resetting Homebrew seed."
                   chmod -R u+w /homebrew-runtime 2>/dev/null || true
                   find /homebrew-runtime -mindepth 1 -maxdepth 1 -exec rm -rf {} +
                   echo "Seeding Homebrew from image /home/linuxbrew/.linuxbrew into /homebrew-runtime."

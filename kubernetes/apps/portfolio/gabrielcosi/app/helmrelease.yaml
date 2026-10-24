@@ -25,9 +25,9 @@ spec:
             - name: registry-credentials
           securityContext:
             runAsNonRoot: true
-            runAsUser: 1001
-            runAsGroup: 1001
-            fsGroup: 1001
+            runAsUser: 1000
+            runAsGroup: 1000
+            fsGroup: 1000
             fsGroupChangePolicy: OnRootMismatch
             seccompProfile:
               type: RuntimeDefault
@@ -36,7 +36,7 @@ spec:
           app:
             image:
               repository: registry.xcd.dev/gabrielcosi/gabrielcosi.dev
-              tag: latest@sha256:d29dd21915a4d568d16f9ee2734c823e35b40ed6249339734d72b620b3e99eb7
+              tag: latest@sha256:7cb636ac2acfd43451a721acb437fdc3f90845b58d8022251a63f6cd937f4972
             envFrom:
               - secretRef:
                   name: gabrielcosi-secrets
