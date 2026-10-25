@@ -36,7 +36,7 @@ spec:
           app:
             image:
               repository: registry.xcd.dev/shirleyrossell/shirleyrossell.com
-              tag: latest@sha256:6e1b41c70442cfe66f812c82712cb8e2d4f70219ae46c146e40f9c244d498ea1
+              tag: latest@sha256:d97e99ffb364139679ee999dd3502b7c93b36a307a6bb08e3be957143aa9cf3e
             resources:
               requests:
                 cpu: 1m
