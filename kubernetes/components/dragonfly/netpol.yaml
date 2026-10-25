@@ -1,0 +1,31 @@
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: ${APP}-dragonfly
+spec:
+  description: Allow namespace clients, replicas, and the operator to reach Dragonfly.
+  endpointSelector:
+    matchLabels:
+      app: ${APP}-dragonfly
+      app.kubernetes.io/name: dragonfly
+  ingress:
+    - fromEndpoints:
+        - {}
+      toPorts:
+        - ports:
+            - port: "6379"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: dragonfly-system
+            k8s:app.kubernetes.io/name: dragonfly-operator
+        - matchLabels:
+            app: ${APP}-dragonfly
+            app.kubernetes.io/name: dragonfly
+      toPorts:
+        - ports:
+            - port: "6379"
+              protocol: TCP
+            - port: "9999"
+              protocol: TCP
