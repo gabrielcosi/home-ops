@@ -19,7 +19,8 @@ spec:
 
         - alert: LlamaSwapRequestsFailing
           expr: |-
-            sum by (model) (increase(bifrost_error_requests_total{provider="llama-swap", status_code=~"5..|unknown"}[15m])) > 0
+            sum by (model) (increase(bifrost_error_requests_total{provider="llama-swap", status_code=~"5..|unknown"}[5m])) > 0
+          for: 10m
           annotations:
             summary: >-
               Model {{ $labels.model }} is failing requests with server errors
