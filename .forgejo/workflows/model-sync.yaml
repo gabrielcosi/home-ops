@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
-      FORGEJO_API: http://forgejo-http.tools.svc.cluster.local:3000/api/v1
+      FORGEJO_API: http://forgejo-http.forgejo.svc.cluster.local:3000/api/v1
       REPO: ${{ forgejo.repository }}
       BRANCH: model-sync/opencode
       SUMMARY_FILE: /tmp/model-sync.md

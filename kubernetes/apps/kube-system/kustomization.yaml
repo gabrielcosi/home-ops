@@ -17,6 +17,7 @@ resources:
   - ./metrics-server/ks.yaml
   - ./multus/ks.yaml
   - ./nvidia-dra-driver/ks.yaml
+  - ./priority-classes/ks.yaml
   - ./reflector/ks.yaml
   - ./reloader/ks.yaml
   - ./snapshot-controller/ks.yaml

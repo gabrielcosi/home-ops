@@ -14,17 +14,14 @@ plugins:
   k8s:
     address: "unix:///plugin/forgejo-runner-k8s.sock"
     options:
-      namespace: tools
+      namespace: forgejo
       poll_timeout: 10m
-      labels: "app.kubernetes.io/name=forgejo-runner-instance"
+      labels: "app.kubernetes.io/name=runner-shirley-instance"
 runner:
-  capacity: 2
+  capacity: 1
   envs:
     FORGEJO_PUBLIC_URL: https://git.xcd.dev
   labels:
-    - ubuntu-latest:k8s:/config/podspec-default.yaml
-    - default:k8s:/config/podspec-default.yaml
     - docker:k8s:/config/podspec-dind.yaml
-    - talos:k8s:/config/podspec-talos.yaml
   timeout: 3h
   shutdown_timeout: 4m

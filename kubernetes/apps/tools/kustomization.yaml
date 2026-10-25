@@ -10,7 +10,6 @@ resources:
   - ./cachette/ks.yaml
   - ./chaski/ks.yaml
   - ./cyberchef/ks.yaml
-  - ./forgejo/ks.yaml
   - ./freeze-frame/ks.yaml
   - ./it-tools/ks.yaml
   - ./konflate/ks.yaml

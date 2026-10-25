@@ -19,12 +19,12 @@ containers:
       - name: talos
         mountPath: /var/run/secrets/talos.dev
         readOnly: true
-serviceAccountName: forgejo-runner-talos
+serviceAccountName: runner-talos
 automountServiceAccountToken: false
 volumes:
   - name: talos
     secret:
-      secretName: forgejo-runner-talos
+      secretName: runner-talos
 runtimeClassName: kata
 priorityClassName: batch-low
 restartPolicy: Never

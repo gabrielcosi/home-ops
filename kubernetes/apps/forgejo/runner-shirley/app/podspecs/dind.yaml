@@ -1,0 +1,69 @@
+initContainers:
+  - name: dind
+    image: docker:29-dind
+    restartPolicy: Always
+    securityContext:
+      privileged: true
+    env:
+      - name: DOCKER_TLS_CERTDIR
+        value: /certs
+    resources:
+      requests:
+        cpu: 250m
+        memory: 512Mi
+      limits:
+        cpu: 1
+        memory: 3Gi
+    volumeMounts:
+      - name: docker-storage
+        mountPath: /var/lib/docker
+      - name: docker-certs
+        mountPath: /certs
+    startupProbe:
+      tcpSocket:
+        port: 2376
+      initialDelaySeconds: 5
+      periodSeconds: 1
+      failureThreshold: 30
+containers:
+  - name: main
+    image: ghcr.io/bjw-s-labs/forgejo-runner:ubuntu-24.04@sha256:fea96a5b525857bee41cc132cf95df67191b73cdd681569ada3000111420397e
+    imagePullPolicy: IfNotPresent
+    env:
+      - name: DEBIAN_FRONTEND
+        value: noninteractive
+      - name: DOCKER_HOST
+        value: tcp://localhost:2376
+      - name: DOCKER_TLS_VERIFY
+        value: '1'
+      - name: DOCKER_CERT_PATH
+        value: /certs/client
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        cpu: 500m
+        memory: 1Gi
+    volumeMounts:
+      - name: docker-certs
+        mountPath: /certs
+        readOnly: true
+runtimeClassName: kata
+priorityClassName: batch-low
+affinity:
+  nodeAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 100
+        preference:
+          matchExpressions:
+            - key: node-role.kubernetes.io/control-plane
+              operator: DoesNotExist
+volumes:
+  - name: docker-storage
+    emptyDir:
+      medium: Memory
+      sizeLimit: 2Gi
+  - name: docker-certs
+    emptyDir: {}
+restartPolicy: Never

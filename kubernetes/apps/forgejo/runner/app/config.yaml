@@ -1,0 +1,30 @@
+cache:
+  enabled: true
+  dir: /data/cache
+  port: 8088
+  proxy_port: 8089
+container:
+  docker_host: "-"
+  workdir_parent: shared/workdir
+host:
+  workdir_parent: /data/act
+log:
+  level: info
+plugins:
+  k8s:
+    address: "unix:///plugin/forgejo-runner-k8s.sock"
+    options:
+      namespace: forgejo
+      poll_timeout: 10m
+      labels: "app.kubernetes.io/name=runner-instance"
+runner:
+  capacity: 2
+  envs:
+    FORGEJO_PUBLIC_URL: https://git.xcd.dev
+  labels:
+    - ubuntu-latest:k8s:/config/podspec-default.yaml
+    - default:k8s:/config/podspec-default.yaml
+    - docker:k8s:/config/podspec-dind.yaml
+    - talos:k8s:/config/podspec-talos.yaml
+  timeout: 3h
+  shutdown_timeout: 4m

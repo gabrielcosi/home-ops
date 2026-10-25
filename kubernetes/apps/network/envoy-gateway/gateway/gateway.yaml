@@ -30,7 +30,7 @@ spec:
           from: Selector
           selector:
             matchLabels:
-              kubernetes.io/metadata.name: tools
+              kubernetes.io/metadata.name: forgejo
         kinds:
           - kind: TCPRoute
 ---
@@ -96,6 +96,6 @@ spec:
           from: Selector
           selector:
             matchLabels:
-              kubernetes.io/metadata.name: tools
+              kubernetes.io/metadata.name: forgejo
         kinds:
           - kind: TCPRoute

@@ -1,0 +1,91 @@
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: runner-shirley
+  namespace: forgejo
+spec:
+  description: Restrict the runner daemon egress to forgejo, the kube-apiserver, and the action sources.
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/instance: runner-shirley
+      app.kubernetes.io/name: runner
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: forgejo
+            k8s:app.kubernetes.io/name: forgejo
+      toPorts:
+        - ports:
+            - port: "3000"
+              protocol: TCP
+    - toEntities:
+        - kube-apiserver
+      toPorts:
+        - ports:
+            - port: "6443"
+              protocol: TCP
+    - toFQDNs:
+        - matchName: data.forgejo.org
+        - matchName: github.com
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: runner-shirley-jobs
+  namespace: forgejo
+spec:
+  description: Restrict CI job pods to forgejo, the runner cache, the external gateway proxies, and internet 80/443.
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: runner-shirley-instance
+  enableDefaultDeny:
+    ingress: true
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: forgejo
+            k8s:app.kubernetes.io/name: forgejo
+      toPorts:
+        - ports:
+            - port: "3000"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: forgejo
+            k8s:app.kubernetes.io/instance: runner-shirley
+            k8s:app.kubernetes.io/name: runner
+      toPorts:
+        - ports:
+            - port: "8088"
+              protocol: TCP
+            - port: "8089"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: network
+            k8s:gateway.envoyproxy.io/owning-gateway-name: envoy-external
+    - toCIDRSet:
+        - cidrGroupRef: internet
+      toPorts:
+        - ports:
+            - port: "80"
+              protocol: TCP
+            - port: "443"
+              protocol: TCP
+  egressDeny:
+    - toCIDRSet:
+        - cidr: 10.0.0.0/8
+          except:
+            - 10.42.0.0/16
+            - 10.43.0.0/16
+        - cidr: 192.168.0.0/16
+    - toCIDR:
+        - 172.16.0.0/12
+    - toEntities:
+        - host
+        - remote-node

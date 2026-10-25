@@ -2,35 +2,38 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: forgejo-runner
+  name: runner
 spec:
   chartRef:
     kind: OCIRepository
-    name: forgejo-runner
+    name: runner
   interval: 1h
   valuesFrom:
     - kind: ConfigMap
-      name: forgejo-runner-values
+      name: runner-values
       valuesKey: config.yaml
       targetPath: runnerConfig
     - kind: ConfigMap
-      name: forgejo-runner-values
+      name: runner-values
       valuesKey: podspec-default.yaml
       targetPath: podSpecs.podspec-default\.yaml
     - kind: ConfigMap
-      name: forgejo-runner-values
+      name: runner-values
       valuesKey: podspec-dind.yaml
       targetPath: podSpecs.podspec-dind\.yaml
     - kind: ConfigMap
-      name: forgejo-runner-values
+      name: runner-values
       valuesKey: podspec-talos.yaml
       targetPath: podSpecs.podspec-talos\.yaml
   values:
+    nameOverride: runner
+    fullnameOverride: runner
+
     replicaCount: 2
 
     forgejo:
-      url: http://forgejo-http.tools.svc.cluster.local:3000
-      existingSecret: forgejo-runner-secret
+      url: http://forgejo-http.forgejo.svc.cluster.local:3000
+      existingSecret: runner-secret
 
     image:
       repository: data.forgejo.org/forgejo/runner
@@ -41,7 +44,7 @@ spec:
         tag: "13.2.1@sha256:d62811841a20fd1a311b2c90c6ffcec37d09e52ebb46834b0c04f3ad2a3bcbe7"
 
     podLabels:
-      app.kubernetes.io/component: forgejo-runner
+      app.kubernetes.io/component: runner
 
     affinity:
       podAntiAffinity:
@@ -51,5 +54,5 @@ spec:
               topologyKey: kubernetes.io/hostname
               labelSelector:
                 matchLabels:
-                  app.kubernetes.io/name: forgejo-runner
-                  app.kubernetes.io/instance: forgejo-runner
+                  app.kubernetes.io/name: runner
+                  app.kubernetes.io/instance: runner

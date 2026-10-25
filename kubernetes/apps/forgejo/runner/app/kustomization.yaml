@@ -6,11 +6,10 @@ resources:
   - ./helmrelease.yaml
   - ./externalsecret.yaml
   - ./netpol.yaml
-  - ./priorityclass.yaml
   - ./serviceaccount.yaml
 
 configMapGenerator:
-  - name: forgejo-runner-values
+  - name: runner-values
     files:
       - config.yaml
       - podspec-default.yaml=podspecs/default.yaml

@@ -140,7 +140,7 @@ spec:
 
         database:
           DB_TYPE: postgres
-          HOST: forgejo-pooler.tools.svc.cluster.local:5432
+          HOST: forgejo-pooler.forgejo.svc.cluster.local:5432
           NAME: forgejodb
           USER: forgejo
 

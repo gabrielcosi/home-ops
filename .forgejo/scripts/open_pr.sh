@@ -28,7 +28,7 @@ git checkout -b "${BRANCH}"
 git add -- ${paths}
 git commit -m "${COMMIT_MESSAGE}"
 
-remote="http://x:${BOT_TOKEN}@forgejo-http.tools.svc.cluster.local:3000/${REPO}.git"
+remote="http://x:${BOT_TOKEN}@forgejo-http.forgejo.svc.cluster.local:3000/${REPO}.git"
 git push --force "${remote}" "${BRANCH}"
 
 existing="$(curl -fsS --retry 3 --retry-all-errors \
