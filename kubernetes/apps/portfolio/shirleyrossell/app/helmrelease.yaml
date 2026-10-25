@@ -22,7 +22,7 @@ spec:
                 matchLabels:
                   app.kubernetes.io/name: shirleyrossell
           imagePullSecrets:
-            - name: shirleyrossell-registry
+            - name: registry-credentials
           securityContext:
             runAsNonRoot: true
             runAsUser: 1000
