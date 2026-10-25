@@ -23,10 +23,11 @@ spec:
     - name: alertstorm
       rules:
         - alert: AlertStorm
-          expr: count(ALERTS{alertstate="firing",alertname!~"AlertStorm|Watchdog|InfoInhibitor"}) > 15
+          expr: count(count by (alertname, job) (ALERTS{alertstate="firing",alertname!~"AlertStorm|Watchdog|InfoInhibitor"})) > 8
           for: 5m
+          keep_firing_for: 10m
           annotations:
-            summary: '{{ $value }} alerts are firing at once. Individual notifications are muted until this clears.'
+            summary: '{{ $value }} alert groups are firing at once. Individual notifications are muted until this clears.'
           labels:
             severity: critical
 ---

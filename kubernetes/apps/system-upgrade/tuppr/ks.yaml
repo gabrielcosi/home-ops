@@ -23,6 +23,10 @@ spec:
     - name: tuppr
   interval: 1h
   path: ./kubernetes/apps/system-upgrade/tuppr/upgrades
+  postBuild:
+    substituteFrom:
+      - kind: ConfigMap
+        name: alert-lists
   prune: true
   sourceRef:
     kind: GitRepository

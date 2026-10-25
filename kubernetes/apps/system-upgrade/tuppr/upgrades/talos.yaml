@@ -25,6 +25,6 @@ spec:
   silences:
     - matchers:
         - name: alertname
-          value: ^(CephMonDown|CephMonDownQuorumAtRisk|CephOSDDown|CephOSDDownHigh|CephOSDHostDown|CephHealthWarning|CephPGsUnclean|KubeNodeUnreachable|KubeletInstanceUnreachable|KubePodNotReady|KubePdbNotEnoughHealthyPods|KubeDeploymentReplicasMismatch|KubeDaemonSetMisScheduled|KubeDaemonSetRolloutStuck|TargetDown|TooManyScrapeErrors|TooManyLogs)$
+          value: ^(${MAINTENANCE_ALERTS})$
           matchType: "=~"
       maxDuration: "2h"

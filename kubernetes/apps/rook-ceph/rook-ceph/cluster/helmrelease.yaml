@@ -131,6 +131,11 @@ spec:
     monitoring:
       enabled: true
       createPrometheusRules: true
+      prometheusRuleOverrides:
+        CephNodeDiskspaceWarning:
+          disabled: true
+        CephNodeNetworkPacketDrops:
+          disabled: true
     toolbox:
       enabled: true
       resources:

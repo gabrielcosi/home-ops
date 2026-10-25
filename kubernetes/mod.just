@@ -24,9 +24,10 @@ delete-ks ns ks:
     just kube render-local-ks "{{ ns }}" "{{ ks }}" | kubectl delete -f -
 
 [private]
-_maintenance re who action hours:
+_maintenance re who action hours node='':
     re='{{ re }}'
     who='{{ who }}'
+    node='{{ node }}'
     kubectl -n monitoring port-forward pod/vmalertmanager-victoria-metrics-cluster-0 19093:9093 >/dev/null 2>&1 &
     pf=$!
     trap 'kill $pf 2>/dev/null' EXIT
@@ -43,8 +44,15 @@ _maintenance re who action hours:
         fi
         start=$(date -u +%Y-%m-%dT%H:%M:%SZ)
         end=$(date -u -v+{{ hours }}H +%Y-%m-%dT%H:%M:%SZ)
-        id=$(curl -sS -X POST "$base/silences" -H 'Content-Type: application/json' -d "{\"matchers\":[{\"name\":\"alertname\",\"value\":\"$re\",\"isRegex\":true,\"isEqual\":true}],\"startsAt\":\"$start\",\"endsAt\":\"$end\",\"createdBy\":\"$who\",\"comment\":\"$who ({{ hours }}h) via just\"}" | jq -r .silenceID)
+        post() {
+            curl -sS -X POST "$base/silences" -H 'Content-Type: application/json' -d "{\"matchers\":$1,\"startsAt\":\"$start\",\"endsAt\":\"$end\",\"createdBy\":\"$who\",\"comment\":\"$who ({{ hours }}h) via just\"}" | jq -r .silenceID
+        }
+        id=$(post "[{\"name\":\"alertname\",\"value\":\"$re\",\"isRegex\":true,\"isEqual\":true}]")
         echo "🔕 $who ON — silence $id (expires $end)"
+        if [ -n "$node" ]; then
+            id=$(post "[{\"name\":\"alertname\",\"value\":\"KubeNodeNotReady\",\"isRegex\":false,\"isEqual\":true},{\"name\":\"node\",\"value\":\"$node\",\"isRegex\":false,\"isEqual\":true}]")
+            echo "🔕 KubeNodeNotReady on $node — silence $id"
+        fi
         echo "   end early: just kube maintenance (select ${who#just-maintenance:} → off)"
         ;;
     off)
@@ -61,7 +69,9 @@ _maintenance re who action hours:
 
 [doc('Interactively silence a node or NAS outage cascade in Alertmanager (auto-expiring; never touches Watchdog)')]
 maintenance:
-    node_re='^(CephMonDown|CephMonDownQuorumAtRisk|CephOSDDown|CephOSDDownHigh|CephOSDHostDown|CephHealthWarning|CephPGsUnclean|KubeNodeUnreachable|KubeletInstanceUnreachable|KubePodNotReady|KubePdbNotEnoughHealthyPods|KubeDeploymentReplicasMismatch|KubeDaemonSetMisScheduled|KubeDaemonSetRolloutStuck|TargetDown|TooManyScrapeErrors|TooManyLogs)$'
+    lists='{{ justfile_directory() }}/kubernetes/components/alert-lists/configmap.yaml'
+    node_alerts=$(yq -r '.data.MAINTENANCE_ALERTS' "$lists")
+    gpu_alerts=$(yq -r '.data.GPU_MAINTENANCE_ALERTS' "$lists")
     nas_re='^(LastFailedArchiveTime|KopiurBackupConsecutiveFailures|KopiurBackupStale|KopiurRepositoryNotReady|KopiurRestoreFailed|KopiurSnapshotFailed)$'
     PS3='> '
     echo 'What is going offline for maintenance?'
@@ -70,15 +80,21 @@ maintenance:
     echo 'Action?'
     select action in on off status; do [ -n "${action:-}" ] && break; done
     case "${action:-}" in on|off|status) ;; *) echo aborted; exit 1 ;; esac
-    case "$target" in node) re="$node_re" ;; nas) re="$nas_re" ;; esac
+    case "$target" in node) re="^($node_alerts)$" ;; nas) re="$nas_re" ;; esac
     hours=4
+    node=''
+    if [ "$action" = on ] && [ "$target" = node ]; then
+        echo 'Which node?'
+        select node in $(kubectl get nodes -o name | sed 's#^node/##'); do [ -n "${node:-}" ] && break; done
+        if [ "$node" = wrk-01 ]; then re="^($node_alerts|$gpu_alerts)$"; fi
+    fi
     if [ "$action" = on ]; then
         read -r -p 'Silence duration in hours [4]: ' h || true
         hours="${h:-4}"; [[ "$hours" =~ ^[0-9]+$ ]] || hours=4
         read -r -p "Silence all $target-outage alerts for ${hours}h? [y/N] " ok || true
         case "${ok:-}" in y|Y|yes) ;; *) echo aborted; exit 1 ;; esac
     fi
-    just kube _maintenance "$re" "just-maintenance:$target" "$action" "$hours"
+    just kube _maintenance "$re" "just-maintenance:$target" "$action" "$hours" "$node"
 
 [doc('Prune pods in Failed, Pending, or Succeeded state')]
 prune-pods:

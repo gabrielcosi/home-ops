@@ -44,6 +44,9 @@ spec:
       rules:
         RecordingRulesNoData:
           create: false
+        KubeAPIDown:
+          spec:
+            expr: absent(up{job="apiserver"} == 1)
         etcdDatabaseHighFragmentationRatio:
           spec:
             expr: >-
@@ -81,6 +84,36 @@ spec:
             - receiver: 'null'
               matchers:
                 - alertname = "InfoInhibitor"
+            - receiver: 'pushover-emergency'
+              group_by: []
+              group_interval: 10m
+              matchers:
+                - alertname =~ "${PAGER_ALERTS}|${PAGER_SCOPED_ALERTS}"
+              routes:
+                - receiver: 'pushover'
+                  group_by: ['alertname', 'job']
+                  group_interval: 30m
+                  matchers:
+                    - alertname = "KubePersistentVolumeFillingUp"
+                    - severity != "critical"
+                - receiver: 'pushover'
+                  group_by: ['alertname', 'job']
+                  group_interval: 30m
+                  matchers:
+                    - alertname = "KubeNodeNotReady"
+                    - node !~ "ctrl-.*"
+                - receiver: 'pushover'
+                  group_by: ['alertname', 'job']
+                  group_interval: 30m
+                  matchers:
+                    - alertname = "NodeFilesystemAlmostOutOfSpace"
+                    - severity != "critical"
+                - receiver: 'pushover'
+                  group_by: ['alertname', 'job']
+                  group_interval: 30m
+                  matchers:
+                    - alertname = "NodeFilesystemAlmostOutOfSpace"
+                    - mountpoint != "/var"
             - receiver: 'pushover'
               matchers:
                 - severity = "critical"
@@ -115,6 +148,21 @@ spec:
                   {{- end }}
                   {{ end }}
                 url_title: View in Alertmanager
+          - name: 'pushover-emergency'
+            pushover_configs:
+              - token_file: /etc/vm/secrets/alertmanager-secret/pushover_token
+                user_key_file: /etc/vm/secrets/alertmanager-secret/pushover_user_key
+                send_resolved: false
+                html: true
+                retry: 1m
+                expire: 1h
+                priority: '2'
+                title: |-
+                  [FIRING:{{ .Alerts.Firing | len }}] {{ if .CommonLabels.alertname }}{{ .CommonLabels.alertname }}{{ else }}{{ .Alerts.Firing | len }} paging alerts{{ end }}
+                message: |-
+                  {{ range .Alerts.Firing }}{{ .StartsAt.Format "15:04" }} UTC {{ .Labels.alertname }} — {{ .Annotations.summary }}
+                  {{ end }}
+                url_title: View in Alertmanager
         inhibit_rules:
           - equal: ['alertname', 'namespace']
             source_match:
@@ -124,7 +172,7 @@ spec:
           - source_matchers:
               - alertname = "AlertStorm"
             target_matchers:
-              - alertname !~ "AlertStorm|Watchdog"
+              - alertname !~ "AlertStorm|Watchdog|${PAGER_ALERTS}|${PAGER_SCOPED_ALERTS}"
       spec:
         replicaCount: 2
         extraArgs:
@@ -133,6 +181,7 @@ spec:
           - alertmanager-secret
         image:
           repository: quay.io/prometheus/alertmanager
+          tag: v0.34.1
         nodeSelector:
           node-role.kubernetes.io/control-plane: ''
         topologySpreadConstraints:

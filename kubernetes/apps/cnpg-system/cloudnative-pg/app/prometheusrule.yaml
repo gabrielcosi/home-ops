@@ -76,3 +76,16 @@ spec:
               Replica {{ $labels.pod }} is failing to replicate
           labels:
             severity: critical
+
+        - alert: CNPGClusterNoPrimary
+          expr: |-
+            label_replace(kube_service_info{service=~".+-rw"}, "cluster", "$1", "service", "(.+)-rw")
+              and on (namespace, cluster) group by (namespace, cluster) (max_over_time(cnpg_collector_up[1d]))
+            unless on (namespace, cluster)
+              label_replace(kube_endpointslice_endpoints{ready="true", endpointslice=~".+-rw-[a-z0-9]+"}, "cluster", "$1", "endpointslice", "(.+)-rw-[a-z0-9]+")
+          for: 5m
+          annotations:
+            summary: >-
+              Cluster {{ $labels.namespace }}/{{ $labels.cluster }} has no ready primary
+          labels:
+            severity: critical
