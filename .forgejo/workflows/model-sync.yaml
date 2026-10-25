@@ -70,7 +70,7 @@ jobs:
             --model "${ANTHROPIC_MODEL}" \
             --permission-mode default \
             --strict-mcp-config \
-            --allowedTools "Read(//tmp/model-sync-plan.json),Write(//tmp/model-sync-decisions.json)" \
+            --allowedTools "Read(//tmp/model-sync-plan.json),Edit(//tmp/model-sync-decisions.json)" \
             < /dev/null
 
       - name: Apply
