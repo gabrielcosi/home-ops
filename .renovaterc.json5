@@ -84,10 +84,10 @@
       ignoreTests: false,
     },
     {
-      description: "Auto-merge llama-swap and llama-server patch updates",
+      description: "Auto-merge llama-swap patch and digest updates",
       addLabels: ["automerge"],
-      matchPackageNames: ["ghcr.io/mostlygeek/llama-swap", "ghcr.io/gabrielcosi/containers/llama-server"],
-      matchUpdateTypes: ["patch"],
+      matchFileNames: ["kubernetes/apps/ai/llama-swap/**"],
+      matchUpdateTypes: ["patch", "digest"],
       automerge: true,
       automergeType: "pr",
       ignoreTests: false,
