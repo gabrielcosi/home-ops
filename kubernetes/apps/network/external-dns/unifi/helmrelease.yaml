@@ -55,6 +55,7 @@ spec:
     domainFilters:
       - xcd.dev
       - gabrielcosi.dev
+      - shirleyrossell.com
     resources:
       requests:
         cpu: 10m

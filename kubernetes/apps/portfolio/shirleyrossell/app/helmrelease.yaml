@@ -1,0 +1,72 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: shirleyrossell
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: shirleyrossell
+  interval: 1h
+  values:
+    controllers:
+      shirleyrossell:
+        replicas: 2
+        strategy: RollingUpdate
+        pod:
+          topologySpreadConstraints:
+            - maxSkew: 1
+              topologyKey: kubernetes.io/hostname
+              whenUnsatisfiable: DoNotSchedule
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/name: shirleyrossell
+          imagePullSecrets:
+            - name: shirleyrossell-registry
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            fsGroup: 1000
+            fsGroupChangePolicy: OnRootMismatch
+            seccompProfile:
+              type: RuntimeDefault
+
+        containers:
+          app:
+            image:
+              repository: registry.xcd.dev/shirleyrossell/shirleyrossell.com
+              tag: latest@sha256:6e1b41c70442cfe66f812c82712cb8e2d4f70219ae46c146e40f9c244d498ea1
+            resources:
+              requests:
+                cpu: 1m
+                memory: 32Mi
+              limits:
+                memory: 32Mi
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities:
+                drop: ['ALL']
+
+    persistence:
+      tmp:
+        type: emptyDir
+        globalMounts:
+          - path: /var/cache/nginx
+          - path: /var/run
+          - path: /tmp
+
+    service:
+      app:
+        ports:
+          http:
+            port: 8080
+
+    route:
+      app:
+        hostnames:
+          - 'shirleyrossell.com'
+        parentRefs:
+          - name: envoy-external
+            namespace: network

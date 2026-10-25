@@ -18,6 +18,8 @@ spec:
           - kind: Secret
             name: cert-gabrielcosi
           - kind: Secret
+            name: cert-shirleyrossell
+          - kind: Secret
             name: cert-xcd
       allowedRoutes:
         namespaces:
@@ -53,6 +55,8 @@ spec:
           - kind: Secret
             name: cert-gabrielcosi
           - kind: Secret
+            name: cert-shirleyrossell
+          - kind: Secret
             name: cert-xcd
       allowedRoutes:
         namespaces:
@@ -83,6 +87,8 @@ spec:
         certificateRefs:
           - kind: Secret
             name: cert-gabrielcosi
+          - kind: Secret
+            name: cert-shirleyrossell
           - kind: Secret
             name: cert-xcd
       allowedRoutes:
