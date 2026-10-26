@@ -1,0 +1,25 @@
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: victoria-logs
+spec:
+  description: Restrict victoria-logs ingress to the cluster and UniFi syslog.
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/instance: victoria-logs
+      app.kubernetes.io/name: victoria-logs-single
+  ingress:
+    - fromEntities:
+        - cluster
+      toPorts:
+        - ports:
+            - port: '9428'
+              protocol: TCP
+    - fromCIDRSet:
+        - cidr: 192.168.1.0/24
+        - cidr: 192.168.42.1/32
+      toPorts:
+        - ports:
+            - port: '5514'
+              protocol: UDP
