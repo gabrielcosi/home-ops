@@ -47,3 +47,10 @@ spec:
             namespace: network
       serviceMonitor:
         enabled: true
+      syslog:
+        udp:
+          - name: syslog-udp
+            value: :5514
+            streamFields: '["hostname","app_name"]'
+            useLocalTimestamp: true
+            useRemoteIP: true
