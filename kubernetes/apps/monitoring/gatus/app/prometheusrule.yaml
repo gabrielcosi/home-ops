@@ -29,6 +29,26 @@ spec:
           labels:
             severity: critical
 
+        - alert: GatusEndpointFlapping
+          expr: |-
+            avg_over_time(gatus_results_endpoint_success{group="external"}[30m]) < 0.9
+          for: 5m
+          annotations:
+            summary: >-
+              The {{ $labels.name }} endpoint is failing intermittently
+          labels:
+            severity: warning
+
+        - alert: GatusEndpointSlow
+          expr: |-
+            quantile_over_time(0.5, (gatus_results_duration_seconds{group="external"} and on (key) gatus_results_endpoint_success == 1)[30m]) > 1
+          for: 15m
+          annotations:
+            summary: >-
+              The {{ $labels.name }} endpoint median latency is {{ $value | humanizeDuration }}
+          labels:
+            severity: warning
+
         - alert: GatusEndpointExposed
           expr: |-
             gatus_results_endpoint_success{group="internal"} == 0
