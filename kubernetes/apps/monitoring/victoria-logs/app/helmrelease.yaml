@@ -45,6 +45,22 @@ spec:
         parentRefs:
           - name: envoy-internal-auth
             namespace: network
+        matches:
+          - path:
+              type: PathPrefix
+              value: /select
+        extraRules:
+          - matches:
+              - path:
+                  type: Exact
+                  value: /
+            filters:
+              - type: RequestRedirect
+                requestRedirect:
+                  path:
+                    type: ReplaceFullPath
+                    replaceFullPath: /select/vmui/
+                  statusCode: 302
       serviceMonitor:
         enabled: true
       syslog:
