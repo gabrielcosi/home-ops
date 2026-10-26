@@ -30,7 +30,7 @@ bifrost:
       - id: rl-kritika
         request_max_limit: 500
         request_reset_duration: '5m'
-        token_max_limit: 40000000
+        token_max_limit: 100000000
         token_reset_duration: '1d'
       - id: rl-home-ops-ci
         request_max_limit: 100
