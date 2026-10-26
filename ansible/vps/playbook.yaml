@@ -135,6 +135,7 @@
         rule: allow
         port: '{{ item.port }}'
         proto: "{{ item.protocol | default('tcp') }}"
+        from_ip: "{{ item.from | default('any') }}"
       loop:
         - name: forgejo-ssh
           port: 22
@@ -147,6 +148,9 @@
         - name: towonel-iroh
           port: 51820
           protocol: udp
+        - name: node-exporter
+          port: 9100
+          from: 172.16.0.0/12
 
     - name: firewall | Enable UFW
       community.general.ufw:

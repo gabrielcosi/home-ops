@@ -18,6 +18,8 @@ services:
       - --remoteWrite.label=location=hetzner
       - --remoteWrite.tmpDataPath=/vmagentdata
       - --remoteWrite.maxDiskUsagePerURL=1GB
+    extra_hosts:
+      - host.docker.internal:host-gateway
     read_only: true
     cap_drop:
       - ALL
@@ -43,8 +45,9 @@ services:
   node-exporter:
     image: quay.io/prometheus/node-exporter:v1.12.1@sha256:1b4e4438faca4dd7e001dd445d161a4a2091b0fededa84093b3a8dfeae1f1be0
     container_name: node-exporter
-    hostname: vps
     restart: unless-stopped
+    network_mode: host
+    pid: host
     command:
       - --path.rootfs=/host
       - --path.procfs=/host/proc
