@@ -52,7 +52,7 @@ spec:
             nameOverride: llama-swap
             image:
               repository: ghcr.io/mostlygeek/llama-swap
-              tag: unified-cuda13-rootless-2026-10-27@sha256:7da9941ba97178bddfa752662138798c61e8477fa07187ef5f512f94d4f9a535 # renovate: docker=ghcr.io/mostlygeek/llama-swap versioning=regex:^unified-cuda13-rootless-(?<major>\d{4})-(?<minor>\d{2})-(?<patch>\d{2})$
+              tag: unified-cuda13-rootless-2026-10-27@sha256:edfd3bc4a3422791f6ea21cee10477ed30555e1de94c9edbbe982d063349e847 # renovate: docker=ghcr.io/mostlygeek/llama-swap versioning=regex:^unified-cuda13-rootless-(?<major>\d{4})-(?<minor>\d{2})-(?<patch>\d{2})$
             args:
               - --config
               - /app/config.yaml
