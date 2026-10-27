@@ -21,4 +21,4 @@ context:
 comments:
   summary: .agents/kritika/summary.md.tmpl
 tools:
-  "github:home-operations/flate": "0.6.5" # renovate: github-releases=home-operations/flate
+  "aqua:home-operations/flate": "v0.6.5" # renovate: github-releases=home-operations/flate
