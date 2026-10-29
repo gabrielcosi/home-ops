@@ -3,7 +3,7 @@ name: crowdsec
 
 services:
   crowdsec:
-    image: docker.io/crowdsecurity/crowdsec:v1.8.1-debian@sha256:ab1bdb61a072154d478ad6c625b8e62c7f79a727b2740209d2128dd51d69d58d
+    image: docker.io/crowdsecurity/crowdsec:v1.8.2-debian@sha256:a5642c72127ee93aaac830e9f66891573fa7851b2c721987d9fef13d7d05fdfe
     container_name: crowdsec
     restart: unless-stopped
     environment:
