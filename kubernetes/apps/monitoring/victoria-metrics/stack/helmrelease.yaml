@@ -181,7 +181,7 @@ spec:
           - alertmanager-secret
         image:
           repository: quay.io/prometheus/alertmanager
-          tag: v0.34.1
+          tag: v0.34.2
         nodeSelector:
           node-role.kubernetes.io/control-plane: ''
         topologySpreadConstraints:
