@@ -48,17 +48,19 @@ bifrost:
           models:
             - deepseek-v4-pro
             - deepseek-v4.1-flash
+            - gemini-4-argon
             - glm-5.2
             - glm-5.3
             - glm-5.3-flash
             - hy3
             - kimi-k2.7-code
             - kimi-k3
+            - kimi-k3.1-pro
             - longcat-2.0
             - mimo-v2.5
-            - mimo-v2.5-pro
             - mimo-v2.6-flash
             - mimo-v2.6-pro
+            - minimax-m3.1-flash
           weight: 1
       network_config:
         base_url: https://opencode.ai/zen/go
@@ -81,6 +83,7 @@ bifrost:
         - name: opencode-anthropic-key
           value: env.OPENCODE_API_KEY
           models:
+            - claude-haiku-5-5
             - minimax-m3
             - qwen3.7-plus
             - qwen3.8-flash
