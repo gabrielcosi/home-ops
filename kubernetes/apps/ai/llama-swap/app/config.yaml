@@ -5,7 +5,7 @@ globalTTL: 0
 
 macros:
   kubeswap: /usr/local/bin/kubeswap
-  vllm-image: docker.io/vllm/vllm-openai:nightly@sha256:f255c4fad2f30ff5ee80db14d3a03afe9ae0f10d3470339864ff04745fe44cb3 # renovate: docker=docker.io/vllm/vllm-openai
+  vllm-image: docker.io/vllm/vllm-openai:nightly@sha256:66f19872e759e7d74f0729c4c7068eaaf71bc8b35f613573c36062a81be8cb3d # renovate: docker=docker.io/vllm/vllm-openai
   llama-server: >-
     /usr/local/bin/llama-server
     --host 0.0.0.0
