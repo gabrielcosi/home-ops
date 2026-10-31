@@ -17,12 +17,30 @@ spec:
 
     controllers:
       main:
+        replicas: 2
+        strategy: RollingUpdate
         annotations:
           reloader.stakater.com/auto: 'true'
+        podDisruptionBudget:
+          minAvailable: 1
+        pod:
+          topologySpreadConstraints:
+            - maxSkew: 1
+              topologyKey: kubernetes.io/hostname
+              whenUnsatisfiable: DoNotSchedule
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/name: cachette
+                  app.kubernetes.io/controller: main
         containers:
           main:
             env:
               CACHETTE_EXTERNAL_URL: https://registry.xcd.dev
+              CACHETTE_DATABASE_URL:
+                valueFrom:
+                  secretKeyRef:
+                    name: cachette-postgres
+                    key: url
               CACHETTE_UPSTREAM_TRUSTED_NETWORKS: 10.42.0.0/16,192.168.0.0/16
               CACHETTE_UPSTREAM_ALLOWLIST: ceph.github.io,git.erwanleboucher.dev,git.ow-ops.eu,kedacore.github.io,kubernetes-sigs.github.io,nvidia.github.io,pkgs.tailscale.com,registry.erwanleboucher.dev
               CACHETTE_PASSWORD_AUTH: admins
