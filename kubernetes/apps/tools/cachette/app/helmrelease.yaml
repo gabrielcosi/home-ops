@@ -33,7 +33,13 @@ spec:
               CACHETTE_OIDC_ADMIN_GROUPS: Cachette Admins
             envFrom:
               - secretRef:
-                  name: cachette-secret
+                  name: cachette-secrets
+
+    signingKey:
+      existingSecret: cachette-keys
+
+    encryptionKey:
+      existingSecret: cachette-keys
 
     persistence:
       data:

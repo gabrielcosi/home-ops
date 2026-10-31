@@ -5,11 +5,16 @@ metadata:
   name: cachette
 spec:
   dependsOn:
+    - name: cloudnative-pg
+      namespace: cnpg-system
+    - name: shared-pg
+      namespace: database
     - name: rook-ceph-cluster
       namespace: rook-ceph
   components:
     - ../../../../components/kopiur/restore
     - ../../../../components/kopiur/backup
+    - ../../../../components/postgres/pass
   interval: 1h
   path: ./kubernetes/apps/tools/cachette/app
   prune: true
@@ -22,6 +27,7 @@ spec:
   postBuild:
     substitute:
       APP: cachette
+      DATABASE_HOST: shared-pg-rw.database.svc.cluster.local
       KOPIUR_PUID: "1000"
       KOPIUR_PGID: "1000"
       KOPIUR_CAPACITY: "20Gi"
