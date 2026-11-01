@@ -42,7 +42,8 @@ spec:
                     name: cachette-postgres
                     key: url
               CACHETTE_UPSTREAM_TRUSTED_NETWORKS: 10.42.0.0/16,192.168.0.0/16
-              CACHETTE_UPSTREAM_ALLOWLIST: ceph.github.io,git.erwanleboucher.dev,git.ow-ops.eu,kedacore.github.io,kubernetes-sigs.github.io,nvidia.github.io,pkgs.tailscale.com,registry.erwanleboucher.dev
+              CACHETTE_UPSTREAM_ALLOWLIST: ceph.github.io,code.forgejo.org,data.forgejo.org,docker.dragonflydb.io,docker.io,ghcr.io,git.erwanleboucher.dev,git.ow-ops.eu,gsoci.azurecr.io,kedacore.github.io,kubernetes-sigs.github.io,mirror.gcr.io,nvcr.io,nvidia.github.io,pkgs.tailscale.com,public.ecr.aws,quay.io,registry.erwanleboucher.dev,registry.k8s.io
+              CACHETTE_DEFAULT_UPSTREAM_QUOTA_BYTES: '5368709120'
               CACHETTE_PASSWORD_AUTH: admins
               CACHETTE_OIDC_ENABLED: 'true'
               CACHETTE_OIDC_NAME: Authentik
