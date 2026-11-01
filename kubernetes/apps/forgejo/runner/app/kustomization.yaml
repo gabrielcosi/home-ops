@@ -6,7 +6,6 @@ resources:
   - ./helmrelease.yaml
   - ./externalsecret.yaml
   - ./netpol.yaml
-  - ./serviceaccount.yaml
 
 configMapGenerator:
   - name: runner-values
@@ -14,7 +13,6 @@ configMapGenerator:
       - config.yaml
       - podspec-default.yaml=podspecs/default.yaml
       - podspec-dind.yaml=podspecs/dind.yaml
-      - podspec-talos.yaml=podspecs/talos.yaml
 
 generatorOptions:
   disableNameSuffixHash: true

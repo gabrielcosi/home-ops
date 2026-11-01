@@ -47,7 +47,7 @@ jobs:
     name: Pull ${{ matrix.image }}
     needs: extract
     if: ${{ needs.extract.outputs.images != '[]' }}
-    runs-on: talos
+    runs-on: ubuntu-latest
     timeout-minutes: 60
     strategy:
       matrix:
@@ -55,28 +55,41 @@ jobs:
       max-parallel: 4
       fail-fast: false
     env:
-      TALOSCTL_VERSION: 'v1.14.5' # renovate: github-releases=siderolabs/talos
+      CRANE_VERSION: 'v0.22.1' # renovate: github-releases=google/go-containerregistry
     steps:
-      - name: Install talosctl
+      - name: Install crane
         run: |-
           set -euo pipefail
-          base="https://github.com/siderolabs/talos/releases/download/${TALOSCTL_VERSION}"
-          curl -fsSLO "${base}/talosctl-linux-amd64"
-          curl -fsSL "${base}/sha256sum.txt" | grep ' talosctl-linux-amd64$' | sha256sum -c -
-          install -D -m 0755 talosctl-linux-amd64 "${HOME}/.local/bin/talosctl"
+          base="https://github.com/google/go-containerregistry/releases/download/${CRANE_VERSION}"
+          archive=go-containerregistry_Linux_x86_64.tar.gz
+          curl -fsSLO "${base}/${archive}"
+          curl -fsSL "${base}/checksums.txt" | grep " ${archive}$" | sha256sum -c -
+          mkdir -p "${HOME}/.local/bin"
+          tar -xzf "${archive}" -C "${HOME}/.local/bin" crane
           echo "${HOME}/.local/bin" >> "${GITHUB_PATH}"
 
       - name: Pull image
         env:
           IMAGE: ${{ matrix.image }}
         run: |-
+          host=${IMAGE%%/*}
+          if [[ "${IMAGE}" != */* || ( "${host}" != *.* && "${host}" != *:* ) ]]; then
+            host=docker.io
+            IMAGE="docker.io/${IMAGE}"
+          fi
+          case "${host}" in
+            registry.xcd.dev | git.xcd.dev)
+              echo "::notice::${IMAGE} is not served through the mirror; skipping"
+              exit 0
+              ;;
+          esac
           for attempt in 1 2 3; do
-            if out=$(talosctl --nodes "${NODE}" image pull "${IMAGE}" 2>&1); then
+            if out=$(crane pull --platform linux/amd64 "registry.xcd.dev/x/${IMAGE}" /dev/null 2>&1); then
               exit 0
             fi
             echo "${out}"
-            if grep -qiE 'unauthorized|401|403|denied' <<< "${out}"; then
-              echo "::warning::${IMAGE} needs registry credentials; skipping"
+            if grep -qiE 'unauthorized|denied|forbidden|status code:? ?40[13]\b' <<< "${out}"; then
+              echo "::warning::${IMAGE} is not allowlisted in cachette or needs registry credentials; skipping"
               exit 0
             fi
             sleep 10

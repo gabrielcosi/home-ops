@@ -21,3 +21,5 @@ spec:
 
     spegel:
       containerdRegistryConfigPath: /etc/cri/conf.d/hosts
+      additionalMirrorTargets:
+        - https://registry.xcd.dev
