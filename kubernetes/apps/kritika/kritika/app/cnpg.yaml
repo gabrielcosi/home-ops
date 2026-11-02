@@ -83,5 +83,3 @@ spec:
         login: true
         passwordSecret:
           name: kritika-pg-app
-      - name: kritika_runner
-        ensure: absent
