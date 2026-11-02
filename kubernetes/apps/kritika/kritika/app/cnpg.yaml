@@ -84,7 +84,4 @@ spec:
         passwordSecret:
           name: kritika-pg-app
       - name: kritika_runner
-        ensure: present
-        login: true
-        passwordSecret:
-          name: kritika-pg-runner
+        ensure: absent

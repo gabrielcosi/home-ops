@@ -78,8 +78,6 @@ spec:
         existingSecret: kritika-pg-credentials
       app:
         existingSecret: kritika-pg-app
-      runner:
-        existingSecret: kritika-pg-runner
     runner:
       podTemplate:
         spec:
