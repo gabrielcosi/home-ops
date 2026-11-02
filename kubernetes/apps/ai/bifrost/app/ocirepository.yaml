@@ -9,6 +9,6 @@ spec:
     mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
     operation: copy
   ref:
-    tag: 2.1.46
-    digest: sha256:daf7e8e9474d742b1b747d7e19d7d6a6488f09f03b531ced275629b56767d0d0
+    tag: 2.1.47
+    digest: sha256:888a40e25f15705ed1f4e42dfeab58f428400524cee68af7999d7d798abb2823
   url: oci://ghcr.io/maximhq/helm-charts/bifrost
