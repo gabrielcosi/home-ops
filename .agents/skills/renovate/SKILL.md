@@ -15,15 +15,16 @@ Judge whether the update is safe to merge: what changed upstream between the old
 
 Take from the title, body and diff the package, its datasource (container image, chart as an `OCIRepository`, GitHub Action, mise tool, Grafana dashboard, Renovate preset), the old and new version or digest, and the changed files. `v1.2.3@sha256:aaa -> v1.3.0@sha256:bbb` is a version bump; `v1.2.3@sha256:aaa -> v1.2.3@sha256:bbb` is a rebuild of the same tag, a different question rather than a smaller one.
 
-Renovate's body carries collapsed release notes. Read them first; go upstream when they are missing, truncated or ambiguous, and always for a major update or a jump over several versions: read every intermediate release, breaking changes land in the middle.
+Renovate's body carries collapsed release notes. Read them first; go upstream when they are missing, truncated or ambiguous, and always for a major update or a jump over several versions: read every intermediate release, breaking changes land in the middle. A body that only points elsewhere ("see the changelog", a vendor URL, "see #123") is not release notes: follow the pointer.
 
 ### Finding the upstream
 
 The changelog lives at the source, not the wrapper: an image bump v1.2 -> v1.3 may re-wrap a tool that jumped 4.0 -> 5.0.
 
 - Read GitHub with `gh`: `gh release view <tag> -R <o>/<r>`, `gh api repos/<o>/<r>/releases`, `gh api "repos/<o>/<r>/compare/<old>...<new>"`, a CHANGELOG or UPGRADING file with `gh api -H "Accept: application/vnd.github.raw+json" repos/<o>/<r>/contents/<path>?ref=<tag>`. Anything else (GitLab, Artifact Hub, vendor docs) with `curl`.
+- Find the release tag rather than guessing its shape: `gh api "repos/<o>/<r>/releases?per_page=100" --jq '.[].tag_name' | grep -F <version>`, or the same on `tags` when there are no releases. Monorepos prefix tags per component (`helm-chart-v2.1.47`, `transports/v2.4.0`), and a release body there is often one line: read the component's README or CHANGELOG at that tag, or the compare narrowed to its directory.
 - An image's `org.opencontainers.image.source`, `version` and `revision` labels, read with `fetch_oci` on the new pinned digest, show what it was built from: check them against the release reviewed. A label naming another version or source than the PR claims is a finding; an image without labels is not.
-- A chart's source is the app's `ocirepository.yaml`: `url` is the registry path, `ref.tag` the version. Charts under `registry.xcd.dev/x/<host>/...` are pulled through the cachette proxy: `<host>/...` is the real upstream. A repository that publishes many charts prefixes its release tags with the chart name (`<chart>-1.2.3`). Chart and app versions are independent streams: read the chart's changelog, and the app's too when `appVersion` moved.
+- A chart's source is the app's `ocirepository.yaml`: `url` is the registry path, `ref.tag` the version. Charts under `registry.xcd.dev/x/<host>/...` are pulled through the cachette proxy: `<host>/...` is the real upstream. A repository that publishes many charts prefixes their release tags (`<chart>-1.2.3`, `helm-chart-v1.2.3`): list the tags to find which. Chart and app versions are independent streams: read the chart's changelog, and the app's too when `appVersion` moved.
 - A release note that says "see #123" is read with `gh pr view` or `gh issue view`, and an issue is taken to the merged PR that closed it.
 - A rebuilt tag still has a cause: a scheduled base-image rebuild, a CI re-run of the same commit, a floating tag now resolving to newer source, or a re-tag of different code. Compare the two digests' `created` and `revision`. If the source moved, treat it as a version bump.
 
@@ -77,6 +78,7 @@ Before prescribing a rename or new value, confirm it from the upstream PR's diff
 - Write an inference out, and only one the evidence carries. A default the release changes to a value this repository already sets explicitly changes nothing here.
 - Put the evidence in the claim: the value found and the file it came from, or the source that says so.
 - What the repository cannot show is not a check: say what could not be verified and what to look at after the merge.
+- Upstream is not "unreadable" until both `gh` and `curl` have been tried on it: name what was tried and what came back.
 
 ## The summary
 
@@ -90,6 +92,7 @@ A Renovate review answers one question: what changed upstream, and does it hit t
   - `#### Fixes` — bugs fixed, grouped; a long list is summarised in one or two bullets.
   - `#### Rebuild` — for a digest-only move: why the digest changed, from the image's `created` and `revision`.
 - Every bullet is upstream substance. Never restate the diff (the tag, the digest, the file it sits in), never describe how Flux, Helm or the pod rolls it out, and never list what stayed the same.
+- A summary whose upstream changes went unread says so in its first bullet: it cannot carry a safe-to-merge score.
 - A breaking change that touches nothing here is still one bullet under Breaking, saying why it does not apply: the confidence scorer has no tools and credits only what the summary states.
 - A defect this repository must fix before merging is a finding on the changed line, not only a bullet.
 - Praise is empty.
