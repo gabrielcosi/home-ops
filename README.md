@@ -48,7 +48,7 @@ My cluster runs on [Talos](https://www.talos.dev), three mini PCs as control pla
 - **Security & Secrets**: [cert-manager](https://github.com/cert-manager/cert-manager) manages certificates and [authentik](https://github.com/goauthentik/authentik) handles SSO. For secrets I use [external-secrets](https://github.com/external-secrets/external-secrets) with [1Password Connect](https://github.com/1Password/connect), so none live in Git.
 - **Storage & Backups**: [rook-ceph](https://github.com/rook/rook) provides RBD and CephFS volumes, with [kopiur](https://github.com/home-operations/kopiur) backing them up to the NAS and offsite. Databases run on [CloudNativePG](https://github.com/cloudnative-pg/cloudnative-pg) and caches on [Dragonfly](https://github.com/dragonflydb/dragonfly).
 - **Observability**: [VictoriaMetrics](https://github.com/VictoriaMetrics/VictoriaMetrics) and VictoriaLogs store metrics and logs, with dashboards from [grafana-operator](https://github.com/grafana/grafana-operator), health checks from [gatus](https://github.com/TwiN/gatus), and alerts sent to Pushover and [karma](https://github.com/prymitive/karma).
-- **Automation & CI/CD**: [Forgejo](https://forgejo.org) hosts this repository and its Actions runners, and [konflate](https://github.com/home-operations/konflate) renders every pull request through Flux to post the diff.
+- **Automation & CI/CD**: [Forgejo](https://forgejo.org) hosts this repository and its Actions runners, and [kritika](https://github.com/home-operations/kritika) reviews every pull request.
 
 ### GitOps
 
