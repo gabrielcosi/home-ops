@@ -46,13 +46,13 @@ A version in the diff is a request; something else here carries it out: an opera
 
 ## A change under `kubernetes/`
 
-Render a HelmRelease whose chart version or values change, from the repository root:
+Render every HelmRelease the pull request changes, an image tag in its values included, from the repository root:
 
 ```
 flate build hr <name> --path kubernetes/apps/<namespace> --allow-missing-secrets --no-progress
 ```
 
-The checkout has no git history, so only the head renders: what the base produced is read upstream at the old tag, or from the names this repository already refers to. A HelmRelease whose Kustomization depends on another namespace's renders from the whole tree (`--path kubernetes/apps -n <namespace>`). flate exits nonzero for any failure in the path; a failure is a finding only when it belongs to the HelmRelease under review and the change caused it. A source that could not be fetched says nothing about the change. A successful render proves the tag exists and the values fit its schema; take label values, resource names and ports from it rather than from reading templates, narrowing with `--show-only <template>`.
+The checkout has no git history, so only the head renders: what the base produced is read upstream at the old tag, or from the names this repository already refers to. A HelmRelease whose Kustomization depends on another namespace's renders from the whole tree (`--path kubernetes/apps -n <namespace>`). flate exits nonzero for any failure in the path; a failure is a finding only when it belongs to the HelmRelease under review and the change caused it. A source that could not be fetched says nothing about the change. A successful render proves the tag exists and the values fit its schema; take label values, resource names, ports, rollout strategy and every other default the chart fills in from it rather than from reading templates, narrowing with `--show-only <template>`. A claim about what the chart produces that no render backs is not a finding: a value missing from the repository's YAML says nothing about the chart's default.
 
 Every HelmRelease also gets the patches in `kubernetes/flux/cluster/ks.yaml` (CRD policy `CreateReplace`, remediation); flate does not apply them.
 
