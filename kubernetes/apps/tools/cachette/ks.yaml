@@ -30,7 +30,7 @@ spec:
       DATABASE_HOST: shared-pg-rw.database.svc.cluster.local
       KOPIUR_PUID: "1000"
       KOPIUR_PGID: "1000"
-      KOPIUR_CAPACITY: "50Gi"
+      KOPIUR_CAPACITY: "100Gi"
       KOPIUR_STORAGECLASS: ceph-filesystem
       KOPIUR_ACCESSMODES: ReadWriteMany
       KOPIUR_SNAPSHOTCLASS: csi-ceph-filesystem
