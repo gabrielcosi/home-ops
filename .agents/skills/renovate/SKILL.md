@@ -1,6 +1,6 @@
 ---
 name: renovate
-description: How to review a Renovate dependency update in this Flux repository and write its summary. Covers finding the upstream, what breaks, what actuates a bump, what depends on it here, rendering with flate, and what a check proves.
+description: How to review a Renovate dependency update in this Flux repository and write its summary. Covers finding the upstream, what breaks, what actuates a bump, what depends on it here, and what a check proves.
 ---
 
 # Reviewing Renovate updates in home-ops
@@ -27,7 +27,7 @@ The changelog lives at the source, not the wrapper: an image bump v1.2 -> v1.3 m
 - A chart's source is the app's `ocirepository.yaml`: `url` is the registry path, `ref.tag` the version. Charts under `registry.xcd.dev/x/<host>/...` are pulled through the cachette proxy: `<host>/...` is the real upstream. A repository that publishes many charts prefixes their release tags (`<chart>-1.2.3`, `helm-chart-v1.2.3`): list the tags to find which. Chart and app versions are independent streams: read the chart's changelog, and the app's too when `appVersion` moved.
 - A release note that says "see #123" is read with `gh pr view` or `gh issue view`, and an issue is taken to the merged PR that closed it.
 - A rebuilt tag still has a cause: a scheduled base-image rebuild, a CI re-run of the same commit, a floating tag now resolving to newer source, or a re-tag of different code. Compare the two digests' `created` and `revision`. If the source moved, treat it as a version bump.
-- Read a digest with `crane`, which handles the registry's anonymous token: `crane manifest <ref>@<digest>` (an index lists per-platform manifests), `crane config` for `created` and labels, and the two layer lists to see which layers moved. Diff a chart's contents by extracting its chart layer from both digests, `crane blob <ref>@<layer digest> | tar -xz`, the layer digest read from `crane manifest`: a chart that pins its own image digest in `values.yaml` moves that image too, and the image is then reviewed the same way.
+- Read a digest with `crane`, which handles the registry's anonymous token, called through the run tool with command `crane` alone and each argument its own element: `crane manifest <ref>@<digest>` (an index lists per-platform manifests), `crane config` for `created` and labels, and the two layer lists to see which layers moved. Diff a chart's contents by extracting its chart layer from both digests, `crane blob <ref>@<layer digest> | tar -xz`, the layer digest read from `crane manifest`: a chart that pins its own image digest in `values.yaml` moves that image too, and the image is then reviewed the same way.
 - A same-commit rebuild usually comes from a re-run release workflow: `gh api "repos/<o>/<r>/actions/runs?created=<old created date>"` and the release run's `run_attempt`, `run_started_at` and `triggering_actor` show who rebuilt it and when, against the new digest's `created`.
 - A cause is established only by evidence of what is inside the new digest: the source diff between the two `revision`s read, or the base-image digest that moved with the source `revision` unchanged. A newer `created`, identical `Chart.yaml` or image config, and the same version label show when it was rebuilt, not why.
 - A digest move whose cause is not established is an unverified change (see *What a check proves*).
@@ -44,19 +44,7 @@ Some apps pin `image.tag` in values on top of the chart, so chart and image bump
 
 A version in the diff is a request; something else here carries it out: an operator that reconciles it, a controller that watches it, a CLI pinned in a job image. Find it, read its pinned version from the repo, and check its supported range against the new target. A target outside the range fails when it runs, not when it renders. The constraint runs both ways.
 
-## A change under `kubernetes/`
-
-Render every HelmRelease the pull request changes, an image tag in its values included, from the repository root:
-
-```
-flate build hr <name> --path kubernetes/apps -n <namespace> --allow-missing-secrets --no-progress
-```
-
-The checkout has no git history, so only the head renders: what the base produced is read upstream at the old tag, or from the names this repository already refers to. Render from the whole tree: almost every Kustomization here depends on another namespace's, and a narrower `--path` leaves the HelmRelease blocked and unrendered. flate exits nonzero for any failure in the path; a failure is a finding only when it belongs to the HelmRelease under review and the change caused it. A source that could not be fetched says nothing about the change. A successful render proves the tag exists and the values fit its schema; take label values, resource names, ports, rollout strategy and every other default the chart fills in from it rather than from reading templates, finding them in the full output with `grep`. A claim about what the chart produces that no render backs is not a finding: a value missing from the repository's YAML says nothing about the chart's default.
-
-Every HelmRelease also gets the patches in `kubernetes/flux/cluster/ks.yaml` (CRD policy `CreateReplace`, remediation); flate does not apply them.
-
-### Exposure here
+## Exposure here
 
 The question is whether anything here depends on what changed. Search `kubernetes/` for:
 
