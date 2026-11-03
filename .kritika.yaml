@@ -1,5 +1,10 @@
 ---
 # yaml-language-server: $schema=https://kritika.home-operations.com/kritika.schema.json
+trigger:
+  exclude:
+    - name: private-images
+      expr: >-
+        pr.bot && ["registry.xcd.dev/gabrielcosi/", "registry.xcd.dev/shirleyrossell/"].exists(p, pr.title.contains(p) || pr.body.contains(p))
 review:
   model: bifrost/anthropic/claude-sonnet-5-5
   effort: high
@@ -22,3 +27,4 @@ comments:
   summary: .agents/kritika/summary.md.tmpl
 tools:
   "aqua:home-operations/flate": "v0.6.5" # renovate: github-releases=home-operations/flate
+  "aqua:google/go-containerregistry": "v0.22.1" # renovate: github-releases=google/go-containerregistry

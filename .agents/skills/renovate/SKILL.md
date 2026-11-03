@@ -27,8 +27,10 @@ The changelog lives at the source, not the wrapper: an image bump v1.2 -> v1.3 m
 - A chart's source is the app's `ocirepository.yaml`: `url` is the registry path, `ref.tag` the version. Charts under `registry.xcd.dev/x/<host>/...` are pulled through the cachette proxy: `<host>/...` is the real upstream. A repository that publishes many charts prefixes their release tags (`<chart>-1.2.3`, `helm-chart-v1.2.3`): list the tags to find which. Chart and app versions are independent streams: read the chart's changelog, and the app's too when `appVersion` moved.
 - A release note that says "see #123" is read with `gh pr view` or `gh issue view`, and an issue is taken to the merged PR that closed it.
 - A rebuilt tag still has a cause: a scheduled base-image rebuild, a CI re-run of the same commit, a floating tag now resolving to newer source, or a re-tag of different code. Compare the two digests' `created` and `revision`. If the source moved, treat it as a version bump.
-
-Images under `registry.xcd.dev/gabrielcosi/` build from private sources: say in one line that their upstream could not be read, and review only what else the PR moves.
+- Read a digest with `crane`, which handles the registry's anonymous token: `crane manifest <ref>@<digest>` (an index lists per-platform manifests), `crane config` for `created` and labels, and the two layer lists to see which layers moved. Diff a chart's contents by extracting its chart layer from both digests, `crane blob <ref>@<layer digest> | tar -xz`, the layer digest read from `crane manifest`: a chart that pins its own image digest in `values.yaml` moves that image too, and the image is then reviewed the same way.
+- A same-commit rebuild usually comes from a re-run release workflow: `gh api "repos/<o>/<r>/actions/runs?created=<old created date>"` and the release run's `run_attempt`, `run_started_at` and `triggering_actor` show who rebuilt it and when, against the new digest's `created`.
+- A cause is established only by evidence of what is inside the new digest: the source diff between the two `revision`s read, or the base-image digest that moved with the source `revision` unchanged. A newer `created`, identical `Chart.yaml` or image config, and the same version label show when it was rebuilt, not why.
+- A digest move whose cause is not established is an unverified change (see *What a check proves*).
 
 ### What breaks
 
@@ -79,6 +81,7 @@ Before prescribing a rename or new value, confirm it from the upstream PR's diff
 - Put the evidence in the claim: the value found and the file it came from, or the source that says so.
 - What the repository cannot show is not a check: say what could not be verified and what to look at after the merge.
 - Upstream is not "unreadable" until both `gh` and `curl` have been tried on it: name what was tried and what came back.
+- An update is unverified when what it changes cannot be established from evidence: a digest move without a cause, a version without readable release notes or a source diff, or a wrapper whose upstream went unread. An unverified update is a finding on the changed line: "what this update changes could not be established", with what was tried. It is not safe to merge without a person, whatever else the review found.
 
 ## The summary
 
@@ -90,9 +93,9 @@ A Renovate review answers one question: what changed upstream, and does it hit t
   - `#### Security` — CVEs, advisories, hardening, credential or permission changes.
   - `#### Features` — what the new version adds. Name it only when this repository could use it, with the setting and file.
   - `#### Fixes` — bugs fixed, grouped; a long list is summarised in one or two bullets.
-  - `#### Rebuild` — for a digest-only move: why the digest changed, from the image's `created` and `revision`.
+  - `#### Rebuild` — for a digest-only move: why the digest changed, with the evidence that established it. When the cause is not established, the first bullet says so.
 - Every bullet is upstream substance. Never restate the diff (the tag, the digest, the file it sits in), never describe how Flux, Helm or the pod rolls it out, and never list what stayed the same.
-- A summary whose upstream changes went unread says so in its first bullet: it cannot carry a safe-to-merge score.
+- A summary of an unverified update says so in its first bullet: it cannot carry a safe-to-merge score.
 - A breaking change that touches nothing here is still one bullet under Breaking, saying why it does not apply: the confidence scorer has no tools and credits only what the summary states.
 - A defect this repository must fix before merging is a finding on the changed line, not only a bullet.
 - Praise is empty.
