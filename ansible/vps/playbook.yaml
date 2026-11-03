@@ -19,7 +19,7 @@
         - { key: 'doco-cd/credential', var: 'op_sa_token' }
         - { key: 'doco-cd/api_secret', var: 'api_secret' }
         - { key: 'doco-cd/webhook_secret', var: 'webhook_secret' }
-        - { key: 'towonel/crowdsec_fw_api_key', var: 'crowdsec_fw_api_key' }
+        - { key: 'crowdsec/fw_api_key', var: 'crowdsec_fw_api_key' }
         - { key: 'crowdsec/cluster_api_key', var: 'crowdsec_cluster_api_key' }
         - { key: 'towonel/ip', var: 'vps_ip' }
       register: secrets_raw
