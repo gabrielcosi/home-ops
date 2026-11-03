@@ -1,0 +1,16 @@
+[Unit]
+Description=The firewall bouncer for the cluster CrowdSec decisions
+After=network-online.target docker.service
+Wants=network-online.target
+
+[Service]
+Type=notify
+ExecStart=/usr/bin/crowdsec-firewall-bouncer -c /etc/crowdsec/bouncers/crowdsec-cluster-bouncer.yaml
+ExecStartPre=/usr/bin/crowdsec-firewall-bouncer -c /etc/crowdsec/bouncers/crowdsec-cluster-bouncer.yaml -t
+Restart=always
+RestartSec=10
+LimitNOFILE=65536
+KillMode=mixed
+
+[Install]
+WantedBy=multi-user.target

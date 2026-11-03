@@ -48,6 +48,24 @@ spec:
       valuesKey: banwhitelist.yaml
       targetPath: config.parsers.s02-enrich.bouncer-ban-whitelist\.yaml
   values:
+    config:
+      profiles.yaml: |
+        name: default_ip_remediation
+        filters:
+          - Alert.Remediation == true && Alert.GetScope() == "Ip"
+        decisions:
+          - type: ban
+            duration: 4h
+        duration_expr: "GetDecisionsCount(Alert.GetValue()) >= 41 ? '168h' : Sprintf('%dh', (GetDecisionsCount(Alert.GetValue()) + 1) * 4)"
+        on_success: break
+        ---
+        name: default_range_remediation
+        filters:
+          - Alert.Remediation == true && Alert.GetScope() == "Range"
+        decisions:
+          - type: ban
+            duration: 4h
+        on_success: break
     container_runtime: containerd
     image:
       repository: docker.io/crowdsecurity/crowdsec

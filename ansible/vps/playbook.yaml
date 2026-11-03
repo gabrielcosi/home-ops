@@ -20,6 +20,7 @@
         - { key: 'doco-cd/api_secret', var: 'api_secret' }
         - { key: 'doco-cd/webhook_secret', var: 'webhook_secret' }
         - { key: 'towonel/crowdsec_fw_api_key', var: 'crowdsec_fw_api_key' }
+        - { key: 'crowdsec/cluster_api_key', var: 'crowdsec_cluster_api_key' }
         - { key: 'towonel/ip', var: 'vps_ip' }
       register: secrets_raw
 
@@ -29,7 +30,8 @@
         api_secret: '{{ secrets_raw.results[1].stdout }}'
         webhook_secret: '{{ secrets_raw.results[2].stdout }}'
         crowdsec_fw_api_key: '{{ secrets_raw.results[3].stdout }}'
-        vps_ip: '{{ secrets_raw.results[4].stdout }}'
+        crowdsec_cluster_api_key: '{{ secrets_raw.results[4].stdout }}'
+        vps_ip: '{{ secrets_raw.results[5].stdout }}'
       no_log: true
 
     - name: Install Docker
@@ -288,6 +290,35 @@
           ansible.builtin.command: systemctl is-active crowdsec-firewall-bouncer
           changed_when: false
 
+        - name: Render cluster bouncer config
+          ansible.builtin.template:
+            src: crowdsec-cluster-bouncer.yaml.j2
+            dest: /etc/crowdsec/bouncers/crowdsec-cluster-bouncer.yaml
+            owner: root
+            group: root
+            mode: '0600'
+          notify: Restart crowdsec-cluster-bouncer
+
+        - name: Install cluster bouncer unit
+          ansible.builtin.template:
+            src: crowdsec-cluster-bouncer.service.j2
+            dest: /etc/systemd/system/crowdsec-cluster-bouncer.service
+            owner: root
+            group: root
+            mode: '0644'
+          notify: Restart crowdsec-cluster-bouncer
+
+        - name: Enable + start cluster bouncer
+          ansible.builtin.systemd:
+            name: crowdsec-cluster-bouncer
+            enabled: true
+            state: started
+            daemon_reload: true
+
+        - name: Verify cluster bouncer is active
+          ansible.builtin.command: systemctl is-active crowdsec-cluster-bouncer
+          changed_when: false
+
     - name: Display summary
       ansible.builtin.debug:
         msg:
@@ -309,3 +340,9 @@
       ansible.builtin.service:
         name: crowdsec-firewall-bouncer
         state: restarted
+
+    - name: Restart crowdsec-cluster-bouncer
+      ansible.builtin.systemd:
+        name: crowdsec-cluster-bouncer
+        state: restarted
+        daemon_reload: true

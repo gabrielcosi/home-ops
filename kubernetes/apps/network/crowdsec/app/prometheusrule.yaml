@@ -57,6 +57,9 @@ spec:
           expr: |-
             min(bouncer_lapi_stream_connected) == 0
             or sum(rate(cs_lapi_bouncer_requests_total{cluster="edge-vps", bouncer="firewall"}[15m])) == 0
+            or absent(cs_lapi_bouncer_requests_total{cluster="edge-vps", bouncer="firewall"})
+            or sum(rate(cs_lapi_bouncer_requests_total{job="crowdsec-service", bouncer=~"VPS@.*"}[15m])) == 0
+            or absent(cs_lapi_bouncer_requests_total{job="crowdsec-service", bouncer=~"VPS@.*"})
           for: 15m
           annotations:
             summary: >-

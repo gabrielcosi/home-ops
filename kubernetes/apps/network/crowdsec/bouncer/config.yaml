@@ -4,6 +4,7 @@ bouncer:
   lapiURL: http://crowdsec-service.network.svc.cluster.local:8080
   metrics: true
   banStatusCode: 418
+  tickerInterval: "2s"
 waf:
   enabled: true
   appSecURL: http://crowdsec-appsec-service.network.svc.cluster.local:7422
