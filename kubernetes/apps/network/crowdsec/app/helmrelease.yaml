@@ -138,6 +138,16 @@ spec:
       serviceAccountName: crowdsec-agent
       deploymentAnnotations:
         reloader.stakater.com/auto: 'true'
+      extraVolumes: &hubVolumes
+        - name: hub
+          emptyDir: {}
+        - name: data
+          emptyDir: {}
+      extraVolumeMounts: &hubMounts
+        - name: hub
+          mountPath: /etc/crowdsec/hub
+        - name: data
+          mountPath: /var/lib/crowdsec/data
       additionalAcquisition:
         - source: kubernetes
           namespace: network
@@ -156,6 +166,68 @@ spec:
         limits:
           cpu: null
           memory: 1Gi
+      metrics:
+        enabled: true
+        serviceMonitor:
+          enabled: true
+    appsec:
+      enabled: true
+      replicas: 2
+      strategy:
+        type: RollingUpdate
+        rollingUpdate:
+          maxSurge: 1
+          maxUnavailable: 0
+      podSecurityContext:
+        seccompProfile:
+          type: RuntimeDefault
+      securityContext:
+        capabilities:
+          drop: ['ALL']
+      wait_for_lapi:
+        securityContext:
+          capabilities:
+            drop: ['ALL']
+      deployAnnotations:
+        reloader.stakater.com/auto: 'true'
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                topologyKey: kubernetes.io/hostname
+                labelSelector:
+                  matchLabels:
+                    k8s-app: crowdsec
+                    type: appsec
+      extraVolumes: *hubVolumes
+      extraVolumeMounts: *hubMounts
+      acquisitions:
+        - source: appsec
+          listen_addr: 0.0.0.0:7422
+          path: /
+          appsec_configs:
+            - crowdsecurity/appsec-default
+            - local/log-only
+          labels:
+            type: appsec
+      configs:
+        log-only.yaml: |
+          name: local/log-only
+          on_match:
+            - apply:
+                - SetRemediation("allow")
+                - CancelEvent()
+      env:
+        - name: COLLECTIONS
+          value: crowdsecurity/appsec-virtual-patching crowdsecurity/appsec-generic-rules
+      resources:
+        requests:
+          cpu: 50m
+          memory: 256Mi
+        limits:
+          cpu: null
+          memory: 512Mi
       metrics:
         enabled: true
         serviceMonitor:

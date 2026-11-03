@@ -7,7 +7,7 @@ services:
     container_name: crowdsec
     restart: unless-stopped
     environment:
-      COLLECTIONS: "crowdsecurity/linux crowdsecurity/sshd crowdsecurity/iptables"
+      COLLECTIONS: "crowdsecurity/linux crowdsecurity/sshd crowdsecurity/iptables crowdsecurity/base-http-scenarios crowdsecurity/http-cve"
       PARSERS: "crowdsecurity/geoip-enrich"
       GID: "1000"
     volumes:
@@ -38,7 +38,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 256M
+          memory: 512M
           cpus: "1.0"
     logging:
       driver: json-file

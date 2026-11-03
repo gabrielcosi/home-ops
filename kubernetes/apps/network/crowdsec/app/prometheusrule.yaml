@@ -9,7 +9,10 @@ spec:
       rules:
         - alert: CrowdSecLogIntakeStalled
           expr: |-
-            sum by (job) (increase(cs_parser_hits_ok_total[6h])) == 0
+            (
+              sum by (job) (increase(cs_parser_hits_ok_total[6h]))
+              or max by (job) (cs_info{job=~"crowdsec|crowdsec-agent-service"}) * 0
+            ) == 0
           for: 30m
           annotations:
             summary: >-
@@ -37,5 +40,36 @@ spec:
           annotations:
             summary: >-
               envoy-external is passing requests without a CrowdSec check
+          labels:
+            severity: warning
+
+        - alert: CrowdSecAppSecUnavailable
+          expr: |-
+            sum(increase(bouncer_waf_errors_total[10m])) > 0
+          for: 15m
+          annotations:
+            summary: >-
+              envoy-external is passing requests without an AppSec check
+          labels:
+            severity: warning
+
+        - alert: CrowdSecBouncerNotSyncing
+          expr: |-
+            min(bouncer_lapi_stream_connected) == 0
+            or sum(rate(cs_lapi_bouncer_requests_total{cluster="edge-vps", bouncer="firewall"}[15m])) == 0
+          for: 15m
+          annotations:
+            summary: >-
+              A CrowdSec bouncer is not pulling new decisions
+          labels:
+            severity: warning
+
+        - alert: CrowdSecVpsDown
+          expr: |-
+            up{cluster="edge-vps", job="crowdsec"} == 0
+          for: 10m
+          annotations:
+            summary: >-
+              CrowdSec on the VPS is not reporting metrics
           labels:
             severity: warning

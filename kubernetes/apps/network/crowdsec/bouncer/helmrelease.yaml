@@ -43,6 +43,11 @@ spec:
                   secretKeyRef:
                     name: crowdsec-secrets
                     key: BOUNCER_KEY_ENVOY
+              ENVOY_BOUNCER_WAF_APIKEY:
+                valueFrom:
+                  secretKeyRef:
+                    name: crowdsec-secrets
+                    key: BOUNCER_KEY_ENVOY
             probes:
               liveness:
                 enabled: true

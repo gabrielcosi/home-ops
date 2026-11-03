@@ -4,6 +4,10 @@ bouncer:
   lapiURL: http://crowdsec-service.network.svc.cluster.local:8080
   metrics: true
   banStatusCode: 418
+waf:
+  enabled: true
+  appSecURL: http://crowdsec-appsec-service.network.svc.cluster.local:7422
+  failOpen: true
 prometheus:
   enabled: true
   port: 9090
