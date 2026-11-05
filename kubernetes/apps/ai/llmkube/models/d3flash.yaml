@@ -1,0 +1,105 @@
+---
+apiVersion: inference.llmkube.dev/v1alpha1
+kind: Model
+metadata:
+  name: d3-flash
+spec:
+  source: s3://models/d3-flash/v1
+  sourceSecretRef:
+    name: models-s3
+  format: safetensors
+  quantization: NVFP4
+  files:
+    - model.safetensors
+    - chat_template.jinja
+    - config.json
+    - decision_config.json
+    - hf_quant_config.json
+    - merges.txt
+    - preprocessor_config.json
+    - readout.safetensors
+    - tokenizer_config.json
+    - tokenizer.json
+    - video_preprocessor_config.json
+    - vocab.json
+  fileSha256:
+    model.safetensors: 0b272e59f1c4bd6c8c5e0d12772d9b34a5d91c93b93cd6d15ee200cfaf0374b2
+    readout.safetensors: 8bbc9a9df4e1b7df85a80a1091977092b938d8d2d2869dfaeb8fd36063cf322f
+  hardware:
+    accelerator: cuda
+    gpu:
+      enabled: true
+      count: 1
+      vendor: nvidia
+      resourceClaims:
+        - name: pro2000
+          resourceClaimName: pro2000
+---
+apiVersion: inference.llmkube.dev/v1alpha1
+kind: InferenceService
+metadata:
+  name: d3-flash
+spec:
+  modelRef: d3-flash
+  runtime: vllm
+  image: docker.io/vllm/vllm-openai:nightly@sha256:bd419f1669b420e7dfcfa2545a9f3b05c2312c858a215b1f287284d7398d3367 # renovate: docker=docker.io/vllm/vllm-openai
+  replicas: 1
+  containerPort: 8080
+  parallelSlots: 4
+  hubOffline: true
+  vllmConfig:
+    maxModelLen: 33024
+    maxNumBatchedTokens: 33024
+    gpuMemoryUtilization: 0.8
+  extraArgs:
+    - --kv-cache-memory-bytes
+    - 512M
+    - --limit-mm-per-prompt.video
+    - "0"
+    - --limit-mm-per-prompt.image
+    - "4"
+  env:
+    - name: HOME
+      value: /state
+    - name: PYTORCH_CUDA_ALLOC_CONF
+      value: expandable_segments:True
+    - name: VLLM_NO_USAGE_STATS
+      value: "1"
+    - name: HF_HUB_DISABLE_TELEMETRY
+      value: "1"
+    - name: DO_NOT_TRACK
+      value: "1"
+  extraVolumes:
+    - name: state
+      persistentVolumeClaim:
+        claimName: d3-flash-state
+  extraVolumeMounts:
+    - name: state
+      mountPath: /state
+  modelCache:
+    storageClassName: miroir-client
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 1000
+    runAsGroup: 1000
+    fsGroup: 1000
+    fsGroupChangePolicy: OnRootMismatch
+    seccompProfile:
+      type: RuntimeDefault
+  resources:
+    cpu: "2"
+    memory: 8Gi
+    memoryLimit: 16Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: d3-flash-state
+  namespace: ai
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: miroir-client
+  resources:
+    requests:
+      storage: 2Gi

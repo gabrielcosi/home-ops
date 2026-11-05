@@ -16,13 +16,10 @@ spec:
           reloader.stakater.com/auto: 'true'
         strategy: Recreate
         pod:
-          automountServiceAccountToken: true
           terminationGracePeriodSeconds: 150
           resourceClaims:
             - name: pro4000
               resourceClaimName: pro4000
-            - name: pro2000
-              resourceClaimName: pro2000
           securityContext:
             runAsNonRoot: true
             runAsUser: 1000
@@ -102,7 +99,6 @@ spec:
             resources:
               claims:
                 - name: pro4000
-                - name: pro2000
               requests:
                 cpu: 100m
                 memory: 4Gi
@@ -158,37 +154,6 @@ spec:
                 memory: 32Mi
               limits:
                 memory: 128Mi
-
-    rbac:
-      roles:
-        kubeswap:
-          type: Role
-          rules:
-            - apiGroups: ['apps']
-              resources: ['deployments']
-              verbs: ['create', 'get', 'list', 'watch', 'delete']
-            - apiGroups: ['']
-              resources: ['services']
-              verbs: ['create', 'get', 'list', 'watch', 'delete']
-            - apiGroups: ['']
-              resources: ['pods']
-              verbs: ['get', 'list']
-            - apiGroups: ['']
-              resources: ['pods/log']
-              verbs: ['get']
-            - apiGroups: ['']
-              resources: ['persistentvolumeclaims']
-              resourceNames: ['llama-swap']
-              verbs: ['get']
-      bindings:
-        kubeswap:
-          type: RoleBinding
-          roleRef:
-            identifier: kubeswap
-          subjects:
-            - kind: ServiceAccount
-              name: llama-swap
-              namespace: ai
 
     service:
       app:
