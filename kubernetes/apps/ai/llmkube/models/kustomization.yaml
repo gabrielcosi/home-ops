@@ -7,4 +7,5 @@ resources:
   - ./externalsecret.yaml
   - ./modelrouter.yaml
   - ./netpol.yaml
+  - ./prometheusrule.yaml
   - ./qwen.yaml

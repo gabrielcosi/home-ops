@@ -34,12 +34,29 @@ spec:
       routerPodMonitor:
         enabled: true
         additionalLabels: {}
+      prometheusRule:
+        enabled: true
+        additionalLabels: {}
+        namespace: ai
+        rules:
+          gpu:
+            enabled: false
+          gpuHealth:
+            enabled: false
     grafana:
       dashboards:
         enabled: true
         additionalLabels: {}
+        only:
+          - llamacpp-dashboard
+          - llmkube-inference
+          - model-router-dashboard
+          - vllm-dashboard
         operator:
           enabled: true
+          datasources:
+            - inputName: DS_PROMETHEUS
+              datasourceName: victoriametrics
           instanceSelector:
             matchLabels:
               dashboards: grafana
