@@ -5,7 +5,7 @@ metadata:
   name: llmkube-inference
   namespace: ai
 spec:
-  description: Restrict LLMKube inference pods to router and vmagent ingress, and egress to the NAS.
+  description: Restrict LLMKube inference pods to router, bifrost and vmagent ingress, and egress to the NAS.
   endpointSelector:
     matchExpressions:
       - key: inference.llmkube.dev/service
@@ -15,6 +15,10 @@ spec:
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: ai
             k8s:inference.llmkube.dev/model-router: models
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: ai
+            k8s:app.kubernetes.io/instance: bifrost
+            k8s:app.kubernetes.io/name: bifrost
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: monitoring
             k8s:app.kubernetes.io/name: vmagent

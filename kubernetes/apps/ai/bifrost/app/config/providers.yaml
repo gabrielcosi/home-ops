@@ -48,7 +48,7 @@ bifrost:
             - embeddinggemma-2
           weight: 1
       network_config:
-        base_url: http://models-router-proxy.ai.svc.cluster.local:8080
+        base_url: http://embeddinggemma-2.ai.svc.cluster.local:8080
         allow_private_network: true
         default_request_timeout_in_seconds: 600
         max_retries: 3
@@ -178,7 +178,7 @@ bifrost:
             - d3-flash
           weight: 1
       network_config:
-        base_url: http://models-router-proxy.ai.svc.cluster.local:8080
+        base_url: http://d3-flash.ai.svc.cluster.local:8080
         allow_private_network: true
         default_request_timeout_in_seconds: 600
         max_retries: 3

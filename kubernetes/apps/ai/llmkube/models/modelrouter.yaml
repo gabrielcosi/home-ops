@@ -5,9 +5,6 @@ metadata:
   name: models
 spec:
   backends:
-    - name: d3-flash
-      inferenceServiceRef:
-        name: d3-flash
     - name: embeddinggemma-2
       inferenceServiceRef:
         name: embeddinggemma-2
