@@ -5,7 +5,7 @@ metadata:
   name: dragonfly-allow-clients
   namespace: database
 spec:
-  description: Allow any in-cluster pod to reach the shared Dragonfly client port.
+  description: Allow any in-cluster pod to reach the shared Dragonfly client port; egress only to replicas.
   endpointSelector:
     matchLabels:
       k8s:app: dragonfly
@@ -16,4 +16,15 @@ spec:
       toPorts:
         - ports:
             - port: "6379"
+              protocol: TCP
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            k8s:app: dragonfly
+            k8s:app.kubernetes.io/name: dragonfly
+      toPorts:
+        - ports:
+            - port: "6379"
+              protocol: TCP
+            - port: "9999"
               protocol: TCP

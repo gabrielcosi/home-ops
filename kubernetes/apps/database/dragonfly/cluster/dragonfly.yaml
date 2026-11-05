@@ -20,6 +20,7 @@ spec:
     - --cluster_mode=emulated
     - --lock_on_hashtags
     - --default_lua_flags=allow-undeclared-keys
+    - --version_check=false
 
   resources:
     requests:

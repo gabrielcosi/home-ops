@@ -16,6 +16,7 @@ spec:
     - --maxmemory=$(MAX_MEMORY)Mi
     - --proactor_threads=1
     - --cluster_mode=emulated
+    - --version_check=false
 
   env:
     - name: MAX_MEMORY
