@@ -116,18 +116,18 @@ spec:
 
         {
           "type": "stat", "title": "Output speed (range)",
-          "description": "Output tokens / upstream time, all requests. Includes prefill.",
+          "description": "Output tokens per second, excluding TTFT on streamed requests.",
           "id": 6, "gridPos": { "h": 4, "w": 8, "x": 0, "y": 4 },
           "datasource": { "type": "prometheus", "uid": "victoriametrics" },
           "targets": [
-            { "refId": "A", "expr": "sum(increase(bifrost_output_tokens_total{provider=~\"$provider\",model=~\"$model\",virtual_key_name=~\"$vkey\",method=~\"$method\"}[$__range])) / clamp_min(sum(increase(bifrost_upstream_latency_seconds_sum{provider=~\"$provider\",model=~\"$model\",virtual_key_name=~\"$vkey\",method=~\"$method\",is_success=\"true\"}[$__range]) and on (provider, model) increase(bifrost_output_tokens_total{provider=~\"$provider\",model=~\"$model\",virtual_key_name=~\"$vkey\",method=~\"$method\"}[$__range]) > 0), 1e-9)", "instant": true, "legendFormat": "tok/s" }
+            { "refId": "A", "expr": "sum(((sum by (model) (increase(bifrost_stream_inter_token_latency_seconds_count{provider=~\"$provider\",model=~\"$model\",virtual_key_name=~\"$vkey\",method=~\"$method\"}[$__range])) or (sum by (model) (increase(bifrost_output_tokens_total{provider=~\"$provider\",model=~\"$model\",virtual_key_name=~\"$vkey\",method=~\"$method\",method!~\".*_stream\"}[$__range])) > 0) * 0) + ((sum by (model) (increase(bifrost_output_tokens_total{provider=~\"$provider\",model=~\"$model\",virtual_key_name=~\"$vkey\",method=~\"$method\",method!~\".*_stream\"}[$__range])) > 0) or sum by (model) (increase(bifrost_stream_inter_token_latency_seconds_count{provider=~\"$provider\",model=~\"$model\",virtual_key_name=~\"$vkey\",method=~\"$method\"}[$__range])) * 0))) / (sum(((sum by (model) (increase(bifrost_stream_inter_token_latency_seconds_sum{provider=~\"$provider\",model=~\"$model\",virtual_key_name=~\"$vkey\",method=~\"$method\"}[$__range])) or (sum by (model) (increase(bifrost_upstream_latency_seconds_sum{provider=~\"$provider\",model=~\"$model\",virtual_key_name=~\"$vkey\",method=~\"$method\",method!~\".*_stream\",is_success=\"true\"}[$__range])) and (sum by (model) (increase(bifrost_output_tokens_total{provider=~\"$provider\",model=~\"$model\",virtual_key_name=~\"$vkey\",method=~\"$method\",method!~\".*_stream\"}[$__range])) > 0)) * 0) + ((sum by (model) (increase(bifrost_upstream_latency_seconds_sum{provider=~\"$provider\",model=~\"$model\",virtual_key_name=~\"$vkey\",method=~\"$method\",method!~\".*_stream\",is_success=\"true\"}[$__range])) and (sum by (model) (increase(bifrost_output_tokens_total{provider=~\"$provider\",model=~\"$model\",virtual_key_name=~\"$vkey\",method=~\"$method\",method!~\".*_stream\"}[$__range])) > 0)) or sum by (model) (increase(bifrost_stream_inter_token_latency_seconds_sum{provider=~\"$provider\",model=~\"$model\",virtual_key_name=~\"$vkey\",method=~\"$method\"}[$__range])) * 0))) > 0)", "instant": true, "legendFormat": "tok/s" }
           ],
           "fieldConfig": { "defaults": { "unit": "suffix:tok/s", "decimals": 1, "color": { "mode": "thresholds" }, "thresholds": { "mode": "absolute", "steps": [ { "color": "red", "value": null }, { "color": "orange", "value": 10 }, { "color": "green", "value": 30 } ] } }, "overrides": [] },
           "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "background", "graphMode": "none" }
         },
         {
           "type": "stat", "title": "Time to first token (mean, range)",
-          "description": "Streaming requests only.",
+          "description": "Mean time to the first token of streamed requests.",
           "id": 7, "gridPos": { "h": 4, "w": 8, "x": 8, "y": 4 },
           "datasource": { "type": "prometheus", "uid": "victoriametrics" },
           "targets": [
@@ -149,22 +149,22 @@ spec:
 
         {
           "type": "timeseries", "title": "Output speed by model (tok/s)",
-          "description": "Output tokens / upstream time, all requests. Includes prefill.",
-          "id": 11, "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 }, "interval": "1h",
+          "description": "Output tokens per second, excluding TTFT on streamed requests.",
+          "id": 11, "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 }, "interval": "5m",
           "datasource": { "type": "prometheus", "uid": "victoriametrics" },
           "targets": [
-            { "refId": "A", "expr": "(sum by (model) (increase(bifrost_output_tokens_total{provider=~\"$provider\",model=~\"$model\",virtual_key_name=~\"$vkey\",method=~\"$method\"}[$__interval])) > 0) / sum by (model) (increase(bifrost_upstream_latency_seconds_sum{provider=~\"$provider\",model=~\"$model\",virtual_key_name=~\"$vkey\",method=~\"$method\",is_success=\"true\"}[$__interval]))", "legendFormat": "{{model}}" }
+            { "refId": "A", "expr": "((sum by (model) (increase(bifrost_stream_inter_token_latency_seconds_count{provider=~\"$provider\",model=~\"$model\",virtual_key_name=~\"$vkey\",method=~\"$method\"}[1h])) or (sum by (model) (increase(bifrost_output_tokens_total{provider=~\"$provider\",model=~\"$model\",virtual_key_name=~\"$vkey\",method=~\"$method\",method!~\".*_stream\"}[1h])) > 0) * 0) + ((sum by (model) (increase(bifrost_output_tokens_total{provider=~\"$provider\",model=~\"$model\",virtual_key_name=~\"$vkey\",method=~\"$method\",method!~\".*_stream\"}[1h])) > 0) or sum by (model) (increase(bifrost_stream_inter_token_latency_seconds_count{provider=~\"$provider\",model=~\"$model\",virtual_key_name=~\"$vkey\",method=~\"$method\"}[1h])) * 0)) / (((sum by (model) (increase(bifrost_stream_inter_token_latency_seconds_sum{provider=~\"$provider\",model=~\"$model\",virtual_key_name=~\"$vkey\",method=~\"$method\"}[1h])) or (sum by (model) (increase(bifrost_upstream_latency_seconds_sum{provider=~\"$provider\",model=~\"$model\",virtual_key_name=~\"$vkey\",method=~\"$method\",method!~\".*_stream\",is_success=\"true\"}[1h])) and (sum by (model) (increase(bifrost_output_tokens_total{provider=~\"$provider\",model=~\"$model\",virtual_key_name=~\"$vkey\",method=~\"$method\",method!~\".*_stream\"}[1h])) > 0)) * 0) + ((sum by (model) (increase(bifrost_upstream_latency_seconds_sum{provider=~\"$provider\",model=~\"$model\",virtual_key_name=~\"$vkey\",method=~\"$method\",method!~\".*_stream\",is_success=\"true\"}[1h])) and (sum by (model) (increase(bifrost_output_tokens_total{provider=~\"$provider\",model=~\"$model\",virtual_key_name=~\"$vkey\",method=~\"$method\",method!~\".*_stream\"}[1h])) > 0)) or sum by (model) (increase(bifrost_stream_inter_token_latency_seconds_sum{provider=~\"$provider\",model=~\"$model\",virtual_key_name=~\"$vkey\",method=~\"$method\"}[1h])) * 0)) > 0)", "legendFormat": "{{model}}" }
           ],
           "fieldConfig": { "defaults": { "unit": "suffix:tok/s", "decimals": 1, "min": 0, "custom": { "drawStyle": "line", "fillOpacity": 10, "lineInterpolation": "smooth", "lineWidth": 2, "showPoints": "auto", "spanNulls": 3600000 } }, "overrides": [] },
           "options": { "legend": { "displayMode": "table", "placement": "right", "showLegend": true, "calcs": ["mean","max"] }, "tooltip": { "mode": "multi", "sort": "desc" } }
         },
         {
           "type": "timeseries", "title": "Time to first token by model (mean)",
-          "description": "Streaming requests only.",
-          "id": 20, "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 }, "interval": "1h",
+          "description": "Mean time to the first token of streamed requests.",
+          "id": 20, "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 }, "interval": "5m",
           "datasource": { "type": "prometheus", "uid": "victoriametrics" },
           "targets": [
-            { "refId": "A", "expr": "sum by (model) (increase(bifrost_stream_first_token_latency_seconds_sum{provider=~\"$provider\",model=~\"$model\",virtual_key_name=~\"$vkey\",method=~\"$method\"}[$__interval])) / (sum by (model) (increase(bifrost_stream_first_token_latency_seconds_count{provider=~\"$provider\",model=~\"$model\",virtual_key_name=~\"$vkey\",method=~\"$method\"}[$__interval])) > 0)", "legendFormat": "{{model}}" }
+            { "refId": "A", "expr": "sum by (model) (increase(bifrost_stream_first_token_latency_seconds_sum{provider=~\"$provider\",model=~\"$model\",virtual_key_name=~\"$vkey\",method=~\"$method\"}[1h])) / (sum by (model) (increase(bifrost_stream_first_token_latency_seconds_count{provider=~\"$provider\",model=~\"$model\",virtual_key_name=~\"$vkey\",method=~\"$method\"}[1h])) > 0)", "legendFormat": "{{model}}" }
           ],
           "fieldConfig": { "defaults": { "unit": "s", "decimals": 2, "min": 0, "custom": { "drawStyle": "line", "fillOpacity": 10, "lineInterpolation": "smooth", "lineWidth": 2, "showPoints": "auto", "spanNulls": 3600000 } }, "overrides": [] },
           "options": { "legend": { "displayMode": "table", "placement": "right", "showLegend": true, "calcs": ["mean","max"] }, "tooltip": { "mode": "multi", "sort": "desc" } }
@@ -276,7 +276,7 @@ spec:
         },
         {
           "type": "stat", "title": "Key rejections (401 / 402 / 403)",
-          "description": "Auth, billing and permission failures per provider over the range. Empty means no key was rejected. Prefer this over bifrost_provider_key_up, which is a last-attempt latch: it sticks at 0 until the next success on that key, so a single per-model refusal leaves a healthy provider reading DOWN indefinitely.",
+          "description": "Auth, billing and permission failures per provider.",
           "id": 52, "gridPos": { "h": 9, "w": 6, "x": 18, "y": 41 },
           "datasource": { "type": "prometheus", "uid": "victoriametrics" },
           "targets": [
@@ -308,7 +308,7 @@ spec:
         },
         {
           "type": "stat", "title": "Prompt cache read share of input",
-          "description": "Provider-side prompt cache hits as a fraction of input tokens. Billed at a reduced rate.",
+          "description": "Share of input tokens read from the provider prompt cache.",
           "id": 62, "gridPos": { "h": 5, "w": 8, "x": 16, "y": 50 },
           "datasource": { "type": "prometheus", "uid": "victoriametrics" },
           "targets": [
