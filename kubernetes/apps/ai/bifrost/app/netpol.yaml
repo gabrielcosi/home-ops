@@ -45,9 +45,6 @@ spec:
             k8s:app.kubernetes.io/instance: cliproxyapi
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: ai
-            k8s:inference.llmkube.dev/model-router: models
-        - matchLabels:
-            k8s:io.kubernetes.pod.namespace: ai
           matchExpressions:
             - key: k8s:inference.llmkube.dev/service
               operator: Exists
@@ -88,9 +85,6 @@ spec:
             - port: "8080"
               protocol: TCP
     - toEndpoints:
-        - matchLabels:
-            k8s:io.kubernetes.pod.namespace: ai
-            k8s:inference.llmkube.dev/model-router: models
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: ai
           matchExpressions:
