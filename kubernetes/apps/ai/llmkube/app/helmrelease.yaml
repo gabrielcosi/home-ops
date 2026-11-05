@@ -32,6 +32,7 @@ spec:
               dashboards: grafana
     modelCache:
       mode: perService
+      prep: never
       size: 32Gi
       storageClass: miroir-client
     modelSource:
