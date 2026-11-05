@@ -26,7 +26,7 @@ spec:
           seed-tools:
             image: &image
               repository: ghcr.io/gabrielcosi/containers/hermes-agent
-              tag: v2026.9.24@sha256:f21938fd7b2eda9fd4d0e62f13865b79745dbf4be23f342af50479f1043697b0
+              tag: v2026.9.24@sha256:a661521d99180cc164945c496e50aa54f5001c65fd01ca94bdd2d3fecaf2bbb3
             command:
               - sh
               - -c
