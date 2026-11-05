@@ -1,0 +1,52 @@
+---
+apiVersion: inference.llmkube.dev/v1alpha1
+kind: Model
+metadata:
+  name: embeddinggemma-2
+spec:
+  source: s3://models/embeddinggemma-2/v1/EmbeddingGemma-2-Q8_0.gguf
+  sourceSecretRef:
+    name: models-s3
+  format: gguf
+  quantization: Q8_0
+  sha256: 2188ac1deca4b77dffefd603c2776a9d76d9d74ec01841392982ebb840b09135
+  hardware:
+    accelerator: cuda
+    gpu:
+      enabled: true
+      count: 1
+      vendor: nvidia
+      layers: 99
+      resourceClaims:
+        - name: pro2000
+          resourceClaimName: pro2000
+---
+apiVersion: inference.llmkube.dev/v1alpha1
+kind: InferenceService
+metadata:
+  name: embeddinggemma-2
+spec:
+  modelRef: embeddinggemma-2
+  image: ghcr.io/ggml-org/llama.cpp:server-cuda13-b12124@sha256:7db040825675e373d978a80826fedd50fb83be57f21641da6d8c4bf11af9d829 # renovate: docker=ghcr.io/ggml-org/llama.cpp versioning=regex:^server-cuda13-b(?<patch>\d+)$
+  replicas: 1
+  mode: embedding
+  contextSize: 32768
+  batchSize: 8192
+  uBatchSize: 8192
+  parallelSlots: 4
+  jinja: true
+  flashAttention: true
+  extraArgs:
+    - --pooling
+    - mean
+    - --fit
+    - "off"
+    - --reasoning-preserve
+  env:
+    - name: GLIBC_TUNABLES
+      value: glibc.malloc.hugetlb=1
+  modelCache:
+    storageClassName: miroir-client
+  resources:
+    cpu: 100m
+    memory: 2Gi

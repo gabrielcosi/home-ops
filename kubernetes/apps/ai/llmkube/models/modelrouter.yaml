@@ -1,0 +1,13 @@
+---
+apiVersion: inference.llmkube.dev/v1alpha1
+kind: ModelRouter
+metadata:
+  name: models
+spec:
+  backends:
+    - name: embeddinggemma-2
+      inferenceServiceRef:
+        name: embeddinggemma-2
+  defaultRouteStrategy: BackendNameMatch
+  proxy:
+    replicas: 2

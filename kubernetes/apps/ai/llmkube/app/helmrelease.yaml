@@ -1,0 +1,39 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: llmkube
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: llmkube
+  interval: 1h
+  values:
+    metrics:
+      secure: false
+    prometheus:
+      serviceMonitor:
+        enabled: true
+        additionalLabels: {}
+      inferencePodMonitor:
+        enabled: true
+        additionalLabels: {}
+      routerPodMonitor:
+        enabled: true
+        additionalLabels: {}
+    grafana:
+      dashboards:
+        enabled: true
+        additionalLabels: {}
+        operator:
+          enabled: true
+          instanceSelector:
+            matchLabels:
+              dashboards: grafana
+    modelCache:
+      mode: perService
+      size: 32Gi
+      storageClass: miroir-client
+    modelSource:
+      allowedRemoteHosts:
+        - s3.xcd.dev
