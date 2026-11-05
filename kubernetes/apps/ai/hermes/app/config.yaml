@@ -16,7 +16,7 @@ model_aliases:
 
 fallback_providers:
   - provider: custom:bifrost
-    model: llama-swap/qwen3.8-27b
+    model: llmkube/qwen3.8-27b
 
 memory:
   provider: memini

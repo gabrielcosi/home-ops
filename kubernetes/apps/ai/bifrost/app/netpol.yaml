@@ -39,10 +39,10 @@ spec:
             k8s:cnpg.io/cluster: shared-pg
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: ai
-            k8s:app.kubernetes.io/instance: llama-swap
+            k8s:app.kubernetes.io/instance: cliproxyapi
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: ai
-            k8s:app.kubernetes.io/instance: cliproxyapi
+            k8s:inference.llmkube.dev/model-router: models
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: ai
           matchExpressions:
@@ -79,12 +79,7 @@ spec:
     - toEndpoints:
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: ai
-            k8s:app.kubernetes.io/instance: llama-swap
-      toPorts:
-        - ports:
-            - port: "8080"
-              protocol: TCP
-    - toEndpoints:
+            k8s:inference.llmkube.dev/model-router: models
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: ai
           matchExpressions:

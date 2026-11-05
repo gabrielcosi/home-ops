@@ -5,13 +5,16 @@ metadata:
   name: llmkube-inference
   namespace: ai
 spec:
-  description: Restrict LLMKube inference pods to bifrost and vmagent ingress, and egress to the NAS.
+  description: Restrict LLMKube inference pods to router, bifrost and vmagent ingress, and egress to the NAS.
   endpointSelector:
     matchExpressions:
       - key: inference.llmkube.dev/service
         operator: Exists
   ingress:
     - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: ai
+            k8s:inference.llmkube.dev/model-router: models
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: ai
             k8s:app.kubernetes.io/instance: bifrost
@@ -29,4 +32,54 @@ spec:
       toPorts:
         - ports:
             - port: "443"
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: llmkube-router
+  namespace: ai
+spec:
+  description: Restrict the model router to bifrost and vmagent ingress, and egress to the inference pods.
+  endpointSelector:
+    matchLabels:
+      inference.llmkube.dev/model-router: models
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: ai
+            k8s:app.kubernetes.io/instance: bifrost
+            k8s:app.kubernetes.io/name: bifrost
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: monitoring
+            k8s:app.kubernetes.io/name: vmagent
+      toPorts:
+        - ports:
+            - port: "9090"
+              protocol: TCP
+    - fromEndpoints:
+        - matchExpressions:
+            - key: k8s:io.kubernetes.pod.namespace
+              operator: In
+              values:
+                - ai
+            - key: k8s:inference.llmkube.dev/service
+              operator: Exists
+  egress:
+    - toEndpoints:
+        - matchExpressions:
+            - key: k8s:io.kubernetes.pod.namespace
+              operator: In
+              values:
+                - ai
+            - key: k8s:inference.llmkube.dev/service
+              operator: Exists
+      toPorts:
+        - ports:
+            - port: "8080"
               protocol: TCP

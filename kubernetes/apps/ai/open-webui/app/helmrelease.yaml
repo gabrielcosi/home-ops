@@ -37,7 +37,7 @@ spec:
               ENABLE_OLLAMA_API: false
               ENABLE_OPENAI_API: true
               OPENAI_API_BASE_URL: 'http://bifrost.ai.svc.cluster.local:8080/v1'
-              TASK_MODEL_EXTERNAL: llama-swap/muse-glimmer-30b
+              TASK_MODEL_EXTERNAL: llmkube/qwen3.8-27b
               DEFAULT_MODEL_METADATA: '{"capabilities": {"web_search": true}, "defaultFeatureIds": ["web_search"]}'
               DEFAULT_PROMPT_SUGGESTIONS: 'null'
               ENABLE_FOLLOW_UP_GENERATION: false
@@ -62,13 +62,8 @@ spec:
               RAG_EMBEDDING_MODEL: llmkube/embeddinggemma-2
               RAG_OPENAI_API_BASE_URL: 'http://bifrost.ai.svc.cluster.local:8080/v1'
               # Images
-              ENABLE_IMAGE_GENERATION: true
-              IMAGE_GENERATION_ENGINE: openai
-              IMAGE_GENERATION_MODEL: llama-swap/qwen-image-2.1
-              IMAGE_SIZE: 1024x1024
-              ENABLE_IMAGE_EDIT: true
-              IMAGE_EDIT_ENGINE: openai
-              IMAGE_EDIT_MODEL: llama-swap/qwen-image-2.1
+              ENABLE_IMAGE_GENERATION: false
+              ENABLE_IMAGE_EDIT: false
               # Web search
               ENABLE_WEB_SEARCH: true
               WEB_SEARCH_ENGINE: searxng

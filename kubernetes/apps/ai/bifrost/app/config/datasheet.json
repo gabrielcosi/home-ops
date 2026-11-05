@@ -93,8 +93,23 @@
     "cache_creation_input_token_cost": 1.25e-07,
     "cache_read_input_token_cost": 1e-08
   },
-  "llama-swap/qwen3.8-27b": {
-    "provider": "llama-swap",
+  "llmkube/embeddinggemma-2": {
+    "provider": "llmkube",
+    "base_model": "embeddinggemma-2",
+    "mode": "embedding",
+    "max_input_tokens": 8192,
+    "architecture": {
+      "input_modalities": [
+        "text"
+      ],
+      "output_modalities": [
+        "embeddings"
+      ]
+    },
+    "input_cost_per_token": 1e-08
+  },
+  "llmkube/qwen3.8-27b": {
+    "provider": "llmkube",
     "base_model": "qwen3.8-27b",
     "mode": "chat",
     "max_input_tokens": 172032,
@@ -115,59 +130,6 @@
     "output_cost_per_token": 1.5e-06,
     "cache_creation_input_token_cost": 2.5e-07,
     "cache_read_input_token_cost": 6.25e-08
-  },
-  "llama-swap/muse-glimmer-30b": {
-    "provider": "llama-swap",
-    "base_model": "muse-glimmer-30b",
-    "mode": "chat",
-    "max_input_tokens": 122880,
-    "max_output_tokens": 122880,
-    "architecture": {
-      "input_modalities": [
-        "text",
-        "image"
-      ],
-      "output_modalities": [
-        "text"
-      ]
-    },
-    "supports_function_calling": true,
-    "supports_tool_choice": true,
-    "supports_reasoning": true,
-    "input_cost_per_token": 1e-07,
-    "output_cost_per_token": 6e-07,
-    "cache_creation_input_token_cost": 1e-07,
-    "cache_read_input_token_cost": 2.5e-08
-  },
-  "llama-swap/qwen-image-2.1": {
-    "provider": "llama-swap",
-    "base_model": "qwen-image-2.1",
-    "mode": "image_generation",
-    "architecture": {
-      "input_modalities": [
-        "text",
-        "image"
-      ],
-      "output_modalities": [
-        "image"
-      ]
-    },
-    "output_cost_per_image": 0.005
-  },
-  "llmkube/embeddinggemma-2": {
-    "provider": "llmkube",
-    "base_model": "embeddinggemma-2",
-    "mode": "embedding",
-    "max_input_tokens": 8192,
-    "architecture": {
-      "input_modalities": [
-        "text"
-      ],
-      "output_modalities": [
-        "embeddings"
-      ]
-    },
-    "input_cost_per_token": 1e-08
   },
   "opencode/deepseek-v4.1-flash": {
     "provider": "opencode",

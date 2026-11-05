@@ -86,7 +86,7 @@
     {
       description: "Auto-merge model-serving patch and digest updates",
       addLabels: ["automerge"],
-      matchFileNames: ["kubernetes/apps/ai/llama-swap/**", "kubernetes/apps/ai/llmkube/**"],
+      matchFileNames: ["kubernetes/apps/ai/llmkube/**"],
       matchUpdateTypes: ["patch", "digest"],
       automerge: true,
       automergeType: "pr",

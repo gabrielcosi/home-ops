@@ -31,6 +31,9 @@ spec:
       inferencePodMonitor:
         enabled: true
         additionalLabels: {}
+      routerPodMonitor:
+        enabled: true
+        additionalLabels: {}
     grafana:
       dashboards:
         enabled: true

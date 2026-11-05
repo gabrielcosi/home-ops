@@ -1,0 +1,18 @@
+---
+apiVersion: inference.llmkube.dev/v1alpha1
+kind: ModelRouter
+metadata:
+  name: models
+spec:
+  backends:
+    - name: embeddinggemma-2
+      inferenceServiceRef:
+        name: embeddinggemma-2
+    - name: qwen3-8-27b
+      displayName: qwen3.8-27b
+      inferenceServiceRef:
+        name: qwen3-8-27b
+  defaultRouteStrategy: BackendNameMatch
+  proxy:
+    replicas: 2
+    responseHeaderTimeout: 600s

@@ -183,7 +183,7 @@ spec:
 
         {
           "type": "timeseries", "title": "Time to first token p95 by model",
-          "description": "Streaming requests only. For llama-swap this includes on-demand model load on a cold start.",
+          "description": "Streaming requests only.",
           "id": 20, "gridPos": { "h": 8, "w": 12, "x": 0, "y": 16 },
           "datasource": { "type": "prometheus", "uid": "victoriametrics" },
           "targets": [

@@ -12,7 +12,6 @@ resources:
   - ./crawl4ai/ks.yaml
   - ./gpu/ks.yaml
   - ./hermes/ks.yaml
-  - ./llama-swap/ks.yaml
   - ./llmkube/ks.yaml
   - ./mcp
   - ./memini/ks.yaml

@@ -1,0 +1,111 @@
+---
+apiVersion: inference.llmkube.dev/v1alpha1
+kind: Model
+metadata:
+  name: qwen3-8-27b
+spec:
+  source: s3://models/qwen3.8-27b/v1
+  sourceSecretRef:
+    name: models-s3
+  format: gguf
+  quantization: NVFP4
+  files:
+    - Swift-1.5-Qwen3.8-27B-NVFP4.gguf
+  mmproj: Swift-1.5-Qwen3.8-27B-mmproj-F16.gguf
+  fileSha256:
+    Swift-1.5-Qwen3.8-27B-NVFP4.gguf: "b4fcae50709ae85ef1d6db0153debf54b2fc23ecde7744f8759c0d6bee0fea76"
+    Swift-1.5-Qwen3.8-27B-mmproj-F16.gguf: "10a24dc46eb801ad794886ef27ea1e43634d35388dfaf2e2374b7a8b67faf526"
+  hardware:
+    accelerator: cuda
+    gpu:
+      enabled: true
+      count: 1
+      vendor: nvidia
+      layers: 99
+      resourceClaims:
+        - name: pro4000
+          resourceClaimName: pro4000
+---
+apiVersion: inference.llmkube.dev/v1alpha1
+kind: InferenceService
+metadata:
+  name: qwen3-8-27b
+spec:
+  modelRef: qwen3-8-27b
+  image: ghcr.io/gabrielcosi/containers/llama-server:b12121@sha256:c08953d6866f6e735e60bbfc15892610ac49a611a54bbff43ea85dbcf213ff86 # renovate: docker=ghcr.io/gabrielcosi/containers/llama-server versioning=regex:^b(?<patch>\d+)$
+  replicas: 1
+  contextSize: 172032
+  parallelSlots: 2
+  jinja: true
+  flashAttention: true
+  cacheTypeK: q8_0
+  cacheTypeV: q8_0
+  speculativeDecoding:
+    type: draft-mtp
+    nDraftMax: 5
+    pMin: 0.0
+  extraArgs:
+    - --fit
+    - "off"
+    - --reasoning-preserve
+    - --no-mmproj-offload
+    - --kv-unified
+    - --chat-template-kwargs
+    - '{"reasoning_effort":"medium"}'
+    - --temp
+    - "1.0"
+    - --top-p
+    - "0.95"
+    - --top-k
+    - "20"
+    - --min-p
+    - "0"
+    - --presence-penalty
+    - "0.0"
+    - --repeat-penalty
+    - "1.0"
+    - --spec-draft-sampling
+    - probabilistic
+    - --cache-dir
+    - /state
+    - --cache-disk
+    - "65536"
+  env:
+    - name: GLIBC_TUNABLES
+      value: glibc.malloc.hugetlb=1
+    - name: GGML_CUDA_MMVQ_MAX_NVFP4
+      value: "1"
+  extraVolumes:
+    - name: state
+      persistentVolumeClaim:
+        claimName: qwen3-8-27b-state
+  extraVolumeMounts:
+    - name: state
+      mountPath: /state
+  modelCache:
+    storageClassName: miroir-client
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 1000
+    runAsGroup: 1000
+    fsGroup: 1000
+    fsGroupChangePolicy: OnRootMismatch
+    seccompProfile:
+      type: RuntimeDefault
+  resources:
+    cpu: 200m
+    memory: 20Gi
+    memoryLimit: 24Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: qwen3-8-27b-state
+  namespace: ai
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: miroir-client
+  resources:
+    requests:
+      storage: 68Gi

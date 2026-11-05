@@ -5,4 +5,6 @@ resources:
   - ./d3flash.yaml
   - ./embeddinggemma.yaml
   - ./externalsecret.yaml
+  - ./modelrouter.yaml
   - ./netpol.yaml
+  - ./qwen.yaml
