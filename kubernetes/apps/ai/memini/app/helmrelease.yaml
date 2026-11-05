@@ -32,7 +32,6 @@ spec:
               MEMINI_LOG_FORMAT: json
               MEMINI_EMBED_BASE_URL: http://bifrost.ai.svc.cluster.local:8080/v1
               MEMINI_EMBED_MODEL: llmkube/embeddinggemma-2
-              MEMINI_REEMBED_ON_MODEL_CHANGE: 'true'
               MEMINI_EMBED_DIMS: '768'
               MEMINI_EMBED_QUERY_PREFIX: "task: search result | query: "
               MEMINI_RECALL_EMBED_TIMEOUT: '10s'
