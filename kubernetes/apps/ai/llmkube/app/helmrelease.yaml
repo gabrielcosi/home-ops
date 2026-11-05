@@ -8,6 +8,19 @@ spec:
     kind: OCIRepository
     name: llmkube
   interval: 1h
+  postRenderers:
+    - kustomize:
+        patches:
+          - target:
+              kind: PodMonitor
+              name: llmkube-inference
+            patch: |
+              - op: add
+                path: /spec/podMetricsEndpoints/0/metricRelabelings
+                value:
+                  - action: drop
+                    sourceLabels: [__name__]
+                    regex: vllm:cache_config_info
   values:
     metrics:
       secure: false
