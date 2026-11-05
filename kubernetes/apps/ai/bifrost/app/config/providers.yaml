@@ -25,8 +25,6 @@ bifrost:
           text_completion_stream: true
           chat_completion: true
           chat_completion_stream: true
-          responses: true
-          responses_stream: true
           embedding: true
       concurrency_and_buffer_size:
         concurrency: 100
