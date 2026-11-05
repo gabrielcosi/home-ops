@@ -6,7 +6,6 @@ bifrost:
         - name: llama-swap-key
           value: env.LLAMA_SWAP_API_KEY
           models:
-            - embeddinggemma-2
             - muse-glimmer-30b
             - qwen-image-2.1
             - qwen3.8-27b
@@ -40,6 +39,26 @@ bifrost:
       concurrency_and_buffer_size:
         concurrency: 100
         buffer_size: 500
+
+    llmkube:
+      keys:
+        - name: llmkube-key
+          value: llmkube-local
+          models:
+            - embeddinggemma-2
+          weight: 1
+      network_config:
+        base_url: http://models-router-proxy.ai.svc.cluster.local:8080
+        allow_private_network: true
+        default_request_timeout_in_seconds: 600
+        max_retries: 3
+        retry_backoff_initial_ms: 250
+        retry_backoff_max_ms: 5000
+      custom_provider_config:
+        base_provider_type: openai
+        allowed_requests:
+          list_models: true
+          embedding: true
 
     opencode:
       keys:

@@ -56,7 +56,7 @@ spec:
       review:
         model: bifrost/opencode/deepseek-v4.1-flash
       embedding:
-        model: bifrost/llama-swap/embeddinggemma-2
+        model: bifrost/llmkube/embeddinggemma-2
         dims: 768
         queryPrompt: 'task: sentence similarity | query: '
         documentPrompt: 'task: sentence similarity | query: '

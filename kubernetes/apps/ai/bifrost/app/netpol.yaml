@@ -43,6 +43,9 @@ spec:
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: ai
             k8s:app.kubernetes.io/instance: cliproxyapi
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: ai
+            k8s:inference.llmkube.dev/model-router: models
     - fromCIDR:
         - 10.43.0.0/16
       icmps:
@@ -75,6 +78,14 @@ spec:
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: ai
             k8s:app.kubernetes.io/instance: llama-swap
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: ai
+            k8s:inference.llmkube.dev/model-router: models
       toPorts:
         - ports:
             - port: "8080"

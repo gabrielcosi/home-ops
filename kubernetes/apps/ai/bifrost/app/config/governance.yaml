@@ -61,7 +61,7 @@ bifrost:
         is_active: true
         rate_limit_id: rl-memini
         provider_configs:
-          - provider: llama-swap
+          - provider: llmkube
             weight: 1
             allowed_models:
               - embeddinggemma-2
@@ -96,13 +96,19 @@ bifrost:
               - '*'
             key_ids:
               - '*'
+          - provider: llmkube
+            weight: 1
+            allowed_models:
+              - '*'
+            key_ids:
+              - '*'
       - id: toolhive
         name: toolhive
         value: env.BIFROST_VK_TOOLHIVE
         is_active: true
         rate_limit_id: rl-toolhive
         provider_configs:
-          - provider: llama-swap
+          - provider: llmkube
             weight: 1
             allowed_models:
               - embeddinggemma-2
@@ -115,6 +121,12 @@ bifrost:
         rate_limit_id: rl-n8n
         provider_configs:
           - provider: llama-swap
+            weight: 1
+            allowed_models:
+              - '*'
+            key_ids:
+              - '*'
+          - provider: llmkube
             weight: 1
             allowed_models:
               - '*'
@@ -146,8 +158,12 @@ bifrost:
               - '*'
           - provider: llama-swap
             allowed_models:
-              - embeddinggemma-2
               - qwen3.8-27b
+            key_ids:
+              - '*'
+          - provider: llmkube
+            allowed_models:
+              - embeddinggemma-2
             key_ids:
               - '*'
       - id: home-ops-ci
@@ -173,6 +189,12 @@ bifrost:
         rate_limit_id: rl-macbook
         provider_configs:
           - provider: llama-swap
+            weight: 1
+            allowed_models:
+              - '*'
+            key_ids:
+              - '*'
+          - provider: llmkube
             weight: 1
             allowed_models:
               - '*'

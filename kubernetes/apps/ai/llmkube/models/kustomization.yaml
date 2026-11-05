@@ -5,3 +5,4 @@ resources:
   - ./embeddinggemma.yaml
   - ./externalsecret.yaml
   - ./modelrouter.yaml
+  - ./netpol.yaml

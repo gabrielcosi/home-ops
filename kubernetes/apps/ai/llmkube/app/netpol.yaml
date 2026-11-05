@@ -1,0 +1,41 @@
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: llmkube-controller
+  namespace: ai
+spec:
+  description: Restrict the LLMKube controller to API server and vmagent ingress, and egress to the API server and the NAS.
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/instance: llmkube
+      app.kubernetes.io/name: llmkube
+      control-plane: controller-manager
+  ingress:
+    - fromEntities:
+        - kube-apiserver
+      toPorts:
+        - ports:
+            - port: "9443"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: monitoring
+            k8s:app.kubernetes.io/name: vmagent
+      toPorts:
+        - ports:
+            - port: "8443"
+              protocol: TCP
+  egress:
+    - toEntities:
+        - kube-apiserver
+      toPorts:
+        - ports:
+            - port: "6443"
+              protocol: TCP
+    - toCIDR:
+        - 192.168.42.20/32
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
