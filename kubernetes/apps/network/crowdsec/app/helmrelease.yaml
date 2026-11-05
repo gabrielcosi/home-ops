@@ -226,16 +226,8 @@ spec:
           path: /
           appsec_configs:
             - crowdsecurity/appsec-default
-            - local/log-only
           labels:
             type: appsec
-      configs:
-        log-only.yaml: |
-          name: local/log-only
-          on_match:
-            - apply:
-                - SetRemediation("allow")
-                - CancelEvent()
       env:
         - name: COLLECTIONS
           value: crowdsecurity/appsec-virtual-patching crowdsecurity/appsec-generic-rules
