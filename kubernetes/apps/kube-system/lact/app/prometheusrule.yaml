@@ -10,8 +10,8 @@ spec:
       rules:
         - alert: GpuCoolingNotResponding
           expr: |-
-            max by (instance, UUID, modelName) (DCGM_FI_DEV_GPU_TEMP) > 78
-              and max by (instance, UUID, modelName) (DCGM_FI_DEV_FAN_SPEED) < 95
+            max by (instance, UUID, modelName) (DCGM_FI_DEV_GPU_TEMP_CELSIUS) > 78
+              and max by (instance, UUID, modelName) (DCGM_FI_DEV_FAN_SPEED_RATIO) < 0.95
           for: 10m
           annotations:
             summary: >-
@@ -21,8 +21,8 @@ spec:
 
         - alert: GpuFanStuckHigh
           expr: |-
-            max by (instance, UUID, modelName) (DCGM_FI_DEV_FAN_SPEED) > 80
-              and max by (instance, UUID, modelName) (DCGM_FI_DEV_GPU_TEMP) < 55
+            max by (instance, UUID, modelName) (DCGM_FI_DEV_FAN_SPEED_RATIO) > 0.8
+              and max by (instance, UUID, modelName) (DCGM_FI_DEV_GPU_TEMP_CELSIUS) < 55
           for: 30m
           annotations:
             summary: >-

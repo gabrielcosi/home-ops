@@ -8,12 +8,6 @@ spec:
     kind: OCIRepository
     name: dcgm-exporter
   interval: 1h
-  valuesFrom:
-    - kind: ConfigMap
-      name: dcgm-exporter-counters
-      valuesKey: counters.csv
-      targetPath: customMetrics
-      literal: true
   values:
     fullnameOverride: dcgm-exporter
     runtimeClassName: nvidia
@@ -27,7 +21,7 @@ spec:
     config:
       metrics:
         - name: default
-          file: /etc/dcgm-exporter/chart/metrics/default-counters.csv
+          file: /etc/dcgm-exporter/counters/counters.csv
           every: 30s
           enrichment:
             kubernetes: auto
@@ -37,6 +31,14 @@ spec:
       sources:
         dra:
           mode: kubernetes
+    extraConfigMapVolumes:
+      - name: counters
+        configMap:
+          name: dcgm-exporter-counters
+    extraVolumeMounts:
+      - name: counters
+        mountPath: /etc/dcgm-exporter/counters
+        readOnly: true
     serviceMonitor:
       enabled: true
       honorLabels: true
