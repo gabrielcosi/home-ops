@@ -9,6 +9,6 @@ spec:
     mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
     operation: copy
   ref:
-    tag: 4.8.4
-    digest: sha256:176dc5d1108207e477bfb482666e9e1ab2d5e52c3f9f421dba8626fbfc9ad4cb
+    tag: 4.9.0
+    digest: sha256:78529fca401201118f36480c9c1696279350cc403f2cdb3d77b81fc5fb077337
   url: oci://registry.xcd.dev/x/nvidia.github.io/dcgm-exporter/helm-charts/dcgm-exporter

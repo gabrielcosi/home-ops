@@ -24,8 +24,19 @@ spec:
             - matchExpressions:
                 - key: extensions.talos.dev/nvidia-open-gpu-kernel-modules-production
                   operator: Exists
-    kubernetesDRA:
-      enabled: true
+    config:
+      metrics:
+        - name: default
+          file: /etc/dcgm-exporter/chart/metrics/default-counters.csv
+          every: 30s
+          enrichment:
+            kubernetes: auto
+            container: false
+            dra: true
+            hpc_jobs: false
+      sources:
+        dra:
+          mode: kubernetes
     serviceMonitor:
       enabled: true
       honorLabels: true
