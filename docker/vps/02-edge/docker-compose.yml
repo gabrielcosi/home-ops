@@ -3,7 +3,7 @@ name: edge
 
 services:
   caddy:
-    image: ghcr.io/bjw-s-labs/caddy-l4:2.11.8@sha256:1e7b538e888e6563a1b7520583343702c53b523b1b02923a002ac7c2b4719038
+    image: ghcr.io/bjw-s-labs/caddy-l4:2.11.9@sha256:2ca65102e513f59fa431f1eea31c30e089893407a30557f0c9b36c7006d4967b
     container_name: caddy
     restart: unless-stopped
     environment:
