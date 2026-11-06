@@ -81,7 +81,7 @@ bifrost:
           - provider: opencode
             weight: 1
             allowed_models:
-              - mimo-v2.5
+              - mimo-v2.6-flash
             key_ids:
               - '*'
       - id: open-webui

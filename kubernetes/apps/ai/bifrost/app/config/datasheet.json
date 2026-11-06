@@ -217,28 +217,6 @@
     "output_cost_per_token": 4e-06,
     "cache_read_input_token_cost": 1.9e-07
   },
-  "opencode/mimo-v2.5": {
-    "provider": "opencode",
-    "base_model": "mimo-v2.5",
-    "mode": "chat",
-    "max_input_tokens": 1000000,
-    "max_output_tokens": 128000,
-    "architecture": {
-      "input_modalities": [
-        "text",
-        "image"
-      ],
-      "output_modalities": [
-        "text"
-      ]
-    },
-    "supports_function_calling": true,
-    "supports_tool_choice": true,
-    "supports_reasoning": true,
-    "input_cost_per_token": 1.4e-07,
-    "output_cost_per_token": 2.8e-07,
-    "cache_read_input_token_cost": 2.8e-09
-  },
   "opencode/mimo-v2.6-flash": {
     "provider": "opencode",
     "base_model": "mimo-v2.6-flash",
@@ -705,5 +683,27 @@
     "input_cost_per_token": 1.5e-07,
     "output_cost_per_token": 6e-07,
     "cache_read_input_token_cost": 1.5e-08
+  },
+  "opencode/hy4": {
+    "provider": "opencode",
+    "base_model": "hy4",
+    "mode": "chat",
+    "max_input_tokens": 1048576,
+    "max_output_tokens": 65536,
+    "architecture": {
+      "input_modalities": [
+        "text",
+        "image"
+      ],
+      "output_modalities": [
+        "text"
+      ]
+    },
+    "supports_function_calling": true,
+    "supports_tool_choice": true,
+    "supports_reasoning": true,
+    "input_cost_per_token": 8.34e-07,
+    "output_cost_per_token": 2.501e-06,
+    "cache_read_input_token_cost": 4.2e-08
   }
 }
