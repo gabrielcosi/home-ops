@@ -9,3 +9,4 @@ resources:
   - ./netpol.yaml
   - ./prometheusrule.yaml
   - ./qwen.yaml
+  - ./vmrule.yaml

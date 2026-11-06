@@ -1,0 +1,72 @@
+---
+apiVersion: operator.victoriametrics.com/v1beta1
+kind: VMRule
+metadata:
+  name: llama-server
+  namespace: ai
+spec:
+  groups:
+    - name: llama-server
+      type: vlogs
+      interval: 1m
+      rules:
+        - alert: LlamaServerError
+          expr: |
+            _time:5m {kubernetes.pod_namespace="ai", kubernetes.container_name="llama-server"}
+            ("out of memory" OR "failed to allocate" OR "error loading model")
+            | stats by (kubernetes.pod_labels.app) count() as hits
+            | rename kubernetes.pod_labels.app as model
+            | filter hits:>0
+          annotations:
+            summary: >-
+              Model {{ $labels.model }} logged a CUDA memory or model-load error
+          labels:
+            severity: warning
+        - alert: LlamaServerCrashed
+          expr: |
+            _time:5m {kubernetes.pod_namespace="ai", kubernetes.container_name="llama-server"}
+            ("GGML_ASSERT" OR "CUDA error")
+            | stats by (kubernetes.pod_labels.app) count() as hits
+            | rename kubernetes.pod_labels.app as model
+            | filter hits:>0
+          annotations:
+            summary: >-
+              Model {{ $labels.model }} aborted on an assertion or CUDA error
+          labels:
+            severity: warning
+        - alert: LlamaServerPromptCacheDropped
+          expr: |
+            _time:5m {kubernetes.pod_namespace="ai", kubernetes.container_name="llama-server"}
+            ("does not fit the prompt cache disk limit" OR "exceeds cache size limit, skipping" OR "not enough free space in")
+            | stats by (kubernetes.pod_labels.app) count() as hits
+            | rename kubernetes.pod_labels.app as model
+            | filter hits:>0
+          annotations:
+            summary: >-
+              Model {{ $labels.model }} dropped a prompt state too large for its cache
+          labels:
+            severity: warning
+        - alert: LlamaServerPromptCacheFailed
+          expr: |
+            _time:5m {kubernetes.pod_namespace="ai", kubernetes.container_name="llama-server"}
+            ("failed to write prompt cache file" OR "cannot open prompt cache file" OR "cannot rename prompt cache file" OR "cannot read the prompt cache directory" OR "cannot serialize tokens for the prompt cache file" OR "is truncated" OR "failed to read the spilled prompt state" OR "failed to restore state" OR "failed to save complete prompt state")
+            | stats by (kubernetes.pod_labels.app) count() as hits
+            | rename kubernetes.pod_labels.app as model
+            | filter hits:>0
+          annotations:
+            summary: >-
+              Model {{ $labels.model }} failed to save or restore a prompt state
+          labels:
+            severity: warning
+        - alert: LlamaServerPromptCacheMispredicted
+          expr: |
+            _time:5m {kubernetes.pod_namespace="ai", kubernetes.container_name="llama-server"}
+            "restored state has pos_min"
+            | stats by (kubernetes.pod_labels.app) count() as hits
+            | rename kubernetes.pod_labels.app as model
+            | filter hits:>0
+          annotations:
+            summary: >-
+              Model {{ $labels.model }} restored a prompt state it scored wrongly
+          labels:
+            severity: warning
