@@ -32,7 +32,7 @@ metadata:
   name: qwen3-8-27b
 spec:
   modelRef: qwen3-8-27b
-  image: ghcr.io/gabrielcosi/containers/llama-server:b12180@sha256:a1c0aa9c0296aef89164780729268d3f871a8fb31b4df254bb2934224fcbbcd6 # renovate: docker=ghcr.io/gabrielcosi/containers/llama-server versioning=regex:^b(?<patch>\d+)$
+  image: ghcr.io/gabrielcosi/containers/llama-server:b12182@sha256:8240ede316e64425678154941bfe4c5f7b1bec6aadbec42e20c041213eb85d93 # renovate: docker=ghcr.io/gabrielcosi/containers/llama-server versioning=regex:^b(?<patch>\d+)$
   replicas: 1
   contextSize: 172032
   parallelSlots: 2
