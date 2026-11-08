@@ -27,7 +27,7 @@ metadata:
   name: embeddinggemma-2
 spec:
   modelRef: embeddinggemma-2
-  image: ghcr.io/ggml-org/llama.cpp:server-cuda13-b12182@sha256:38ab331a06df01e2c8a024e3c81dc66842b07d7cc015703bf2d648ea0d49e52c # renovate: docker=ghcr.io/ggml-org/llama.cpp versioning=regex:^server-cuda13-b(?<patch>\d+)$
+  image: ghcr.io/ggml-org/llama.cpp:server-cuda13-b12199@sha256:19c9cdce4b2c28945e8eb5e10643a4d90876e918140210e18aebfc4ea7909536 # renovate: docker=ghcr.io/ggml-org/llama.cpp versioning=regex:^server-cuda13-b(?<patch>\d+)$
   replicas: 1
   mode: embedding
   contextSize: 32768
