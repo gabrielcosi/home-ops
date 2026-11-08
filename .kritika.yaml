@@ -27,7 +27,7 @@ rules:
     rule: >-
       Render every HelmRelease the change touches before judging what it produces. Call the run tool with command
       "flate" alone and the arguments as separate elements: ["build", "hr", "<name>", "--path", "kubernetes/apps",
-      "-n", "<namespace>", "--allow-missing-secrets", "--no-progress"]. Read rollout strategy, labels, ports,
+      "-n", "<namespace>", "--no-progress"]. Read rollout strategy, labels, ports,
       resource names and every other chart default from that output, with grep on the kept file when it is cut.
       A claim about what the chart produces that no successful render backs is not a finding: a value absent from
       the repository's YAML says nothing about the chart's default. When the render fails or returns nothing,
@@ -42,5 +42,5 @@ context:
 comments:
   summary: .agents/kritika/summary.md.tmpl
 tools:
-  "aqua:home-operations/flate": "v0.6.5" # renovate: github-releases=home-operations/flate
+  "aqua:home-operations/flate": "v0.7.0" # renovate: github-releases=home-operations/flate
   "aqua:google/go-containerregistry": "v0.22.1" # renovate: github-releases=google/go-containerregistry

@@ -34,7 +34,7 @@ jobs:
           set -euo pipefail
           base=$(git merge-base "${BASE_SHA}" HEAD)
           rendered=$(flate diff images --path ./kubernetes/flux/cluster --base "${base}" \
-            --allow-missing-secrets --no-progress --output json)
+            --no-progress --output json)
           referenced=$(git diff --unified=0 "${base}" HEAD -- kubernetes \
             | { grep -E '^\+[^+]' || true; } \
             | { grep -oE '[a-z0-9.-]+\.[a-z]{2,}(:[0-9]+)?/[a-z0-9._/-]+:[A-Za-z0-9._-]+@sha256:[0-9a-f]{64}' || true; } \

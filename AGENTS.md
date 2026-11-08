@@ -34,11 +34,11 @@ Allowed (non-mutating): `flate test|build|diff`, `just kube view-secret`, `just 
 
 ## Validate changes — `flate`, from repo root
 
-flate renders what Flux applies (Kustomizations + HelmReleases + `postBuild` substitutions + components + OCI/Helm/Git sources). Pass `--allow-missing-secrets` locally so ExternalSecret-backed apps render without their auth Secrets.
+flate renders what Flux applies (Kustomizations + HelmReleases + `postBuild` substitutions + components + OCI/Helm/Git sources).
 
-- Whole tree (PASS/FAIL per object, non-zero exit on failure): `flate test all --path ./kubernetes --allow-missing-secrets`
+- Whole tree (PASS/FAIL per object, non-zero exit on failure): `flate test all --path ./kubernetes`
 - Change vs a baseline branch (git-to-git, not the live cluster): `flate diff all --path ./kubernetes --base main`
-- Render one app: `flate build hr --path ./kubernetes <app> --allow-missing-secrets` (or `build ks --namespace <ns> <app>`)
+- Render one app: `flate build hr --path ./kubernetes <app>` (or `build ks --namespace <ns> <app>`)
 
 kritika reviews every PR, with `flate` installed to render its Flux changes; on Renovate's it follows `.agents/skills/renovate/SKILL.md` and its confidence score gates automerge through the `Kritika / Review` check. Its repository settings live in `.kritika.yaml`.
 
