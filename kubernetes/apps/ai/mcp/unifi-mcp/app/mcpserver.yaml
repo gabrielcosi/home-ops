@@ -16,8 +16,8 @@ spec:
       value: "true"
     - name: UNIFI_MCP_HOST
       value: 0.0.0.0
-    - name: UNIFI_MCP_ALLOWED_HOSTS
-      value: mcp-unifi-mcp
+    - name: UNIFI_MCP_ENABLE_DNS_REBINDING_PROTECTION
+      value: "false"
     - name: UNIFI_REQUIRE_PREVIEW_TOKEN
       value: "true"
   secrets:
