@@ -122,10 +122,6 @@ platforms:
   telegram:
     enabled: true
 
-mcp_servers:
-  mcps:
-    url: https://mcp.xcd.dev/mcp
-
 web:
   search_backend: searxng
   extract_backend: crawl4ai

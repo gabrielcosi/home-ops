@@ -8,6 +8,13 @@ spec:
   transport: streamable-http
   groupRef:
     name: mcp-tools
+  resourceOverrides:
+    proxyDeployment:
+      env:
+        - name: TOOLHIVE_SKIP_UPDATE_CHECK
+          value: "true"
+        - name: TOOLHIVE_USAGE_METRICS_ENABLED
+          value: "false"
   telemetryConfigRef:
     name: prometheus
     serviceName: outline-mcp

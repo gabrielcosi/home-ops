@@ -4,8 +4,47 @@ kind: VirtualMCPServer
 metadata:
   name: mcp-gateway
 spec:
+  authServerConfig:
+    issuer: https://mcp.xcd.dev
+    signingKeySecretRefs:
+      - name: toolhive-vmcp-secrets
+        key: AUTH_SIGNING_KEY
+    hmacSecretRefs:
+      - name: toolhive-vmcp-secrets
+        key: AUTH_HMAC_KEY
+    baselineClientScopes:
+      - openid
+      - offline_access
+    tokenLifespans:
+      accessTokenLifespan: 1h
+      refreshTokenLifespan: 720h
+    upstreamProviders:
+      - name: authentik
+        type: oidc
+        oidcConfig:
+          issuerUrl: https://auth.xcd.dev/application/o/toolhive/
+          clientId: toolhive
+          clientSecretRef:
+            name: toolhive-vmcp-secrets
+            key: OIDC_CLIENT_SECRET
+          redirectUri: https://mcp.xcd.dev/oauth/callback
+          allowPrivateIPs: true
+          scopes:
+            - openid
+            - profile
+            - email
+            - offline_access
   incomingAuth:
-    type: anonymous
+    type: oidc
+    oidcConfigRef:
+      name: mcp-gateway
+      audience: https://mcp.xcd.dev/
+      resourceUrl: https://mcp.xcd.dev/
+      scopes:
+        - openid
+        - profile
+        - email
+        - offline_access
   outgoingAuth:
     source: discovered
   serviceType: ClusterIP

@@ -11,6 +11,10 @@ spec:
   env:
     - name: HOMEASSISTANT_URL
       value: https://home.xcd.dev
+    - name: HA_MCP_DISABLE_UPDATE_CHECK
+      value: "true"
+    - name: FASTMCP_CHECK_FOR_UPDATES
+      value: "off"
   secrets:
     - name: ha-mcp-token
       key: HOMEASSISTANT_TOKEN
@@ -26,6 +30,13 @@ spec:
       volumes:
         - name: tmp
           emptyDir: {}
+  resourceOverrides:
+    proxyDeployment:
+      env:
+        - name: TOOLHIVE_SKIP_UPDATE_CHECK
+          value: "true"
+        - name: TOOLHIVE_USAGE_METRICS_ENABLED
+          value: "false"
   telemetryConfigRef:
     name: prometheus
     serviceName: ha-mcp

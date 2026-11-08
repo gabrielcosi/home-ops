@@ -1,0 +1,48 @@
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: outline-mcp
+  namespace: ai
+spec:
+  description: Restrict the outline-mcp proxy to the mcp-gateway vMCP and vmagent ingress, and egress to the internal gateway proxies and the API server.
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/instance: outline-mcp
+      app.kubernetes.io/name: mcpremoteproxy
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: ai
+            k8s:app.kubernetes.io/name: virtualmcpserver
+            k8s:app.kubernetes.io/instance: mcp-gateway
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: monitoring
+            k8s:app.kubernetes.io/name: vmagent
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: network
+            k8s:app.kubernetes.io/managed-by: envoy-gateway
+            k8s:gateway.envoyproxy.io/owning-gateway-name: envoy-internal
+    - fromEntities:
+        - kube-apiserver
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: network
+            k8s:app.kubernetes.io/managed-by: envoy-gateway
+            k8s:gateway.envoyproxy.io/owning-gateway-name: envoy-internal
+      toPorts:
+        - ports:
+            - port: "10443"
+              protocol: TCP
+    - toEntities:
+        - kube-apiserver
+      toPorts:
+        - ports:
+            - port: "6443"
+              protocol: TCP
