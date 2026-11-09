@@ -27,6 +27,13 @@ spec:
 
     replicaCount: 1
 
+    resources:
+      requests:
+        cpu: 5m
+        memory: 64Mi
+      limits:
+        memory: 256Mi
+
     forgejo:
       url: http://forgejo-http.forgejo.svc.cluster.local:3000
       existingSecret: runner-secret
