@@ -42,6 +42,8 @@ spec:
     defaultRules:
       create: true
       rules:
+        KubeHpaMaxedOut:
+          create: false
         RecordingRulesNoData:
           create: false
         KubeAPIDown:
