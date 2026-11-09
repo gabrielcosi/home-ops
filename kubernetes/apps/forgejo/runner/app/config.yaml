@@ -1,8 +1,8 @@
 cache:
   enabled: true
-  dir: /data/cache
-  port: 8088
+  external_server: http://runner-cache.forgejo.svc.cluster.local:8088/
   proxy_port: 8089
+  secret_url: file:///etc/forgejo-runner-secret/cache
 container:
   docker_host: "-"
   workdir_parent: shared/workdir

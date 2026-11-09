@@ -1,0 +1,79 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: runner-cache
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: runner-cache
+  interval: 1h
+  values:
+    controllers:
+      runner-cache:
+        annotations:
+          reloader.stakater.com/auto: 'true'
+        strategy: Recreate
+
+        pod:
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            fsGroup: 1000
+            fsGroupChangePolicy: OnRootMismatch
+            seccompProfile:
+              type: RuntimeDefault
+
+        containers:
+          app:
+            image:
+              repository: data.forgejo.org/forgejo/runner
+              tag: 13.2.1@sha256:568cea8c15ddc01fc8f330124892f572af7db37fa28344a2c1914405793bf61d
+            command:
+              - /bin/forgejo-runner
+            args:
+              - cache-server
+              - --dir
+              - /cache
+              - --port
+              - '8088'
+              - --secret
+              - $(CACHE_SECRET)
+            env:
+              CACHE_SECRET:
+                valueFrom:
+                  secretKeyRef:
+                    name: runner-secret
+                    key: cache
+            probes:
+              liveness:
+                enabled: true
+              readiness:
+                enabled: true
+            resources:
+              requests:
+                cpu: 10m
+                memory: 64Mi
+              limits:
+                memory: 512Mi
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities:
+                drop: ['ALL']
+
+    service:
+      app:
+        ports:
+          http:
+            port: 8088
+
+    persistence:
+      cache:
+        type: persistentVolumeClaim
+        accessMode: ReadWriteOnce
+        size: 20Gi
+        storageClass: ceph-block
+        globalMounts:
+          - path: /cache

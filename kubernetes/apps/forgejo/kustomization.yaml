@@ -9,4 +9,5 @@ resources:
   - ./namespace.yaml
   - ./forgejo/ks.yaml
   - ./runner/ks.yaml
+  - ./runner-cache/ks.yaml
   - ./runner-shirley/ks.yaml
