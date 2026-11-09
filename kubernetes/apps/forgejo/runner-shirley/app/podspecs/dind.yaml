@@ -1,6 +1,25 @@
 initContainers:
+  - name: format
+    image: ghcr.io/bjw-s-labs/forgejo-runner:ubuntu-24.04@sha256:fea96a5b525857bee41cc132cf95df67191b73cdd681569ada3000111420397e
+    command:
+      - sh
+      - -c
+      - truncate -s 20G /disk/docker.img && mkfs.ext4 -q -F -m0 /disk/docker.img
+    resources:
+      requests:
+        cpu: 100m
+        memory: 64Mi
+      limits:
+        memory: 512Mi
+    volumeMounts:
+      - name: docker-storage
+        mountPath: /disk
   - name: dind
     image: docker:29-dind
+    command:
+      - sh
+      - -c
+      - mount -o loop -o discard /disk/docker.img /var/lib/docker && exec dockerd-entrypoint.sh
     restartPolicy: Always
     securityContext:
       privileged: true
@@ -13,10 +32,10 @@ initContainers:
         memory: 512Mi
       limits:
         cpu: 1
-        memory: 3Gi
+        memory: 2Gi
     volumeMounts:
       - name: docker-storage
-        mountPath: /var/lib/docker
+        mountPath: /disk
       - name: docker-certs
         mountPath: /certs
     startupProbe:
@@ -62,8 +81,7 @@ affinity:
 volumes:
   - name: docker-storage
     emptyDir:
-      medium: Memory
-      sizeLimit: 2Gi
+      sizeLimit: 20Gi
   - name: docker-certs
     emptyDir: {}
 restartPolicy: Never
