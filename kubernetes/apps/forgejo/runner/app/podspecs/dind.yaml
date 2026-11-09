@@ -32,7 +32,7 @@ initContainers:
         memory: 1Gi
       limits:
         cpu: 2
-        memory: 2Gi
+        memory: 4Gi
     volumeMounts:
       - name: docker-storage
         mountPath: /disk
