@@ -25,7 +25,7 @@ spec:
     nameOverride: runner
     fullnameOverride: runner
 
-    replicaCount: 2
+    replicaCount: 1
 
     forgejo:
       url: http://forgejo-http.forgejo.svc.cluster.local:3000

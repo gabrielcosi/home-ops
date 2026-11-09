@@ -1,0 +1,47 @@
+---
+apiVersion: keda.sh/v1alpha1
+kind: TriggerAuthentication
+metadata:
+  name: runner-keda
+  namespace: forgejo
+spec:
+  secretTargetRef:
+    - parameter: token
+      name: runner-keda
+      key: token
+---
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: runner
+  namespace: forgejo
+spec:
+  scaleTargetRef:
+    name: runner
+  minReplicaCount: 1
+  maxReplicaCount: 2
+  pollingInterval: 15
+  advanced:
+    horizontalPodAutoscalerConfig:
+      behavior:
+        scaleDown:
+          stabilizationWindowSeconds: 180
+    scalingModifiers:
+      target: "1"
+      metricType: AverageValue
+      formula: "active > 0 && wrk > 0 ? 2 : 1"
+  triggers:
+    - type: forgejo-runner
+      name: active
+      authenticationRef:
+        name: runner-keda
+      metadata:
+        address: http://forgejo-http.forgejo.svc.cluster.local:3000
+        global: "true"
+        labels: ubuntu-latest,default,docker
+    - type: prometheus
+      name: wrk
+      metadata:
+        serverAddress: http://vmsingle-victoria-metrics-cluster.monitoring.svc.cluster.local:8428
+        query: max(kube_node_status_condition{node="wrk-01",condition="Ready",status="true"})
+        threshold: "1"

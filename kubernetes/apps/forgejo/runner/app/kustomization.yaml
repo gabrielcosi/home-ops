@@ -6,6 +6,7 @@ resources:
   - ./helmrelease.yaml
   - ./externalsecret.yaml
   - ./netpol.yaml
+  - ./scaledobject.yaml
 
 configMapGenerator:
   - name: runner-values
