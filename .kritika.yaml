@@ -9,8 +9,14 @@ review:
   model: bifrost/anthropic/claude-sonnet-5-5
   fallback: bifrost/opencode/deepseek-v4.1-flash
   effort: high
+  agents:
+    - name: deps
+      model: bifrost/opencode/deepseek-v4.1-flash
+      when:
+        - { name: renovate, expr: pr.bot }
 confidence:
-  model: bifrost/anthropic/claude-sonnet-5-5
+  model: bifrost/opencode/glm-5.3-flash
+  fallback: bifrost/opencode/deepseek-v4.1-flash
   threshold: 4
   when:
     - name: renovate
