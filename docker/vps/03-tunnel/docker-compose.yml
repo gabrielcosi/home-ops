@@ -20,11 +20,13 @@ services:
       TOWONEL_HUB_PUBLIC_URL: https://towonel.xcd.dev
       TOWONEL_EDGE_ENABLED: "true"
       TOWONEL_EDGE_HEALTH_LISTEN_ADDR: 0.0.0.0:9092
+      TOWONEL_EDGE_HTTP_LISTEN_ADDR: 0.0.0.0:4480
       TOWONEL_EDGE_IROH_PORT: "51820"
       TOWONEL_EDGE_LISTEN_ADDR: 0.0.0.0:4443
       TOWONEL_EDGE_PROXY_PROTOCOL: "true"
     expose:
       - "4443"
+      - "4480"
       - "8443"
     ports:
       - "22:2222"

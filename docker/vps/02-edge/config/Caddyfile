@@ -34,6 +34,15 @@
 					upstream 127.0.0.1:8080
 				}
 			}
+
+			# Everything else → the towonel edge's plain-HTTP listener → home.
+			@http http
+			route @http {
+				proxy {
+					proxy_protocol v2
+					upstream towonel-hub:4480
+				}
+			}
 		}
 	}
 

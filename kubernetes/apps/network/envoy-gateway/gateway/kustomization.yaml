@@ -7,4 +7,5 @@ resources:
   - ./certificate.yaml
   - ./trafficpolicy.yaml
   - ./gateway.yaml
+  - ./httproute.yaml
   - ./securitypolicy.yaml
