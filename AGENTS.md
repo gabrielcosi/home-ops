@@ -18,7 +18,7 @@ Homelab infrastructure-as-code. Work from the repo root.
 - `talosctl` (1.13.x) for Talos machine config, via `just talos` (render/validate/apply); `op` (1Password CLI) for secret material.
 - Cluster reads use read-only `kubectl` (`get`/`describe`/`logs`).
 - Outline wiki via `outline-mcp` tools — for a `https://docs.xcd.dev/` link use `outline-mcp_fetch` (`resource: "document"`); search with `outline-mcp_list_documents`.
-- Self-hosted Forgejo (`git.xcd.dev`) via the `tea` CLI, not WebFetch (auth-gated): for any `git.xcd.dev/<owner>/<repo>` link use e.g. `tea pr <n> --repo <owner>/<repo>`. Read-only subcommands by default.
+- Self-hosted Forgejo (`git.xcd.dev`) via the `fjo` CLI, not WebFetch (auth-gated): for any `git.xcd.dev/<owner>/<repo>` link use e.g. `fjo pr view <n> -R <owner>/<repo>`, or pass the link itself. Read-only subcommands by default.
 
 ## Safety — read/validate-only by default
 
