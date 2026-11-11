@@ -42,7 +42,7 @@ metadata:
 spec:
   modelRef: d3-flash
   runtime: vllm
-  image: docker.io/vllm/vllm-openai:nightly@sha256:390a656b54e12144ad15ff32244c6e848408b0ee94f2c4c5a84451e7430f1aa7 # renovate: docker=docker.io/vllm/vllm-openai
+  image: docker.io/vllm/vllm-openai:nightly@sha256:902b49de0568ba5a5c951b0243bc06ef8541f46bc3eb80832961fefb22a19034 # renovate: docker=docker.io/vllm/vllm-openai
   replicas: 1
   containerPort: 8080
   parallelSlots: 4
