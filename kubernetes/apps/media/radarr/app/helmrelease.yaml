@@ -99,17 +99,10 @@ spec:
             app:
               - path: /config
 
-      downloads:
-        type: nfs
-        server: tank.internal
-        path: /mnt/home-pool/library/downloads
-        globalMounts:
-          - path: /downloads
-
       media:
         type: nfs
         server: tank.internal
-        path: /mnt/home-pool/library/media
+        path: /mnt/home-pool/library
         globalMounts:
           - path: /media
 
