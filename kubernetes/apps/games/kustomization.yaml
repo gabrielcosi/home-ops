@@ -4,7 +4,6 @@ kind: Kustomization
 namespace: games
 components:
   - ../../components/flux-alerts
-  - ../../components/kopiur/secret
 resources:
   - ./namespace.yaml
   - ./minecraft/ks.yaml

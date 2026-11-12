@@ -4,7 +4,6 @@ kind: Kustomization
 namespace: media
 components:
   - ../../components/flux-alerts
-  - ../../components/kopiur/secret
 resources:
   - ./namespace.yaml
   - ./bazarr/ks.yaml

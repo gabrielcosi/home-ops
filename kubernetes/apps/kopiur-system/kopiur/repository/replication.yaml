@@ -1,0 +1,21 @@
+---
+apiVersion: kopiur.home-operations.com/v1alpha1
+kind: RepositoryReplication
+metadata:
+  name: rustfs
+spec:
+  sourceRef:
+    kind: ClusterRepository
+    name: nas
+  destination:
+    s3:
+      auth:
+        secretRef:
+          name: kopiur-nas-secret
+          namespace: kopiur-system
+      bucket: kopiur-backup
+      endpoint: s3.xcd.dev
+  schedule:
+    cron: "15 * * * *"
+  sync:
+    parallel: 8

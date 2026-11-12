@@ -10,6 +10,9 @@ spec:
   interval: 1h
   values:
     installScope: cluster
+    features:
+      credentialProjection:
+        enabled: true
     extraVolumes:
       - name: repo
         nfs:
