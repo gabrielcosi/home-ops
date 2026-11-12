@@ -7,7 +7,7 @@ trigger:
         pr.bot && ["registry.xcd.dev/gabrielcosi/", "registry.xcd.dev/shirleyrossell/"].exists(p, pr.title.contains(p) || pr.body.contains(p))
 review:
   model: bifrost/anthropic/claude-sonnet-5-5
-  fallback: bifrost/opencode/deepseek-v4.1-flash
+  fallback: bifrost/proxyapi/claude-sonnet-5-5
   effort: high
   agents:
     - name: deps
