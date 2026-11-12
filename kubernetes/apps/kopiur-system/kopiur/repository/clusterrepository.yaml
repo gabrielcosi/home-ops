@@ -7,12 +7,13 @@ spec:
   allowedNamespaces:
     all: true
   backend:
-    filesystem:
-      path: /repo
-      volume:
-        nfs:
-          server: tank.internal
-          path: /mnt/fast-pool/kopiur
+    s3:
+      auth:
+        secretRef:
+          name: kopiur-nas-secret
+          namespace: kopiur-system
+      bucket: kopiur-backup
+      endpoint: s3.xcd.dev
   credentialProjection:
     allowed: true
   encryption:
