@@ -4,22 +4,22 @@ initContainers:
     command:
       - sh
       - -c
-      - truncate -s 20G /disk/docker.img && mkfs.ext4 -q -F -m0 /disk/docker.img
+      - mkfs.ext4 -q -F -m0 /dev/docker-disk
     resources:
       requests:
         cpu: 100m
         memory: 64Mi
       limits:
         memory: 512Mi
-    volumeMounts:
+    volumeDevices:
       - name: docker-storage
-        mountPath: /disk
+        devicePath: /dev/docker-disk
   - name: dind
     image: docker:29-dind
     command:
       - sh
       - -c
-      - mount -o loop -o discard /disk/docker.img /var/lib/docker && exec dockerd-entrypoint.sh
+      - mount -o discard /dev/docker-disk /var/lib/docker && exec dockerd-entrypoint.sh
     restartPolicy: Always
     securityContext:
       privileged: true
@@ -33,9 +33,10 @@ initContainers:
       limits:
         cpu: 2
         memory: 4Gi
-    volumeMounts:
+    volumeDevices:
       - name: docker-storage
-        mountPath: /disk
+        devicePath: /dev/docker-disk
+    volumeMounts:
       - name: docker-certs
         mountPath: /certs
     startupProbe:
@@ -80,8 +81,16 @@ affinity:
               operator: DoesNotExist
 volumes:
   - name: docker-storage
-    emptyDir:
-      sizeLimit: 20Gi
+    ephemeral:
+      volumeClaimTemplate:
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          storageClassName: miroir-local
+          volumeMode: Block
+          resources:
+            requests:
+              storage: 20Gi
   - name: docker-certs
     emptyDir: {}
 restartPolicy: Never
