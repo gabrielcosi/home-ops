@@ -61,3 +61,19 @@ spec:
             summary: Hubble metrics on {{ $labels.node }} are {{ $value | humanize1024 }}B per scrape. This may lead to vmagent dropping the target.
           labels:
             severity: warning
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: zfs
+spec:
+  groups:
+    - name: zfs
+      rules:
+        - alert: ZfsUnexpectedPoolState
+          expr: node_zfs_zpool_state{state!="online"} > 0
+          for: 15m
+          annotations:
+            summary: ZFS pool {{ $labels.zpool }} on {{ $labels.instance }} is {{ $labels.state }}
+          labels:
+            severity: critical
