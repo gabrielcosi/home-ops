@@ -34,8 +34,6 @@ spec:
         cron: "0 3 * * *"
         jitter: "1h"
   moverDefaults:
-    nodeSelector:
-      node-role.kubernetes.io/control-plane: ""
     securityContext:
       runAsUser: 1000
       runAsGroup: 1000
