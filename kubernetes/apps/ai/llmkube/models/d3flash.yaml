@@ -77,7 +77,7 @@ spec:
     - name: state
       mountPath: /state
   modelCache:
-    storageClassName: miroir-client
+    storageClassName: miroir-local
   podSecurityContext:
     runAsNonRoot: true
     runAsUser: 1000
@@ -99,7 +99,7 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
-  storageClassName: miroir-client
+  storageClassName: miroir-local
   resources:
     requests:
       storage: 2Gi

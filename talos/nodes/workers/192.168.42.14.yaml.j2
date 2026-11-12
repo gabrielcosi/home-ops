@@ -8,3 +8,11 @@ provisioning:
 apiVersion: v1alpha1
 kind: HostnameConfig
 hostname: wrk-01
+---
+apiVersion: v1alpha1
+kind: RawVolumeConfig
+name: miroir
+provisioning:
+  diskSelector:
+    match: disk.model == "Samsung SSD 9100 PRO 2TB" && !system_disk
+  minSize: 2TB

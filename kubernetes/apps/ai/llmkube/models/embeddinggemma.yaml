@@ -46,7 +46,7 @@ spec:
     - name: GLIBC_TUNABLES
       value: glibc.malloc.hugetlb=1
   modelCache:
-    storageClassName: miroir-client
+    storageClassName: miroir-local
   podSecurityContext:
     runAsNonRoot: true
     runAsUser: 1000

@@ -64,7 +64,7 @@ spec:
       mode: perService
       prep: never
       size: 32Gi
-      storageClass: miroir-client
+      storageClass: miroir-local
     modelSource:
       allowedRemoteHosts:
         - s3.xcd.dev
