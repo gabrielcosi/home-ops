@@ -25,5 +25,7 @@ runner:
     - ubuntu-latest:k8s:/config/podspec-default.yaml
     - default:k8s:/config/podspec-default.yaml
     - docker:k8s:/config/podspec-dind.yaml
+    - large:k8s:/config/podspec-large.yaml
+    - docker-large:k8s:/config/podspec-dindlarge.yaml
   timeout: 3h
   shutdown_timeout: 4m

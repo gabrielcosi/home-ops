@@ -28,8 +28,8 @@ initContainers:
         value: /certs
     resources:
       requests:
-        cpu: 500m
-        memory: 1Gi
+        cpu: 750m
+        memory: 2560Mi
       limits:
         cpu: 2
         memory: 4Gi

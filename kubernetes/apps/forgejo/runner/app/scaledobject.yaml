@@ -38,7 +38,7 @@ spec:
       metadata:
         address: http://forgejo-http.forgejo.svc.cluster.local:3000
         global: "true"
-        labels: ubuntu-latest,default,docker
+        labels: ubuntu-latest,default,docker,large,docker-large
     - type: prometheus
       name: wrk
       metadata:

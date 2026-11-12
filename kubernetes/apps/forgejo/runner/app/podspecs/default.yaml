@@ -7,11 +7,11 @@ containers:
         value: noninteractive
     resources:
       requests:
-        cpu: 500m
-        memory: 4Gi
+        cpu: 1
+        memory: 2Gi
       limits:
         cpu: 4
-        memory: 8Gi
+        memory: 6Gi
     volumeMounts:
       - name: shared
         mountPath: /shared
