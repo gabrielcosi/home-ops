@@ -13,14 +13,6 @@ spec:
     features:
       credentialProjection:
         enabled: true
-    extraVolumes:
-      - name: repo
-        nfs:
-          server: tank.internal
-          path: /mnt/fast-pool/kopiur
-    extraVolumeMounts:
-      - name: repo
-        mountPath: /repo
     podSecurityContext:
       runAsNonRoot: true
       runAsUser: 1000
