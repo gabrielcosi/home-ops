@@ -69,6 +69,18 @@ containers:
       - name: docker-certs
         mountPath: /certs
         readOnly: true
+      - name: shared
+        mountPath: /shared
+        subPath: workspace
+      - name: shared
+        mountPath: /root/.cache
+        subPath: cache
+      - name: shared
+        mountPath: /root/.local/share/mise
+        subPath: mise
+      - name: shared
+        mountPath: /root/go
+        subPath: go
 runtimeClassName: kata
 priorityClassName: batch-low
 affinity:
@@ -80,6 +92,16 @@ affinity:
             - key: node-role.kubernetes.io/control-plane
               operator: DoesNotExist
 volumes:
+  - name: shared
+    ephemeral:
+      volumeClaimTemplate:
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          storageClassName: miroir-local
+          resources:
+            requests:
+              storage: 20Gi
   - name: docker-storage
     ephemeral:
       volumeClaimTemplate:
