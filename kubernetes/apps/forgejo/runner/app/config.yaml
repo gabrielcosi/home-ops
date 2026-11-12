@@ -15,7 +15,7 @@ plugins:
     address: "unix:///plugin/forgejo-runner-k8s.sock"
     options:
       namespace: forgejo
-      poll_timeout: 10m
+      poll_timeout: 20m
       labels: "app.kubernetes.io/name=runner-instance"
 runner:
   capacity: 4
@@ -28,4 +28,4 @@ runner:
     - large:k8s:/config/podspec-large.yaml
     - docker-large:k8s:/config/podspec-dindlarge.yaml
   timeout: 3h
-  shutdown_timeout: 4m
+  shutdown_timeout: 15m
