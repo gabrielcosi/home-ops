@@ -42,6 +42,7 @@ services:
       RCLONE_CONFIG_BOXCRYPT_PASSWORD2: ${OFFSITE_CRYPT_SALT}
     labels:
       cd.doco.job.enabled: "true"
+      cd.doco.job.execution_mode: one_off
       cd.doco.job.schedule: "0 */6 * * *"
       cd.doco.job.skip_running: "true"
     read_only: true
