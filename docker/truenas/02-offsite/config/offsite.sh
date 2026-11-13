@@ -2,11 +2,11 @@
 set -eu
 
 printf '%s\n' "${OFFSITE_BOX_KNOWN_HOSTS}" > /tmp/known_hosts
-printf '%s\n' "${OFFSITE_BUCKETS}" > /tmp/buckets
+printf '%s\n' "${OFFSITE_BUCKETS}" | tr -d ' \t\r' | tr ',' '\n' > /tmp/buckets
 
 failed=0
 listed=0
-while read -r bucket mode; do
+while IFS=: read -r bucket mode; do
   [ -n "${bucket}" ] || continue
   listed=$((listed + 1))
 
