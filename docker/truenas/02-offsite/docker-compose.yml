@@ -16,6 +16,8 @@ services:
       RCLONE_CACHE_DIR: /tmp/rclone
       RCLONE_TRANSFERS: "4"
       RCLONE_CHECKERS: "4"
+      TZ: Europe/Berlin
+      RCLONE_BWLIMIT: "08:00,3M 00:00,off"
       RCLONE_BUFFER_SIZE: 16M
       RCLONE_FAST_LIST: "true"
       RCLONE_STATS: 10m
@@ -40,7 +42,7 @@ services:
       RCLONE_CONFIG_BOXCRYPT_PASSWORD2: ${OFFSITE_CRYPT_SALT}
     labels:
       cd.doco.job.enabled: "true"
-      cd.doco.job.schedule: "0 3 * * *"
+      cd.doco.job.schedule: "0 */6 * * *"
       cd.doco.job.skip_running: "true"
     read_only: true
     cap_drop:
