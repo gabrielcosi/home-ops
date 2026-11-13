@@ -27,7 +27,7 @@ spec:
             nameOverride: n8n
             image:
               repository: ghcr.io/n8n-io/n8n
-              tag: 3.1.0@sha256:6e9f220e9cf0d2f17d3c2371c8d8a6fe6720f99b82a9672afb96bf068cfd04a5
+              tag: 3.2.2@sha256:c5d94cb443ff3d7b3abd65927fd8c9af1281f026ebfed9b208cf8d0f6b199a94
             env:
               N8N_LOG_LEVEL: debug
               TZ: Europe/Berlin
@@ -98,7 +98,7 @@ spec:
           task-runner:
             image:
               repository: ghcr.io/n8n-io/runners
-              tag: 3.1.0@sha256:730c78a31b9d5711319fff053a18e98ba5265f11769c88d1917506e9b33d2616
+              tag: 3.2.2@sha256:7e64bb2cbcfddf644dbb1f6ef703ce6e70adf8880f6494c870dcc54aa976f099
             env:
               GENERIC_TIMEZONE: Europe/Berlin
               N8N_RUNNERS_AUTH_TOKEN:
