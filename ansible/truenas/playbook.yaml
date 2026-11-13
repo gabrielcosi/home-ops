@@ -63,8 +63,8 @@
           loop:
             - name: 1pw_token
               content: '{{ op_sa_token }}'
-            - name: api_secret
-              content: '{{ api_secret }}'
+            - name: api_keys
+              content: "{{ [{'key': api_secret, 'role': 'write'}] | to_json }}"
             - name: webhook_secret
               content: '{{ webhook_secret }}'
 
