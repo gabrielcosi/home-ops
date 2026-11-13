@@ -9,6 +9,6 @@ spec:
     mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
     operation: copy
   ref:
-    tag: 1.104.4
-    digest: sha256:3ea22d57ad38ab0486a095cfeb9709e654e8f4ac26fcfea2deaded1ac7661c20
+    tag: 1.104.7
+    digest: sha256:ac1273fe1a83d944bd55bdeb1ede082db90c54754a1feeb7c2a1f773490575f3
   url: oci://registry.xcd.dev/x/pkgs.tailscale.com/helmcharts/tailscale-operator
