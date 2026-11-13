@@ -6,7 +6,7 @@ x-logging: &default-logging
     max-file: "3"
 services:
   towonel-hub:
-    image: git.ow-ops.eu/towonel/towonel-node:1.13.6@sha256:18af643c3bb10fd6610a155f00d67d12dcae8a5f3f5947ac65ca589f7d357f9b
+    image: git.ow-ops.eu/towonel/towonel-node:1.13.7@sha256:42b66de4a9f4fe820bcd2b785971044b2284dde70829ac6f7735ee71caa4970e
     container_name: towonel-hub
     restart: unless-stopped
     user: "10001:10001"
