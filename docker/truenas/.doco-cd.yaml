@@ -10,3 +10,12 @@ auto_discovery:
 force_recreate: false
 external_secrets:
   TRUENAS_MONITORING_PASSWORD: 'op://truenas/monitoring/ingest_password'
+  OFFSITE_BUCKETS: 'op://truenas/offsite/buckets'
+  OFFSITE_S3_ACCESS_KEY_ID: 'op://truenas/offsite/s3_access_key_id'
+  OFFSITE_S3_SECRET_ACCESS_KEY: 'op://truenas/offsite/s3_secret_access_key'
+  OFFSITE_BOX_HOST: 'op://truenas/offsite/box_host'
+  OFFSITE_BOX_USER: 'op://truenas/offsite/box_user'
+  OFFSITE_BOX_PASS: 'op://truenas/offsite/box_pass'
+  OFFSITE_BOX_KNOWN_HOSTS: 'op://truenas/offsite/box_known_hosts'
+  OFFSITE_CRYPT_PASSWORD: 'op://truenas/offsite/crypt_password'
+  OFFSITE_CRYPT_SALT: 'op://truenas/offsite/crypt_salt'

@@ -1,0 +1,62 @@
+---
+name: offsite
+
+services:
+  rclone:
+    image: docker.io/rclone/rclone:1.75.2@sha256:2687085f718d3c628f7fdfb77c52a1d344332aed543110bb88088f2c70d43eb5
+    container_name: offsite-rclone
+    restart: "no"
+    network_mode: host
+    user: "65534:65534"
+    entrypoint: ["/bin/sh", "/config/offsite.sh"]
+    environment:
+      OFFSITE_BUCKETS: ${OFFSITE_BUCKETS}
+      OFFSITE_BOX_KNOWN_HOSTS: ${OFFSITE_BOX_KNOWN_HOSTS}
+      GOMEMLIMIT: 900MiB
+      RCLONE_CACHE_DIR: /tmp/rclone
+      RCLONE_TRANSFERS: "4"
+      RCLONE_CHECKERS: "4"
+      RCLONE_BUFFER_SIZE: 16M
+      RCLONE_FAST_LIST: "true"
+      RCLONE_STATS: 10m
+      RCLONE_STATS_ONE_LINE: "true"
+      RCLONE_STATS_LOG_LEVEL: NOTICE
+      RCLONE_CONFIG_S3_TYPE: s3
+      RCLONE_CONFIG_S3_PROVIDER: Other
+      RCLONE_CONFIG_S3_ENDPOINT: http://192.168.42.20:30292
+      RCLONE_CONFIG_S3_FORCE_PATH_STYLE: "true"
+      RCLONE_CONFIG_S3_ACCESS_KEY_ID: ${OFFSITE_S3_ACCESS_KEY_ID}
+      RCLONE_CONFIG_S3_SECRET_ACCESS_KEY: ${OFFSITE_S3_SECRET_ACCESS_KEY}
+      RCLONE_CONFIG_BOX_TYPE: sftp
+      RCLONE_CONFIG_BOX_HOST: ${OFFSITE_BOX_HOST}
+      RCLONE_CONFIG_BOX_USER: ${OFFSITE_BOX_USER}
+      RCLONE_CONFIG_BOX_PORT: "23"
+      RCLONE_CONFIG_BOX_PASS: ${OFFSITE_BOX_PASS}
+      RCLONE_CONFIG_BOX_KNOWN_HOSTS_FILE: /tmp/known_hosts
+      RCLONE_CONFIG_BOX_CONNECTIONS: "8"
+      RCLONE_CONFIG_BOXCRYPT_TYPE: crypt
+      RCLONE_CONFIG_BOXCRYPT_REMOTE: box:offsite/crypt
+      RCLONE_CONFIG_BOXCRYPT_PASSWORD: ${OFFSITE_CRYPT_PASSWORD}
+      RCLONE_CONFIG_BOXCRYPT_PASSWORD2: ${OFFSITE_CRYPT_SALT}
+    labels:
+      cd.doco.job.enabled: "true"
+      cd.doco.job.schedule: "0 3 * * *"
+      cd.doco.job.skip_running: "true"
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=64m
+    volumes:
+      - ./config/offsite.sh:/config/offsite.sh:ro
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
