@@ -8,14 +8,14 @@ Homelab infrastructure-as-code. Work from the repo root.
 
 - `kubernetes/` — Flux-managed cluster: `HelmRelease` + `OCIRepository`/`HelmRepository`, with reusable Kustomize Components.
 - `talos/` — Talos machine-config rendering (minijinja + `talosctl`).
-- `bootstrap/` — `just` module that brings up a fresh cluster (secrets, CRDs, core apps).
-- `ansible/` + `docker/` — off-cluster nodes (VPS edge). `ansible` provisions them (`just ansible install|deploy <target>`); `docker/` holds their Compose stacks, deployed by doco-cd (compose-GitOps), not Flux.
+- `bootstrap/` — mise tasks that bring up a fresh cluster (secrets, CRDs, core apps).
+- `ansible/` + `docker/` — off-cluster nodes (VPS edge). `ansible` provisions them (`mise run //ansible:install|deploy <target>`); `docker/` holds their Compose stacks, deployed by doco-cd (compose-GitOps), not Flux.
 
 ## Tooling
 
-- `just` is the entrypoint: the root justfile imports the `bootstrap`, `kube`, `talos`, and `ansible` modules (`*/mod.just`). Prefer `just` recipes over their underlying commands. After the user approves a mutating op, answer recipe confirmation prompts with `yes | just <recipe> ...` rather than bypassing the recipe.
+- mise tasks are the entrypoint, in monorepo mode: `ansible/`, `bootstrap/`, `kubernetes/`, and `talos/` each have a `mise.toml`, and `mise tasks --all` lists every task. Prefer tasks over their underlying commands. After the user approves a mutating op, answer the task confirmation with `mise --yes run //<dir>:<task> ...` rather than bypassing the task.
 - `flate` validates Kubernetes manifests — it renders the full Flux pipeline with bundled helm/kustomize/source SDKs (no `helm`/`kustomize`/`flux` binaries).
-- `talosctl` (1.13.x) for Talos machine config, via `just talos` (render/validate/apply); `op` (1Password CLI) for secret material.
+- `talosctl` (1.13.x) for Talos machine config, via `mise run //talos:<task>` (render/validate/apply); `op` (1Password CLI) for secret material.
 - Cluster reads use read-only `kubectl` (`get`/`describe`/`logs`).
 - Outline wiki via `outline-mcp` tools — for a `https://docs.xcd.dev/` link use `outline-mcp_fetch` (`resource: "document"`); search with `outline-mcp_list_documents`.
 - Self-hosted Forgejo (`git.xcd.dev`) via the `fjo` CLI, not WebFetch (auth-gated): for any `git.xcd.dev/<owner>/<repo>` link use e.g. `fjo pr view <n> -R <owner>/<repo>`, or pass the link itself. Read-only subcommands by default.
@@ -26,11 +26,11 @@ Never run commands that change live infrastructure or cluster state. If recovery
 
 Forbidden:
 
-- `just bootstrap cluster|base|apps`
-- Live-mutating `kube` recipes: `apply-ks`, `delete-ks`, `sync`, `prune-pods`, `browse-pvc`, `debug-node`, `maintenance`
-- Mutating `talos` recipes: `apply-node`, `reboot-node`, `reset-node`, `shutdown-node`, `upgrade-node`, `upgrade-k8s`
+- `//bootstrap:cluster` and its hidden stages
+- Live-mutating `//kubernetes` tasks: `apply-ks`, `delete-ks`, `sync`, `prune-pods`, `browse-pvc`, `debug-node`, `maintenance`
+- Mutating `//talos` tasks: `apply-node`, `reboot-node`, `reset-node`, `shutdown-node`, `upgrade-node`, `upgrade-k8s`
 
-Allowed (non-mutating): `flate test|build|diff`, `just kube view-secret`, `just kube render-local-ks`, read-only `kubectl` diagnostics.
+Allowed (non-mutating): `flate test|build|diff`, `mise run //kubernetes:view-secret`, `mise run //kubernetes:render-local-ks`, read-only `kubectl` diagnostics.
 
 ## Validate changes — `flate`, from repo root
 
@@ -46,7 +46,7 @@ kritika reviews every PR, with `flate` installed to render its Flux changes; on 
 
 ### Files & YAML
 
-- 2-space indent (YAML, HCL, justfiles); one resource type per file where practical; no trailing whitespace.
+- 2-space indent (YAML, HCL, TOML); one resource type per file where practical; no trailing whitespace.
 - Filenames: no hyphens, at most 22 characters including the extension. Default to the lowercased kind, singular even when the file holds several objects (`externalsecret.yaml`, `trafficpolicy.yaml`).
 - Where the kind is unwieldy use a short token (`pool.yaml`, `l3.yaml`, `talos.yaml`); in a collection directory name by subject instead (`dashboards/dcgm.yaml`, `netpols/cidrgroup.yaml`). Keep related objects together rather than splitting one kind per file (`vmauth.yaml` holds its `VMUser`s).
 - Key order `apiVersion`, `kind`, `metadata`, `spec`. Explicit `namespace` on namespaced objects. Quote values YAML may coerce (bools, numbers, durations, IDs).

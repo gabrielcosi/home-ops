@@ -1,0 +1,168 @@
+[tasks.apply-ks]
+description = "Apply local Flux Kustomization"
+usage = '''
+arg "<ns>" help="Namespace of the Flux Kustomization"
+arg "<ks>" help="Name of the Flux Kustomization"
+'''
+run = '''
+manifests="$(mise run //kubernetes:render-local-ks "$usage_ns" "$usage_ks")"
+printf '%s\n' "$manifests" | kubectl apply --server-side --force-conflicts --field-manager=kustomize-controller -f -
+'''
+
+[tasks.browse-pvc]
+description = "Browse a PVC"
+interactive = true
+usage = '''
+arg "<ns>" help="Namespace of the PVC"
+arg "<claim>" help="Name of the PVC"
+'''
+run = '''
+kubectl run -n "$usage_ns" "browse-pvc-$usage_claim" -it --rm --restart=Never \
+    --image=mirror.gcr.io/alpine:latest \
+    --overrides='{"spec":{"containers":[{"name":"browse-pvc-{{ usage.claim }}","image":"mirror.gcr.io/alpine:latest","stdin":true,"tty":true,"command":["/bin/sh"],"workingDir":"/mnt","volumeMounts":[{"mountPath":"/mnt","name":"data"}]}],"volumes":[{"name":"data","persistentVolumeClaim":{"claimName":"{{ usage.claim }}"}}]}}'
+'''
+
+[tasks.debug-node]
+description = "Debug a node"
+interactive = true
+usage = 'arg "<node>" help="Name of the node"'
+run = '''
+trap 'kubectl delete pod -n default -l app.kubernetes.io/managed-by=kubectl-debug --field-selector "spec.nodeName=$usage_node" --ignore-not-found --wait=false' EXIT
+kubectl debug "node/$usage_node" -n default -it --image=mirror.gcr.io/alpine:latest --profile=sysadmin
+'''
+
+[tasks.delete-ks]
+description = "Delete local Flux Kustomization"
+usage = '''
+arg "<ns>" help="Namespace of the Flux Kustomization"
+arg "<ks>" help="Name of the Flux Kustomization"
+'''
+run = '''
+manifests="$(mise run //kubernetes:render-local-ks "$usage_ns" "$usage_ks")"
+printf '%s\n' "$manifests" | kubectl delete -f -
+'''
+
+[tasks.maintenance]
+description = "Interactively silence a node or NAS outage cascade in Alertmanager (auto-expiring; never touches Watchdog)"
+interactive = true
+run = '''
+lists='components/alert-lists/configmap.yaml'
+node_alerts=$(yq -r '.data.MAINTENANCE_ALERTS' "$lists")
+gpu_alerts=$(yq -r '.data.GPU_MAINTENANCE_ALERTS' "$lists")
+nas_re='^(LastFailedArchiveTime|KopiurBackupConsecutiveFailures|KopiurBackupStale|KopiurRepositoryNotReady|KopiurRestoreFailed|KopiurSnapshotFailed)$'
+PS3='> '
+echo 'What is going offline for maintenance?'
+select target in node nas quit; do [ -n "${target:-}" ] && break; done
+[ "${target:-}" = node ] || [ "${target:-}" = nas ] || { echo aborted; exit 1; }
+echo 'Action?'
+select action in on off status; do [ -n "${action:-}" ] && break; done
+case "${action:-}" in on|off|status) ;; *) echo aborted; exit 1 ;; esac
+case "$target" in node) re="^($node_alerts)$" ;; nas) re="$nas_re" ;; esac
+hours=4
+node=''
+if [ "$action" = on ] && [ "$target" = node ]; then
+    echo 'Which node?'
+    select node in $(kubectl get nodes -o name | sed 's#^node/##'); do [ -n "${node:-}" ] && break; done
+    if [ "$node" = wrk-01 ]; then re="^($node_alerts|$gpu_alerts)$"; fi
+fi
+if [ "$action" = on ]; then
+    read -r -p 'Silence duration in hours [4]: ' h || true
+    hours="${h:-4}"; [[ "$hours" =~ ^[0-9]+$ ]] || hours=4
+    read -r -p "Silence all $target-outage alerts for ${hours}h? [y/N] " ok || true
+    case "${ok:-}" in y|Y|yes) ;; *) echo aborted; exit 1 ;; esac
+fi
+mise run //kubernetes:maintenance-silence "$re" "maintenance:$target" "$action" "$hours" "$node"
+'''
+
+[tasks.maintenance-silence]
+hide = true
+usage = '''
+arg "<re>"
+arg "<who>"
+arg "<action>"
+arg "<hours>"
+arg "[node]" default=""
+'''
+run = '''
+re="$usage_re"
+who="$usage_who"
+node="${usage_node:-}"
+kubectl -n monitoring port-forward pod/vmalertmanager-victoria-metrics-cluster-0 19093:9093 >/dev/null 2>&1 &
+pf=$!
+trap 'kill $pf 2>/dev/null' EXIT
+base="http://127.0.0.1:19093/api/v2"
+for _ in $(seq 1 60); do curl -sf "$base/status" >/dev/null && break; sleep 0.5; done
+curl -sf "$base/status" >/dev/null || { echo "alertmanager port-forward failed (is vmalertmanager-victoria-metrics-cluster-0 running?)"; exit 1; }
+case "$usage_action" in
+on)
+    existing=$(curl -sS "$base/silences" | jq -r --arg w "$who" '.[]|select(.status.state=="active" and .createdBy==$w)|.id' | head -n1)
+    if [ -n "$existing" ]; then
+        echo "🔕 $who already ON — silence $existing (run off first to change duration)"
+        echo "   end early: mise run //kubernetes:maintenance (select ${who#maintenance:} → off)"
+        exit 0
+    fi
+    start=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+    end=$(date -u -v+"${usage_hours}"H +%Y-%m-%dT%H:%M:%SZ)
+    post() {
+        curl -sS -X POST "$base/silences" -H 'Content-Type: application/json' -d "{\"matchers\":$1,\"startsAt\":\"$start\",\"endsAt\":\"$end\",\"createdBy\":\"$who\",\"comment\":\"$who (${usage_hours}h) via mise\"}" | jq -r .silenceID
+    }
+    id=$(post "[{\"name\":\"alertname\",\"value\":\"$re\",\"isRegex\":true,\"isEqual\":true}]")
+    echo "🔕 $who ON — silence $id (expires $end)"
+    if [ -n "$node" ]; then
+        id=$(post "[{\"name\":\"alertname\",\"value\":\"KubeNodeNotReady\",\"isRegex\":false,\"isEqual\":true},{\"name\":\"node\",\"value\":\"$node\",\"isRegex\":false,\"isEqual\":true}]")
+        echo "🔕 KubeNodeNotReady on $node — silence $id"
+    fi
+    echo "   end early: mise run //kubernetes:maintenance (select ${who#maintenance:} → off)"
+    ;;
+off)
+    n=0
+    for id in $(curl -sS "$base/silences" | jq -r --arg w "$who" '.[]|select(.status.state=="active" and .createdBy==$w)|.id'); do
+        curl -sS -o /dev/null -X DELETE "$base/silence/$id" && echo "🔔 lifted $id" && n=$((n+1))
+    done
+    echo "$who OFF ($n lifted)"
+    ;;
+status)
+    curl -sS "$base/silences" | jq -r '.[]|select(.status.state=="active")|"• \(.createdBy)  ends=\(.endsAt)"'
+    ;;
+esac
+'''
+
+[tasks.prune-pods]
+description = "Prune pods in Failed, Pending, or Succeeded state"
+run = '''
+for phase in Failed Pending Succeeded; do
+    kubectl delete pods -A --field-selector status.phase="$phase" --ignore-not-found=true
+done
+'''
+
+[tasks.sync]
+description = "Sync a resource"
+usage = '''
+arg "<resource>" help="Kind of resource to sync" {
+  choices "hr" "ks" "gitrepo" "ocirepo" "es"
+}
+'''
+run = '''
+kubectl get "$usage_resource" --no-headers -A | while read -r ns name _; do
+    kubectl -n "$ns" annotate --field-manager flux-client-side-apply --overwrite "$usage_resource" "$name" \
+        "force-sync=$(date +%s)" \
+        "reconcile.fluxcd.io/requestedAt=$(date +%s)" \
+        "reconcile.fluxcd.io/forceAt=$(date +%s)"
+done
+'''
+
+[tasks.view-secret]
+description = "View a secret"
+usage = '''
+arg "<ns>" help="Namespace of the secret"
+arg "<secret>" help="Name of the secret"
+'''
+run = 'kubectl view-secret -n "$usage_ns" "$usage_secret"'
+
+[tasks.render-local-ks]
+description = "Render a local Flux Kustomization"
+usage = '''
+arg "<ns>" help="Namespace of the Flux Kustomization"
+arg "<ks>" help="Name of the Flux Kustomization"
+'''
+run = 'flate build ks --namespace "$usage_ns" --path . --output yaml "$usage_ks"'

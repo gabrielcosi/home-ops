@@ -1,0 +1,33 @@
+[tasks.install-collections]
+description = "Install Ansible collections required for host playbooks"
+run = 'ansible-galaxy collection install -r requirements.yml'
+
+[tasks.install]
+description = "Bootstrap a host with its playbook"
+extends = "target"
+depends = [":install-collections"]
+confirm = { message = "Bootstrap {{ usage.target }}?", default = "no" }
+run = '''
+case "$usage_target" in vps) user=debian; default_port=2222 ;; truenas) user=truenas_admin; default_port=22 ;; esac
+port="${usage_port:-$default_port}"
+OP_SERVICE_ACCOUNT_TOKEN="$(op read "op://${usage_target}/doco-cd/credential")"
+export OP_SERVICE_ACCOUNT_TOKEN
+ansible-playbook -i "${usage_target}," -e ansible_user="$user" -e ansible_port="$port" "${usage_target}/playbook.yaml"
+'''
+
+[tasks.deploy]
+description = "Trigger a doco-cd deployment on a host"
+extends = "target"
+confirm = { message = "Trigger {{ usage.target }} doco-cd deployment?", default = "no" }
+run = '''
+case "$usage_target" in vps) user=debian; default_port=2222 ;; truenas) user=truenas_admin; default_port=22 ;; esac
+port="${usage_port:-$default_port}"
+OP_SERVICE_ACCOUNT_TOKEN="$(op read "op://${usage_target}/doco-cd/credential")"
+export OP_SERVICE_ACCOUNT_TOKEN
+api_key="$(vals get "ref+op://${usage_target}/doco-cd/api_secret")"
+ssh -p "$port" "${user}@${usage_target}" "curl --silent --fail --request POST \
+  --url 'http://localhost:8080/v1/api/poll/run?wait=true' \
+  --header 'content-type: application/json' \
+  --header 'x-api-key: ${api_key}' \
+  --data '[{\"url\": \"https://github.com/gabrielcosi/home-ops.git\"}]'"
+'''
