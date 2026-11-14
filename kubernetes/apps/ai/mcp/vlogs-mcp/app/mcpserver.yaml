@@ -16,6 +16,8 @@ spec:
       value: http
     - name: MCP_LISTEN_ADDR
       value: :8081
+    - name: MCP_LOG_LEVEL
+      value: warn
   podTemplateSpec:
     spec:
       securityContext:
