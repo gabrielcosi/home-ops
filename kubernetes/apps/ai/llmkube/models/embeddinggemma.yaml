@@ -47,6 +47,7 @@ spec:
       value: glibc.malloc.hugetlb=1
   modelCache:
     storageClassName: miroir-local
+    size: 1Gi
   podSecurityContext:
     runAsNonRoot: true
     runAsUser: 1000
