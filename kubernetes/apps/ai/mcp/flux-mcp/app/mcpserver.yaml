@@ -1,0 +1,53 @@
+---
+apiVersion: toolhive.stacklok.dev/v1beta1
+kind: MCPServer
+metadata:
+  name: flux-mcp
+spec:
+  image: ghcr.io/controlplaneio-fluxcd/flux-operator-mcp:v0.62.1@sha256:0b4181bc9ada80eedf3e9df3355153abc9c3e6d8b913bddebe0b12908309bff6
+  transport: streamable-http
+  mcpPort: 9090
+  groupRef:
+    name: mcp-tools
+  serviceAccount: flux-mcp
+  args:
+    - serve
+    - --transport=http
+    - --port=9090
+    - --read-only=true
+  podTemplateSpec:
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+        runAsGroup: 65532
+      containers:
+        - name: mcp
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir: {}
+  resourceOverrides:
+    proxyDeployment:
+      env:
+        - name: TOOLHIVE_SKIP_UPDATE_CHECK
+          value: "true"
+        - name: TOOLHIVE_USAGE_METRICS_ENABLED
+          value: "false"
+  telemetryConfigRef:
+    name: prometheus
+    serviceName: flux-mcp
+  resources:
+    requests:
+      cpu: 10m
+      memory: 64Mi
+    limits:
+      memory: 1Gi

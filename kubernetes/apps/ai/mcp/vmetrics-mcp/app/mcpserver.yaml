@@ -1,0 +1,56 @@
+---
+apiVersion: toolhive.stacklok.dev/v1beta1
+kind: MCPServer
+metadata:
+  name: vmetrics-mcp
+spec:
+  image: ghcr.io/victoriametrics/mcp-victoriametrics:v1.21.0@sha256:c03d2a0160871d0870cf082c39c04046fb7951b3cd9ac459f4e1daebc1599e44
+  transport: streamable-http
+  mcpPort: 8080
+  groupRef:
+    name: mcp-tools
+  env:
+    - name: VM_INSTANCE_ENTRYPOINT
+      value: http://vmsingle-victoria-metrics-cluster.monitoring.svc.cluster.local:8428
+    - name: VM_INSTANCE_TYPE
+      value: single
+    - name: MCP_SERVER_MODE
+      value: http
+    - name: MCP_LISTEN_ADDR
+      value: :8080
+  podTemplateSpec:
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        runAsGroup: 65534
+      containers:
+        - name: mcp
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir: {}
+  resourceOverrides:
+    proxyDeployment:
+      env:
+        - name: TOOLHIVE_SKIP_UPDATE_CHECK
+          value: "true"
+        - name: TOOLHIVE_USAGE_METRICS_ENABLED
+          value: "false"
+  telemetryConfigRef:
+    name: prometheus
+    serviceName: vmetrics-mcp
+  resources:
+    requests:
+      cpu: 10m
+      memory: 32Mi
+    limits:
+      memory: 256Mi

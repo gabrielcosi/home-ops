@@ -1,0 +1,77 @@
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: vmetrics-mcp-proxy
+  namespace: ai
+spec:
+  description: Restrict the vmetrics-mcp proxy to the mcp-gateway vMCP and vmagent ingress, and egress to its backend and the API server.
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/instance: vmetrics-mcp
+      app.kubernetes.io/name: mcpserver
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: ai
+            k8s:app.kubernetes.io/name: virtualmcpserver
+            k8s:app.kubernetes.io/instance: mcp-gateway
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: monitoring
+            k8s:app.kubernetes.io/name: vmagent
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: ai
+            k8s:app: vmetrics-mcp
+    - fromEntities:
+        - kube-apiserver
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: ai
+            k8s:app: vmetrics-mcp
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
+    - toEntities:
+        - kube-apiserver
+      toPorts:
+        - ports:
+            - port: "6443"
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: vmetrics-mcp
+  namespace: ai
+spec:
+  description: Restrict the vmetrics-mcp backend ingress to its proxy, and egress to VictoriaMetrics.
+  endpointSelector:
+    matchLabels:
+      app: vmetrics-mcp
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: ai
+            k8s:app.kubernetes.io/instance: vmetrics-mcp
+            k8s:app.kubernetes.io/name: mcpserver
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: monitoring
+            k8s:app.kubernetes.io/name: vmsingle
+            k8s:app.kubernetes.io/instance: victoria-metrics-cluster
+      toPorts:
+        - ports:
+            - port: "8428"
+              protocol: TCP
