@@ -46,6 +46,7 @@ spec:
       providers:
         bifrost:
           type: openai
+          concurrency: 4
           baseUrl: http://bifrost.ai.svc.cluster.local:8080/v1
           apiKey:
             env: KRITIKA_BIFROST_VK
@@ -67,6 +68,7 @@ spec:
           - '*'
           - 192.168.69.182
       trigger:
+        settle: 60s
         exclude:
           - name: forks
             expr: pr.fork
@@ -78,6 +80,8 @@ spec:
         existingSecret: kritika-pg-credentials
       app:
         existingSecret: kritika-pg-app
+    gatewayCache:
+      enabled: true
     runner:
       podTemplate:
         spec:
