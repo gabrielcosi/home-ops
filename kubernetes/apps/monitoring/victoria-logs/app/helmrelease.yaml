@@ -38,29 +38,6 @@ spec:
           memory: 512Mi
         limits:
           memory: 2Gi
-      route:
-        enabled: true
-        hostnames:
-          - logs.xcd.dev
-        parentRefs:
-          - name: envoy-internal-auth
-            namespace: network
-        matches:
-          - path:
-              type: PathPrefix
-              value: /select
-        extraRules:
-          - matches:
-              - path:
-                  type: Exact
-                  value: /
-            filters:
-              - type: RequestRedirect
-                requestRedirect:
-                  path:
-                    type: ReplaceFullPath
-                    replaceFullPath: /select/vmui/
-                  statusCode: 302
       serviceMonitor:
         enabled: true
       syslog:
