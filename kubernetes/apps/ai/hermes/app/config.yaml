@@ -125,5 +125,7 @@ platforms:
 web:
   search_backend: searxng
   extract_backend: crawl4ai
+  keyless_fallback: false
+  keyless_rescue: false
 
 unauthorized_dm_behavior: pair

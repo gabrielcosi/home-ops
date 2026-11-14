@@ -22,85 +22,11 @@ spec:
             fsGroupChangePolicy: OnRootMismatch
             seccompProfile:
               type: RuntimeDefault
-        initContainers:
-          seed-tools:
-            image: &image
-              repository: ghcr.io/gabrielcosi/containers/hermes-agent
-              tag: v0.23.1@sha256:454ff92c4454233d84ef6cde342fc91aaa1d602afdfd7a54c34d9502dfa1a9fa
-            command:
-              - sh
-              - -c
-              - |
-                set -e
-                if [ -O /homebrew-runtime/.seeded ]; then
-                  echo "Homebrew already seeded; skipping."
-                else
-                  echo "Resetting Homebrew seed."
-                  chmod -R u+w /homebrew-runtime 2>/dev/null || true
-                  find /homebrew-runtime -mindepth 1 -maxdepth 1 -exec rm -rf {} +
-                  echo "Seeding Homebrew from image /home/linuxbrew/.linuxbrew into /homebrew-runtime."
-                  cp -RP /home/linuxbrew/.linuxbrew/. /homebrew-runtime/
-                  touch /homebrew-runtime/.seeded
-                  echo "Homebrew seed complete."
-                fi
-                echo "Linking memini plugin into /opt/data/plugins."
-                mkdir -p /opt/data/plugins
-                ln -sfn /opt/memini /opt/data/plugins/memini
-                echo "Ensuring /opt/data/home and /opt/data/bin exist."
-                mkdir -p /opt/data/home /opt/data/bin
-                echo "Writing /opt/data/home/.profile with PATH."
-                printf '%s\n' 'export PATH="/opt/data/bin:/home/linuxbrew/.linuxbrew/bin:/opt/hermes/.venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"' > /opt/data/home/.profile
-                echo "Mirroring .profile to /opt/data/home/.bashrc."
-                cp /opt/data/home/.profile /opt/data/home/.bashrc
-                echo "Shell dotfiles ready."
-            securityContext:
-              allowPrivilegeEscalation: false
-              readOnlyRootFilesystem: true
-              capabilities:
-                drop:
-                  - ALL
-          seed-config:
-            image:
-              repository: mikefarah/yq
-              tag: '4.54.3@sha256:7834187596ad56fd5a81436114e0b0b9dd54c91bb43946d1f7145b2be5f9c3d2'
-            command:
-              - sh
-              - -c
-              - |
-                set -eu
-                if [ ! -f /opt/data/config.yaml ]; then
-                  echo "seed-config: no persisted config; seeding from git source."
-                  cp /config-src/config.yaml /opt/data/config.yaml
-                  cp /config-src/config.yaml /opt/data/.config.git-base.yaml
-                  exit 0
-                fi
-                cp /opt/data/config.yaml /tmp/config.work.yaml
-                if [ -f /opt/data/.config.git-base.yaml ]; then
-                  yq -o=json -I=0 '[... | path] | .[] | select(length > 0) | select(.[-1] | tag == "!!str")' /opt/data/.config.git-base.yaml | sort -u > /tmp/base.keys
-                  yq -o=json -I=0 '[... | path] | .[] | select(length > 0) | select(.[-1] | tag == "!!str")' /config-src/config.yaml | sort -u > /tmp/src.keys
-                  if [ -s /tmp/src.keys ]; then
-                    grep -Fxv -f /tmp/src.keys /tmp/base.keys > /tmp/removed.keys || true
-                    if [ -s /tmp/removed.keys ]; then
-                      echo "seed-config: pruning keys removed from git since last reconcile:"
-                      cat /tmp/removed.keys
-                      yq ea -p=json -o=json -I=0 '[.]' /tmp/removed.keys > /tmp/removed.json
-                      yq -i 'del(.. | select( ([path] - load("/tmp/removed.json")) | length == 0 ))' /tmp/config.work.yaml
-                    fi
-                  fi
-                fi
-                yq eval-all 'select(fileIndex == 0) * select(fileIndex == 1)' /tmp/config.work.yaml /config-src/config.yaml > /tmp/config.final.yaml
-                cp /tmp/config.final.yaml /opt/data/config.yaml
-                cp /config-src/config.yaml /opt/data/.config.git-base.yaml
-                echo "seed-config: merged git over persisted config (git wins; runtime-only keys kept; git deletions pruned)."
-            securityContext:
-              allowPrivilegeEscalation: false
-              readOnlyRootFilesystem: true
-              capabilities:
-                drop:
-                  - ALL
         containers:
           gateway:
-            image: *image
+            image:
+              repository: ghcr.io/gabrielcosi/containers/hermes-agent
+              tag: v0.23.1@sha256:1a4a056a2e2a32f96c72596c4b448c4f3fce13e6fe3874dd43a25663035d0920
             args:
               - gateway
               - run
@@ -108,15 +34,12 @@ spec:
               TZ: Europe/Berlin
               HOME: /opt/data/home
               HERMES_HOME: /opt/data
-              PATH: /opt/data/bin:/home/linuxbrew/.linuxbrew/bin:/opt/hermes/.venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+              PATH: /opt/data/home/.local/share/mise/shims:/opt/mise:/opt/hermes/bin:/opt/hermes/.venv/bin:/opt/data/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
               API_SERVER_ENABLED: true
               API_SERVER_HOST: 0.0.0.0
               API_SERVER_PORT: '8642'
               HERMES_STREAM_READ_TIMEOUT: '300'
               HERMES_STREAM_STALE_TIMEOUT: '300'
-              HOMEBREW_NO_AUTO_UPDATE: '1'
-              HOMEBREW_NO_ANALYTICS: '1'
-              HOMEBREW_NO_ENV_HINTS: '1'
               S6_YES_I_WANT_A_WORLD_WRITABLE_RUN_BECAUSE_KUBERNETES: '1'
               S6_READ_ONLY_ROOT: '1'
               SEARXNG_URL: http://searxng.tools.svc.cluster.local:8080
@@ -150,27 +73,20 @@ spec:
         existingClaim: hermes
         globalMounts:
           - path: /opt/data
-      homebrew:
-        type: persistentVolumeClaim
-        forceRename: hermes-homebrew
-        accessMode: ReadWriteOnce
-        size: 1Gi
-        storageClass: miroir-replicated
-        advancedMounts:
-          hermes:
-            seed-tools:
-              - path: /homebrew-runtime
-            gateway:
-              - path: /home/linuxbrew/.linuxbrew
       config:
         type: configMap
         name: hermes-config
-        advancedMounts:
-          hermes:
-            seed-config:
-              - path: /config-src/config.yaml
-                subPath: config.yaml
-                readOnly: true
+        globalMounts:
+          - path: /etc/hermes/config.yaml
+            subPath: config.yaml
+            readOnly: true
+      mise:
+        type: image
+        image: ghcr.io/jdx/mise:2026.11.7@sha256:36a8408d3398aff30a761b4ae57f71f50942d64f4e7ecd5353ffaee7ec4fa63a
+        globalMounts:
+          - path: /opt/mise
+            subPath: usr/local/bin
+            readOnly: true
       tmp:
         type: emptyDir
         globalMounts:
