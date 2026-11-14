@@ -12,7 +12,7 @@ services:
     environment:
       OFFSITE_BUCKETS: ${OFFSITE_BUCKETS}
       OFFSITE_BOX_KNOWN_HOSTS: ${OFFSITE_BOX_KNOWN_HOSTS}
-      GOMEMLIMIT: 900MiB
+      GOMEMLIMIT: 230MiB
       RCLONE_CACHE_DIR: /tmp/rclone
       RCLONE_TRANSFERS: "4"
       RCLONE_CHECKERS: "4"
@@ -57,7 +57,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 1G
+          memory: 256M
     logging:
       driver: json-file
       options:
