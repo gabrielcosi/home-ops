@@ -13,10 +13,31 @@ spec:
       value: info
   image: ghcr.io/renovatebot/renovate:44.239.1@sha256:7dba1a3b916a2cf302ba0df458ddcc8fcbac3c92d0fe9882ac13ba0363de656b
   parallelism: 3
+  priorityClassName: batch-low
+  affinity:
+    nodeAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+        - weight: 100
+          preference:
+            matchExpressions:
+              - key: node-role.kubernetes.io/control-plane
+                operator: DoesNotExist
+  scratchVolume:
+    enabled: true
+    path: /renovate
+    ephemeral:
+      volumeClaimTemplate:
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          storageClassName: miroir-local
+          resources:
+            requests:
+              storage: 5Gi
   resources:
     requests:
-      cpu: 100m
-      memory: 256Mi
+      cpu: 250m
+      memory: 1Gi
     limits:
       memory: 4Gi
   schedule: '0 * * * *'
