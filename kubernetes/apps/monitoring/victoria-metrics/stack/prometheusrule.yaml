@@ -77,3 +77,19 @@ spec:
             summary: ZFS pool {{ $labels.zpool }} on {{ $labels.instance }} is {{ $labels.state }}
           labels:
             severity: critical
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: offsite
+spec:
+  groups:
+    - name: offsite
+      rules:
+        - alert: OffsiteSyncFailed
+          expr: last_over_time(offsite_sync_success[7d]) == 0 or absent_over_time(offsite_sync_success[7d])
+          for: 15m
+          annotations:
+            summary: The last off-site sync failed
+          labels:
+            severity: warning

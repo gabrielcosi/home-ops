@@ -1,6 +1,13 @@
 #!/bin/sh
 set -eu
 
+push_result() {
+  printf 'offsite_sync_success %s\n' "$1" > /tmp/metric
+  wget -q -O /dev/null --post-file=/tmp/metric http://127.0.0.1:8429/api/v1/import/prometheus
+}
+succeeded=0
+trap 'push_result "${succeeded}"' EXIT
+
 printf '%s\n' "${OFFSITE_BOX_KNOWN_HOSTS}" > /tmp/known_hosts
 printf '%s\n' "${OFFSITE_BUCKETS}" | tr -d ' \t\r' | tr ',' '\n' > /tmp/buckets
 
@@ -45,5 +52,4 @@ if [ "${failed}" -ne 0 ]; then
   exit 1
 fi
 
-printf 'offsite_sync_last_success_timestamp_seconds %s\n' "$(date +%s)" > /tmp/metric
-wget -q -O /dev/null --post-file=/tmp/metric http://127.0.0.1:8429/api/v1/import/prometheus
+succeeded=1
