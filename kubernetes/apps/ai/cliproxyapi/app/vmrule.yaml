@@ -12,7 +12,7 @@ spec:
         - alert: CliProxyApiReauthNeeded
           expr: |
             _time:15m {kubernetes.pod_namespace="ai", kubernetes.pod_name=~"cliproxyapi.*"}
-            ("invalid_grant" OR "refresh_token_reused" OR "refresh_token_expired" OR "refresh_token_revoked")
+            ("invalid_grant" OR "refresh_token_reused" OR "refresh_token_expired" OR "refresh_token_revoked" OR "refresh_outcome_unknown")
             | extract_regexp `\[(?P<provider>anthropic|openai)_auth\.go:`
             | stats by (provider) count() as hits
             | filter hits:>0
