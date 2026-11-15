@@ -9,6 +9,6 @@ spec:
     mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
     operation: copy
   ref:
-    tag: 0.8.2
-    digest: sha256:5f54ce6fd99db369d561c694ff338de5d28b9582c6fdf1455c44ea4c212df068
+    tag: 0.9.0
+    digest: sha256:c28c84cd1f20b2e2eca8e16089fe2ad83dd85ba75a085590d7f2c4a21a7aae51
   url: oci://git.xcd.dev/gabrielcosi/charts/cachette
