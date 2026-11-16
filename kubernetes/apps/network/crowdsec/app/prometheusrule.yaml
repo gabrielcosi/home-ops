@@ -45,7 +45,8 @@ spec:
 
         - alert: CrowdSecAppSecUnavailable
           expr: |-
-            sum(increase(bouncer_waf_errors_total[10m])) > 0
+            sum(increase(bouncer_waf_errors_total[10m]))
+              / sum(increase(bouncer_waf_requests_total[10m])) > 0.01
           for: 15m
           annotations:
             summary: >-
