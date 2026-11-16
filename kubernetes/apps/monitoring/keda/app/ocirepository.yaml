@@ -9,6 +9,6 @@ spec:
     mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
     operation: copy
   ref:
-    tag: 2.21.0
-    digest: sha256:5d4ffadc27e606b2a8702a6fa801476733e36cd488c13adb3a89760bb2790b43
+    tag: 2.21.1
+    digest: sha256:6cd91636a18077a82065ae3b273284ce724c446b149bf16b55c1315c57bae3eb
   url: oci://registry.xcd.dev/x/kedacore.github.io/charts/keda
