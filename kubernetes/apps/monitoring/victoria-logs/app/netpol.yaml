@@ -23,3 +23,28 @@ spec:
         - ports:
             - port: '5514'
               protocol: UDP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: victoria-logs-vector
+spec:
+  description: Restrict vector ingress to Talos kmsg from the nodes and metrics scrapes.
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/instance: victoria-logs
+      app.kubernetes.io/name: vector
+  ingress:
+    - fromEntities:
+        - host
+        - remote-node
+      toPorts:
+        - ports:
+            - port: '6050'
+              protocol: UDP
+    - fromEntities:
+        - cluster
+      toPorts:
+        - ports:
+            - port: '9090'
+              protocol: TCP

@@ -47,3 +47,74 @@ spec:
             streamFields: '["hostname","app_name"]'
             useLocalTimestamp: true
             useRemoteIP: true
+
+    vector:
+      enabled: true
+      role: Stateless-Aggregator
+      image:
+        repository: docker.io/timberio/vector
+        tag: 0.61.0-distroless-libc@sha256:1a3451978644d5cd4b99a0b28c990791e2f7e1efbea4184122f1c59a56448143
+      replicas: 2
+      resources:
+        requests:
+          cpu: 10m
+          memory: 64Mi
+        limits:
+          memory: 128Mi
+      podSecurityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        runAsGroup: 65534
+        seccompProfile:
+          type: RuntimeDefault
+      securityContext:
+        allowPrivilegeEscalation: false
+        readOnlyRootFilesystem: true
+        capabilities:
+          drop:
+            - ALL
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: DoNotSchedule
+          labelSelector:
+            matchLabels:
+              app.kubernetes.io/instance: victoria-logs
+              app.kubernetes.io/name: vector
+      containerPorts:
+        - name: prom-exporter
+          containerPort: 9090
+          protocol: TCP
+        - name: talos-kmsg
+          containerPort: 6050
+          protocol: UDP
+      service:
+        enabled: true
+        type: LoadBalancer
+        annotations:
+          io.cilium/lb-ipam-ips: '192.168.69.190'
+        ports:
+          - name: talos-kmsg
+            port: 6050
+            targetPort: 6050
+            protocol: UDP
+      podMonitor:
+        enabled: true
+      customConfig:
+        sources:
+          k8s:
+            type: socket
+            mode: udp
+            address: 0.0.0.0:6050
+            max_length: 102400
+        transforms:
+          parser:
+            source: |
+              . = merge(object!(parse_json!(.message)), {"node": .host})
+        sinks:
+          vlogs:
+            request:
+              headers:
+                VL-Time-Field: talos-time
+                VL-Stream-Fields: node,facility
+                VL-Msg-Field: msg
