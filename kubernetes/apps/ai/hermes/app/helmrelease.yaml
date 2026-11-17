@@ -26,7 +26,7 @@ spec:
           gateway:
             image:
               repository: ghcr.io/gabrielcosi/containers/hermes-agent
-              tag: v0.23.1@sha256:1a4a056a2e2a32f96c72596c4b448c4f3fce13e6fe3874dd43a25663035d0920
+              tag: v0.23.2@sha256:afafebe01db5dc45a8a2d783e83abb47fe799e424cd7ac3e664786e81e77fb04
             args:
               - gateway
               - run
