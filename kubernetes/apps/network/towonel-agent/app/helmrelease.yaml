@@ -28,9 +28,6 @@ spec:
           origin: envoy-external.network.svc.cluster.local:443
           proxy_protocol: v2
       tcpServices:
-        - name: forgejo-ssh
-          origin: envoy-external.network.svc.cluster.local:22
-          listen_port: 2222
         - name: monitoring-ingest
           origin: vmauth-ingest.monitoring.svc.cluster.local:8427
           listen_port: 18429
