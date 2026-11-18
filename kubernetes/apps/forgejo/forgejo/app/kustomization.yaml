@@ -5,6 +5,8 @@ resources:
   - ./ocirepository.yaml
   - ./helmrelease.yaml
   - ./httproute.yaml
+  - ./trafficpolicy.yaml
+  - ./rbac.yaml
   - ./cnpg.yaml
   - ./objectstore.yaml
   - ./pooler.yaml

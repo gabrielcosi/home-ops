@@ -172,9 +172,14 @@ spec:
           selector: gateway.envoyproxy.io/owning-gateway-name=envoy-external
           labels:
             type: envoy
+        - source: kubernetes
+          namespace: forgejo
+          selector: app.kubernetes.io/name=forgejo,app.kubernetes.io/instance=forgejo
+          labels:
+            type: gitea
       env:
         - name: COLLECTIONS
-          value: yanis-kouidri/envoy crowdsecurity/http-cve
+          value: yanis-kouidri/envoy crowdsecurity/http-cve LePresidente/gitea
         - name: PARSERS
           value: crowdsecurity/geoip-enrich crowdsecurity/whitelists
       resources:

@@ -137,6 +137,10 @@ spec:
           DOMAIN: git.xcd.dev
           SSH_DOMAIN: git.xcd.dev
           SSH_SERVER_HOST_KEYS: ssh/ssh_host_ed25519_key
+          SSH_SERVER_USE_PROXY_PROTOCOL: true
+
+        log:
+          LOGGER_SSH_MODE: console
 
         database:
           DB_TYPE: postgres
