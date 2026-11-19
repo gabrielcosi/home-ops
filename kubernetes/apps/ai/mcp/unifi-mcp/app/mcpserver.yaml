@@ -20,6 +20,8 @@ spec:
       value: "false"
     - name: UNIFI_REQUIRE_PREVIEW_TOKEN
       value: "true"
+    - name: UNIFI_NETWORK_WEBSOCKET_ENABLED
+      value: "false"
   secrets:
     - name: unifi-mcp-secrets
       key: UNIFI_USERNAME
