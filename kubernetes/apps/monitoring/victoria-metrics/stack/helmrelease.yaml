@@ -55,6 +55,13 @@ spec:
               ((last_over_time(etcd_mvcc_db_total_size_in_use_in_bytes{job=~".*etcd.*"}[5m]) /
               last_over_time(etcd_mvcc_db_total_size_in_bytes{job=~".*etcd.*"}[5m])) < 0.5) and
               (etcd_mvcc_db_total_size_in_use_in_bytes{job=~".*etcd.*"} > 367001600)
+        NodeMemoryHighUtilization:
+          spec:
+            expr: >-
+              (100 - ((node_memory_MemAvailable_bytes{job="node-exporter"} +
+              (node_zfs_arc_size{job="node-exporter"} - node_zfs_arc_c_min{job="node-exporter"}
+              or node_memory_MemAvailable_bytes{job="node-exporter"} * 0)) /
+              node_memory_MemTotal_bytes{job="node-exporter"} * 100)) > 90
 
     defaultDatasources:
       victoriametrics:
