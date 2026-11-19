@@ -19,11 +19,17 @@ spec:
 
         - alert: UniFiDeviceCPUCreep
           expr: |-
-            avg_over_time(unpoller_device_cpu_utilization_ratio[2h]) > 0.35
-          for: 30m
+            max by (name) (avg_over_time(unpoller_device_cpu_utilization_ratio{type="udm"}[2h]))
+              -
+            sum by (name) (
+              rate(unpoller_device_port_receive_packets_total[2h])
+                + rate(unpoller_device_port_transmit_packets_total[2h])
+            ) * 3.2e-6
+              > 0.2
+          for: 1h
           annotations:
             summary: >-
-              UniFi device {{ $labels.name }} has averaged {{ $value | humanizePercentage }} CPU over the last 2 hours
+              UniFi device {{ $labels.name }} has averaged {{ $value | humanizePercentage }} baseline CPU over the last 2 hours
           labels:
             severity: warning
 
