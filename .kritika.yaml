@@ -49,5 +49,5 @@ context:
 comments:
   summary: .agents/kritika/summary.md.tmpl
 tools:
-  "aqua:home-operations/flate": "v0.7.3" # renovate: github-releases=home-operations/flate
+  "aqua:home-operations/flate": "v0.8.0" # renovate: github-releases=home-operations/flate
   "aqua:google/go-containerregistry": "v0.22.1" # renovate: github-releases=google/go-containerregistry
