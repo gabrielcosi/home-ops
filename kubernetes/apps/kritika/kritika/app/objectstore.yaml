@@ -20,3 +20,10 @@ spec:
     data:
       compression: gzip
   retentionPolicy: '7d'
+  instanceSidecarConfiguration:
+    resources:
+      requests:
+        cpu: 10m
+        memory: 32Mi
+      limits:
+        memory: 512Mi

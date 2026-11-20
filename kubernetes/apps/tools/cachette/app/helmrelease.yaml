@@ -34,6 +34,12 @@ spec:
                   app.kubernetes.io/controller: main
         containers:
           main:
+            resources:
+              requests:
+                cpu: 5m
+                memory: 64Mi
+              limits:
+                memory: 512Mi
             env:
               CACHETTE_EXTERNAL_URL: https://registry.xcd.dev
               CACHETTE_DATABASE_URL:
