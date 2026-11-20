@@ -65,10 +65,10 @@ spec:
                     - ALL
               resources:
                 requests:
-                  cpu: 25m
-                  memory: 1Gi
+                  cpu: 35m
+                  memory: 750Mi
                 limits:
-                  memory: 1536Mi
+                  memory: 1500Mi
           securityContext:
             runAsNonRoot: true
             runAsUser: 1000

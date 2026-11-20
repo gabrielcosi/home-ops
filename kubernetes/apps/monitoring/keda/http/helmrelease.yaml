@@ -18,8 +18,8 @@ spec:
         min: 1
       resources:
         requests:
-          cpu: 25m
-          memory: 32Mi
+          cpu: 5m
+          memory: 64Mi
         limits:
           cpu: null
           memory: 128Mi
@@ -27,8 +27,8 @@ spec:
       replicas: 1
       resources:
         requests:
-          cpu: 25m
-          memory: 32Mi
+          cpu: 5m
+          memory: 64Mi
         limits:
           cpu: null
           memory: 128Mi
@@ -36,8 +36,8 @@ spec:
       replicas: 1
       resources:
         requests:
-          cpu: 25m
-          memory: 32Mi
+          cpu: 10m
+          memory: 64Mi
         limits:
           cpu: null
           memory: 64Mi

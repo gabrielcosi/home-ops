@@ -51,7 +51,8 @@ spec:
           targetLabel: instance
     resources:
       requests:
-        cpu: 50m
-        memory: 128Mi
+        cpu: 10m
+        memory: 150Mi
       limits:
+        cpu: null
         memory: 512Mi

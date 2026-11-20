@@ -46,10 +46,10 @@ spec:
       operator:
         limits:
           cpu: null
-          memory: 256Mi
+          memory: 375Mi
         requests:
           cpu: 10m
-          memory: 128Mi
+          memory: 250Mi
 
       metricServer:
         limits:
@@ -65,4 +65,4 @@ spec:
           memory: 100Mi
         requests:
           cpu: 10m
-          memory: 100Mi
+          memory: 64Mi
