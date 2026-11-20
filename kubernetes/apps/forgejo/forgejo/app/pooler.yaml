@@ -29,6 +29,12 @@ spec:
           labelSelector:
             matchLabels:
               cnpg.io/poolerName: forgejo-pooler
+      initContainers:
+        - name: bootstrap-controller
+          resources:
+            requests:
+              memory: '16Mi'
+              cpu: '5m'
       containers:
         - name: pgbouncer
           resources:

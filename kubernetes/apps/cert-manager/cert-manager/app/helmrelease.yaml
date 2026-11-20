@@ -43,8 +43,6 @@ spec:
 
     startupapicheck:
       resources:
-        limits:
-          memory: 64Mi
         requests:
           cpu: 5m
           memory: 32Mi

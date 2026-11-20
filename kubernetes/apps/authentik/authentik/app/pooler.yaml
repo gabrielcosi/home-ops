@@ -34,8 +34,6 @@ spec:
             requests:
               memory: '16Mi'
               cpu: '5m'
-            limits:
-              memory: '256Mi'
       containers:
         - name: pgbouncer
           resources:
