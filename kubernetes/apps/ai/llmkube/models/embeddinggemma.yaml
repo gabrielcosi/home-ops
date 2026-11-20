@@ -122,7 +122,7 @@ metadata:
 spec:
   accessModes:
     - ReadWriteMany
-  storageClassName: miroir-replicated
+  storageClassName: ceph-filesystem
   resources:
     requests:
       storage: 1Gi
