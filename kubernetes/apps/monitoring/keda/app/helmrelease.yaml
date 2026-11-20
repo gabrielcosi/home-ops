@@ -10,6 +10,25 @@ spec:
   interval: 1h
   values:
     enableServiceLinks: false
+    operator:
+      replicaCount: 2
+    metricsServer:
+      replicaCount: 2
+    topologySpreadConstraints:
+      operator:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: DoNotSchedule
+          labelSelector:
+            matchLabels:
+              app.kubernetes.io/name: keda-operator
+      metricsServer:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: DoNotSchedule
+          labelSelector:
+            matchLabels:
+              app.kubernetes.io/name: keda-operator-metrics-apiserver
     prometheus:
       metricServer:
         enabled: true
