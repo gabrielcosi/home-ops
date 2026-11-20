@@ -27,10 +27,14 @@ spec:
       disable_prometheus_converter: false
       enable_converter_ownership: true
 
+    env:
+      - name: VM_CONFIG_RELOADER_LIMIT_MEMORY
+        value: 64Mi
+
     resources:
       requests:
-        cpu: 50m
-        memory: 128Mi
+        cpu: 15m
+        memory: 150Mi
       limits:
         memory: 256Mi
 

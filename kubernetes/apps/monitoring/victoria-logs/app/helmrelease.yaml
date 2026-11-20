@@ -34,8 +34,8 @@ spec:
         size: 50Gi
       resources:
         requests:
-          cpu: 50m
-          memory: 512Mi
+          cpu: 60m
+          memory: 600Mi
         limits:
           memory: 2Gi
       serviceMonitor:

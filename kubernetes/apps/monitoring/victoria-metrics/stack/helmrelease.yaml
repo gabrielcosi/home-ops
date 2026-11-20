@@ -212,12 +212,20 @@ spec:
               storageClassName: ceph-block
         resources:
           requests:
-            cpu: 20m
-            memory: 128Mi
+            cpu: 5m
+            memory: 64Mi
           limits:
             memory: 128Mi
       monzoTemplate:
         enabled: false
+
+    syncJob:
+      resources:
+        requests:
+          cpu: 10m
+          memory: 32Mi
+        limits:
+          memory: 128Mi
 
     kube-state-metrics:
       fullnameOverride: kube-state-metrics
@@ -226,7 +234,7 @@ spec:
       resources:
         requests:
           cpu: 10m
-          memory: 128Mi
+          memory: 100Mi
         limits:
           memory: 256Mi
 
@@ -353,10 +361,10 @@ spec:
             drop: ['ALL']
         resources:
           requests:
-            cpu: 100m
-            memory: 256Mi
+            cpu: 200m
+            memory: 275Mi
           limits:
-            memory: 512Mi
+            memory: 650Mi
         extraArgs:
           promscrape.dropOriginalLabels: 'true'
           promscrape.maxScrapeSize: 50MiB
@@ -371,8 +379,8 @@ spec:
         securityContext: *securityContext
         resources:
           requests:
-            cpu: 50m
-            memory: 128Mi
+            cpu: 25m
+            memory: 100Mi
           limits:
             memory: 256Mi
         datasource:
@@ -386,10 +394,10 @@ spec:
         securityContext: *securityContext
         resources:
           requests:
-            cpu: 50m
-            memory: 128Mi
+            cpu: 20m
+            memory: 25Mi
           limits:
-            memory: 256Mi
+            memory: 50Mi
         extraArgs:
           requestBufferSize: '65536'
         unauthorizedUserAccessSpec:
@@ -416,7 +424,7 @@ spec:
         securityContext: *securityContext
         resources:
           requests:
-            cpu: 150m
+            cpu: 200m
             memory: 2Gi
           limits:
             memory: 4Gi
