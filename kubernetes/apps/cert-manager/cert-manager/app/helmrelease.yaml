@@ -20,10 +20,10 @@ spec:
 
     resources:
       limits:
-        memory: 70Mi
+        memory: 100Mi
       requests:
         cpu: 5m
-        memory: 70Mi
+        memory: 64Mi
 
     webhook:
       resources:
@@ -31,7 +31,7 @@ spec:
           memory: 100Mi
         requests:
           cpu: 5m
-          memory: 100Mi
+          memory: 64Mi
 
     cainjector:
       resources:
@@ -39,7 +39,15 @@ spec:
           memory: 256Mi
         requests:
           cpu: 5m
-          memory: 100Mi
+          memory: 125Mi
+
+    startupapicheck:
+      resources:
+        limits:
+          memory: 64Mi
+        requests:
+          cpu: 5m
+          memory: 32Mi
 
     prometheus:
       enabled: true

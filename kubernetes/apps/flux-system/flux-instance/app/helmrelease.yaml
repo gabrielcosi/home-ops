@@ -48,11 +48,15 @@ spec:
                     containers:
                       - name: manager
                         resources:
+                          requests:
+                            cpu: 10m
+                            memory: 128Mi
                           limits:
+                            cpu: null
                             memory: 1Gi
             target:
               kind: Deployment
-              name: (kustomize-controller|helm-controller|source-controller)
+              name: helm-controller
           - patch: |-
               apiVersion: apps/v1
               kind: Deployment
@@ -64,27 +68,55 @@ spec:
                     containers:
                       - name: manager
                         resources:
+                          requests:
+                            cpu: 60m
+                            memory: 175Mi
                           limits:
+                            cpu: null
+                            memory: 1Gi
+            target:
+              kind: Deployment
+              name: kustomize-controller
+          - patch: |-
+              apiVersion: apps/v1
+              kind: Deployment
+              metadata:
+                name: all
+              spec:
+                template:
+                  spec:
+                    containers:
+                      - name: manager
+                        resources:
+                          requests:
+                            cpu: 5m
+                            memory: 125Mi
+                          limits:
+                            cpu: null
+                            memory: 275Mi
+            target:
+              kind: Deployment
+              name: source-controller
+          - patch: |-
+              apiVersion: apps/v1
+              kind: Deployment
+              metadata:
+                name: all
+              spec:
+                template:
+                  spec:
+                    containers:
+                      - name: manager
+                        resources:
+                          requests:
+                            cpu: 5m
+                            memory: 100Mi
+                          limits:
+                            cpu: null
                             memory: 256Mi
             target:
               kind: Deployment
               name: notification-controller
-          - patch: |-
-              apiVersion: apps/v1
-              kind: Deployment
-              metadata:
-                name: all
-              spec:
-                template:
-                  spec:
-                    containers:
-                      - name: manager
-                        resources:
-                          limits:
-                            cpu: null
-            target:
-              kind: Deployment
-              name: (kustomize-controller|helm-controller|source-controller|notification-controller)
           - patch: |-
               - op: add
                 path: /spec/template/spec/containers/0/args/-
