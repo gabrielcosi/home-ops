@@ -17,3 +17,21 @@ spec:
       port: 514
       targetPort: 5514
       protocol: UDP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: victoria-logs-talos
+  namespace: monitoring
+spec:
+  type: ClusterIP
+  clusterIP: 10.43.0.60
+  internalTrafficPolicy: Local
+  selector:
+    app.kubernetes.io/instance: victoria-logs
+    app.kubernetes.io/name: vector
+  ports:
+    - name: talos-kmsg
+      port: 6050
+      targetPort: 6050
+      protocol: TCP

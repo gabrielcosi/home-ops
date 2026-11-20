@@ -29,7 +29,7 @@ kind: CiliumNetworkPolicy
 metadata:
   name: victoria-logs-vector
 spec:
-  description: Restrict vector ingress to Talos kmsg from the nodes and metrics scrapes.
+  description: Restrict vector ingress to Talos kmsg from its own node and metrics scrapes.
   endpointSelector:
     matchLabels:
       app.kubernetes.io/instance: victoria-logs
@@ -37,11 +37,10 @@ spec:
   ingress:
     - fromEntities:
         - host
-        - remote-node
       toPorts:
         - ports:
             - port: '6050'
-              protocol: UDP
+              protocol: TCP
     - fromEntities:
         - cluster
       toPorts:

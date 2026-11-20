@@ -50,11 +50,17 @@ spec:
 
     vector:
       enabled: true
-      role: Stateless-Aggregator
+      role: Agent
       image:
         repository: docker.io/timberio/vector
         tag: 0.62.0-distroless-libc
-      replicas: 2
+      rbac:
+        create: false
+      persistence:
+        hostPath:
+          enabled: false
+      defaultVolumes: []
+      defaultVolumeMounts: []
       resources:
         requests:
           cpu: 10m
@@ -73,44 +79,28 @@ spec:
         capabilities:
           drop:
             - ALL
-      topologySpreadConstraints:
-        - maxSkew: 1
-          topologyKey: kubernetes.io/hostname
-          whenUnsatisfiable: DoNotSchedule
-          labelSelector:
-            matchLabels:
-              app.kubernetes.io/instance: victoria-logs
-              app.kubernetes.io/name: vector
       containerPorts:
         - name: prom-exporter
           containerPort: 9090
           protocol: TCP
         - name: talos-kmsg
           containerPort: 6050
-          protocol: UDP
+          protocol: TCP
       service:
-        enabled: true
-        type: LoadBalancer
-        annotations:
-          io.cilium/lb-ipam-ips: '192.168.69.190'
-        ports:
-          - name: talos-kmsg
-            port: 6050
-            targetPort: 6050
-            protocol: UDP
+        enabled: false
       podMonitor:
         enabled: true
       customConfig:
         sources:
           k8s:
             type: socket
-            mode: udp
+            mode: tcp
             address: 0.0.0.0:6050
             max_length: 102400
         transforms:
           parser:
             source: |
-              . = merge(object!(parse_json!(.message)), {"node": .host})
+              . = merge(object!(parse_json!(.message)), {"node": get_env_var!("VECTOR_SELF_NODE_NAME")})
         sinks:
           vlogs:
             request:
