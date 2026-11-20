@@ -57,7 +57,7 @@ spec:
                   name: hermes-secrets
             resources:
               requests:
-                cpu: 50m
+                cpu: 10m
                 memory: 512Mi
               limits:
                 memory: 1Gi

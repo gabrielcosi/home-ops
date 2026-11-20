@@ -24,3 +24,9 @@ spec:
         valueSecretRef:
           name: outline-mcp-token
           key: OUTLINE_MCP_TOKEN
+  resources:
+    requests:
+      cpu: 5m
+      memory: 32Mi
+    limits:
+      memory: 200Mi

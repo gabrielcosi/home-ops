@@ -23,6 +23,12 @@ spec:
         runAsGroup: 65532
       containers:
         - name: mcp
+          resources:
+            requests:
+              cpu: 5m
+              memory: 32Mi
+            limits:
+              memory: 128Mi
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
@@ -48,6 +54,6 @@ spec:
   resources:
     requests:
       cpu: 10m
-      memory: 64Mi
+      memory: 32Mi
     limits:
-      memory: 1Gi
+      memory: 128Mi

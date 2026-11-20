@@ -22,6 +22,12 @@ spec:
     spec:
       containers:
         - name: mcp
+          resources:
+            requests:
+              cpu: 5m
+              memory: 150Mi
+            limits:
+              memory: 250Mi
           command:
             - ha-mcp-web
           volumeMounts:
@@ -42,7 +48,7 @@ spec:
     serviceName: ha-mcp
   resources:
     requests:
-      cpu: 1m
-      memory: 128Mi
+      cpu: 5m
+      memory: 50Mi
     limits:
       memory: 128Mi

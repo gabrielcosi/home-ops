@@ -52,6 +52,13 @@ spec:
     spec:
       containers:
         - name: vmcp
+          resources:
+            requests:
+              cpu: 5m
+              memory: 128Mi
+            limits:
+              cpu: null
+              memory: 750Mi
           env:
             - name: OPENAI_API_KEY
               valueFrom:

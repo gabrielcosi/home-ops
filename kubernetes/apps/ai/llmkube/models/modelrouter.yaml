@@ -47,3 +47,9 @@ spec:
           matchLabels:
             inference.llmkube.dev/model-router: models
     responseHeaderTimeout: 600s
+    resources:
+      requests:
+        cpu: 5m
+        memory: 32Mi
+      limits:
+        memory: 128Mi
