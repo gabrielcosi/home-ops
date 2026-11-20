@@ -5,6 +5,7 @@ metadata:
   name: egress
 spec:
   exitNode: true
+  proxyClass: connector
   replicas: 2
 ---
 apiVersion: tailscale.com/v1alpha1
@@ -12,6 +13,7 @@ kind: Connector
 metadata:
   name: ingress
 spec:
+  proxyClass: connector
   appConnector:
     routes:
       - 192.168.42.0/24

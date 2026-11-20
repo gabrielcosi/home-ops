@@ -18,8 +18,22 @@ spec:
             limits:
               memory: 512Mi
             requests:
-              cpu: 50m
+              cpu: 15m
               memory: 128Mi
+        patch:
+          type: StrategicMerge
+          value:
+            spec:
+              template:
+                spec:
+                  containers:
+                    - name: shutdown-manager
+                      resources:
+                        requests:
+                          cpu: 10m
+                          memory: 75Mi
+                        limits:
+                          memory: 200Mi
       envoyService:
         externalTrafficPolicy: Local
   shutdown:

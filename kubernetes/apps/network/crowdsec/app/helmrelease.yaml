@@ -131,11 +131,11 @@ spec:
               type: lapi
       resources:
         requests:
-          cpu: 50m
-          memory: 256Mi
+          cpu: 10m
+          memory: 100Mi
         limits:
           cpu: null
-          memory: 1Gi
+          memory: 450Mi
       metrics:
         enabled: true
         serviceMonitor:
@@ -184,11 +184,11 @@ spec:
           value: crowdsecurity/geoip-enrich crowdsecurity/whitelists
       resources:
         requests:
-          cpu: 50m
-          memory: 256Mi
+          cpu: 10m
+          memory: 100Mi
         limits:
           cpu: null
-          memory: 1Gi
+          memory: 325Mi
       metrics:
         enabled: true
         serviceMonitor:
@@ -238,8 +238,8 @@ spec:
           value: crowdsecurity/appsec-virtual-patching crowdsecurity/appsec-generic-rules
       resources:
         requests:
-          cpu: 50m
-          memory: 256Mi
+          cpu: 15m
+          memory: 100Mi
         limits:
           cpu: null
           memory: 512Mi

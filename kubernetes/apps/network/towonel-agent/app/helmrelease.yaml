@@ -14,6 +14,14 @@ spec:
         replicas: 2
         annotations:
           reloader.stakater.com/auto: 'true'
+        containers:
+          main:
+            resources:
+              requests:
+                cpu: 10m
+                memory: 50Mi
+              limits:
+                memory: 100Mi
     agent:
       logLevel: info
       healthPort: 9090

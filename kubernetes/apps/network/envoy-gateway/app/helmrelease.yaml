@@ -16,10 +16,19 @@ spec:
       envoyGateway:
         resources:
           limits:
-            memory: 256Mi
+            memory: 350Mi
           requests:
             cpu: 10m
-            memory: 256Mi
+            memory: 150Mi
+
+    certgen:
+      job:
+        resources:
+          limits:
+            memory: 128Mi
+          requests:
+            cpu: 10m
+            memory: 32Mi
 
     config:
       envoyGateway:
