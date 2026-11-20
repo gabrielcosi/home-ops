@@ -12,8 +12,6 @@ spec:
     autoEvictAfter: 1h
     drbd:
       alExtents: 6007
-    gateway:
-      enabled: true
     monitoring:
       dashboards:
         enabled: true
