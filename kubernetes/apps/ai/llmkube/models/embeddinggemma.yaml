@@ -58,7 +58,8 @@ spec:
       type: RuntimeDefault
   resources:
     cpu: 100m
-    memory: 2Gi
+    memory: 1Gi
+    memoryLimit: 2Gi
 ---
 apiVersion: inference.llmkube.dev/v1alpha1
 kind: Model
