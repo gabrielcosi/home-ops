@@ -9,6 +9,12 @@ spec:
     name: tuppr
   interval: 1h
   values:
+    resources:
+      requests:
+        cpu: 5m
+        memory: 175Mi
+      limits:
+        memory: 512Mi
     replicaCount: 2
     nodeSelector:
       node-role.kubernetes.io/control-plane: ""

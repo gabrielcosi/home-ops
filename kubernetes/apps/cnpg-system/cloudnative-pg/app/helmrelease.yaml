@@ -9,6 +9,12 @@ spec:
     name: cloudnative-pg
   interval: 1h
   values:
+    resources:
+      requests:
+        cpu: 15m
+        memory: 100Mi
+      limits:
+        memory: 475Mi
     monitoring:
       podMonitorEnabled: true
       grafanaDashboard:

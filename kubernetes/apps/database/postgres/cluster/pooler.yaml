@@ -29,11 +29,19 @@ spec:
           labelSelector:
             matchLabels:
               cnpg.io/poolerName: shared-pooler
+      initContainers:
+        - name: bootstrap-controller
+          resources:
+            requests:
+              memory: '16Mi'
+              cpu: '5m'
+            limits:
+              memory: '32Mi'
       containers:
         - name: pgbouncer
           resources:
             requests:
-              memory: '64Mi'
+              memory: '50Mi'
               cpu: '10m'
             limits:
               memory: '64Mi'

@@ -13,6 +13,13 @@ spec:
       enabled: true
     rbacProxy:
       enabled: false
+    manager:
+      resources:
+        requests:
+          cpu: 5m
+          memory: 50Mi
+        limits:
+          memory: 200Mi
     grafanaDashboard:
       enabled: true
       folder: dragonfly-system

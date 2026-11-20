@@ -8,3 +8,10 @@ spec:
     kind: OCIRepository
     name: plugin-barman-cloud
   interval: 1h
+  values:
+    resources:
+      requests:
+        cpu: 5m
+        memory: 64Mi
+      limits:
+        memory: 150Mi
