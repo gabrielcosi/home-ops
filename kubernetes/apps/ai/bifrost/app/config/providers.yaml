@@ -40,7 +40,6 @@ bifrost:
             - deepseek-v4-pro
             - deepseek-v4.1-flash
             - gemini-4-argon
-            - glm-5.2
             - glm-5.3
             - glm-5.3-flash
             - hy3
@@ -79,6 +78,7 @@ bifrost:
             - qwen3.7-plus
             - qwen3.8-flash
             - qwen3.8-max
+            - qwen4-max
           weight: 1
       network_config:
         base_url: https://opencode.ai/zen/go
