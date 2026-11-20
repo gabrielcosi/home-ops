@@ -59,3 +59,141 @@ spec:
   resources:
     cpu: 100m
     memory: 2Gi
+---
+apiVersion: inference.llmkube.dev/v1alpha1
+kind: Model
+metadata:
+  name: embeddinggemma-2-cpu
+spec:
+  source: s3://models/embeddinggemma-2/v1/EmbeddingGemma-2-Q8_0.gguf
+  sourceSecretRef:
+    name: models-s3
+  format: gguf
+  quantization: Q8_0
+  sha256: 2188ac1deca4b77dffefd603c2776a9d76d9d74ec01841392982ebb840b09135
+  hardware:
+    accelerator: cpu
+---
+apiVersion: inference.llmkube.dev/v1alpha1
+kind: InferenceService
+metadata:
+  name: embeddinggemma-2-wrk
+spec:
+  modelRef: embeddinggemma-2-cpu
+  image: ghcr.io/ggml-org/llama.cpp:server-b12464@sha256:5b43086e3ba7ea5794d72904654f6cd41224a9b1c6ac0398f4940ee380d30f23 # renovate: docker=ghcr.io/ggml-org/llama.cpp versioning=regex:^server-b(?<patch>\d+)$
+  replicas: 1
+  mode: embedding
+  contextSize: 32768
+  batchSize: 8192
+  uBatchSize: 8192
+  parallelSlots: 4
+  nodeSelector:
+    kubernetes.io/hostname: wrk-01
+  extraArgs:
+    - --pooling
+    - mean
+    - --threads
+    - "8"
+    - --threads-batch
+    - "8"
+    - --poll
+    - "0"
+  modelCache:
+    storageClassName: miroir-local
+    size: 1Gi
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 1000
+    runAsGroup: 1000
+    fsGroup: 1000
+    fsGroupChangePolicy: OnRootMismatch
+    seccompProfile:
+      type: RuntimeDefault
+  resources:
+    cpu: 100m
+    memory: 1Gi
+    memoryLimit: 2Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: embeddinggemma-2-cpu-cache
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: miroir-replicated
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: inference.llmkube.dev/v1alpha1
+kind: InferenceService
+metadata:
+  name: embeddinggemma-2-ctrl
+spec:
+  modelRef: embeddinggemma-2-cpu
+  image: ghcr.io/ggml-org/llama.cpp:server-b12464@sha256:5b43086e3ba7ea5794d72904654f6cd41224a9b1c6ac0398f4940ee380d30f23 # renovate: docker=ghcr.io/ggml-org/llama.cpp versioning=regex:^server-b(?<patch>\d+)$
+  mode: embedding
+  contextSize: 16384
+  batchSize: 8192
+  uBatchSize: 8192
+  parallelSlots: 2
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: node-role.kubernetes.io/control-plane
+                operator: Exists
+  topologySpreadConstraints:
+    - maxSkew: 1
+      topologyKey: kubernetes.io/hostname
+      whenUnsatisfiable: DoNotSchedule
+      labelSelector:
+        matchLabels:
+          inference.llmkube.dev/service: embeddinggemma-2-ctrl
+  extraArgs:
+    - --pooling
+    - mean
+    - --threads
+    - "2"
+    - --threads-batch
+    - "2"
+    - --poll
+    - "0"
+    - --load-mode
+    - none
+  modelCache:
+    claimName: embeddinggemma-2-cpu-cache
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 1000
+    runAsGroup: 1000
+    fsGroup: 1000
+    fsGroupChangePolicy: OnRootMismatch
+    seccompProfile:
+      type: RuntimeDefault
+  resources:
+    cpu: 100m
+    memory: 1Gi
+    memoryLimit: 2Gi
+---
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: embeddinggemma-2-ctrl
+spec:
+  scaleTargetRef:
+    apiVersion: inference.llmkube.dev/v1alpha1
+    kind: InferenceService
+    name: embeddinggemma-2-ctrl
+  pollingInterval: 5
+  cooldownPeriod: 300
+  minReplicaCount: 0
+  maxReplicaCount: 3
+  triggers:
+    - type: prometheus
+      metadata:
+        serverAddress: http://vmsingle-victoria-metrics-cluster.monitoring.svc.cluster.local:8428
+        query: vector(3) and on() (sum(kube_deployment_status_replicas_available{namespace="ai",deployment=~"embeddinggemma-2|embeddinggemma-2-wrk"}) == 0)
+        threshold: "1"
