@@ -37,7 +37,7 @@ spec:
         - alert: LlamaServerPromptCacheDropped
           expr: |
             _time:5m {kubernetes.pod_namespace="ai", kubernetes.container_name="llama-server"}
-            ("does not fit the prompt cache disk limit" OR "exceeds cache size limit, skipping" OR "not enough free space in")
+            ("does not fit the prompt cache disk limit" OR "not enough free space in")
             | stats by (kubernetes.pod_labels.app) count() as hits
             | rename kubernetes.pod_labels.app as model
             | filter hits:>0
