@@ -22,10 +22,10 @@ spec:
       resolution: endpoint
       balancing:
         mode: LoadAware
-    - name: qwen3-8-27b
-      displayName: qwen3.8-27b
+    - name: qwen3-8-flash-next
+      displayName: qwen3.8-flash-next
       inferenceServiceRef:
-        name: qwen3-8-27b
+        name: qwen3-8-flash-next
   defaultRouteStrategy: BackendNameMatch
   rules:
     - name: embeddinggemma-2

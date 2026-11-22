@@ -37,7 +37,7 @@ spec:
               ENABLE_OLLAMA_API: false
               ENABLE_OPENAI_API: true
               OPENAI_API_BASE_URL: 'http://bifrost.ai.svc.cluster.local:8080/v1'
-              TASK_MODEL_EXTERNAL: llmkube/qwen3.8-27b
+              TASK_MODEL_EXTERNAL: llmkube/qwen3.8-flash-next
               DEFAULT_MODEL_METADATA: '{"capabilities": {"web_search": true}, "defaultFeatureIds": ["web_search"]}'
               DEFAULT_PROMPT_SUGGESTIONS: 'null'
               ENABLE_FOLLOW_UP_GENERATION: false

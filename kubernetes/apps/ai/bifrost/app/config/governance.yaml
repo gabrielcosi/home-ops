@@ -75,7 +75,7 @@ bifrost:
         provider_configs:
           - provider: llmkube
             allowed_models:
-              - qwen3.8-27b
+              - qwen3.8-flash-next
             key_ids:
               - '*'
           - provider: opencode
@@ -153,7 +153,7 @@ bifrost:
           - provider: llmkube
             allowed_models:
               - embeddinggemma-2
-              - qwen3.8-27b
+              - qwen3.8-flash-next
             key_ids:
               - '*'
       - id: home-ops-ci
@@ -169,7 +169,7 @@ bifrost:
               - '*'
           - provider: llmkube
             allowed_models:
-              - qwen3.8-27b
+              - qwen3.8-flash-next
             key_ids:
               - '*'
       - id: macbook
@@ -242,5 +242,5 @@ bifrost:
         cel_expression: '(provider == "opencode" || provider == "opencode-anthropic") && budget_used > 95.0'
         targets:
           - provider: llmkube
-            model: qwen3.8-27b
+            model: qwen3.8-flash-next
             weight: 1

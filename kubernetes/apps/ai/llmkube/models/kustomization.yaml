@@ -8,5 +8,5 @@ resources:
   - ./modelrouter.yaml
   - ./netpol.yaml
   - ./prometheusrule.yaml
-  - ./qwen.yaml
+  - ./qwen38flashnext.yaml
   - ./vmrule.yaml

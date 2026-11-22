@@ -1,0 +1,125 @@
+---
+apiVersion: inference.llmkube.dev/v1alpha1
+kind: Model
+metadata:
+  name: qwen3-8-flash-next
+spec:
+  source: s3://models/qwen3.8-flash-next/v1
+  sourceSecretRef:
+    name: models-s3
+  format: custom
+  quantization: IQ3_XXS
+  files:
+    - Qwen3.8-Flash-Next-GSQ-RCO-IQ3_XXS.basalt
+  fileSha256:
+    Qwen3.8-Flash-Next-GSQ-RCO-IQ3_XXS.basalt: "a41fe60d2cd6ed1628f115c38389497b1bc931d148f49e247fe7e035ff1cb9c8"
+  hardware:
+    accelerator: cuda
+    gpu:
+      enabled: true
+      count: 1
+      vendor: nvidia
+      resourceClaims:
+        - name: pro4000
+          resourceClaimName: pro4000
+---
+apiVersion: inference.llmkube.dev/v1alpha1
+kind: InferenceService
+metadata:
+  name: qwen3-8-flash-next
+spec:
+  modelRef: qwen3-8-flash-next
+  runtime: generic
+  stageModel: true
+  image: ghcr.io/gabrielcosi/containers/basalt:v0.5.5@sha256:a5b26818d25f6a9e5265968bab4626ed5947eb21894631441faec1422fbf39c4 # renovate: docker=ghcr.io/gabrielcosi/containers/basalt
+  replicas: 1
+  args:
+    - serve
+    - $(LLMKUBE_MODEL_PATH)
+    - --host
+    - 0.0.0.0
+    - --port
+    - "8080"
+    - --alias
+    - qwen3-8-flash-next
+    - --allowed-host
+    - .ai.svc.cluster.local
+    - --max-context
+    - "262144"
+    - --slot-full-context
+    - --parallel
+    - "4"
+    - --kv
+    - int8
+    - --vision
+    - dynamic
+    - --resident-budget-gib
+    - "2"
+    - --prompt-cache
+    - "2"
+    - --pool-workers
+    - "4"
+    - --conversation-cache-mib
+    - "0"
+    - --conversation-cache-disk-mib
+    - "44032"
+    - --temperature
+    - "1.0"
+    - --top-p
+    - "0.95"
+    - --top-k
+    - "20"
+    - --min-p
+    - "0"
+    - --reasoning-effort
+    - medium
+  probeOverrides:
+    liveness:
+      httpGet:
+        path: /health
+        port: 8080
+      periodSeconds: 15
+      timeoutSeconds: 5
+      failureThreshold: 3
+    readiness:
+      httpGet:
+        path: /health
+        port: 8080
+      periodSeconds: 10
+      timeoutSeconds: 5
+      failureThreshold: 3
+  extraVolumes:
+    - name: state
+      persistentVolumeClaim:
+        claimName: qwen3-8-flash-next-state
+  extraVolumeMounts:
+    - name: state
+      mountPath: /data
+  modelCache:
+    storageClassName: miroir-local
+    size: 80Gi
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 1000
+    runAsGroup: 1000
+    fsGroup: 1000
+    fsGroupChangePolicy: OnRootMismatch
+    seccompProfile:
+      type: RuntimeDefault
+  resources:
+    cpu: "1"
+    memory: 12Gi
+    memoryLimit: 48Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: qwen3-8-flash-next-state
+  namespace: ai
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: miroir-local
+  resources:
+    requests:
+      storage: 48Gi
