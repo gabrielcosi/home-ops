@@ -36,7 +36,7 @@ metadata:
   name: llmkube-router
   namespace: ai
 spec:
-  description: Restrict the model router to bifrost and vmagent ingress, and egress to the inference pods.
+  description: Restrict the model router to bifrost and vmagent ingress, and egress to the inference pods and kube-apiserver.
   endpointSelector:
     matchLabels:
       inference.llmkube.dev/model-router: models
@@ -66,6 +66,12 @@ spec:
                 - ai
             - key: k8s:inference.llmkube.dev/service
               operator: Exists
+    - fromCIDR:
+        - 10.43.0.0/16
+      icmps:
+        - fields:
+            - type: DestinationUnreachable
+              family: IPv4
   egress:
     - toEndpoints:
         - matchExpressions:
@@ -78,4 +84,10 @@ spec:
       toPorts:
         - ports:
             - port: "8080"
+              protocol: TCP
+    - toEntities:
+        - kube-apiserver
+      toPorts:
+        - ports:
+            - port: "6443"
               protocol: TCP

@@ -11,9 +11,11 @@ spec:
     - name: embeddinggemma-2
       inferenceServiceRef:
         name: embeddinggemma-2
+      timeout: 5s
     - name: embeddinggemma-2-wrk
       inferenceServiceRef:
         name: embeddinggemma-2-wrk
+      timeout: 45s
     - name: embeddinggemma-2-ctrl
       inferenceServiceRef:
         name: embeddinggemma-2-ctrl
@@ -30,7 +32,6 @@ spec:
       match:
         models:
           - embeddinggemma-2
-      timeout: 120s
       route:
         strategy: primary-fallback
         backends:
