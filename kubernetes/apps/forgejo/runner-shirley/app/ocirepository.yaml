@@ -9,6 +9,6 @@ spec:
     mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
     operation: copy
   ref:
-    tag: 13.2.3
-    digest: sha256:b2c2e8da84e21e0fd06755091cb80d6c8199d53bbe8192375c033650603b53f7
+    tag: 13.3.1
+    digest: sha256:85d7c1e5d0b392424dc79192aa06c91daa88b61eda50147ab0da81b74c698e65
   url: oci://registry.xcd.dev/x/git.erwanleboucher.dev/eleboucher/charts/forgejo-runner
