@@ -31,7 +31,7 @@ spec:
   modelRef: qwen3-8-flash-next
   runtime: generic
   stageModel: true
-  image: ghcr.io/gabrielcosi/containers/basalt:v0.5.6@sha256:578234827b83887cee56e2c508e3ac66790967cf99dc15c4b7bffb2570dc6e76 # renovate: docker=ghcr.io/gabrielcosi/containers/basalt
+  image: ghcr.io/gabrielcosi/containers/basalt:v0.5.7@sha256:5aca80b08d0d3e0ae9cdbd0eb90c12b6079cd6e53438c9679a66982fb530d46a # renovate: docker=ghcr.io/gabrielcosi/containers/basalt
   replicas: 1
   args:
     - serve
