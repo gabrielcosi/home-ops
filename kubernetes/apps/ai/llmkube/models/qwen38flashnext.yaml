@@ -4,15 +4,15 @@ kind: Model
 metadata:
   name: qwen3-8-flash-next
 spec:
-  source: s3://models/qwen3.8-flash-next/v1
+  source: s3://models/swift-1.5-flash-next/v1
   sourceSecretRef:
     name: models-s3
   format: custom
-  quantization: IQ3_XXS
+  quantization: IQ3_S
   files:
-    - Qwen3.8-Flash-Next-GSQ-RCO-IQ3_XXS.basalt
+    - Swift-1.5-Flash-Next-abliterated-IQ3_S.basalt
   fileSha256:
-    Qwen3.8-Flash-Next-GSQ-RCO-IQ3_XXS.basalt: "a41fe60d2cd6ed1628f115c38389497b1bc931d148f49e247fe7e035ff1cb9c8"
+    Swift-1.5-Flash-Next-abliterated-IQ3_S.basalt: "753cb7c4824f7438e9578ac02eb5da9c36a006be76f1ca72615ba6df635b1878"
   hardware:
     accelerator: cuda
     gpu:
