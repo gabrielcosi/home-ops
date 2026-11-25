@@ -1,0 +1,25 @@
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: victoria-logs
+  namespace: monitoring
+spec:
+  groups:
+    - name: victoria-logs.rules
+      rules:
+        - alert: TalosLogsNotShipping
+          expr: |-
+            max by (pod) (
+              (increase(vector_component_errors_total{job="vector", component_id="vlogs-0"}[30m]) > 0)
+              or
+              (increase(vector_component_discarded_events_total{job="vector", component_id="vlogs-0"}[30m]) > 0)
+              or
+              (max_over_time(vector_buffer_size_events{job="vector", component_id="vlogs-0"}[5m]) > 10)
+            )
+          for: 15m
+          annotations:
+            summary: >-
+              Vector {{ $labels.pod }} cannot deliver Talos logs to VictoriaLogs
+          labels:
+            severity: critical

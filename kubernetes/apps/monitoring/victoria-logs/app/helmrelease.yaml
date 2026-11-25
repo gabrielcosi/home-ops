@@ -101,10 +101,20 @@ spec:
           parser:
             source: |
               . = merge(object!(parse_json!(.message)), {"node": get_env_var!("VECTOR_SELF_NODE_NAME")})
+              service = string(."talos-service") ?? ""
+              if includes(["kernel", "dns-resolve-cache"], service) || (service == "machined" && contains(string(.msg) ?? "", "match with service \"dashboard\"")) {
+                abort
+              }
+              if is_string(.msg) {
+                .msg = replace(string!(.msg), r'\n$', "")
+              }
+              if exists(."talos-level") {
+                .level = del(."talos-level")
+              }
         sinks:
           vlogs:
             request:
               headers:
                 VL-Time-Field: talos-time
-                VL-Stream-Fields: node,facility
-                VL-Msg-Field: msg
+                VL-Stream-Fields: node,talos-service,facility
+                VL-Msg-Field: msg,content
