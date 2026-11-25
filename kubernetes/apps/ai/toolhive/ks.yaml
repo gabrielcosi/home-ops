@@ -12,7 +12,6 @@ spec:
     name: flux-system
     namespace: flux-system
   targetNamespace: ai
-  timeout: 5m
   wait: false
   healthChecks:
     - apiVersion: helm.toolkit.fluxcd.io/v2
@@ -38,7 +37,6 @@ spec:
     name: flux-system
     namespace: flux-system
   targetNamespace: ai
-  timeout: 5m
   wait: false
   healthChecks:
     - apiVersion: helm.toolkit.fluxcd.io/v2
