@@ -93,6 +93,8 @@ releases:
 
   - name: flux-instance
     namespace: flux-system
+    labels:
+      path: flux-operator/instance
     inherit:
       - template: default
     needs:
