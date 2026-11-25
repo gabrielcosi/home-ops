@@ -14,8 +14,8 @@ spec:
   path: ./kubernetes/apps/media/prowlarr/app
   prune: true
   sourceRef:
-    kind: GitRepository
-    name: flux-system
+    kind: ExternalArtifact
+    name: prowlarr
     namespace: flux-system
   targetNamespace: media
   wait: false

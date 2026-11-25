@@ -8,8 +8,8 @@ spec:
   path: ./kubernetes/apps/monitoring/victoria-metrics/operator
   prune: true
   sourceRef:
-    kind: GitRepository
-    name: flux-system
+    kind: ExternalArtifact
+    name: victoria-metrics
     namespace: flux-system
   targetNamespace: monitoring
   wait: true
@@ -29,8 +29,8 @@ spec:
         name: alert-lists
   prune: true
   sourceRef:
-    kind: GitRepository
-    name: flux-system
+    kind: ExternalArtifact
+    name: victoria-metrics
     namespace: flux-system
   targetNamespace: monitoring
   wait: false

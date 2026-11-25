@@ -8,8 +8,8 @@ spec:
   path: ./kubernetes/apps/monitoring/smartctl-exporter/app
   prune: true
   sourceRef:
-    kind: GitRepository
-    name: flux-system
+    kind: ExternalArtifact
+    name: smartctl-exporter
     namespace: flux-system
   targetNamespace: monitoring
   wait: false

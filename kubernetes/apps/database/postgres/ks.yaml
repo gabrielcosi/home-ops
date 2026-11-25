@@ -21,10 +21,9 @@ spec:
   interval: 1h
   path: ./kubernetes/apps/database/postgres/cluster
   prune: true
-  retryInterval: 2m
   sourceRef:
-    kind: GitRepository
-    name: flux-system
+    kind: ExternalArtifact
+    name: postgres
     namespace: flux-system
   targetNamespace: database
   wait: false

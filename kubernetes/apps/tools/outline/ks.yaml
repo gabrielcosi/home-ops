@@ -26,8 +26,8 @@ spec:
   path: ./kubernetes/apps/tools/outline/app
   prune: true
   sourceRef:
-    kind: GitRepository
-    name: flux-system
+    kind: ExternalArtifact
+    name: outline
     namespace: flux-system
   targetNamespace: tools
   wait: false

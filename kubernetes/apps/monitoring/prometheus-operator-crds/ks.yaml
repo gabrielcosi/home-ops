@@ -8,8 +8,8 @@ spec:
   path: ./kubernetes/apps/monitoring/prometheus-operator-crds/app
   prune: true
   sourceRef:
-    kind: GitRepository
-    name: flux-system
+    kind: ExternalArtifact
+    name: prometheus-operator-crds
     namespace: flux-system
   targetNamespace: monitoring
   wait: false

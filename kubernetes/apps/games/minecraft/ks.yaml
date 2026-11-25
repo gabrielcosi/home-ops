@@ -14,8 +14,8 @@ spec:
   path: ./kubernetes/apps/games/minecraft/app
   prune: true
   sourceRef:
-    kind: GitRepository
-    name: flux-system
+    kind: ExternalArtifact
+    name: minecraft
     namespace: flux-system
   targetNamespace: games
   wait: false

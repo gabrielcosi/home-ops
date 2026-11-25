@@ -35,8 +35,8 @@ spec:
   path: ./kubernetes/apps/forgejo/forgejo/app
   prune: true
   sourceRef:
-    kind: GitRepository
-    name: flux-system
+    kind: ExternalArtifact
+    name: forgejo
     namespace: flux-system
   targetNamespace: forgejo
   wait: false

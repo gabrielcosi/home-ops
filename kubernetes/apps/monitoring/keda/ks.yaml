@@ -8,8 +8,8 @@ spec:
   path: ./kubernetes/apps/monitoring/keda/app
   prune: true
   sourceRef:
-    kind: GitRepository
-    name: flux-system
+    kind: ExternalArtifact
+    name: keda
     namespace: flux-system
   targetNamespace: monitoring
   wait: true
@@ -25,8 +25,8 @@ spec:
   path: ./kubernetes/apps/monitoring/keda/http
   prune: true
   sourceRef:
-    kind: GitRepository
-    name: flux-system
+    kind: ExternalArtifact
+    name: keda
     namespace: flux-system
   targetNamespace: monitoring
   wait: true

@@ -8,8 +8,8 @@ spec:
   path: ./kubernetes/apps/games/gate/app
   prune: true
   sourceRef:
-    kind: GitRepository
-    name: flux-system
+    kind: ExternalArtifact
+    name: gate
     namespace: flux-system
   targetNamespace: games
   wait: false

@@ -17,8 +17,8 @@ spec:
   path: ./kubernetes/apps/media/bazarr/app
   prune: true
   sourceRef:
-    kind: GitRepository
-    name: flux-system
+    kind: ExternalArtifact
+    name: bazarr
     namespace: flux-system
   targetNamespace: media
   wait: false

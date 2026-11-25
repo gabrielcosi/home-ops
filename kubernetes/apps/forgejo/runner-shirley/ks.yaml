@@ -18,8 +18,8 @@ spec:
   path: ./kubernetes/apps/forgejo/runner-shirley/app
   prune: true
   sourceRef:
-    kind: GitRepository
-    name: flux-system
+    kind: ExternalArtifact
+    name: runner-shirley
     namespace: flux-system
   targetNamespace: forgejo
   wait: false

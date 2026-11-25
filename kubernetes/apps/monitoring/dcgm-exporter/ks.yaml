@@ -11,8 +11,8 @@ spec:
   path: ./kubernetes/apps/monitoring/dcgm-exporter/app
   prune: true
   sourceRef:
-    kind: GitRepository
-    name: flux-system
+    kind: ExternalArtifact
+    name: dcgm-exporter
     namespace: flux-system
   targetNamespace: monitoring
   wait: false

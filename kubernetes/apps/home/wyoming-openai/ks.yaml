@@ -8,8 +8,8 @@ spec:
   path: ./kubernetes/apps/home/wyoming-openai/app
   prune: true
   sourceRef:
-    kind: GitRepository
-    name: flux-system
+    kind: ExternalArtifact
+    name: wyoming-openai
     namespace: flux-system
   targetNamespace: home
   wait: false

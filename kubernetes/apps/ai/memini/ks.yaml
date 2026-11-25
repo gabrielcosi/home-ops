@@ -14,8 +14,8 @@ spec:
   path: ./kubernetes/apps/ai/memini/app
   prune: true
   sourceRef:
-    kind: GitRepository
-    name: flux-system
+    kind: ExternalArtifact
+    name: memini
     namespace: flux-system
   targetNamespace: ai
   wait: false

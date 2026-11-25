@@ -22,8 +22,8 @@ spec:
   path: ./kubernetes/apps/kritika/kritika/app
   prune: true
   sourceRef:
-    kind: GitRepository
-    name: flux-system
+    kind: ExternalArtifact
+    name: kritika
     namespace: flux-system
   targetNamespace: kritika
   wait: false

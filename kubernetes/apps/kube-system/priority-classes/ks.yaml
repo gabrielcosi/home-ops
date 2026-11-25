@@ -8,8 +8,8 @@ spec:
   path: ./kubernetes/apps/kube-system/priority-classes/app
   prune: true
   sourceRef:
-    kind: GitRepository
-    name: flux-system
+    kind: ExternalArtifact
+    name: priority-classes
     namespace: flux-system
   targetNamespace: kube-system
   wait: false

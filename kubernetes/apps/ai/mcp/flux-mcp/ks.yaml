@@ -11,8 +11,8 @@ spec:
   path: ./kubernetes/apps/ai/mcp/flux-mcp/app
   prune: true
   sourceRef:
-    kind: GitRepository
-    name: flux-system
+    kind: ExternalArtifact
+    name: mcp
     namespace: flux-system
   targetNamespace: ai
   wait: false

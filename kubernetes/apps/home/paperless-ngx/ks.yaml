@@ -16,8 +16,8 @@ spec:
   path: ./kubernetes/apps/home/paperless-ngx/app
   prune: true
   sourceRef:
-    kind: GitRepository
-    name: flux-system
+    kind: ExternalArtifact
+    name: paperless-ngx
     namespace: flux-system
   targetNamespace: home
   wait: false

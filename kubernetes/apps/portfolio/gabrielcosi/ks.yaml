@@ -23,8 +23,8 @@ spec:
   path: ./kubernetes/apps/portfolio/gabrielcosi/app
   prune: true
   sourceRef:
-    kind: GitRepository
-    name: flux-system
+    kind: ExternalArtifact
+    name: gabrielcosi
     namespace: flux-system
   targetNamespace: portfolio
   wait: false

@@ -14,8 +14,8 @@ spec:
   path: ./kubernetes/apps/home/mosquitto/app
   prune: true
   sourceRef:
-    kind: GitRepository
-    name: flux-system
+    kind: ExternalArtifact
+    name: mosquitto
     namespace: flux-system
   targetNamespace: home
   wait: false

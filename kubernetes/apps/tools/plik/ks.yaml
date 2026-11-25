@@ -17,8 +17,8 @@ spec:
   path: ./kubernetes/apps/tools/plik/app
   prune: true
   sourceRef:
-    kind: GitRepository
-    name: flux-system
+    kind: ExternalArtifact
+    name: plik
     namespace: flux-system
   targetNamespace: tools
   wait: false

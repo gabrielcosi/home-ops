@@ -13,8 +13,8 @@ spec:
   path: ./kubernetes/apps/network/tailscale/operator/app
   prune: true
   sourceRef:
-    kind: GitRepository
-    name: flux-system
+    kind: ExternalArtifact
+    name: tailscale
     namespace: flux-system
   targetNamespace: network
   wait: false

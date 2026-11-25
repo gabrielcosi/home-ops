@@ -17,8 +17,8 @@ spec:
   path: ./kubernetes/apps/ai/open-webui/app
   prune: true
   sourceRef:
-    kind: GitRepository
-    name: flux-system
+    kind: ExternalArtifact
+    name: open-webui
     namespace: flux-system
   targetNamespace: ai
   wait: false

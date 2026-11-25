@@ -13,8 +13,8 @@ spec:
   path: ./kubernetes/apps/network/echo/app
   prune: true
   sourceRef:
-    kind: GitRepository
-    name: flux-system
+    kind: ExternalArtifact
+    name: echo
     namespace: flux-system
   targetNamespace: network
   wait: false

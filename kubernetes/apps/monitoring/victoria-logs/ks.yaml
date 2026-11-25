@@ -11,8 +11,8 @@ spec:
   path: ./kubernetes/apps/monitoring/victoria-logs/app
   prune: true
   sourceRef:
-    kind: GitRepository
-    name: flux-system
+    kind: ExternalArtifact
+    name: victoria-logs
     namespace: flux-system
   targetNamespace: monitoring
   wait: false
@@ -28,8 +28,8 @@ spec:
   path: ./kubernetes/apps/monitoring/victoria-logs/collector
   prune: true
   sourceRef:
-    kind: GitRepository
-    name: flux-system
+    kind: ExternalArtifact
+    name: victoria-logs
     namespace: flux-system
   targetNamespace: monitoring
   wait: false

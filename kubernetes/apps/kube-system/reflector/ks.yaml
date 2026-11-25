@@ -8,8 +8,8 @@ spec:
   path: ./kubernetes/apps/kube-system/reflector/app
   prune: true
   sourceRef:
-    kind: GitRepository
-    name: flux-system
+    kind: ExternalArtifact
+    name: reflector
     namespace: flux-system
   targetNamespace: kube-system
   wait: false

@@ -8,8 +8,8 @@ spec:
   path: ./kubernetes/apps/kube-system/lact/app
   prune: true
   sourceRef:
-    kind: GitRepository
-    name: flux-system
+    kind: ExternalArtifact
+    name: lact
     namespace: flux-system
   targetNamespace: kube-system
   wait: false

@@ -14,8 +14,8 @@ spec:
   path: ./kubernetes/apps/home/zigbee/app
   prune: true
   sourceRef:
-    kind: GitRepository
-    name: flux-system
+    kind: ExternalArtifact
+    name: zigbee
     namespace: flux-system
   targetNamespace: home
   wait: false

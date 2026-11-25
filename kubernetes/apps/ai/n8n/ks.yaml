@@ -14,8 +14,8 @@ spec:
   path: ./kubernetes/apps/ai/n8n/app
   prune: true
   sourceRef:
-    kind: GitRepository
-    name: flux-system
+    kind: ExternalArtifact
+    name: n8n
     namespace: flux-system
   targetNamespace: ai
   wait: false

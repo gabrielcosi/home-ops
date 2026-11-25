@@ -20,8 +20,8 @@ spec:
   path: ./kubernetes/apps/tools/miniflux/app
   prune: true
   sourceRef:
-    kind: GitRepository
-    name: flux-system
+    kind: ExternalArtifact
+    name: miniflux
     namespace: flux-system
   targetNamespace: tools
   wait: false

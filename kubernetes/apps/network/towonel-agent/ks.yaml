@@ -13,8 +13,8 @@ spec:
   path: ./kubernetes/apps/network/towonel-agent/app
   prune: true
   sourceRef:
-    kind: GitRepository
-    name: flux-system
+    kind: ExternalArtifact
+    name: towonel-agent
     namespace: flux-system
   targetNamespace: network
   wait: false

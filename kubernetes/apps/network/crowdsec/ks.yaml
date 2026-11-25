@@ -20,8 +20,8 @@ spec:
   path: ./kubernetes/apps/network/crowdsec/app
   prune: true
   sourceRef:
-    kind: GitRepository
-    name: flux-system
+    kind: ExternalArtifact
+    name: crowdsec
     namespace: flux-system
   targetNamespace: network
   wait: false
@@ -46,8 +46,8 @@ spec:
   path: ./kubernetes/apps/network/crowdsec/bouncer
   prune: true
   sourceRef:
-    kind: GitRepository
-    name: flux-system
+    kind: ExternalArtifact
+    name: crowdsec
     namespace: flux-system
   targetNamespace: network
   wait: false

@@ -14,8 +14,8 @@ spec:
   path: ./kubernetes/apps/ai/cliproxyapi/app
   prune: true
   sourceRef:
-    kind: GitRepository
-    name: flux-system
+    kind: ExternalArtifact
+    name: cliproxyapi
     namespace: flux-system
   targetNamespace: ai
   wait: false

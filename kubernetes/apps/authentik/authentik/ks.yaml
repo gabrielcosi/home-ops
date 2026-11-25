@@ -24,8 +24,8 @@ spec:
   path: ./kubernetes/apps/authentik/authentik/app
   prune: true
   sourceRef:
-    kind: GitRepository
-    name: flux-system
+    kind: ExternalArtifact
+    name: authentik
     namespace: flux-system
   targetNamespace: authentik
   wait: false
