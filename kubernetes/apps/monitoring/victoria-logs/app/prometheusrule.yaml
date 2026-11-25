@@ -11,11 +11,13 @@ spec:
         - alert: TalosLogsNotShipping
           expr: |-
             max by (pod) (
-              (increase(vector_component_errors_total{job="vector", component_id="vlogs-0"}[30m]) > 0)
+              (increase(vector_component_errors_total{job="vector"}[30m]) > 0)
               or
-              (increase(vector_component_discarded_events_total{job="vector", component_id="vlogs-0"}[30m]) > 0)
+              (increase(vector_component_discarded_events_total{job="vector", intentional="false"}[30m]) > 0)
               or
               (max_over_time(vector_buffer_size_events{job="vector", component_id="vlogs-0"}[5m]) > 10)
+              or
+              (rate(vector_component_received_events_total{job="vector", component_id="k8s"}[15m]) == 0)
             )
           for: 15m
           annotations:

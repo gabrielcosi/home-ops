@@ -96,9 +96,13 @@ spec:
             type: socket
             mode: tcp
             address: 0.0.0.0:6050
-            max_length: 102400
+            framing:
+              method: newline_delimited
+              newline_delimited:
+                max_length: 262144
         transforms:
           parser:
+            drop_on_error: true
             source: |
               . = merge(object!(parse_json!(.message)), {"node": get_env_var!("VECTOR_SELF_NODE_NAME")})
               service = string(."talos-service") ?? ""
@@ -107,6 +111,9 @@ spec:
               }
               if is_string(.msg) {
                 .msg = replace(string!(.msg), r'\n$', "")
+              }
+              if is_string(.content) {
+                .content = replace(string!(.content), r'\n$', "")
               }
               if exists(."talos-level") {
                 .level = del(."talos-level")
