@@ -164,11 +164,6 @@ spec:
                       - destination_namespace
                       - source_app
                       - destination_app
-                excludeFilters: &hubbleChurn
-                  - source_label: ["app.kubernetes.io/managed-by=kopiur"]
-                  - destination_label: ["app.kubernetes.io/managed-by=kopiur"]
-                  - source_label: ["renovate-operator.mogenius.com/renovatejob=forgejo"]
-                  - destination_label: ["renovate-operator.mogenius.com/renovatejob=forgejo"]
               - name: drop
                 contextOptions: &hubbleContext
                   - name: sourceContext
@@ -185,10 +180,8 @@ spec:
                 contextOptions: *hubbleContext
               - name: flow
                 contextOptions: *hubbleContext
-                excludeFilters: *hubbleChurn
               - name: tcp
                 contextOptions: *hubbleContext
-                excludeFilters: *hubbleChurn
         serviceMonitor:
           enabled: true
           interval: "30s"
