@@ -7,6 +7,10 @@ machine:
     apidCheckExtKeyUsage: true
     diskQuotaSupport: true
     rbac: true
+  logging:
+    destinations:
+      - endpoint: tcp://10.43.0.60:6050/
+        format: json_lines
   token: op://k8s/talos/MACHINE_TOKEN
 cluster:
   ca:
