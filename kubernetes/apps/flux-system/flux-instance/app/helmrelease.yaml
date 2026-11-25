@@ -19,6 +19,7 @@ spec:
         - kustomize-controller
         - helm-controller
         - notification-controller
+        - source-watcher
       sync:
         kind: GitRepository
         url: https://github.com/gabrielcosi/home-ops
