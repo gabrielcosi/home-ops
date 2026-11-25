@@ -159,6 +159,26 @@ spec:
               kind: Deployment
               name: notification-controller
           - patch: |-
+              apiVersion: apps/v1
+              kind: Deployment
+              metadata:
+                name: all
+              spec:
+                template:
+                  spec:
+                    containers:
+                      - name: manager
+                        resources:
+                          requests:
+                            cpu: 5m
+                            memory: 32Mi
+                          limits:
+                            cpu: null
+                            memory: 64Mi
+            target:
+              kind: Deployment
+              name: source-watcher
+          - patch: |-
               - op: add
                 path: /spec/template/spec/containers/0/args/-
                 value: --concurrent=20
