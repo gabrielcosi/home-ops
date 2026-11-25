@@ -20,7 +20,6 @@ metadata:
   name: rook-ceph-cluster
 spec:
   dependsOn:
-    - name: ceph-csi-drivers
     - name: rook-ceph
     - name: kopiur
       namespace: kopiur-system
