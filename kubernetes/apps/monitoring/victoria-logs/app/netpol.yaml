@@ -3,15 +3,37 @@ apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
   name: victoria-logs
+  namespace: monitoring
 spec:
-  description: Restrict victoria-logs ingress to the cluster and UniFi syslog.
+  description: Restrict victoria-logs ingress to its writers, readers, metrics scrapes, and UniFi syslog.
   endpointSelector:
     matchLabels:
       app.kubernetes.io/instance: victoria-logs
       app.kubernetes.io/name: victoria-logs-single
   ingress:
+    - fromEndpoints:
+        - matchLabels:
+            app.kubernetes.io/instance: victoria-logs-collector
+            app.kubernetes.io/name: victoria-logs-collector
+        - matchLabels:
+            app.kubernetes.io/instance: victoria-logs
+            app.kubernetes.io/name: vector
+        - matchLabels:
+            app.kubernetes.io/name: vmauth
+        - matchLabels:
+            app.kubernetes.io/instance: victoria-metrics-cluster
+            app.kubernetes.io/name: vmagent
+        - matchLabels:
+            app: grafana
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: ai
+            k8s:app: vlogs-mcp
+      toPorts:
+        - ports:
+            - port: '9428'
+              protocol: TCP
     - fromEntities:
-        - cluster
+        - host
       toPorts:
         - ports:
             - port: '9428'
