@@ -32,6 +32,7 @@ kind: KubeAPIServerConfig
 certExtraSANs:
   - k8s.internal
 extraArgs:
+  audit-log-path: "-"
   enable-aggregator-routing: "true"
 image: registry.k8s.io/kube-apiserver:v1.37.2
 ---
@@ -40,7 +41,80 @@ kind: KubeAuditPolicyConfig
 configuration:
   apiVersion: audit.k8s.io/v1
   kind: Policy
+  omitStages:
+    - RequestReceived
   rules:
+    - level: Metadata
+      resources:
+        - group: ""
+          resources:
+            - pods/attach
+            - pods/ephemeralcontainers
+            - pods/exec
+            - pods/log
+            - pods/portforward
+            - pods/proxy
+            - nodes/proxy
+            - services/proxy
+    - level: None
+      resources:
+        - group: coordination.k8s.io
+          resources:
+            - leases
+        - group: ""
+          resources:
+            - events
+        - group: events.k8s.io
+          resources:
+            - events
+        - group: authentication.k8s.io
+          resources:
+            - tokenreviews
+        - group: authorization.k8s.io
+          resources:
+            - selfsubjectaccessreviews
+            - selfsubjectrulesreviews
+            - subjectaccessreviews
+    - level: None
+      nonResourceURLs:
+        - /api*
+        - /apis*
+        - /healthz*
+        - /livez*
+        - /metrics
+        - /openapi*
+        - /readyz*
+        - /version
+    - level: Metadata
+      resources:
+        - group: ""
+          resources:
+            - secrets
+    - level: None
+      userGroups:
+        - system:nodes
+        - system:serviceaccounts
+      verbs:
+        - get
+        - list
+        - watch
+    - level: None
+      users:
+        - system:apiserver
+        - system:kube-controller-manager
+        - system:kube-scheduler
+      verbs:
+        - get
+        - list
+        - watch
+    - level: None
+      userGroups:
+        - system:nodes
+        - system:serviceaccounts
+      resources:
+        - group: "*"
+          resources:
+            - "*/status"
     - level: Metadata
 ---
 apiVersion: v1alpha1
