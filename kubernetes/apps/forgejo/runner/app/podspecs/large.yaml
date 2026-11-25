@@ -1,6 +1,6 @@
 containers:
   - name: main
-    image: ghcr.io/bjw-s-labs/forgejo-runner:ubuntu-24.04@sha256:fea96a5b525857bee41cc132cf95df67191b73cdd681569ada3000111420397e
+    image: ghcr.io/catthehacker/ubuntu:act-24.04@sha256:f195e42bedd719818f81f28c6e54c1d08c5a8400f3012aa187cb90df3823e59a
     imagePullPolicy: IfNotPresent
     env:
       - name: DEBIAN_FRONTEND

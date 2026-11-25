@@ -18,6 +18,8 @@ jobs:
     timeout-minutes: 15
     outputs:
       images: ${{ steps.extract.outputs.images }}
+    env:
+      FLATE_VERSION: 'v0.8.0' # renovate: github-releases=home-operations/flate
     steps:
       - name: Checkout PR
         uses: https://github.com/actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -25,6 +27,18 @@ jobs:
           fetch-depth: 0
           ref: ${{ forgejo.event.pull_request.head.sha }}
           persist-credentials: false
+
+      - name: Install flate
+        run: |-
+          set -euo pipefail
+          version=${FLATE_VERSION#v}
+          base="https://github.com/home-operations/flate/releases/download/${FLATE_VERSION}"
+          archive="flate_${version}_linux_amd64.tar.gz"
+          curl -fsSLO "${base}/${archive}"
+          echo "$(curl -fsSL "${base}/${archive}.sha256")  ${archive}" | sha256sum -c -
+          mkdir -p "${HOME}/.local/bin"
+          tar -xzf "${archive}" -C "${HOME}/.local/bin" flate
+          echo "${HOME}/.local/bin" >> "${GITHUB_PATH}"
 
       - name: Extract images
         id: extract
