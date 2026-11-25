@@ -69,8 +69,7 @@ Renovate watches the entire repository for dependency updates and opens a PR whe
 ```sh
 📁 kubernetes
 ├── 📁 apps       # applications, grouped by namespace
-├── 📁 components # reusable kustomize components
-└── 📁 flux       # flux configuration
+└── 📁 components # reusable kustomize components
 ```
 
 ### Flux dependency flow

@@ -5,7 +5,7 @@ monorepo_root = true
 KUBECONFIG = "{{config_root}}/kubeconfig"
 MINIJINJA_CONFIG_FILE = "{{config_root}}/.minijinja.toml"
 TALOSCONFIG = "{{config_root}}/talosconfig"
-FLATE_PATH = "{{config_root}}/kubernetes/flux/cluster"
+FLATE_PATH = "{{config_root}}/kubernetes/apps"
 
 # Shell completion runs this outside the task environment, from the caller's directory.
 [task_templates.node]

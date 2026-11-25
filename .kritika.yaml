@@ -41,8 +41,9 @@ rules:
       say so and what the error was, and make no such claim. The checkout has no git history, so only the head
       renders: read what the base produced upstream at the old tag. flate exits nonzero for any failure in the path;
       a failure is a finding only when it belongs to the HelmRelease under review and the change caused it, and a
-      source that could not be fetched says nothing about the change. Every HelmRelease also gets the patches in
-      kubernetes/flux/cluster/ks.yaml, which flate does not apply.
+      source that could not be fetched says nothing about the change. Every HelmRelease also gets the patches that
+      the FluxInstance in kubernetes/apps/flux-system/flux-instance applies to the flux-system Kustomization, which
+      flate does not apply.
 context:
   - path: AGENTS.md
     description: Repository layout, file naming, Flux app shape, secrets and pinning conventions.

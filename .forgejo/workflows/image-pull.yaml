@@ -33,7 +33,7 @@ jobs:
         run: |-
           set -euo pipefail
           base=$(git merge-base "${BASE_SHA}" HEAD)
-          rendered=$(flate diff images --path ./kubernetes/flux/cluster --base "${base}" \
+          rendered=$(flate diff images --path ./kubernetes/apps --base "${base}" \
             --no-progress --output json)
           referenced=$(git diff --unified=0 "${base}" HEAD -- kubernetes \
             | { grep -E '^\+[^+]' || true; } \
