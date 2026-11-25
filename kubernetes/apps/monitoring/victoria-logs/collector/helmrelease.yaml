@@ -24,6 +24,13 @@ spec:
     podMonitor:
       enabled: true
 
+    collector:
+      msgField:
+        - message
+        - msg
+        - log
+        - requestURI
+
     remoteWrite:
       - url: http://victoria-logs.monitoring.svc.cluster.local:9428
 
