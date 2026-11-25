@@ -9,6 +9,6 @@ spec:
     mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
     operation: copy
   ref:
-    tag: 0.69.0
-    digest: sha256:0889699b9fd9ed3ce40dfeea1532039c8c607c151634b8f4441b94367ab1cf28
+    tag: 0.69.1
+    digest: sha256:95b13697df3dd033755276fd4b693680f09c1d56bfd3ed496961f10e11c4355a
   url: oci://ghcr.io/stacklok/toolhive/toolhive-operator
