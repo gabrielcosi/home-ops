@@ -162,8 +162,6 @@ spec:
                     values:
                       - source_namespace
                       - destination_namespace
-                      - source_app
-                      - destination_app
               - name: drop
                 contextOptions: &hubbleContext
                   - name: sourceContext
@@ -174,8 +172,6 @@ spec:
                     values:
                       - source_namespace
                       - destination_namespace
-                      - source_app
-                      - destination_app
               - name: icmp
                 contextOptions: *hubbleContext
               - name: flow
