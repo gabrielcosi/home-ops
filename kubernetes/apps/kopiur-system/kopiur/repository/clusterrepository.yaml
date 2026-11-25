@@ -42,6 +42,8 @@ spec:
       fsGroup: 1000
       fsGroupChangePolicy: OnRootMismatch
     ttlSecondsAfterFinished: 300
+    podLabels:
+      app.kubernetes.io/name: kopiur-mover
   parameters:
     epoch:
       minDuration: "1h"

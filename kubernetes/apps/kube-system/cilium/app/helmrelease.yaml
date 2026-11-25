@@ -155,9 +155,9 @@ spec:
                 contextOptions:
                   - name: query
                   - name: sourceContext
-                    values: ["app", "workload", "pod", "reserved-identity"]
+                    values: ["app", "reserved-identity"]
                   - name: destinationContext
-                    values: ["app", "workload", "pod", "dns", "reserved-identity"]
+                    values: ["app", "dns", "reserved-identity"]
                   - name: labelsContext
                     values:
                       - source_namespace
@@ -172,9 +172,9 @@ spec:
               - name: drop
                 contextOptions: &hubbleContext
                   - name: sourceContext
-                    values: ["app", "workload", "pod", "reserved-identity"]
+                    values: ["app", "reserved-identity"]
                   - name: destinationContext
-                    values: ["app", "workload", "pod", "dns", "reserved-identity"]
+                    values: ["app", "dns", "reserved-identity"]
                   - name: labelsContext
                     values:
                       - source_namespace
