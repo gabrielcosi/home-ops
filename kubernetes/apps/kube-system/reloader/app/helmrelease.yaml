@@ -15,6 +15,7 @@ spec:
       deployment:
         replicas: 1
       readOnlyRootFileSystem: true
+      reloadStrategy: annotations
       podMonitor:
         enabled: true
         namespace: "{{ .Release.Namespace }}"
