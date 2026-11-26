@@ -27,7 +27,7 @@ metadata:
   name: embeddinggemma-2
 spec:
   modelRef: embeddinggemma-2
-  image: ghcr.io/ggml-org/llama.cpp:server-cuda13-b12723@sha256:fc5fa507a4bd771207be58c35b870ddb242f984182058ea587ea8b831c447cc5 # renovate: docker=ghcr.io/ggml-org/llama.cpp versioning=regex:^server-cuda13-b(?<patch>\d+)$
+  image: ghcr.io/ggml-org/llama.cpp:server-cuda13-b12767@sha256:7bc5aa9c98be735dd81420b02a146514f8d85e802301a6b6a5d12a8bd4004a70 # renovate: docker=ghcr.io/ggml-org/llama.cpp versioning=regex:^server-cuda13-b(?<patch>\d+)$
   replicas: 1
   mode: embedding
   contextSize: 32768
@@ -81,7 +81,7 @@ metadata:
   name: embeddinggemma-2-wrk
 spec:
   modelRef: embeddinggemma-2-cpu
-  image: ghcr.io/ggml-org/llama.cpp:server-b12723@sha256:b0cd5490eefff30b40dcd47f7249a7d7211136908f73fe440a2a86b35a22b23b # renovate: docker=ghcr.io/ggml-org/llama.cpp versioning=regex:^server-b(?<patch>\d+)$
+  image: ghcr.io/ggml-org/llama.cpp:server-b12767@sha256:b24873ae66a4732e0b4b66dd7dc658066ccad6e8c63524278e92eebc767aacbe # renovate: docker=ghcr.io/ggml-org/llama.cpp versioning=regex:^server-b(?<patch>\d+)$
   replicas: 1
   mode: embedding
   contextSize: 32768
@@ -133,7 +133,7 @@ metadata:
   name: embeddinggemma-2-ctrl
 spec:
   modelRef: embeddinggemma-2-cpu
-  image: ghcr.io/ggml-org/llama.cpp:server-b12723@sha256:b0cd5490eefff30b40dcd47f7249a7d7211136908f73fe440a2a86b35a22b23b # renovate: docker=ghcr.io/ggml-org/llama.cpp versioning=regex:^server-b(?<patch>\d+)$
+  image: ghcr.io/ggml-org/llama.cpp:server-b12767@sha256:b24873ae66a4732e0b4b66dd7dc658066ccad6e8c63524278e92eebc767aacbe # renovate: docker=ghcr.io/ggml-org/llama.cpp versioning=regex:^server-b(?<patch>\d+)$
   mode: embedding
   contextSize: 16384
   batchSize: 8192
