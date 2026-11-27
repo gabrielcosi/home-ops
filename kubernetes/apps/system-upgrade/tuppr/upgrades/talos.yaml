@@ -22,6 +22,14 @@ spec:
       kind: CephCluster
       expr: |-
         status.ceph.health in ['HEALTH_OK']
+    - apiVersion: postgresql.cnpg.io/v1
+      kind: Cluster
+      expr: |-
+        has(status.readyInstances) && status.readyInstances == object.spec.instances && status.conditions.exists(e, e.type == 'Ready' && e.status == 'True')
+    - apiVersion: miroir.home-operations.com/v1alpha1
+      kind: MiroirVolume
+      expr: |-
+        status.phase == 'Ready'
   silences:
     - matchers:
         - name: alertname
