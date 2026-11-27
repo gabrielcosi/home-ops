@@ -31,6 +31,7 @@ spec:
               tag: 1.6.2@sha256:6c40dfa683f767d28d1dc502837ed0a5a57682a84231f03e704e2b3f61b25a46
             env:
               BAZARR__PORT: 6767
+              DYNACONF_ANALYTICS__ENABLED: '@bool false'
               TZ: Europe/Berlin
             probes:
               liveness:
