@@ -27,7 +27,7 @@ spec:
             nameOverride: n8n
             image:
               repository: ghcr.io/n8n-io/n8n
-              tag: 3.3.0@sha256:e06707c78ef5adb302b47909f8fee5caf8d389a7e5f3f0e03165214f6178565e
+              tag: 3.4.1@sha256:95f4fabd308669b35761ccf5b0d0a63526da06135e7e44d19d14694dbfd340be
             env:
               N8N_LOG_LEVEL: info
               TZ: Europe/Berlin
@@ -48,6 +48,8 @@ spec:
               N8N_HIRING_BANNER_ENABLED: false
               N8N_DYNAMIC_BANNERS_ENABLED: false
               N8N_VERIFIED_PACKAGES_ENABLED: false
+              N8N_LICENSE_AUTO_RENEW_ENABLED: false
+              N8N_LICENSE_SERVER_URL: http://127.0.0.1:9/v1
               N8N_DISABLED_MODULES: mcp-registry
               EXECUTIONS_DATA_PRUNE: 'true'
               EXECUTIONS_DATA_MAX_AGE: '24'
@@ -97,8 +99,8 @@ spec:
 
           task-runner:
             image:
-              repository: ghcr.io/n8n-io/runners
-              tag: 3.3.0@sha256:7d6bf76088a08962b812a39dcb8c5ef7b038253a21f69fc4a2bfc1b6e9e486b9
+              repository: registry.xcd.dev/gabrielcosi/n8n-runners
+              tag: 3.4.1@sha256:b5f45656a04f296f3fdf362194ba368494dd280a780ee05bbef53083dd2c1b28
             env:
               GENERIC_TIMEZONE: Europe/Berlin
               N8N_RUNNERS_AUTH_TOKEN:
@@ -139,6 +141,8 @@ spec:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
               runAsNonRoot: true
+              runAsUser: 65532
+              runAsGroup: 65532
               capabilities:
                 drop:
                   - ALL
@@ -171,10 +175,16 @@ spec:
           n8n:
             app:
               - path: /tmp
-              - path: /home/node/.cache
-              - path: /home/node/.npm
+              - path: /home/node
+
+      runner-tmp:
+        type: emptyDir
+        advancedMounts:
+          n8n:
             task-runner:
               - path: /tmp
+              - path: /home/runner
+              - path: /home/nonroot
 
       runner-config:
         type: configMap

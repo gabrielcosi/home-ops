@@ -4,7 +4,7 @@ kind: CiliumNetworkPolicy
 metadata:
   name: n8n
 spec:
-  description: Restrict n8n egress to crawl4ai, the external gateway proxies, the NAS, and the npm registry.
+  description: Restrict n8n egress to crawl4ai, the external gateway proxies, the NAS, and the internet.
   endpointSelector:
     matchLabels:
       app.kubernetes.io/name: n8n
@@ -28,9 +28,11 @@ spec:
         - ports:
             - port: "443"
               protocol: TCP
-    - toFQDNs:
-        - matchName: registry.npmjs.org
+    - toCIDRSet:
+        - cidrGroupRef: internet
       toPorts:
         - ports:
+            - port: "80"
+              protocol: TCP
             - port: "443"
               protocol: TCP
