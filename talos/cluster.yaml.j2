@@ -134,6 +134,11 @@ content: |
     device_ownership_from_security_context = true
 ---
 apiVersion: v1alpha1
+kind: RegistryAuthConfig
+name: registry.xcd.dev
+auth: op://k8s/shared/private_registry_auth
+---
+apiVersion: v1alpha1
 kind: KubeNodeConfig
 nodeIP:
   validSubnets:

@@ -12,8 +12,6 @@ spec:
     controllers:
       freeze-frame:
         pod:
-          imagePullSecrets:
-            - name: registry-credentials
           securityContext:
             runAsNonRoot: true
             runAsUser: 1000

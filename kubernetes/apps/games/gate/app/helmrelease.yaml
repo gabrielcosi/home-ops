@@ -15,8 +15,6 @@ spec:
           reloader.stakater.com/auto: 'true'
 
         pod:
-          imagePullSecrets:
-            - name: registry-credentials
           securityContext:
             runAsNonRoot: true
             runAsUser: 1000
