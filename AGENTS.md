@@ -15,7 +15,7 @@ Homelab infrastructure-as-code. Work from the repo root.
 
 - mise tasks are the entrypoint, in monorepo mode: `ansible/`, `bootstrap/`, `kubernetes/`, and `talos/` each have a `mise.toml`, and `mise tasks --all` lists every task. Prefer tasks over their underlying commands. After the user approves a mutating op, answer the task confirmation with `mise --yes run //<dir>:<task> ...` rather than bypassing the task.
 - `flate` validates Kubernetes manifests — it renders the full Flux pipeline with bundled helm/kustomize/source SDKs (no `helm`/`kustomize`/`flux` binaries).
-- `talosctl` (1.13.x) for Talos machine config, via `mise run //talos:<task>` (render/validate/apply); `op` (1Password CLI) for secret material.
+- `talosctl` for Talos machine config, via `mise run //talos:<task>` (render/validate/apply); `op` (1Password CLI) for secret material.
 - Cluster reads use read-only `kubectl` (`get`/`describe`/`logs`).
 - Outline wiki via `outline-mcp` tools — for a `https://docs.xcd.dev/` link use `outline-mcp_fetch` (`resource: "document"`); search with `outline-mcp_list_documents`.
 - Self-hosted Forgejo (`git.xcd.dev`) via the `fjo` CLI, not WebFetch (auth-gated): for any `git.xcd.dev/<owner>/<repo>` link use e.g. `fjo pr view <n> -R <owner>/<repo>`, or pass the link itself. Read-only subcommands by default.
