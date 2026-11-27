@@ -47,6 +47,7 @@ spec:
     - --max-context
     - "262144"
     - --slot-full-context
+    - --fit-max-tokens
     - --parallel
     - "4"
     - --kv
