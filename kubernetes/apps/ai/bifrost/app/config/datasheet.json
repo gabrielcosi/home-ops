@@ -395,27 +395,6 @@
     "output_cost_per_token": 5e-07,
     "cache_read_input_token_cost": 3e-08
   },
-  "opencode/longcat-2.0": {
-    "provider": "opencode",
-    "base_model": "longcat-2.0",
-    "mode": "chat",
-    "max_input_tokens": 1000000,
-    "max_output_tokens": 131072,
-    "architecture": {
-      "input_modalities": [
-        "text"
-      ],
-      "output_modalities": [
-        "text"
-      ]
-    },
-    "supports_function_calling": true,
-    "supports_tool_choice": true,
-    "supports_reasoning": true,
-    "input_cost_per_token": 3e-07,
-    "output_cost_per_token": 1.2e-06,
-    "cache_read_input_token_cost": 6e-09
-  },
   "opencode-anthropic/qwen3.8-flash": {
     "provider": "opencode-anthropic",
     "base_model": "qwen3.8-flash",
