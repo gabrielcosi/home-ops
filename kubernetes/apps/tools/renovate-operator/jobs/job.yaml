@@ -14,7 +14,7 @@ spec:
   metadata:
     labels:
       app.kubernetes.io/name: renovate
-  image: ghcr.io/renovatebot/renovate:45.0.0@sha256:97cfa40435ec98308f7fab0a830659e8aa829eb54858b32dba68541452f20b07
+  image: ghcr.io/renovatebot/renovate:45.3.2@sha256:d0358088501c7665688673c8932474b02517941703a16e970e8b4fcf235299cb
   parallelism: 3
   priorityClassName: batch-low
   affinity:
