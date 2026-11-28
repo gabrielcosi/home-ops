@@ -34,7 +34,7 @@ spec:
           app:
             image:
               repository: ghcr.io/gabrielcosi/containers/scrypted
-              tag: v0.148.10-noble-full@sha256:8fa6284e7dc41583d0e579682d3491d409ca56d491b9d24205195f596d52c3d2
+              tag: v0.148.12-noble-full@sha256:9e2a33f0a97fcf0c87297459203891bfff553b976be464ed12049182e5731e1a
             resources:
               requests:
                 cpu: 75m
